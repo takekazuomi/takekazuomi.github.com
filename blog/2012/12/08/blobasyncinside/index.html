@@ -125,6 +125,8 @@
 
 <time datetime="2012-12-08T15:26:00+09:00" pubdate data-updated="true"> 12/08/2012</time>
         
+         | <a href="#disqus_thread">Comments</a>
+        
       </p>
     
   </header>
@@ -394,7 +396,7 @@ namespace ConsoleApplication10
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/async/'>Async</a>, <a class='category' href='/blog/categories/azure/'>Azure</a>, <a class='category' href='/blog/categories/blob/'>Blob</a>
+    <a class='category' href='/blog/categories/async/'>Async</a>, <a class='category' href='/blog/categories/azure/'>Azure</a>, <a class='category' href='/blog/categories/blob/'>Blob</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/cloud/'>Cloud</a>, <a class='category' href='/blog/categories/nosql/'>NoSQL</a>, <a class='category' href='/blog/categories/storage/'>Storage</a>
   
 </span>
 
@@ -412,6 +414,12 @@ namespace ConsoleApplication10
 </div>
 
     
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
     
     <ul class="pager">
       
@@ -481,6 +489,13 @@ namespace ConsoleApplication10
 </section>
 
 
+<section>
+  <h1>On Delicious</h1>
+  <div id="delicious"></div>
+  <script type="text/javascript" src="http://feeds.delicious.com/v2/json/takekazuomi?count=3&amp;sort=date&amp;callback=renderDeliciousLinks"></script>
+  <p><a href="http://delicious.com/takekazuomi">My Delicious Bookmarks &raquo;</a></p>
+</section>
+
 
 
 
@@ -498,6 +513,22 @@ namespace ConsoleApplication10
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'cloudmemo';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/';
+        var disqus_url = 'http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

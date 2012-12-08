@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Cloud Memo]]></title>
-  <link href="http://takekazuomi.github.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: NoSQL | Cloud Memo]]></title>
+  <link href="http://takekazuomi.github.com/blog/categories/nosql/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
   <updated>2012-12-08T22:18:27+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
@@ -18,7 +18,7 @@
     <link href="http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/"/>
     <updated>2012-12-08T15:26:00+09:00</updated>
     <id>http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside</id>
-    <content type="html"><![CDATA[<p><a href="http://takekazuomi.github.com/blog/2012/12/08/WAAC2012Day2">前の記事</a>では非同期呼び出しを使っていますが、これには理由があります。
+    <content type="html"><![CDATA[<p><a href="/blog/2012/12/08/WAAC2012Day2">前の記事</a>では非同期呼び出しを使っていますが、これには理由があります。
 2010年ぐらいに、最初にAzureが出始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時にはスレッドを上げてやったのと非同期にしてやったので有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論でした。</p>
 
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
@@ -37,7 +37,7 @@
 
 <p>確認に使ったコード、（メッセージがドイツ語になっているのは、AzureLargeFileUploader の名残です）</p>
 
-<div><script src='https://gist.github.com/4133960.js?file='></script>
+<p><div><script src='https://gist.github.com/4133960.js?file='></script>
 <noscript><pre><code>// #define OPENWRITE
 
 using System;
@@ -122,7 +122,7 @@ namespace UseUFS
 
 
 </code></pre></noscript></div>
-
+</p>
 
 <p>このコードのポイントは下記の3点です。</p>
 
@@ -138,7 +138,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 
 <p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
 
-<p><img src="http://takekazuomi.github.com/images/2012-08-screen01.png" alt="Resource Monitor" /></p>
+<p><img src="/images/2012-08-screen01.png" alt="Resource Monitor" /></p>
 
 <hr />
 
@@ -158,7 +158,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 
 <p>試しに、下記のようなコードでioThreadsを確認したところデスクトップPCでは２，Azure上のLargeのインスタンスでは４でした。どちらの環境でもデフォルトでParallelOperationThreadCountが２以上になり並列で動作します。</p>
 
-<div><script src='https://gist.github.com/4239681.js?file='></script>
+<p><div><script src='https://gist.github.com/4239681.js?file='></script>
 <noscript><pre><code>using System;
 
 namespace ConsoleApplication10
@@ -176,7 +176,7 @@ namespace ConsoleApplication10
     }
 }
 </code></pre></noscript></div>
-
+</p>
 
 <h2>2.0 では</h2>
 
@@ -231,7 +231,7 @@ namespace ConsoleApplication10
 
 <p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
 
-<p>このあたりは、<a href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What&#8217;s New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
+<p>このあたりは、<a href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What's New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
 
 <hr />
 
@@ -304,7 +304,7 @@ namespace ConsoleApplication10
 
 <p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
 
-<div><script src='https://gist.github.com/4238298.js?file='></script>
+<p><div><script src='https://gist.github.com/4238298.js?file='></script>
 <noscript><pre><code>public class EntityNk : TableEntity
 {
   const int MAX_PROPERTY = 8; 
@@ -345,43 +345,43 @@ namespace ConsoleApplication10
   {
     set
       {
-    if (value != dataSize)
-    {
-        Clear();
+	if (value != dataSize)
+	{
+	    Clear();
 
-        dataSize = value;
-        var x = dataSize / MAX_PROPERTY;
-        var y = dataSize % MAX_PROPERTY;
+	    dataSize = value;
+	    var x = dataSize / MAX_PROPERTY;
+	    var y = dataSize % MAX_PROPERTY;
 
-        for (var i = 0; i &lt; dataCache.Count(); i++)
-        {
-        dataCache[i] = GetRandomByte(x);
-        }
+	    for (var i = 0; i &lt; dataCache.Count(); i++)
+	    {
+		dataCache[i] = GetRandomByte(x);
+	    }
 
-        if (y != 0)
-          dataCache[x] = GetRandomByte(y);
-      }
+	    if (y != 0)
+	      dataCache[x] = GetRandomByte(y);
+	  }
       }
   }
 }
 </code></pre></noscript></div>
-
+</p>
 
 <p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
 
 <p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
 
-<div><script src='https://gist.github.com/4238639.js?file='></script>
+<p><div><script src='https://gist.github.com/4238639.js?file='></script>
 <noscript><pre><code>public static class CloudTableExtensions
 {
   public static Task&lt;TableResult&gt; ExecuteAsync(this CloudTable cloudTable, TableOperation operation, TableRequestOptions requestOptions = null, OperationContext operationContext = null, object state = null)
   {
     return Task.Factory.FromAsync&lt;TableOperation, TableRequestOptions, OperationContext, TableResult&gt;(
-                                                      cloudTable.BeginExecute, cloudTable.EndExecute, operation, requestOptions, operationContext, state);
+												      cloudTable.BeginExecute, cloudTable.EndExecute, operation, requestOptions, operationContext, state);
   }
 }
 </code></pre></noscript></div>
-
+</p>
 
 <p>この辺りは、下記のサイトが詳しくお勧めです。</p>
 
@@ -398,7 +398,7 @@ namespace ConsoleApplication10
 <p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
 今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
 
-<div><script src='https://gist.github.com/4238661.js?file='></script>
+<p><div><script src='https://gist.github.com/4238661.js?file='></script>
 <noscript><pre><code>         
 var batchOperation = new TableBatchOperation();
 
@@ -422,7 +422,7 @@ catch (Exception ex)
 }
 return cresult;
 </code></pre></noscript></div>
-
+</p>
 
 <hr />
 
