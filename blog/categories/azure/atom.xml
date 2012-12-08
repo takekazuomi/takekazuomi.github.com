@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Azure | Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/blog/categories/azure/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-09T07:28:04+09:00</updated>
+  <updated>2012-12-09T07:39:56+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -19,13 +19,13 @@
     <updated>2012-12-08T15:26:00+09:00</updated>
     <id>http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside</id>
     <content type="html"><![CDATA[<p><a href="/blog/2012/12/08/WAAC2012Day2">前の記事</a>では非同期呼び出しを使っていますが、これには理由があります。
-2010年ぐらいに、最初にAzureが出始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時にはスレッドを上げてやったのと非同期にしてやったので有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論でした。</p>
+以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論でした。</p>
 
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
 
-<p>ある日、<a href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて見てみたら、速度重視には見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら動かないのかな？」と思い2.0のコードを動かして実際に試して見ました。</p>
+<p>ある日、<a href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて見てみたら、以前読んだ実装に比べて、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良い、2.0の実装では十分な速度でBlobにアップロードされます。</p>
 
-<p>やってみたらなかなか調子が良い、2.0の実相で十分実用的な速度でアップロードされます。C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うにはよい環境が揃ってきているという感じです。</p>
+<p>C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うには良い環境が揃ってきていると感じました。それで非同期呼び出しを使っているのです。</p>
 
 <p><a href="http://www.flickr.com/photos/takekazuomi/8149221698/" title="shibuya by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg" width="800" height="313" alt="shibuya"></a></p>
 
