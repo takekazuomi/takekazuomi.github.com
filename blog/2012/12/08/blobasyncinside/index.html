@@ -1,24 +1,136 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Cloud Memo]]></title>
-  <link href="http://takekazuomi.github.com/atom.xml" rel="self"/>
-  <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-08T21:48:12+09:00</updated>
-  <id>http://takekazuomi.github.com/</id>
-  <author>
-    <name><![CDATA[Takekazu Omi]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Windows Azure Storage 2.0 の Blob Upload - Cloud Memo</title>
+  <meta name="author" content="Takekazu Omi">
 
   
-  <entry>
-    <title type="html"><![CDATA[Windows Azure Storage 2.0 の Blob Upload]]></title>
-    <link href="http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/"/>
-    <updated>2012-12-08T15:26:00+09:00</updated>
-    <id>http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside</id>
-    <content type="html"><![CDATA[<p>前の記事では非同期呼び出しを使っていますが、これには理由があります。
+  <meta name="description" content="記事は随時更新します。">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside">
+  <link href="/favicon.ico" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Cloud Memo" type="application/atom+xml">
+  
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36911322-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Cloud Memo</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://google.com/search" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:takekazuomi.github.com" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Windows Azure Storage 2.0 の Blob Upload</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-08T15:26:00+09:00" pubdate data-updated="true"> 12/08/2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前の記事では非同期呼び出しを使っていますが、これには理由があります。
 2010年ぐらいに、最初にAzureが出始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時にはスレッドを上げてやったのと非同期にしてやったので有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論でした。</p>
 
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
@@ -138,7 +250,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 
 <p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
 
-<p><img src="http://takekazuomi.github.com/images/2012-08-screen01.png" alt="Resource Monitor" /></p>
+<p><img src="/images/2012-08-screen01.png" alt="Resource Monitor" /></p>
 
 <hr />
 
@@ -255,282 +367,166 @@ namespace ConsoleApplication10
 <p><a href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
 
 <hr />
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  <entry>
-    <title type="html"><![CDATA[Azure Storage Gen 2は速かった]]></title>
-    <link href="http://takekazuomi.github.com/blog/2012/12/08/WAAC2012Day2/"/>
-    <updated>2012-12-08T11:11:00+09:00</updated>
-    <id>http://takekazuomi.github.com/blog/2012/12/08/WAAC2012Day2</id>
-    <content type="html"><![CDATA[<p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
 
-<p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
+<span class="byline author vcard">Posted by <span class="fn">Takekazu Omi</span></span>
 
-<ul>
-<li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。</li>
-</ul>
+      
 
 
-<p><a href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></p>
-
-<p><a href="http://www.flickr.com/photos/takekazuomi/8217239370/" title="omikuji by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg" width="640" height="480" alt="omikuji"></a></p>
-
-<hr />
-
-<h1>Azure Storageのパフォーマンスの向上</h1>
-
-<p>2012/6/7 以降に作成されたストレージアカウントで、下記のようにパフォーマンスターゲットが引き上げられました。Gen 2と呼ばれているようです。以前のもの（Gen1）に比べ秒間のトランザクションベースだと4倍程度になっています（Azure Table 1Kエンティティの場合）</p>
-
-<p>詳しくはリンク先を見てもらうとして下記の4点が注目です。</p>
-
-<ol>
-<li>ストレージ ノード 間のネットワーク速度が1Gbpsから10Gbpsに向上</li>
-<li>ジャーナリングに使われるストレージデバイスがHDDからSSDに改善</li>
-<li>単一パーテーション  500 エンティティ/秒 ->   2,000 エンティティ/秒 (15Mbps)</li>
-<li>複数パーテーション 5,000 エンティティ/秒 -> 20,000 エンティティ/秒 (156Mbps)</li>
-</ol>
 
 
-<p>参照：<a href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9/">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
-
-<hr />
-
-<h1>確認しよう</h1>
-
-<p>ではどれだけ速くなったのか確認しましょう。なるべく実利用環境に近いようにということでC#を使います。ライブライは、最近出たばかりですが、Azure Storage Client 2.0を使います。このライブラリのコードをざっと見た感じだと、従来のコードに比べてシンプルになって読みやすく速度も期待できそうです。</p>
-
-<p>比較的限界が低い単一パーテーションで確認します。前記のGen2の記事には、エンティティが1KByteで、単一パーテーションの場合、2,000 エンティティ/秒というパフォーマンスターゲットが記述されています。これを確認しようとするとAzure外部からのネットワークアクセスだと厳しいのでWorkerRoleを立てて、リモートデスクトップでログインしてプログラムを実行します。プログラムは秒間2000オブジェクトを計測時間の間は作りづけないといけないのでCPUやGCがボトルネックになるかもしれません、今回はLargeのインスタンスを使うことにしました。</p>
-
-<p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
-
-<div><script src='https://gist.github.com/4238298.js?file='></script>
-<noscript><pre><code>public class EntityNk : TableEntity
-{
-  const int MAX_PROPERTY = 8; 
-  private static List&lt;byte[]&gt; dataCache;
-  private static int dataSize = 1;
-
-  static EntityNk()
-  {
-    Clear();
-  }
-
-  public EntityNk(string partitionKey, string rowKey)
-  {
-    this.PartitionKey = partitionKey;
-    this.RowKey = rowKey;
-    this.Data0 = dataCache[0];
-    this.Data1 = dataCache[1];
-    this.Data2 = dataCache[2];
-    this.Data3 = dataCache[3];
-    this.Data4 = dataCache[4];
-    this.Data5 = dataCache[5];
-    this.Data6 = dataCache[6];
-    this.Data7 = dataCache[7];
-  }
-
-  public EntityNk() { }
-
-  public byte[] Data0 { get; set; }
-  public byte[] Data1 { get; set; }
-  public byte[] Data2 { get; set; }
-  public byte[] Data3 { get; set; }
-  public byte[] Data4 { get; set; }
-  public byte[] Data5 { get; set; }
-  public byte[] Data6 { get; set; }
-  public byte[] Data7 { get; set; }
-
-  public static int DataSize
-  {
-    set
-      {
-    if (value != dataSize)
-    {
-        Clear();
-
-        dataSize = value;
-        var x = dataSize / MAX_PROPERTY;
-        var y = dataSize % MAX_PROPERTY;
-
-        for (var i = 0; i &lt; dataCache.Count(); i++)
-        {
-        dataCache[i] = GetRandomByte(x);
-        }
-
-        if (y != 0)
-          dataCache[x] = GetRandomByte(y);
-      }
-      }
-  }
-}
-</code></pre></noscript></div>
 
 
-<p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
-
-<p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
-
-<div><script src='https://gist.github.com/4238639.js?file='></script>
-<noscript><pre><code>public static class CloudTableExtensions
-{
-  public static Task&lt;TableResult&gt; ExecuteAsync(this CloudTable cloudTable, TableOperation operation, TableRequestOptions requestOptions = null, OperationContext operationContext = null, object state = null)
-  {
-    return Task.Factory.FromAsync&lt;TableOperation, TableRequestOptions, OperationContext, TableResult&gt;(
-                                                      cloudTable.BeginExecute, cloudTable.EndExecute, operation, requestOptions, operationContext, state);
-  }
-}
-</code></pre></noscript></div>
 
 
-<p>この辺りは、下記のサイトが詳しくお勧めです。</p>
-
-<p>参照：<a href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
-
-<p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
-
-<h4><strong> これは、Azure Storage Client 2.0のBUG </strong> だったようです。2.0.2で修正されています。</h4>
-
-<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">Issue #141:</a></p>
-
-<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、そうでも無いということなので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
-
-<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
-今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
-
-<div><script src='https://gist.github.com/4238661.js?file='></script>
-<noscript><pre><code>         
-var batchOperation = new TableBatchOperation();
-
-foreach (var e in entityFactory(n))
-{
-    batchOperation.Insert(e);
-}
-
-var cresult = new CommandResult { Start = DateTime.UtcNow.Ticks };
-var cbt = 0L;
-var context = GetOperationContext((t) =&gt; cbt = t);
-try
-{
-    var results = await table.ExecuteBatchAsync(batchOperation, operationContext: context);
-    cresult.Elapsed = cbt;
-}
-catch (Exception ex)
-{
-    cresult.Elapsed = -1;
-    Console.Error.WriteLine(&quot;Error DoInsert {0} {1}&quot;, n, ex.ToString());
-}
-return cresult;
-</code></pre></noscript></div>
-
-
-<hr />
-
-<h1>結果</h1>
-
-<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。
-単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）
-下記の表の最初のカラムは起動するプロセス数です。</p>
-
-<p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
-
-<p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
-
-<table border="1" width="90%">
-    <caption>表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</caption>
-    <thead>
-      <tr>
-        <th>プロセス数</th>
-        <th>最少</th>
-        <th>中央値</th>
-        <th>平均</th>
-        <th>最大</th>
-        <th>90%点</th>
-        <th>95%点</th>
-        <th>99%点</th>
-        <th>ピークe/s</th>
-        <th>成功数</th>
-        <th>失敗数</th>
-      </tr>
-    </thead>
-
-    <tbody align="right">
-      <tr>
-        <th>2</th>
-        <td>97.27</td>
-        <td>166.6</td>
-        <td>258.0</td>
-        <td>14,800</td>
-        <td>359.578</td>
-        <td>472.373</td>
-        <td>1,106.282</td>
-        <td>6,684</td>
-        <td>40,000</td>
-        <td>0</td>
-      </tr>
-
-      <tr>
-        <th>2</th>
-        <td>94.17</td>
-        <td>260.5</td>
-        <td>333.7</td>
-        <td>5,320</td>
-        <td>564.774</td>
-        <td>723.272</td>
-        <td>1,339.027</td>
-        <td>6,932</td>
-        <td>40,000</td>
-        <td>0</td>
-      </tr>
-
-      <tr>
-        <th>3</th>
-        <td>90.13</td>
-        <td>174.8</td>
-        <td>734.1</td>
-        <td>21,270</td>
-        <td>1,621.490</td>
-        <td>1,845.903</td>
-        <td>3,434.256</td>
-        <td>7,218</td>
-        <td>59,377</td>
-        <td>623</td>
-      </tr>
-
-      <tr>
-        <th>3</th>
-        <td>90.35</td>
-        <td>341.6</td>
-        <td>610.1</td>
-        <td>27,490</td>
-        <td>1,064.593</td>
-        <td>1,380.415</td>
-        <td>4,431.789</td>
-        <td>8,005</td>
-        <td>59,740</td>
-        <td>260</td>
-      </tr>
-    </tbody>
-</table>
-
-
-<hr />
-
-<h1>最後に</h1>
-
-<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。
-<a href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
-
-<p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
-
-<p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
-
-<hr />
-
-<h1>おまけ</h1>
-
-<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。</p>
-]]></content>
-  </entry>
   
-</feed>
+
+
+<time datetime="2012-12-08T15:26:00+09:00" pubdate data-updated="true"> 12/08/2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/async/'>Async</a>, <a class='category' href='/blog/categories/azure/'>Azure</a>, <a class='category' href='/blog/categories/blob/'>Blob</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/" data-via="takekazuomi" data-counturl="http://takekazuomi.github.com/blog/2012/12/08/blobasyncinside/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    
+    <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/12/08/WAAC2012Day2/" title="Previous Post:
+        Azure Storage Gen 2は速かった">&laquo; Azure Storage Gen 2は速かった</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    <section class="well">
+  <ul id="recent_posts" class="nav nav-list">
+    <li class="nav-header">Recent Posts</li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/08/blobasyncinside/">Windows Azure Storage 2.0 の Blob Upload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/08/WAAC2012Day2/">Azure Storage Gen 2は速かった</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section class="well">
+  <ul id="gh_repos" class="nav">
+    <li class="nav-header">GitHub Repos</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/takekazuomi">@takekazuomi</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        github.showRepos({
+            user: 'takekazuomi',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/asides/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section class="well">
+  <ul id="tweets" class="nav">
+    <li class="nav-header">Latest Tweets</li>
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      getTwitterFeed("takekazuomi", 5, false);
+    });
+  </script>
+  <script src="/javascripts/asides/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/takekazuomi" class="twitter-follow-button" data-show-count="false">Follow @takekazuomi</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><hr>
+<p>
+  Copyright &copy; 2012 - Takekazu Omi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

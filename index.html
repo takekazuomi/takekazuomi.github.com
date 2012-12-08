@@ -19,7 +19,7 @@
 
   
   <link rel="canonical" href="http://takekazuomi.github.com">
-  <link href="/favicon.png" rel="icon">
+  <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -103,6 +103,278 @@
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/08/blobasyncinside/">Windows Azure Storage 2.0 の Blob Upload</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-08T15:26:00+09:00" pubdate data-updated="true"> 12/08/2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前の記事では非同期呼び出しを使っていますが、これには理由があります。
+2010年ぐらいに、最初にAzureが出始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時にはスレッドを上げてやったのと非同期にしてやったので有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論でした。</p>
+
+<p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
+
+<p>ある日、<a href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて見てみたら、速度重視には見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら動かないのかな？」と思い2.0のコードを動かして実際に試して見ました。</p>
+
+<p>やってみたらなかなか調子が良い、2.0の実相で十分実用的な速度でアップロードされます。C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うにはよい環境が揃ってきているという感じです。</p>
+
+<p><a href="http://www.flickr.com/photos/takekazuomi/8149221698/" title="shibuya by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg" width="800" height="313" alt="shibuya"></a></p>
+
+<hr />
+
+<h1>試行（やってみた）</h1>
+
+<p>Azure Datacenter内にLargeのインスタンスを用意して適当なファイルを元にして8GBのファイルを用意しました。そのファイルを同一のBlobに4回アップロードして平均の速度を測定します。結果は、<strong> 平均473Mbps </strong> でした。これは、ほぼインスタンスのネットワーク帯域制限値と同じです。なかなか良い結果と言えます。</p>
+
+<p>確認に使ったコード、（メッセージがドイツ語になっているのは、AzureLargeFileUploader の名残です）</p>
+
+<div><script src='https://gist.github.com/4133960.js?file='></script>
+<noscript><pre><code>// #define OPENWRITE
+
+using System;
+using System.Configuration;
+using System.IO;
+using System.Net;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+
+
+namespace UseUFS
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            ServicePointManager.DefaultConnectionLimit = 1024;
+
+            if (args.Length != 1)
+            {
+                Console.Error.WriteLine(&quot;Bitte die Video-Datei zum Hochladen mit angeben...&quot;);
+                return;
+            }
+
+            var filename = args[0];
+            if (!File.Exists(filename))
+            {
+                Console.Error.WriteLine(&quot;Video-Datei \&quot;{0}\&quot; existiert nicht?&quot;, filename);
+                return;
+            }
+
+            Console.WriteLine(&quot;Uploading {0}&quot;, filename);
+
+            var connectionString = ConfigurationManager.AppSettings[&quot;storageaccount&quot;];
+            Console.WriteLine(&quot;Using connection &quot; + connectionString);
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+
+            var containerName = ConfigurationManager.AppSettings[&quot;containername&quot;];
+
+            upload(new FileInfo(filename), storageAccount, containerName);
+
+        }
+
+        private static void upload(FileInfo fileInfo, CloudStorageAccount storageAccount, string containerName)
+        {
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(containerName);
+            container.CreateIfNotExists();
+
+            var permission = container.GetPermissions();
+            permission.PublicAccess = BlobContainerPublicAccessType.Container;
+            container.SetPermissions(permission);
+
+            //var blob = container.GetBlockBlobReference(fileInfo.Name);
+            var blob = container.GetPageBlobReference(fileInfo.Name);
+
+
+            blobClient.ParallelOperationThreadCount = Environment.ProcessorCount * 12;
+
+#if OPENWRITE
+            using (var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+            using (var toStream = blob.OpenWrite())
+            {
+                stream.CopyToAsync(toStream).Wait();
+            }
+#else
+            using (var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+            {
+                blob.UploadFromStream(stream);
+            }
+
+#endif
+
+        }
+    }
+}
+
+
+
+
+
+
+</code></pre></noscript></div>
+
+
+<p>このコードのポイントは下記の3点です。</p>
+
+<ol>
+<li>18行目ので接続数の制限を1024に設定していること</li>
+<li>59行目で並列度の設定をコア数の12倍にしていること</li>
+<li>55,56行目ではPage/Block Blobのどちらを使うかを切り替えていること</li>
+</ol>
+
+
+<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。
+Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
+
+<p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
+
+<p><img src="/images/2012-08-screen01.png" alt="Resource Monitor" /></p>
+
+<hr />
+
+<p>ここからは、ソースを見ながら確認していった過程のメモです。リンクばかりで分かり辛いかもしれませんが参考までに。興味深いのは非同期と同期の処理の境界と並列度の制限をしている部分です。</p>
+
+<hr />
+
+<h1>どうしてこんなところが変わったの？ ParallelOperationThreadCount のデフォルト値</h1>
+
+<h2>1.x では</h2>
+
+<p>CloudBlobClientに、ParallelOperationThreadCount というのがあります。１系では、下記のように定義されていました。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L261">StorageClient/CloudBlobClient.cs#L261</a></p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L52">CloudBlobClient.cs#L52</a></p>
+
+<p>試しに、下記のようなコードでioThreadsを確認したところデスクトップPCでは２，Azure上のLargeのインスタンスでは４でした。どちらの環境でもデフォルトでParallelOperationThreadCountが２以上になり並列で動作します。</p>
+
+<div><script src='https://gist.github.com/4239681.js?file='></script>
+<noscript><pre><code>using System;
+
+namespace ConsoleApplication10
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int workerThreads;
+            int ioThreads;
+
+            System.Threading.ThreadPool.GetMinThreads(out workerThreads, out ioThreads);
+            Console.WriteLine(&quot;workerThreads {0},  ioThreads {1}&quot;, workerThreads, ioThreads);
+        }
+    }
+}
+</code></pre></noscript></div>
+
+
+<h2>2.0 では</h2>
+
+<p>それに対し、２系では下記のように定義されています。parallelismFactorは、47行目付近で1で初期化されておりデフォルトは1となります。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L232">CloudBlobClientBase.cs#L232</a></p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L47">CloudBlobClientBase.cs#L47</a></p>
+
+<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、<a href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a> にも書いてあるBreaking Changesです。</p>
+
+<p>2.0に移行した後、Block Blobのアップロードが遅くなった場合はParallelOperationThreadCountを確認するといいかもしれません。</p>
+
+<hr />
+
+<h1>ParallelOperationThreadCountの使われ方</h1>
+
+<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度を決めるために使われる。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。Page Blobでは並列アップロードは実装されていません。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
+
+<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかる。
+<a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
+
+<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいる。
+<a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
+
+<hr />
+
+<h1>同期と非同期の境界</h1>
+
+<p>WriteToSyncの実装は下記のようになっている。
+<a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
+
+<p>WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期しているので、並列動作はせずに、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないように見えるが、 toStream.Write の実装を見ると内部非同期に処理されているのがわかる。</p>
+
+<p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行う。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs">BlobWriteStream.cs</a></p>
+
+<p>呼び出し側を見ると同期処理のように見えるが、BlobWriteStreamBase で、AsyncSemaphore　parallelOperationSemaphoerをParallelOperationThreadCountの数で初期化しており、書き込みは非同期に行われる。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs#L286">BlobWriteStream.cs#L286</a></p>
+
+<hr />
+
+<h1>非同期実行数の制限</h1>
+
+<p>ここで、AsyncSemaphoreは、既定の数以上に処理が実行されないように非同期実行数を制御している役割を果たしている。</p>
+
+<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Core/Util/AsyncSemaphore.cs">AsyncSemaphore.cs</a></p>
+
+<p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
+
+<p>このあたりは、<a href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What&#8217;s New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
+
+<hr />
+
+<h1>結論</h1>
+
+<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。
+サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
+
+<hr />
+
+<h1>おまけ</h1>
+
+<p>LargeのRoleからStorageにUploadしたら450Mbps程度の速度が出た。ローカルからも、20Mbps程度だったので結構速い。転送中を見ていると、しばらくは複数のコネクションを使ってデータ転送していて最後にコネクションが一本になって終わる。、</p>
+
+<p>PutBlobを非同期でやって最後にPutBlobListで終了となってるようだ。PutBlobの処理中はCPUはほとんど使われずに、ネットワーク帯域がボトルネックになっるぐらいには効率がいい。最後のPutBlobListの間はStorage側の待ちになってしまう。</p>
+
+<p>これを考えると、複数のファイルをUploadする場合は、スレッドを分けて個々に処理した方が短時間で終わるのではないかと考えられる。ただ、あまり多くのスレッドを起動するメリットは無さそうだ。</p>
+
+<p>今回は2、UploadFromStreamを使ったが下記の説明にはOpenWriteを使うとStreamのように処理できると書いてある。やてみたら同じように動いた。つまりBlobをStreamとして使えるってことだ素晴らしい。</p>
+
+<p><a href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
+
+<hr />
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -387,13 +659,12 @@ return cresult;
 
 <h1>最後に</h1>
 
-<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると思われます。</p>
-
-<p><a href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
+<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。
+<a href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
 
 <p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
 
-<p>なんか、ずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
+<p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
 
 <hr />
 
@@ -418,6 +689,10 @@ return cresult;
     <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">Recent Posts</li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/08/blobasyncinside/">Windows Azure Storage 2.0 の Blob Upload</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/12/08/WAAC2012Day2/">Azure Storage Gen 2は速かった</a>
