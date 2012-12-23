@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/">
+  <link rel="canonical" href="http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/">
   <link href="/favicon.ico" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -48,8 +48,8 @@
   
   <meta property="og:title" content="Azure Virtual MachineのDISK性能 - Cloud Memo" />
   <meta property="og:description" content="twitterで、「Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。Azure Ubuntu 12.04 iozone 速報 2012/7/4 Azure &hellip;" />
-  <meta property="og:url" content="http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/" />
-  <meta property="og:image" content="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg" />
+  <meta property="og:url" content="http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/" />
+  <meta property="og:image" content="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg" />
   <meta property="og:author" content="Takekazu Omi" />
   <meta property="og:site_name" content="Cloud Memo" />
   <meta property="og:locale" content="ja_JP" />
@@ -134,7 +134,7 @@
   
 
 
-<time datetime="2012-12-22T07:26:00+09:00" pubdate data-updated="true"> 12/22/2012</time>
+<time datetime="2012-12-23T18:40:00+09:00" pubdate data-updated="true"> 12/23/2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -149,7 +149,7 @@
 
 <p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
 
-<p>テスト自体は一回しか走らせていないので、ぜひ再試験して結果を公開してください。今まで、Azure Tableの性能評価をしたこともありましたが、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがありました。</p>
+<p><a href="http://www.flickr.com/photos/takekazuomi/7987640250/" title="Triangle by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg" width="800" height="534" alt="Triangle"></a></p>
 
 <hr />
 
@@ -592,6 +592,9 @@
 <p>iozoneという選択肢がどうだったのかという気もしてるが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。
 もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
 
+<p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえるとみんなの役に立つも思います。今まで、Azure Tableの性能評価をしたこともありましたが、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがありました。
+いろいろなパターンの性能情報があると設計が楽になり精度もあがりますし。</p>
+
 <h1>Bookmarks</h1>
 
 <ul>
@@ -625,7 +628,7 @@
   
 
 
-<time datetime="2012-12-22T07:26:00+09:00" pubdate data-updated="true"> 12/22/2012</time>
+<time datetime="2012-12-23T18:40:00+09:00" pubdate data-updated="true"> 12/23/2012</time>
       
 
 <span class="categories">
@@ -639,7 +642,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/" data-via="takekazuomi" data-counturl="http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/" data-via="takekazuomi" data-counturl="http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/" >Tweet</a>
   
   
   
@@ -674,7 +677,7 @@
     <li class="nav-header">Recent Posts</li>
     
       <li class="post">
-        <a href="/blog/2012/12/22/azurevmfix1221/">Azure Virtual MachineのDISK性能</a>
+        <a href="/blog/2012/12/23/azurevmfix1221/">Azure Virtual MachineのDISK性能</a>
       </li>
     
       <li class="post">
@@ -760,8 +763,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/';
-        var disqus_url = 'http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/';
+        var disqus_identifier = 'http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/';
+        var disqus_url = 'http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/';
         var disqus_script = 'embed.js';
       
     (function () {

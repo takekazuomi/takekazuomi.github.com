@@ -4,7 +4,7 @@
   <title><![CDATA[Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-23T18:31:00+09:00</updated>
+  <updated>2012-12-23T18:41:05+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -15,16 +15,16 @@
   
   <entry>
     <title type="html"><![CDATA[Azure Virtual MachineのDISK性能]]></title>
-    <link href="http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221/"/>
-    <updated>2012-12-22T07:26:00+09:00</updated>
-    <id>http://takekazuomi.github.com/blog/2012/12/22/azurevmfix1221</id>
+    <link href="http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221/"/>
+    <updated>2012-12-23T18:40:00+09:00</updated>
+    <id>http://takekazuomi.github.com/blog/2012/12/23/azurevmfix1221</id>
     <content type="html"><![CDATA[<p>twitterで、「<a href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a>」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。<a href="http://www.slideshare.net/takekazuomi/azure-ubuntu-1204-iozone" title="Azure Ubuntu 12.04 iozone 速報 2012/7/4">Azure Ubuntu 12.04 iozone 速報 2012/7/4</a></p>
 
 <p>Azure Storageの非同期と同期の比較をしようと始めたのだけど、なかなか手間取って進まない。ちょっと寄り道して速くなったというAzure VMを試してみることにした。</p>
 
 <p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
 
-<p>テスト自体は一回しか走らせていないので、ぜひ再試験して結果を公開してください。今まで、Azure Tableの性能評価をしたこともありましたが、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがありました。</p>
+<p><a href="http://www.flickr.com/photos/takekazuomi/7987640250/" title="Triangle by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg" width="800" height="534" alt="Triangle"></a></p>
 
 <hr />
 
@@ -466,6 +466,9 @@
 
 <p>iozoneという選択肢がどうだったのかという気もしてるが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。
 もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
+
+<p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえるとみんなの役に立つも思います。今まで、Azure Tableの性能評価をしたこともありましたが、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがありました。
+いろいろなパターンの性能情報があると設計が楽になり精度もあがりますし。</p>
 
 <h1>Bookmarks</h1>
 
