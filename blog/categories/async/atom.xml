@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Async | Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/blog/categories/async/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-24T17:12:10+09:00</updated>
+  <updated>2012-12-26T22:22:26+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -12,6 +12,215 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Azure Storage Client 2.0 CompletedSynchronously FIX]]></title>
+    <link href="http://takekazuomi.github.com/blog/2012/12/26/asc2-dot-0asyncbug/"/>
+    <updated>2012-12-26T23:59:00+09:00</updated>
+    <id>http://takekazuomi.github.com/blog/2012/12/26/asc2-dot-0asyncbug</id>
+    <content type="html"><![CDATA[<p>以前の記事<a href="/blog/2012/12/08/WAAC2012Day2/">Azure Storage Gen 2は速かった</a>の補足です。その<a href="/blog/2012/12/08/WAAC2012Day2/#pending">記事</a>で、</p>
+
+<blockquote><p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。
+<strong> これは、Azure Storage Client 2.0のBUG </strong> だったようです。2.0.2で修正されています。</p></blockquote>
+
+<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かったのですが確認したことも含めまとめてみました。</p>
+
+<p><a href="http://www.flickr.com/photos/takekazuomi/8307052288/" title="candle by takekazu, on Flickr"><img src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg" width="800" height="600" alt="candle"></a></p>
+
+<hr />
+
+<h1>BUGの内容</h1>
+
+<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
+
+<ul>
+<li>参照</li>
+<li><p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></p></li>
+<li><p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></p></li>
+</ul>
+
+
+<hr />
+
+<h1>再現試験</h1>
+
+<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは<a href="/blog/2012/12/08/WAAC2012Day2/">前の記事</a>とほとんど同じですが、なるべく簡略化したものにしています。</p>
+
+<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
+
+<p><div><script src='https://gist.github.com/4369349.js?file='></script>
+<noscript><pre><code>public static class CloudTableExtensions
+{
+    public static Task&lt;TableResult&gt; ExecuteAsync(this CloudTable cloudTable, TableOperation operation, TableRequestOptions requestOptions = null, OperationContext operationContext = null, object state = null)
+    {
+        return Task.Factory.FromAsync&lt;TableOperation, TableRequestOptions, OperationContext, TableResult&gt;(
+        cloudTable.BeginExecute, cloudTable.EndExecute, operation, requestOptions, operationContext, state);
+    }
+}
+</code></pre></noscript></div>
+</p>
+
+<p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
+
+<p><div><script src='https://gist.github.com/4369329.js?file='></script>
+<noscript><pre><code>using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+
+namespace AsyncSemaphore
+{
+    partial class Program
+    {
+        static void InsertAsync001(CloudTable table, int start, int count)
+        {
+            var tasks = Enumerable.Range(start, count).Select(async i =&gt;
+            {
+                var e = new TableEntity(PKEY_STRS[i % PKEY_STRS.Length], i.ToString(&quot;D10&quot;));
+
+                var insertOperation = TableOperation.Insert(e);
+                try
+                {
+                    await table.ExecuteAsync(insertOperation).ConfigureAwait(false);
+
+                    if (i != 0 &amp;&amp; i % 100000 == 0)
+                        Console.Error.WriteLine(i);
+                }
+                catch (StorageException se)
+                {
+                    Console.Error.WriteLine(&quot;{0}, {1}&quot;, i, se.ToString());
+                }
+            }).ToArray();
+
+            Task.WhenAll(tasks);
+        }
+    }
+}
+</code></pre></noscript></div>
+</p>
+
+<p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
+
+<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7/">C#たんっ！ 新機能が入るまで</a>」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
+
+<h2>2.0.1 で動かす</h2>
+
+<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
+
+<p>```</p>
+
+<blockquote><p>Uninstall-Package WindowsAzure.Storage –RemoveDependencies</p>
+
+<p>Install-Package  WindowsAzure.Storage -Version 2.0.1</p></blockquote>
+
+<p>```</p>
+
+<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではわかり辛い面があります。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。あとは、ネットワーク転送速度（Send）も参考になります。</p>
+
+<ul>
+<li>Azure Storage Client 2.0.1 時のResource Moniter画面
+<img src="/images/2012_12/connections-asc2.0.1.png" alt="2.0.1時のResource Moniter画面" /></li>
+</ul>
+
+
+<p>見事に接続数が伸びません。</p>
+
+<h2>2.0.3では？</h2>
+
+<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
+
+<p>```</p>
+
+<blockquote><p>Uninstall-Package WindowsAzure.Storage –RemoveDependencies</p>
+
+<p>Install-Package  WindowsAzure.Storage</p></blockquote>
+
+<p>```</p>
+
+<ul>
+<li>Azure Storage Client 2.0.3 時のResource Moniter画面
+<img src="/images/2012_12/connections-asc2.0.3.png" alt="2.0.3時のResource Moniter画面" /></li>
+</ul>
+
+
+<h2>結論</h2>
+
+<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
+
+<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
+
+<hr />
+
+<h1>次の問題</h1>
+
+<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
+
+<ul>
+<li>Azure Storage Client 2.0.3 時でのException
+<img src="/images/2012_12/connections-asc2.0.3-cmd.png" alt="Azure Storage Client 2.0.3 時でのException" /></li>
+</ul>
+
+
+<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
+
+<p>ここでは、Blog でのUpload処理が参考になります。
+<a href="/blog/2012/12/08/blobasyncinside/#borderofsyncasync">Windows Azure Storage 2.0 の Blob Upload の同期と非同期の境界</a>で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御しているのがわかる。</p>
+
+<h2>Semaphoreを使う</h2>
+
+<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御する。SemaphoreSlim という便利がものがあるのでそれを使うことにします。
+こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
+
+<p><div><script src='https://gist.github.com/4369880.js?file='></script>
+<noscript><pre><code>static void InsertAsync002(CloudTable table, int start, int count)
+{
+    var throttler = new SemaphoreSlim(initialCount: 100);
+
+    var tasks = Enumerable.Range(start, count).Select(async i =&gt;
+    {
+
+        throttler.Wait();
+
+        var e = new TableEntity(PKEY_STRS[i % PKEY_STRS.Length], i.ToString(&quot;D10&quot;));
+
+        var insertOperation = TableOperation.Insert(e);
+        try
+        {
+
+            await table.ExecuteAsync(insertOperation).ConfigureAwait(false);
+
+            if (i != 0 &amp;&amp; i % 100000 == 0)
+                Console.Error.WriteLine(i);
+
+        }
+        catch (StorageException se)
+        {
+            Console.Error.WriteLine(&quot;{0}, {1}&quot;, i, se.ToString());
+        }
+        finally
+        {
+            throttler.Release();
+        }
+    }).ToArray();
+
+    Task.WhenAll(tasks);
+}
+</code></pre></noscript></div>
+</p>
+
+<hr />
+
+<h1>まとめ</h1>
+
+<ul>
+<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
+<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
+<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Windows Azure Storage 2.0 の Blob Upload]]></title>
@@ -206,7 +415,7 @@ namespace ConsoleApplication10
 
 <hr />
 
-<h1>同期と非同期の境界</h1>
+<h1>同期と非同期の境界<a name="borderofsyncasync"></a></h1>
 
 <p>WriteToSyncの実装は下記のようになっている。
 <a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
@@ -387,13 +596,13 @@ namespace ConsoleApplication10
 
 <p>参照：<a href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
 
-<p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
+<p><a name="pending"></a>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
 
-<h4><strong> これは、Azure Storage Client 2.0のBUG </strong> だったようです。2.0.2で修正されています。</h4>
+<h4><strong> これは、Azure Storage Client 2.0のBUG </strong> だったようです。2.0.2で修正されています。<a href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></h4>
 
-<p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">Issue #141:</a></p>
+<p><strong> <a href="/blog/2012/12/26/asc2-dot-0asyncbug/">2012/12/26 このFIXに関するまとめを書きました</a> </strong></p>
 
-<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、そうでも無いということなので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
+<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
 
 <p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
 今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>

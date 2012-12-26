@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Blob | Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/blog/categories/blob/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-24T17:12:10+09:00</updated>
+  <updated>2012-12-26T22:22:26+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -206,7 +206,7 @@ namespace ConsoleApplication10
 
 <hr />
 
-<h1>同期と非同期の境界</h1>
+<h1>同期と非同期の境界<a name="borderofsyncasync"></a></h1>
 
 <p>WriteToSyncの実装は下記のようになっている。
 <a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>

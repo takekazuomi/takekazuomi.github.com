@@ -4,7 +4,7 @@
   <title><![CDATA[Category: IaaS | Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/blog/categories/iaas/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-24T17:12:10+09:00</updated>
+  <updated>2012-12-26T22:22:26+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -335,17 +335,17 @@ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
 
 <ul>
 <li><p>図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定
-<img src="/images/2012_12/sdc1-rw.png" title="* 図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定 " alt="* 図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定 " /></p></li>
+<img src="/images/2012_12/sdc1-rw.png" title="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定 " alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定 " /></p></li>
 <li><p>図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定
-<img src="/images/2012_12/sdc1-w.png" title="* 図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定 " alt="* 図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定 " /></p></li>
+<img src="/images/2012_12/sdc1-w.png" title="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定 " /></p></li>
 <li><p>図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定
-<img src="/images/2012_12/sdd1-rw.png" title="* 図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定 " alt="* 図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定 " /></p></li>
+<img src="/images/2012_12/sdd1-rw.png" title="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定 " alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定 " /></p></li>
 <li><p>図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定
-<img src="/images/2012_12/sdd1-w.png" title="* 図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定 " alt="* 図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定 " /></p></li>
-<li><p>図5 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定
-<img src="/images/2012_12/sde1-rw.png" title="* 図5 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定 " alt="* 図5 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定 " /></p></li>
-<li><p>図6 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定
-<img src="/images/2012_12/sde1-w.png" title="* 図6 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定 " alt="* 図6 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定 " /></p></li>
+<img src="/images/2012_12/sdd1-w.png" title="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定 " alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定 " /></p></li>
+<li><p>図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定
+<img src="/images/2012_12/sde1-rw.png" title="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定 " alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定 " /></p></li>
+<li><p>図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定
+<img src="/images/2012_12/sde1-w.png" title=" 図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定 " alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定 " /></p></li>
 </ul>
 
 
