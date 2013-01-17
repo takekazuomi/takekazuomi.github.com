@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Storage | Cloud Memo]]></title>
   <link href="http://takekazuomi.github.com/blog/categories/storage/atom.xml" rel="self"/>
   <link href="http://takekazuomi.github.com/"/>
-  <updated>2012-12-26T23:28:49+09:00</updated>
+  <updated>2012-12-28T21:19:08+09:00</updated>
   <id>http://takekazuomi.github.com/</id>
   <author>
     <name><![CDATA[Takekazu Omi]]></name>
@@ -164,7 +164,7 @@ namespace AsyncSemaphore
 
 <p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
 
-<p>ここでは、Blog でのUpload処理が参考になります。
+<p>ここでは、Blob でのUpload処理が参考になります。
 <a href="/blog/2012/12/08/blobasyncinside/#borderofsyncasync">Windows Azure Storage 2.0 の Blob Upload の同期と非同期の境界</a>で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御しているのがわかる。</p>
 
 <h2>Semaphoreを使う</h2>
@@ -407,7 +407,7 @@ namespace ConsoleApplication10
 
 <p><a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
 
-<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかる。
+<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。
 <a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
 
 <p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいる。
@@ -420,7 +420,7 @@ namespace ConsoleApplication10
 <p>WriteToSyncの実装は下記のようになっている。
 <a href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
 
-<p>WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期しているので、並列動作はせずに、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないように見えるが、 toStream.Write の実装を見ると内部非同期に処理されているのがわかる。</p>
+<p>WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期しているので、並列動作はせずに、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないように見えるが、 toStream.Write の実装を見ると内部が非同期に処理されているのがわかる。</p>
 
 <p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行う。</p>
 
@@ -459,7 +459,7 @@ namespace ConsoleApplication10
 
 <p>これを考えると、複数のファイルをUploadする場合は、スレッドを分けて個々に処理した方が短時間で終わるのではないかと考えられる。ただ、あまり多くのスレッドを起動するメリットは無さそうだ。</p>
 
-<p>今回は2、UploadFromStreamを使ったが下記の説明にはOpenWriteを使うとStreamのように処理できると書いてある。やてみたら同じように動いた。つまりBlobをStreamとして使えるってことだ素晴らしい。</p>
+<p>今回は、UploadFromStreamを使ったが下記の説明にはOpenWriteを使うとStreamのように処理できると書いてある。やってみたら同じように動いた。つまりBlobをStreamとして使えるってことだ素晴らしい。</p>
 
 <p><a href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
 

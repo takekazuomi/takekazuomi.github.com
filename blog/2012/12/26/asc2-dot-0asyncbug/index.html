@@ -263,7 +263,7 @@ namespace AsyncSemaphore
 
 <p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
 
-<p>ここでは、Blog でのUpload処理が参考になります。
+<p>ここでは、Blob でのUpload処理が参考になります。
 <a href="/blog/2012/12/08/blobasyncinside/#borderofsyncasync">Windows Azure Storage 2.0 の Blob Upload の同期と非同期の境界</a>で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御しているのがわかる。</p>
 
 <h2>Semaphoreを使う</h2>
