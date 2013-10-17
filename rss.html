@@ -10,9 +10,9 @@
         <item>
             <link>http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</link>
             <guid>http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</guid>
-            <title><![CDATA[Azure SDK for Java 0.4.6 のlong値のfilter BUG]]></title>
+            <title><![CDATA[Azure SDK for Java 0.4.6 long値のfilter BUG]]></title>
             <description><![CDATA[<div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
-<h1>Azure SDK for Java 0.4.6 のlong値のfilter BUG</h1>
+<h1>Azure SDK for Java 0.4.6 long値のfilter BUG</h1>
 <p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
 <p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
 <p>修正して、Pull Requestを投げています。(2013/10/13)</p>
