@@ -1,0 +1,208 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Azure Storage Client 2.0 CompletedSynchronously FIX &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="next" title="Azure Virtual MachineのDISK性能" href="../22/azurevmfix1221.html" /><link rel="prev" title="Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1" href="../../../2013/10/15/windows_azure_plugin_for_eclipse_with_java.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Scroll to content if on small screen
+            if (screen.width < 480)
+            {
+                $(document).scrollTop(document.getElementsByTagName("article")[0].offsetTop - 44);
+            }
+        });
+    </script></head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header>
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+            <ul><li class="main-nav">
+                  <a href="../../../index.html">Home</a>
+                </li>
+              <li class="main-nav">
+                  <a href="../../../pages/about_me.html">About Kyrt</a>
+                </li>
+              </ul>
+          </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>December 26, 2012</span>
+        </div>
+    <div class="section" id="azure-storage-client-2-0-completedsynchronously-fix">
+<h1>Azure Storage Client 2.0 CompletedSynchronously FIX</h1>
+<p>以前の記事 <a class="reference internal" href="../08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> の補足です。その中の <a class="reference internal" href="../08/waac2012day2.html#waac2012day2-pending"><em>非同期で同時接続数が上がらない？</em></a> で、</p>
+<blockquote>
+<div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。
+<strong>これは、Azure Storage Client 2.0のBUG</strong> だったようです。2.0.2で修正されています。</div></blockquote>
+<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かりました。少々混乱したのでここに顛末をまとめます。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8307052288/"><img alt="candle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg" /></a>
+<hr class="docutils" />
+<div class="section" id="bug">
+<h2>BUGの内容</h2>
+<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
+<div class="section" id="id1">
+<h3>参照</h3>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></li>
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></li>
+</ol>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="id2">
+<h2>再現試験</h2>
+<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは[前の記事] (Azure Storage Gen 2は速かった) とほとんど同じですが、なるべく簡略化したものにしています。</p>
+<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369349.js">&nbsp;</script><p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
+<script src="https://gist.github.com/takekazuomi/4369329.js">&nbsp;</script><p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
+<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a class="reference external" href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7/">C#たんっ！ 新機能が入るまで</a> 」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
+</div>
+<div class="section" id="id3">
+<h2>2.0.1 で動かす</h2>
+<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
+</pre></div>
+</div>
+<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
+<div class="section" id="azure-storage-client-2-0-1-resource-moniter">
+<h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
+<img alt="2.0.1時のResource Moniter画面" src="../../../_images/2012_12_connections-asc2.0.1.png" />
+<p>見事に接続数が伸びません。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>2.0.3では？</h2>
+<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage
+</pre></div>
+</div>
+<div class="section" id="azure-storage-client-2-0-3-resource-moniter">
+<h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
+<img alt="2.0.3時のResource Moniter画面" src="../../../_images/2012_12_connections-asc2.0.3.png" />
+</div>
+</div>
+<div class="section" id="id5">
+<h2>結論</h2>
+<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
+<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="id6">
+<h2>次の問題</h2>
+<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
+<div class="section" id="azure-storage-client-2-0-3-exception">
+<h3>Azure Storage Client 2.0.3 時でのException</h3>
+<img alt="Azure Storage Client 2.0.3 時でのException" src="../../../_images/2012_12_connections-asc2.0.3-cmd.png" />
+<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
+<p>ここでは、Blob でのUpload処理が参考になります。
+Windows Azure Storage 2.0 の Blob Upload で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
+</div>
+</div>
+<div class="section" id="semaphore">
+<h2>Semaphoreを使う</h2>
+<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御します。SemaphoreSlim という便利がものがあるのでそれを使います。
+こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369880.js">&nbsp;</script></div>
+<hr class="docutils" />
+<div class="section" id="id7">
+<h2>まとめ</h2>
+<ol class="arabic simple">
+<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
+<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
+<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
+</ol>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/azure_table.html">Azure Table</a>, <a href="../../../categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="../../../tags/c_.html">C#</a>, <a href="../../../tags/azure_table.html">Azure Table</a>, <a href="../../../tags/async.html">Async</a>, <a href="../../../tags/cloud.html">Cloud</a>, <a href="../../../tags/nosql.html">NoSQL</a>, <a href="../../../tags/storage.html">Storage</a>, <a href="../../../tags/table.html">Table</a>, <a href="../../../tags/async.html">Async</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="../../../2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></li>
+            <li class="right"><a href="../22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/26/asc2_dot_0asyncbug";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="../../../2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
+        </li><li>
+            <a href="#">Azure Storage Client 2.0 CompletedSynchronously FIX</a>
+        </li><li>
+            <a href="../22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a>
+        </li><li>
+            <a href="../08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a>
+        </li><li>
+            <a href="../08/waac2012day2.html">Azure Storage Gen 2は速かった</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (5)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (3)</li><li><a href="../../../categories/java.html">Java</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (1), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (3), <a href="../../../tags/blob.html">Blob</a> (1), <a href="../../../tags/c_.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (1), <a href="../../../tags/storage.html">Storage</a> (4), <a href="../../../tags/table.html">Table</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Search</h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container"><footer class="wrapper">&copy; Copyright 2012-2013, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

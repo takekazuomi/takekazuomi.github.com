@@ -1,0 +1,13 @@
+Sitemap
+=======
+
+.. toctree::
+   :maxdepth: 1
+
+   2013/10/15/windows_azure_plugin_for_eclipse_with_java
+   2012/12/26/asc2_dot_0asyncbug
+   2012/12/22/azurevmfix1221
+   2012/12/08/blobasyncinside
+   2012/12/08/waac2012day2
+   pages/about_me
+

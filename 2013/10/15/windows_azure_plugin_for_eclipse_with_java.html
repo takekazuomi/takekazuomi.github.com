@@ -1,0 +1,353 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1 &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
+        <link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="next" title="Azure Storage Client 2.0 CompletedSynchronously FIX" href="../../../2012/12/26/asc2_dot_0asyncbug.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Scroll to content if on small screen
+            if (screen.width < 480)
+            {
+                $(document).scrollTop(document.getElementsByTagName("article")[0].offsetTop - 44);
+            }
+        });
+    </script></head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header>
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+            <ul><li class="main-nav">
+                  <a href="../../../index.html">Home</a>
+                </li>
+              <li class="main-nav">
+                  <a href="../../../pages/about_me.html">About Kyrt</a>
+                </li>
+              </ul>
+          </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>October 15, 2013</span>
+        </div>
+    <div class="section" id="windows-azure-plugin-for-eclipse-with-javaplay-framework-2-1">
+<h1>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</h1>
+<p>Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを簡単に流します。Java, Play Frameworkに付いてある程度知識があって、Windows Azureを使ってみようという人を前提としています。</p>
+<div class="section" id="id1">
+<h2>必要環境</h2>
+<p>確認は下記の環境で行いました。</p>
+<ol class="arabic simple">
+<li>Windows 8</li>
+<li>Java Developer Kit (JDK), v1.7</li>
+<li>Eclipse IDE for Java EE Developers Kepler</li>
+<li>Windows Azure SDK 2.1</li>
+<li>Play Framework 2.1</li>
+</ol>
+<p>開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
+<div class="section" id="windows-azure-sdk-2-1">
+<h3>Windows Azure SDK 2.1のインストール</h3>
+<p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
+<p>Web Platform Installerを起動して、右上の検索ボックス①に <span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span> と入力して改行すると検索結果が表示されます。その中の <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> ② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> だけです。</p>
+<p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
+<img alt="../../../_images/2013_10_webpi002.png" src="../../../_images/2013_10_webpi002.png" />
+<ul class="simple">
+<li>Web Platform Installer 4.6 は、 <a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a> からインストールできます。</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>もっと簡単な方法</h3>
+<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using the
+Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> をインストールするplugin(exe)も配布されています。 <a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a> このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
+</div>
+</div>
+<div class="section" id="windows-azure-plugin-for-eclipse-with-java-by-microsoft-open-technologies">
+<h2>Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</h2>
+<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。
+プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
+<p>レポジトリとして、 <span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span> を追加すると、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span> が表示されます。</p>
+<img alt="../../../_images/2013_10_javaplugininstall002.png" src="../../../_images/2013_10_javaplugininstall002.png" />
+<p>必要に応じてライブラリを洗濯してください。今回はとりあえず、全部選択します。</p>
+<div class="section" id="id3">
+<h3>サポートされているライブラリの種類</h3>
+<p>Windows Azure Plugin for Eclipse with Javaが、EclipseのUIとツールを提供するもので、その他のものはAzureのAPIをラップしたクラスライブラリです。</p>
+<ul class="simple">
+<li>Microsoft JDBC Driver 4.0 for SQL Server: SQL Database 用のコンポーネント</li>
+<li>Package for Apache Qpid Client Libraries for JMS (by MS Open Tech): Azureのメッセージングサービス向けのJMS client library （Apache Qpid project が元になっています）</li>
+<li>Package for Windows Azure Libraries for Java (by MS Open Tech): このコンポーネントは、Windows Azure でスケーラブルなクラウドコンピューティングを実現するためのライブラリを提供</li>
+<li>Windows Azure Access Control Services Filter (by MS Open Tech): このコンポーネントはWindows Azure ACS を使った認証アプリケーション向け</li>
+<li>Windows Azure Common Plugin (by MS Open Tech): 他のこのコンポーネントとの共通コンポーネント</li>
+<li>Windows Azure Plugin for Eclipse with Java (by MS Open Tech): このコンポーネントは、project configuration logic、the publish-to-cloud wizard、と user interfaceを含む</li>
+</ul>
+<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span> のチェックを外してみてください。</p>
+<p>ここまでの内容は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a> に詳しく書いてありますので、そちらも参照してください。</p>
+</div>
+</div>
+<div class="section" id="play-frameworkeclipse">
+<h2>Play Frameworkのプロジェクト作成からEclipseへの取り込へ</h2>
+<p>動作確認のためにPlay Frameworkのプロジェクトを作成して、Eclipseへ取り込みます。</p>
+<p>MyFirstAppという名前で、play frameworkのアプリを作ります。今回は全くコードは書かないので関係ありませんが言語はJavaを選択します:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ play new MyFirstApp
+       _            _
+ _ __ | | __ _ _  _| |
+| &#39;_ \| |/ _&#39; | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+The new application will be created in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp
+
+What is the application name? [MyFirstApp]
+&gt;
+
+Which template do you want to use for this new application?
+
+  1             - Create a simple Scala application
+  2             - Create a simple Java application
+
+&gt; 2
+OK, application MyFirstApp is created.
+
+Have fun!
+</pre></div>
+</div>
+<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、 <span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span> の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd .\MyFirstApp
+$ play
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+       _            _
+ _ __ | | __ _ _  _| |
+| &#39;_ \| |/ _&#39; | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+&gt; Type &quot;help play&quot; or &quot;license&quot; for more information.
+&gt; Type &quot;exit&quot; or use Ctrl+D to leave this console.
+
+[MyFirstApp] $ eclipse
+[info] About to create Eclipse project files for your project(s).
+[info] Updating {file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/}MyFirstApp...
+[info] Done updating.
+[info] Compiling 4 Scala sources and 2 Java sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\classes...
+[info] Successfully created Eclipse project files for project(s):
+[info] MyFirstApp
+[MyFirstApp] $ exit
+</pre></div>
+</div>
+<p>AzureのDeploy用のパッケージ(cspkg)に入れるためアプリの配布用zipを作成します:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ play dist
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-sources.jar ...
+[info] Done packaging.
+[info] Generating Scala API documentation for main sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\api...
+[info] Wrote C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.pom
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.jar ...
+[info] Done packaging.
+model contains 17 documentable templates
+[info] Scala API documentation generation successful.
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-javadoc.jar ...
+[info] Done packaging.
+
+Your application is ready in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\dist\myfirstapp-1.0-SNAPSHOT.zip
+
+[success] Total time: 8 s, completed 2013/10/15 14:57:13
+$
+</pre></div>
+</div>
+<p>この時に、 <span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span> の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
+<p>eclipseを起動して、プロジェクトをimportします。</p>
+<img alt="../../../_images/2013_10_eclipse002.png" src="../../../_images/2013_10_eclipse002.png" />
+<p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
+<p>参考： <a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
+</div>
+<div class="section" id="azure-project">
+<h2>Azure 用のProjectの作成</h2>
+<p>ツールバーの <span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span> を押します。</p>
+<img alt="../../../_images/2013_10_eclipse003.png" src="../../../_images/2013_10_eclipse003.png" />
+<p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
+<img alt="../../../_images/2013_10_eclipse004.png" src="../../../_images/2013_10_eclipse004.png" />
+<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。
+今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
+<img alt="../../../_images/2013_10_eclipse005.png" src="../../../_images/2013_10_eclipse005.png" />
+<p>下記のような内容のプロジェクトが作成されます。</p>
+<img alt="../../../_images/2013_10_eclipse006.png" src="../../../_images/2013_10_eclipse006.png" />
+<div class="section" id="workerrole1myfirstappdist-zip">
+<h3>プロジェクトのWorkerRole1へMyFirstAppのdist zipを追加する</h3>
+<p>WorkerRole1を選択してプロパティを開き、Windows Azure RoleのTreeを開いてComponentsを選びます。コンポーネントリストにHelloWorld.warがありますが、不要なのでremoveします。その後Addを押してMyFirstAppのdist zipを追加します。</p>
+<img alt="../../../_images/2013_10_eclipse007.png" src="../../../_images/2013_10_eclipse007.png" />
+<p>「Windows Azure Role Component」のpopupをでは、Import into packageのFrom Pathの部分に、dist zip のフルパス名を入れます。Methodは、copyを選択、As Nameは、dist zipのファイル名入れます（ここは、From Pathのファイル名部分がデフォルトで入力されるはずです）その下の、Deploy from packageの設定は、Methodをunzip、To directoryを.にしてください。今回</p>
+<img alt="../../../_images/2013_10_eclipse008.png" src="../../../_images/2013_10_eclipse008.png" />
+</div>
+<div class="section" id="id4">
+<h3>環境変数の追加</h3>
+<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、 <span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span> )を定義します。</p>
+<img alt="../../../_images/2013_10_eclipse009.png" src="../../../_images/2013_10_eclipse009.png" />
+</div>
+<div class="section" id="endpoint">
+<h3>EndPointを変更</h3>
+<p>play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。publicで定義されているのがAzure のload brancer がインターネット上で公開しているポート番号で、privateがAzure インスタンスでアプリが待ち受けているポート番号です。play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。Azure Load brancerがこの定義に基いてポート変換を実行します。</p>
+<img alt="../../../_images/2013_10_eclipse010.png" src="../../../_images/2013_10_eclipse010.png" />
+</div>
+<div class="section" id="script">
+<h3>scriptの変更</h3>
+<p>MyAzureProject/WorkerRole1/approotにあるstartup.cmdとrun.cmdを下記のように変更します。</p>
+<p>startup.cmd:</p>
+<div class="highlight-none"><div class="highlight"><pre>del /q run_body.cmd
+powershell -ExecutionPolicy RemoteSigned -f replace.ps1 run_body.cmd.template &gt; run_body.cmd
+</pre></div>
+</div>
+<p>run.cmd:</p>
+<div class="highlight-none"><div class="highlight"><pre>rem @ECHO OFF
+
+set _SLEEPLENGTH=15000
+set _FILENAME=run_body.cmd
+
+@REM Create a temporary sleep script in VBScript
+echo WScript.sleep(%_SLEEPLENGTH%) &gt; %Temp%\_mysleep.vbs
+
+:Loop
+if exist %_FILENAME% (goto:StartToRun)
+
+cscript /Nologo %Temp%\_mysleep.vbs
+goto:Loop
+
+del %Temp%\_mysleep.vbs
+
+:StartToRun
+call %_FILENAME%
+</pre></div>
+</div>
+<p>replace.ps1と、run_body.cmd.templateの2つファイルを追加します。</p>
+<p>replace.ps1:</p>
+<div class="highlight-none"><div class="highlight"><pre>cat $args[0] | % {$l = $_ -creplace &#39;__JAVA_HOME__&#39;,&quot;$Env:JAVA_HOME&quot;; &quot;$l&quot; } | % {$l = $_ -creplace &#39;__ZIP_NAME__&#39;,&quot;$Env:ZIP_NAME&quot;; &quot;$l&quot; }
+</pre></div>
+</div>
+<p>run_body.cmd.template:</p>
+<div class="highlight-none"><div class="highlight"><pre>set JAVA_HOME=__JAVA_HOME__
+set ZIP_NAME=__ZIP_NAME__
+
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+setlocal
+set d=%~dp0
+set d=%d:\=/%
+java %* -cp &quot;%d%/%ZIP_NAME%/lib/*;&quot; play.core.server.NettyServer %d%
+</pre></div>
+</div>
+</div>
+<div class="section" id="emulator">
+<h3>Emulatorでの実行</h3>
+<p>これで準備ができました。 <span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span> を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
+<img alt="../../../_images/2013_10_eclipse011.png" src="../../../_images/2013_10_eclipse011.png" />
+<p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
+<img alt="../../../_images/2013_10_eclipse012.png" src="../../../_images/2013_10_eclipse012.png" />
+</div>
+<div class="section" id="azuredeploy">
+<h3>Azure環境へのDeploy</h3>
+<p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
+<img alt="../../../_images/2013_10_eclipse013.png" src="../../../_images/2013_10_eclipse013.png" />
+<p>Azure環境では、Azure LoadBarancerが介在するのでport 80で見えます。</p>
+</div>
+</div>
+<div class="section" id="bookmarks">
+<h2>Bookmarks</h2>
+<ul class="simple">
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>
+Java開発の入り口</li>
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx">Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a></li>
+</ul>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/java.html">Java</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="../../../tags/azure.html">Azure</a>, <a href="../../../tags/emulator.html">Emulator</a>, <a href="../../../tags/deploy.html">Deploy</a>, <a href="../../../tags/tutorial.html">Tutorial</a>, <a href="../../../tags/play_framework.html">Play Framework</a>, <a href="../../../tags/step_by_step.html">Step By Step</a>, <a href="../../../tags/eclipse.html">Eclipse</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../../2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/10/15/windows_azure_plugin_for_eclipse_with_java";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="#">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
+        </li><li>
+            <a href="../../../2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a>
+        </li><li>
+            <a href="../../../2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a>
+        </li><li>
+            <a href="../../../2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a>
+        </li><li>
+            <a href="../../../2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (5)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (3)</li><li><a href="../../../categories/java.html">Java</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (1), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (3), <a href="../../../tags/blob.html">Blob</a> (1), <a href="../../../tags/c_.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (1), <a href="../../../tags/storage.html">Storage</a> (4), <a href="../../../tags/table.html">Table</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Search</h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container"><footer class="wrapper">&copy; Copyright 2012-2013, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
