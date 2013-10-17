@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2013/10/17/azure_java_sdk_long_value_filtering_bug
    2013/10/15/windows_azure_plugin_for_eclipse_with_java
    2012/12/26/asc2_dot_0asyncbug
    2012/12/22/azurevmfix1221

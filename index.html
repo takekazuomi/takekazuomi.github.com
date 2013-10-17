@@ -65,6 +65,68 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>October 17, 2013</span>
+        </div>
+        <div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
+<h1><a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 のlong値のfilter BUG</a></h1>
+<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
+<p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
+<p>修正して、Pull Requestを投げています。(2013/10/13)</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="id1">
+<h2>修正内容</h2>
+<script src="https://gist.github.com/takekazuomi/7031393.js"> </script><p>edmType が、EdmType.INT64の場合に、値のpostfixに’L’を付けるように変更しました。</p>
+</div>
+<div class="section" id="id2">
+<h2>元の仕様</h2>
+<p>どこからこの’L’が出てきたかという話をチョットします。
+Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
+<table border="1" class="docutils">
+<caption>OData Primitive Data Types</caption>
+<colgroup>
+<col width="25%"/>
+<col width="25%"/>
+<col width="25%"/>
+<col width="25%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Primitive Types     Literal Form    Example</th>
+<th class="head"> </th>
+<th class="head"> </th>
+<th class="head"> </th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Edm.Int64 Represents a signed 64-bit</td>
+<td>integer value</td>
+<td>[-] [0-9]+L</td>
+<td>Example 1: 64L Example 2: -64L</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference external" href="http://www.odata.org/documentation/overview/azure_java_sdk_long_value_filtering_bug.html#AbstractTypeSystem">odata.org  6. Primitive Data Types</a> より</p>
+<p>念のため他のデータ型の実装も確認すると、Azure Tableでサポートされているデータ型でリテラル表記に癖があるEdm.Guid, Edm.DateTimeのあたりですは問題なさそうです。</p>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_sdk.html">Azure SDK</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a>, <a href="tags/java.html">Java</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/bug.html">BUG</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html#disqus_thread" data-disqus-identifier="2013/10/17/azure_java_sdk_long_value_filtering_bug">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 15, 2013</span>
         </div>
         <div class="section" id="windows-azure-plugin-for-eclipse-with-javaplay-framework-2-1">
@@ -1027,6 +1089,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 のlong値のfilter BUG</a>
+        </li><li>
             <a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
         </li><li>
             <a href="2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a>
@@ -1040,9 +1104,9 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (5)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (3)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (5)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (3)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_table.html">Azure Table</a> (3), <a href="tags/blob.html">Blob</a> (1), <a href="tags/c_.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (4), <a href="tags/table.html">Table</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (4), <a href="tags/blob.html">Blob</a> (1), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c_.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (4), <a href="tags/table.html">Table</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
