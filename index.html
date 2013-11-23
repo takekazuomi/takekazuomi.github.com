@@ -30,7 +30,7 @@
         <script src="_static/main.js"></script>
         <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -65,6 +65,50 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
+        <div class="section" id="windows-azure-tables-breaking-changes-2013-11">
+<h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
+<p>Azure Storage Team より、Windows Azure Table のJSONサポー 準備のため Table の response が一部変更されている旨アナウンスされmました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a> から変更点を紹介します。</p>
+<div class="section" id="id1">
+<h2>変更点</h2>
+<ol class="arabic simple">
+<li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
+<li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
+<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、 <cite>type=feed</cite> が追加されます
+変更前: Content-Type: application/atom+xml;charset=utf-8
+変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
+<li>MIME type のセキュリティ リスクの削減のための新しいresponse header <cite>X-Content-Type-Options: nosniff</cite> が返されます。
+参照： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>感想等</h2>
+<p>手元のアカウントで確認してみたら既に上記の通りに変更されていました、変更前に教えて欲しいところです。
+改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。
+XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。
+AtomPub内のXML elementの順番に関しては、 <a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>  が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。
+HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</p>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/blog/html/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 17, 2013</span>
         </div>
         <div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
@@ -479,7 +523,7 @@ Windows Azure Storage 2.0 の Blob Upload で参照している処理を見る�
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/c_.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/blog/html/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
@@ -805,7 +849,7 @@ ___ snip ___
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/c_.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/blog/html/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
@@ -916,7 +960,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/c_.html">C#</a>, <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/blob.html">Blob</a></span>
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/blob.html">Blob</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/blog/html/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
@@ -1080,7 +1124,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/c_.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/blog/html/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
@@ -1089,6 +1133,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a>
+        </li><li>
             <a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a>
         </li><li>
             <a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
@@ -1104,9 +1150,9 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (5)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (3)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (6)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (4)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (4), <a href="tags/blob.html">Blob</a> (1), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c_.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (4), <a href="tags/table.html">Table</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (5), <a href="tags/blob.html">Blob</a> (1), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (5), <a href="tags/table.html">Table</a> (4), <a href="tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

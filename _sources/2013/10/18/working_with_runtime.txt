@@ -1,0 +1,64 @@
+======================
+ Working with Runtime
+======================
+Azure上にアプリケーションを実行しよとするとアプリケーションをがランタイムを要求することがあります。ランタイムはあまり変更されないので、パッケージ（cspkg）に入れて毎回アップロードするのは時間がかかり無駄です。また、エミュレータ上では開発用にローカルにインストールされたものを使ったほうがアプリケーションの実行開始にかかる時間が少なくなります。
+
+`Windows Azure Plugin for Eclipse with Java <http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx>`_ では、JDKをカスタマイズものをruntimeとして使う機能が用意されているので、ここでは、Play Framework 1.2とjreをruntimeとして設定する方法を紹介します。
+
+runtimeの準備
+=============
+runtime というディレクトリを作成し、下記のディレクトリ構成になるようにplay framework と、jreをインストール先からcopyします。
+
+.. highlight:: none
+
+ディレクトリ構成::
+
+  runtime
+  ├─jre7
+  │  ├─bin
+  │  │  ├─dtplugin
+  │  │  ├─plugin2
+  │  │  └─server
+  │  └─lib
+  │      ├─amd64
+  .
+  .
+  .        省略
+  .
+  .
+  └─play-1.2.7
+      ├─documentation
+      │  ├─api
+  .
+  .
+  .        省略
+  .
+  .
+      │  ├─commands
+      │  ├─files
+      │  ├─images
+      │  └─manual
+      ├─framework
+      │  ├─lib
+      │  ├─lib-test
+      │  ├─patches
+      │  ├─pym
+      │  │  ├─play
+      │  │  │  └─commands
+      │  │  ├─simplejson
+      │  │  │  └─tests
+      │  │  └─yaml
+      │  ├─src
+      │  │  └─play
+      │  │      ├─ant
+  .
+  .
+  .        省略
+  .
+  .
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::
