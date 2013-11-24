@@ -1,5 +1,5 @@
 var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'hUA-36911322-1']);
+_gaq.push(['_setAccount', 'UA-36911322-1']);
 _gaq.push(['_setDomainName', 'kyrt.in']);
 _gaq.push(['_trackPageview']);
 
