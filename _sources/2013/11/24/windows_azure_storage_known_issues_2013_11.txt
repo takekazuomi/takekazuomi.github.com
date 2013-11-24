@@ -78,7 +78,7 @@ We apologize for these issues and we are working on a hotfix to address them. (�
 ================
 * 最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。
 * コンテナの前が `//` になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。
-* ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなあｙつです。意味はもともと無かったはずなので、外せば良いと思います。
+* ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。
 
 
 
