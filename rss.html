@@ -2,14 +2,128 @@
 <rss version="2.0">
     <channel>
         <title>Kyrt Blog</title>
-        <link>http://kyrt.in/blog/html/</link>
+        <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sun, 24 Nov 2013 00:00:00 +0900</pubDate>
+        <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
         
         <item>
-            <link>http://kyrt.in/blog/html/2013/11/24/windows_azure_storage_known_issues_2013_11.html</link>
-            <guid>http://kyrt.in/blog/html/2013/11/24/windows_azure_storage_known_issues_2013_11.html</guid>
+            <link>http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html</link>
+            <guid>http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html</guid>
+            <title><![CDATA[Helios を Azure Cloud Service で使う]]></title>
+            <description><![CDATA[<div class="section" id="helios-azure-cloud-service">
+<h1>Helios を Azure Cloud Service で使う</h1>
+<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 <a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a> と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
+<a class="reference internal image-reference" href="http://kyrt.in/_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios009.png" style="width: 600px;"/></a>
+<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
+<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id1">
+<h2>手順の確認</h2>
+<div class="section" id="webrolehelios">
+<h3>WebRoleの作成からHeliosのインストールまで</h3>
+<ol class="arabic simple">
+<li>Cloud Service を作ってWebRoleを追加します
+普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
+</ol>
+<a class="reference internal image-reference" href="http://kyrt.in/_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios003.png" style="width: 600px;"/></a>
+<ol class="arabic simple" start="2">
+<li>projectを、.NET 4.5.1 を使うようにします</li>
+</ol>
+<a class="reference internal image-reference" href="http://kyrt.in/_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios004.png" style="width: 600px;"/></a>
+<ol class="arabic" start="3">
+<li><p class="first">コンパイルして問題無いのを確認します。</p>
+</li>
+<li><p class="first">System.Webの参照を全て削除します</p>
+</li>
+<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+</pre></div>
+</div>
+</li>
+</ol>
+<p>そうすると、このような参照になります</p>
+<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios006.png"/>
+</div>
+<div class="section" id="startup-class">
+<h3>Startup Classの設定</h3>
+<p>下記のようなStartup classのコードを追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>using System;
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(WebRole1.Startup))]
+
+namespace WebRole1
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+
+            app.Run(async context =&gt;  // IOWinContext
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = &quot;text/html&quot;;
+
+                await context.Response.WriteAsync(&quot;Hello Herios. Time is: &quot; + DateTime.Now.ToString());
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
+</div>
+<div class="section" id="webrolestartup-task">
+<h3>WebRoleのStartup taskの作成</h3>
+<p>Heliosの中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios007.png"/>
+<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;ServiceDefinition name=&quot;HelloHelios&quot; xmlns=&quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition&quot; schemaVersion=&quot;2013-10.2.2&quot;&gt;
+  &lt;WebRole name=&quot;WebRole1&quot; vmsize=&quot;Small&quot;&gt;
+    &lt;Startup&gt;
+      &lt;Task commandLine=&quot;startup.cmd&quot; executionContext=&quot;elevated&quot; taskType=&quot;simple&quot; /&gt;
+    &lt;/Startup&gt;
+
+    &lt;Sites&gt;
+    以下省略・・・・
+</pre></div>
+</div>
+<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
+<dl class="docutils">
+<dt>startup.cmd::</dt>
+<dd>vcredist_x64.exe /install /quiet</dd>
+</dl>
+<p>vcredist_x64.exe は、 <a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a> からダウンロードできます。VS 2013をインストールしている場合は、 <cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite> 等のディレクトリにファイルがあります。</p>
+<p><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+</div>
+<div class="section" id="osfamily">
+<h3>osFamilyの変更</h3>
+<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
+<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;ServiceConfiguration serviceName=&quot;HelloHelios&quot; xmlns=&quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration&quot; osFamily=&quot;4&quot; osVersion=&quot;*&quot; schemaVersion=&quot;2013-10.2.2&quot;&gt;
+  &lt;Role name=&quot;WebRole1&quot;&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>まとめ</h2>
+<p>Helios runtimeには、native codeのdllが含まれている。dllは、VC12(VS2013)のランタイム、msvcr120.dllに依存しているので、インストールが必要。
+これは、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> の問題です。
+このままだとちょっと使いづらいですね。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Helios ]]></category>
+             <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
+        </item>
+    
+        <item>
+            <link>http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html</link>
+            <guid>http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html</guid>
             <title><![CDATA[Windows Azure Storage Known Issues 2013/11]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-storage-known-issues-2013-11">
 <h1>Windows Azure Storage Known Issues 2013/11</h1>
@@ -84,8 +198,8 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html</link>
-            <guid>http://kyrt.in/blog/html/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html</guid>
+            <link>http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html</link>
+            <guid>http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html</guid>
             <title><![CDATA[Windows Azure Tables の Breaking Changes 2013/11]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-tables-breaking-changes-2013-11">
 <h1>Windows Azure Tables の Breaking Changes 2013/11</h1>
@@ -121,8 +235,8 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</link>
-            <guid>http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</guid>
+            <link>http://kyrt.in/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</link>
+            <guid>http://kyrt.in/2013/10/17/azure_java_sdk_long_value_filtering_bug.html</guid>
             <title><![CDATA[Azure SDK for Java 0.4.6 long値のfilter BUG]]></title>
             <description><![CDATA[<div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
 <h1>Azure SDK for Java 0.4.6 long値のfilter BUG</h1>
@@ -172,8 +286,8 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html</link>
-            <guid>http://kyrt.in/blog/html/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html</guid>
+            <link>http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html</link>
+            <guid>http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html</guid>
             <title><![CDATA[Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-plugin-for-eclipse-with-javaplay-framework-2-1">
 <h1>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</h1>
@@ -194,7 +308,7 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
 <p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
 <p>Web Platform Installerを起動して、右上の検索ボックス①に <span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span> と入力して改行すると検索結果が表示されます。その中の <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> ② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> だけです。</p>
 <p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
-<img alt="../../../_images/2013_10_webpi002.png" src="http://kyrt.in/blog/html/_images/2013_10_webpi002.png"/>
+<img alt="../../../_images/2013_10_webpi002.png" src="http://kyrt.in/_images/2013_10_webpi002.png"/>
 <ul class="simple">
 <li>Web Platform Installer 4.6 は、 <a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a> からインストールできます。</li>
 </ul>
@@ -210,7 +324,7 @@ Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span cl
 <p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。
 プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
 <p>レポジトリとして、 <span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span> を追加すると、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span> が表示されます。</p>
-<img alt="../../../_images/2013_10_javaplugininstall002.png" src="http://kyrt.in/blog/html/_images/2013_10_javaplugininstall002.png"/>
+<img alt="../../../_images/2013_10_javaplugininstall002.png" src="http://kyrt.in/_images/2013_10_javaplugininstall002.png"/>
 <p>必要に応じてライブラリを洗濯してください。今回はとりあえず、全部選択します。</p>
 <div class="section" id="id3">
 <h3>サポートされているライブラリの種類</h3>
@@ -305,37 +419,37 @@ $
 </div>
 <p>この時に、 <span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span> の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
 <p>eclipseを起動して、プロジェクトをimportします。</p>
-<img alt="../../../_images/2013_10_eclipse002.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse002.png"/>
+<img alt="../../../_images/2013_10_eclipse002.png" src="http://kyrt.in/_images/2013_10_eclipse002.png"/>
 <p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
 <p>参考： <a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
 </div>
 <div class="section" id="azure-project">
 <h2>Azure 用のProjectの作成</h2>
 <p>ツールバーの <span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span> を押します。</p>
-<img alt="../../../_images/2013_10_eclipse003.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse003.png"/>
+<img alt="../../../_images/2013_10_eclipse003.png" src="http://kyrt.in/_images/2013_10_eclipse003.png"/>
 <p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
-<img alt="../../../_images/2013_10_eclipse004.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse004.png"/>
+<img alt="../../../_images/2013_10_eclipse004.png" src="http://kyrt.in/_images/2013_10_eclipse004.png"/>
 <p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。
 今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
-<img alt="../../../_images/2013_10_eclipse005.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse005.png"/>
+<img alt="../../../_images/2013_10_eclipse005.png" src="http://kyrt.in/_images/2013_10_eclipse005.png"/>
 <p>下記のような内容のプロジェクトが作成されます。</p>
-<img alt="../../../_images/2013_10_eclipse006.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse006.png"/>
+<img alt="../../../_images/2013_10_eclipse006.png" src="http://kyrt.in/_images/2013_10_eclipse006.png"/>
 <div class="section" id="workerrole1myfirstappdist-zip">
 <h3>プロジェクトのWorkerRole1へMyFirstAppのdist zipを追加する</h3>
 <p>WorkerRole1を選択してプロパティを開き、Windows Azure RoleのTreeを開いてComponentsを選びます。コンポーネントリストにHelloWorld.warがありますが、不要なのでremoveします。その後Addを押してMyFirstAppのdist zipを追加します。</p>
-<img alt="../../../_images/2013_10_eclipse007.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse007.png"/>
+<img alt="../../../_images/2013_10_eclipse007.png" src="http://kyrt.in/_images/2013_10_eclipse007.png"/>
 <p>「Windows Azure Role Component」のpopupをでは、Import into packageのFrom Pathの部分に、dist zip のフルパス名を入れます。Methodは、copyを選択、As Nameは、dist zipのファイル名入れます（ここは、From Pathのファイル名部分がデフォルトで入力されるはずです）その下の、Deploy from packageの設定は、Methodをunzip、To directoryを.にしてください。今回</p>
-<img alt="../../../_images/2013_10_eclipse008.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse008.png"/>
+<img alt="../../../_images/2013_10_eclipse008.png" src="http://kyrt.in/_images/2013_10_eclipse008.png"/>
 </div>
 <div class="section" id="id4">
 <h3>環境変数の追加</h3>
 <p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、 <span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span> )を定義します。</p>
-<img alt="../../../_images/2013_10_eclipse009.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse009.png"/>
+<img alt="../../../_images/2013_10_eclipse009.png" src="http://kyrt.in/_images/2013_10_eclipse009.png"/>
 </div>
 <div class="section" id="endpoint">
 <h3>EndPointを変更</h3>
 <p>play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。publicで定義されているのがAzure のload brancer がインターネット上で公開しているポート番号で、privateがAzure インスタンスでアプリが待ち受けているポート番号です。play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。Azure Load brancerがこの定義に基いてポート変換を実行します。</p>
-<img alt="../../../_images/2013_10_eclipse010.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse010.png"/>
+<img alt="../../../_images/2013_10_eclipse010.png" src="http://kyrt.in/_images/2013_10_eclipse010.png"/>
 </div>
 <div class="section" id="script">
 <h3>scriptの変更</h3>
@@ -387,14 +501,14 @@ java %* -cp &quot;%d%/%ZIP_NAME%/lib/*;&quot; play.core.server.NettyServer %d%
 <div class="section" id="emulator">
 <h3>Emulatorでの実行</h3>
 <p>これで準備ができました。 <span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span> を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
-<img alt="../../../_images/2013_10_eclipse011.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse011.png"/>
+<img alt="../../../_images/2013_10_eclipse011.png" src="http://kyrt.in/_images/2013_10_eclipse011.png"/>
 <p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
-<img alt="../../../_images/2013_10_eclipse012.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse012.png"/>
+<img alt="../../../_images/2013_10_eclipse012.png" src="http://kyrt.in/_images/2013_10_eclipse012.png"/>
 </div>
 <div class="section" id="azuredeploy">
 <h3>Azure環境へのDeploy</h3>
 <p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
-<img alt="../../../_images/2013_10_eclipse013.png" src="http://kyrt.in/blog/html/_images/2013_10_eclipse013.png"/>
+<img alt="../../../_images/2013_10_eclipse013.png" src="http://kyrt.in/_images/2013_10_eclipse013.png"/>
 <p>Azure環境では、Azure LoadBarancerが介在するのでport 80で見えます。</p>
 </div>
 </div>
@@ -413,12 +527,12 @@ Java開発の入り口</li>
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2012/12/26/asc2_dot_0asyncbug.html</link>
-            <guid>http://kyrt.in/blog/html/2012/12/26/asc2_dot_0asyncbug.html</guid>
+            <link>http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html</link>
+            <guid>http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html</guid>
             <title><![CDATA[Azure Storage Client 2.0 CompletedSynchronously FIX]]></title>
             <description><![CDATA[<div class="section" id="azure-storage-client-2-0-completedsynchronously-fix">
 <h1>Azure Storage Client 2.0 CompletedSynchronously FIX</h1>
-<p>以前の記事 <a class="reference internal" href="http://kyrt.in/blog/html/2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> の補足です。その中の <a class="reference internal" href="http://kyrt.in/blog/html/2012/12/08/waac2012day2.html#waac2012day2-pending"><em>非同期で同時接続数が上がらない？</em></a> で、</p>
+<p>以前の記事 <a class="reference internal" href="http://kyrt.in/2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> の補足です。その中の <a class="reference internal" href="http://kyrt.in/2012/12/08/waac2012day2.html#waac2012day2-pending"><em>非同期で同時接続数が上がらない？</em></a> で、</p>
 <blockquote>
 <div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。
 <strong>これは、Azure Storage Client 2.0のBUG</strong> だったようです。2.0.2で修正されています。</div></blockquote>
@@ -455,7 +569,7 @@ Java開発の入り口</li>
 <p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
 <div class="section" id="azure-storage-client-2-0-1-resource-moniter">
 <h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
-<img alt="2.0.1時のResource Moniter画面" src="http://kyrt.in/blog/html/_images/2012_12_connections-asc2.0.1.png"/>
+<img alt="2.0.1時のResource Moniter画面" src="http://kyrt.in/_images/2012_12_connections-asc2.0.1.png"/>
 <p>見事に接続数が伸びません。</p>
 </div>
 </div>
@@ -468,7 +582,7 @@ Java開発の入り口</li>
 </div>
 <div class="section" id="azure-storage-client-2-0-3-resource-moniter">
 <h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
-<img alt="2.0.3時のResource Moniter画面" src="http://kyrt.in/blog/html/_images/2012_12_connections-asc2.0.3.png"/>
+<img alt="2.0.3時のResource Moniter画面" src="http://kyrt.in/_images/2012_12_connections-asc2.0.3.png"/>
 </div>
 </div>
 <div class="section" id="id5">
@@ -482,7 +596,7 @@ Java開発の入り口</li>
 <p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
 <div class="section" id="azure-storage-client-2-0-3-exception">
 <h3>Azure Storage Client 2.0.3 時でのException</h3>
-<img alt="Azure Storage Client 2.0.3 時でのException" src="http://kyrt.in/blog/html/_images/2012_12_connections-asc2.0.3-cmd.png"/>
+<img alt="Azure Storage Client 2.0.3 時でのException" src="http://kyrt.in/_images/2012_12_connections-asc2.0.3-cmd.png"/>
 <p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
 <p>ここでは、Blob でのUpload処理が参考になります。
 Windows Azure Storage 2.0 の Blob Upload で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
@@ -509,8 +623,8 @@ Windows Azure Storage 2.0 の Blob Upload で参照している処理を見る�
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2012/12/22/azurevmfix1221.html</link>
-            <guid>http://kyrt.in/blog/html/2012/12/22/azurevmfix1221.html</guid>
+            <link>http://kyrt.in/2012/12/22/azurevmfix1221.html</link>
+            <guid>http://kyrt.in/2012/12/22/azurevmfix1221.html</guid>
             <title><![CDATA[Azure Virtual MachineのDISK性能]]></title>
             <description><![CDATA[<div class="section" id="azure-virtual-machinedisk">
 <h1>Azure Virtual MachineのDISK性能</h1>
@@ -747,7 +861,7 @@ ___ snip ___
 <span class="nv">$ </span>iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
 </pre></div>
 </div>
-<p><a class="reference download internal" href="http://kyrt.in/blog/html/_downloads/20121222-iozone-azurevm.zip"><span class="xref download docutils literal"><span class="pre">結果のファイル(zip)</span></span></a></p>
+<p><a class="reference download internal" href="http://kyrt.in/_downloads/20121222-iozone-azurevm.zip"><span class="xref download docutils literal"><span class="pre">結果のファイル(zip)</span></span></a></p>
 </div>
 <div class="section" id="iozone">
 <h2>iozone の実行結果</h2>
@@ -756,18 +870,18 @@ ___ snip ___
 <h3>ローカルディスクの性能</h3>
 <p>まずは、ローカルドライブの実行結果から見る。読み込みはレコードサイズが8Kあたりから256KBまでは、2,500,000 KB/sec  - 3,000,000 KB/sec で、レコードサイズが増えていくとだんだん遅くなっていく。書き込み側は同じ軸ではとスケールが違い過ぎてよくわからない。</p>
 <div class="figure">
-<img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdb2-rw.png"/>
+<img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdb2-rw.png"/>
 <p class="caption">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</p>
 </div>
 <p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「 Iozone Filesystem Benchmark Download Documentation 」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
 <div class="figure">
-<img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdb2-note1-w.png"/>
+<img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdb2-note1-w.png"/>
 <p class="caption">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</p>
 </div>
 <p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentation から）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。
 同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
 <div class="figure">
-<img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdb2-w.png"/>
+<img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdb2-w.png"/>
 <p class="caption">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</p>
 </div>
 <p>小さいブロックのランダム書き込みが苦手だということがわかる。これはHDDの一般的な傾向で納得できる。以降では書き込みの図は図2と同じデータ項目を表示する。</p>
@@ -777,27 +891,27 @@ ___ snip ___
 <p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。
 ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
 <div class="figure">
-<img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdc1-rw.png"/>
+<img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdc1-rw.png"/>
 <p class="caption">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</p>
 </div>
 <div class="figure">
-<img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="http://kyrt.in/blog/html/_images/2012_12_sdc1-w.png"/>
+<img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="http://kyrt.in/_images/2012_12_sdc1-w.png"/>
 <p class="caption">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</p>
 </div>
 <div class="figure">
-<img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdd1-rw.png"/>
+<img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdd1-rw.png"/>
 <p class="caption">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</p>
 </div>
 <div class="figure">
-<img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sdd1-w.png"/>
+<img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sdd1-w.png"/>
 <p class="caption">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</p>
 </div>
 <div class="figure">
-<img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sde1-rw.png"/>
+<img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sde1-rw.png"/>
 <p class="caption">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</p>
 </div>
 <div class="figure">
-<img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="http://kyrt.in/blog/html/_images/2012_12_sde1-w.png"/>
+<img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="http://kyrt.in/_images/2012_12_sde1-w.png"/>
 <p class="caption">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</p>
 </div>
 </div>
@@ -825,12 +939,12 @@ ___ snip ___
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2012/12/08/blobasyncinside.html</link>
-            <guid>http://kyrt.in/blog/html/2012/12/08/blobasyncinside.html</guid>
+            <link>http://kyrt.in/2012/12/08/blobasyncinside.html</link>
+            <guid>http://kyrt.in/2012/12/08/blobasyncinside.html</guid>
             <title><![CDATA[Windows Azure Storage 2.0 の Blob Upload]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-storage-2-0-blob-upload">
 <h1>Windows Azure Storage 2.0 の Blob Upload</h1>
-<p>前の記事 <a class="reference internal" href="http://kyrt.in/blog/html/2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> では非同期呼び出しを使っていますが、これには理由があります。
+<p>前の記事 <a class="reference internal" href="http://kyrt.in/2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> では非同期呼び出しを使っていますが、これには理由があります。
 以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
 <p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
@@ -850,7 +964,7 @@ ___ snip ___
 <p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。
 Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
 <p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
-<img alt="../../../_images/2012-08-screen01.png" src="http://kyrt.in/blog/html/_images/2012-08-screen01.png"/>
+<img alt="../../../_images/2012-08-screen01.png" src="http://kyrt.in/_images/2012-08-screen01.png"/>
 <p>![Resource Monitor](/images/2012-08-screen01.png)</p>
 <hr class="docutils"/>
 <p>** ここからは、ソースを見ながら確認していった過程のメモです。リンクばかりで分かり辛いかもしれませんが参考までに。興味深いのは非同期と同期の処理の境界と並列度の制限をしている部分です。 **</p>
@@ -926,8 +1040,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </item>
     
         <item>
-            <link>http://kyrt.in/blog/html/2012/12/08/waac2012day2.html</link>
-            <guid>http://kyrt.in/blog/html/2012/12/08/waac2012day2.html</guid>
+            <link>http://kyrt.in/2012/12/08/waac2012day2.html</link>
+            <guid>http://kyrt.in/2012/12/08/waac2012day2.html</guid>
             <title><![CDATA[Azure Storage Gen 2は速かった]]></title>
             <description><![CDATA[<div class="section" id="azure-storage-gen-2">
 <h1>Azure Storage Gen 2は速かった</h1>

@@ -65,6 +65,130 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>November 28, 2013</span>
+        </div>
+        <div class="section" id="helios-azure-cloud-service">
+<h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
+<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 <a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a> と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
+<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
+<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
+<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id1">
+<h2>手順の確認</h2>
+<div class="section" id="webrolehelios">
+<h3>WebRoleの作成からHeliosのインストールまで</h3>
+<ol class="arabic simple">
+<li>Cloud Service を作ってWebRoleを追加します
+普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
+<ol class="arabic simple" start="2">
+<li>projectを、.NET 4.5.1 を使うようにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
+<ol class="arabic" start="3">
+<li><p class="first">コンパイルして問題無いのを確認します。</p>
+</li>
+<li><p class="first">System.Webの参照を全て削除します</p>
+</li>
+<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+</pre></div>
+</div>
+</li>
+</ol>
+<p>そうすると、このような参照になります</p>
+<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
+</div>
+<div class="section" id="startup-class">
+<h3>Startup Classの設定</h3>
+<p>下記のようなStartup classのコードを追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>using System;
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(WebRole1.Startup))]
+
+namespace WebRole1
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+
+            app.Run(async context =&gt;  // IOWinContext
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = &quot;text/html&quot;;
+
+                await context.Response.WriteAsync(&quot;Hello Herios. Time is: &quot; + DateTime.Now.ToString());
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
+</div>
+<div class="section" id="webrolestartup-task">
+<h3>WebRoleのStartup taskの作成</h3>
+<p>Heliosの中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
+<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;ServiceDefinition name=&quot;HelloHelios&quot; xmlns=&quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition&quot; schemaVersion=&quot;2013-10.2.2&quot;&gt;
+  &lt;WebRole name=&quot;WebRole1&quot; vmsize=&quot;Small&quot;&gt;
+    &lt;Startup&gt;
+      &lt;Task commandLine=&quot;startup.cmd&quot; executionContext=&quot;elevated&quot; taskType=&quot;simple&quot; /&gt;
+    &lt;/Startup&gt;
+
+    &lt;Sites&gt;
+    以下省略・・・・
+</pre></div>
+</div>
+<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
+<dl class="docutils">
+<dt>startup.cmd::</dt>
+<dd>vcredist_x64.exe /install /quiet</dd>
+</dl>
+<p>vcredist_x64.exe は、 <a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a> からダウンロードできます。VS 2013をインストールしている場合は、 <cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite> 等のディレクトリにファイルがあります。</p>
+<p><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+</div>
+<div class="section" id="osfamily">
+<h3>osFamilyの変更</h3>
+<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
+<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;ServiceConfiguration serviceName=&quot;HelloHelios&quot; xmlns=&quot;http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration&quot; osFamily=&quot;4&quot; osVersion=&quot;*&quot; schemaVersion=&quot;2013-10.2.2&quot;&gt;
+  &lt;Role name=&quot;WebRole1&quot;&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>まとめ</h2>
+<p>Helios runtimeには、native codeのdllが含まれている。dllは、VC12(VS2013)のランタイム、msvcr120.dllに依存しているので、インストールが必要。
+これは、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> の問題です。
+このままだとちょっと使いづらいですね。</p>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
         <div class="section" id="windows-azure-storage-known-issues-2013-11">
@@ -149,7 +273,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
                 <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
+            <a href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
@@ -196,7 +320,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
                 <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+            <a href="http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 17, 2013</span>
         </div>
@@ -258,7 +382,7 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
                 <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a>, <a href="tags/java.html">Java</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/bug.html">BUG</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2013/10/17/azure_java_sdk_long_value_filtering_bug.html#disqus_thread" data-disqus-identifier="2013/10/17/azure_java_sdk_long_value_filtering_bug">Leave a comment</a>
+            <a href="http://kyrt.in/2013/10/17/azure_java_sdk_long_value_filtering_bug.html#disqus_thread" data-disqus-identifier="2013/10/17/azure_java_sdk_long_value_filtering_bug">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 15, 2013</span>
         </div>
@@ -509,7 +633,7 @@ Java開発の入り口</li>
                 <a href="tags/azure.html">Azure</a>, <a href="tags/emulator.html">Emulator</a>, <a href="tags/deploy.html">Deploy</a>, <a href="tags/tutorial.html">Tutorial</a>, <a href="tags/play_framework.html">Play Framework</a>, <a href="tags/step_by_step.html">Step By Step</a>, <a href="tags/eclipse.html">Eclipse</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
+            <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 26, 2012</span>
         </div>
@@ -615,7 +739,7 @@ Windows Azure Storage 2.0 の Blob Upload で参照している処理を見る�
                 <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
+            <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 22, 2012</span>
         </div>
@@ -941,7 +1065,7 @@ ___ snip ___
                 <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
+            <a href="http://kyrt.in/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 08, 2012</span>
         </div>
@@ -1052,7 +1176,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
                 <a href="tags/c.html">C#</a>, <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/blob.html">Blob</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
+            <a href="http://kyrt.in/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 08, 2012</span>
         </div>
@@ -1216,12 +1340,14 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
                 <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/blog/html/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
+            <a href="http://kyrt.in/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a>
+        </li><li>
             <a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a>
         </li><li>
             <a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a>
@@ -1241,9 +1367,9 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (7)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (5)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (8)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (5)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (6), <a href="tags/blob.html">Blob</a> (1), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (6), <a href="tags/table.html">Table</a> (5), <a href="tags/tutorial.html">Tutorial</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (6), <a href="tags/blob.html">Blob</a> (1), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (6), <a href="tags/table.html">Table</a> (5), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
