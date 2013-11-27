@@ -40,7 +40,7 @@ WebRoleの作成からHeliosのインストールまで
 
      Install-Package Microsoft.Owin.Host.IIS -Pre
 
-そうすると、このような参照になります
+下記のような参照になります
 
 .. image:: 2013_11_helios006.png
    :align: center
@@ -103,8 +103,7 @@ startup.cmd::
 
 vcredist_x64.exe は、 `Visual Studio 2013 の Visual C++ 再頒布可能パッケージ <http://www.microsoft.com/ja-jp/download/details.aspx?id=40784>`_ からダウンロードできます。VS 2013をインストールしている場合は、 `C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist` 等のディレクトリにファイルがあります。
 
-
-`Windows Azure でスタートアップ タスクを実行する <http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx>`_
+startup taskについて： `Windows Azure でスタートアップ タスクを実行する <http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx>`_
 
 osFamilyの変更
 --------------
@@ -119,8 +118,9 @@ ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します
 
 まとめ
 ======
-Helios runtimeには、native codeのdllが含まれている。dllは、VC12(VS2013)のランタイム、msvcr120.dllに依存しているので、インストールが必要。
-これは、厳密に言うと `Microsoft.Owin.Host.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre>`_ が使っている、`Microsoft.AspNet.Loader.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre>`_ の問題です。
+Helios runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
+vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
+この問題は、厳密に言うと `Microsoft.Owin.Host.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre>`_ が使っている、`Microsoft.AspNet.Loader.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre>`_ に起因する。
 このままだとちょっと使いづらいですね。
 
 

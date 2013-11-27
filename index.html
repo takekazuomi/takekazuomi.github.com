@@ -97,7 +97,7 @@
 </div>
 </li>
 </ol>
-<p>そうすると、このような参照になります</p>
+<p>下記のような参照になります</p>
 <img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
 </div>
 <div class="section" id="startup-class">
@@ -152,7 +152,7 @@ namespace WebRole1
 <dd>vcredist_x64.exe /install /quiet</dd>
 </dl>
 <p>vcredist_x64.exe は、 <a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a> からダウンロードできます。VS 2013をインストールしている場合は、 <cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite> 等のディレクトリにファイルがあります。</p>
-<p><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+<p>startup taskについて： <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
 </div>
 <div class="section" id="osfamily">
 <h3>osFamilyの変更</h3>
@@ -167,8 +167,9 @@ namespace WebRole1
 </div>
 <div class="section" id="id2">
 <h2>まとめ</h2>
-<p>Helios runtimeには、native codeのdllが含まれている。dllは、VC12(VS2013)のランタイム、msvcr120.dllに依存しているので、インストールが必要。
-これは、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> の問題です。
+<p>Helios runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
+vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
+この問題は、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> に起因する。
 このままだとちょっと使いづらいですね。</p>
 </div>
 </div>
