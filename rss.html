@@ -8,6 +8,74 @@
         <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
         
         <item>
+            <link>http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html</link>
+            <guid>http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html</guid>
+            <title><![CDATA[Windows Azure Storage Release - CORS、JSON、Minute Metrics と の紹介]]></title>
+            <description><![CDATA[<div class="section" id="windows-azure-storage-release-corsjsonminute-metrics">
+<h1>Windows Azure Storage Release - CORS、JSON、Minute Metrics と の紹介</h1>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a>
+以下に抜粋で内容を紹介します。</p>
+<div class="section" id="id1">
+<h2>3つの主要な機能</h2>
+<ol class="arabic">
+<li><p class="first">CORS (Cross Origin Resource Sharing):
+Windows Azure Blobs, Tables, Queues でCORS が有効できるようにになった。これによって、browser から異なったドメインのリソースへのアクセス・操作ができる。
+CORS は、Service Properties の 設定で有効化。詳しくは <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx</a> を参照してください。</p>
+</li>
+<li><p class="first">JSON (JavaScript Object Notation): 現在、Windows Azure Table は、 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation">OData 3.0</a> の <a class="reference external" href="http://www.json.org">JSON format</a> をサポートしている。JSON format では、AtomPub XML payloadの冗長な部分が削減されより効率的な転送になる。</p>
+<p>JSONは下記3つの形式でサポート</p>
+<ul class="simple">
+<li>No Metadata - これは最も効率的なformatで、クライアントがカスタムプロパティのデータ型を知っている場合に便利です</li>
+<li>Minimal Metadata - この形式は、暗黙的に解釈できない特定の種類のカスタムプロパティのデータ型情報が含まれている。例えば、Azure Table Browserのような、一般的なツールのように保存されているEntityのデータ型を知らないで読まなければいけない場合に便利です</li>
+<li>Full Metadata - このフォーマットは、 generic OData readers で読む場合に便利です</li>
+</ul>
+<p>Windows Azure TableのJSONについての詳細情報は <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx</a> を参照してださい。</p>
+</li>
+<li><p class="first">Windows Azure Storage Analytics の Minute Metrics: 今まで、Windows Azure StorageのMetricsは時間集計でした。（ <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a> ） 新しい 2013-08-15 version では、 いくつかの主要な値に付いて 5分以内に 分集計（Minute Metrics） が取得できるようになります。それに伴って下記のテーブルを追加します。</p>
+<ul class="simple">
+<li>$MetricsHourPrimaryTransactionsBlob</li>
+<li>$MetricsHourPrimaryTransactionsTable</li>
+<li>$MetricsHourPrimaryTransactionsQueue</li>
+<li>$MetricsMinutePrimaryTransactionsBlob</li>
+<li>$MetricsMinutePrimaryTransactionsTable</li>
+<li>$MetricsMinutePrimaryTransactionsQueue</li>
+</ul>
+<p>時間集計のテーブル名が変わっているので注意してください。古いテーブルも継続して存在します。</p>
+<p>分集計の設定は、2013-08-15 version を設定して、Set Service Properties REST APIを使います。現在  Windows Azure Portal では設定ができませんが、将来サポートされる予定です。</p>
+<p>詳細情報は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">About Storage Analytics Metrics</a> を見てくだい。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>その他の追加機能</h2>
+<p>これらの他の2013-8-15 versionでは、以下の機能を実装しています。2013-8-15 version の変更詳細のリストは： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx</a> にあります。</p>
+<ul class="simple">
+<li>Copy blob で、Shared Access Signature (SAS) を、コピー先にも適応します。（同じstorage accountの場合）</li>
+<li>Windows Azure Blob service は、Content-Disposition と response headers の cache-control などの ability control (via. SAS）をサポートします。Content-Disposition は、Set Blob Properties で設定します。</li>
+<li>Windows Azure Blob service は、Get Blob と Get Blob Propertiesで、複数の HTTP conditional header をサポートします。この機能は、web-browsers which から CDN servers 経由でアクセスする場合に有用です。</li>
+<li>Windows Azure Blob Service は、uncommitted blobはある状態での、Delete Blob operation をサポートします。以前は、事前にcommitしないとdelete Blob出来ませんでした。</li>
+<li>List Containers, List Blobs と List Queues は、2013-08-15 version から、resourceに、URL address field を含みません。 これは、clientで再構築できる fields を削減したためです。</li>
+<li>Lease Blob と Lease Container は、2013-08-15 version から、ETag と Last Modified Time を response headers で返します。これによって、lease holder は最後に見た時から、リソースが変更されたかどうかを簡単に確認することができます。（つまり、blob や その metadata が更新されたか)。以前と同じくblob の lease operations では、ETagは変更されません。</li>
+</ul>
+<p>これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">ここ</a> にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。</p>
+<p>既知の問題が幾つかあります。下記の記事を参照してください。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx</a>
+<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx</a></p>
+<p>以上</p>
+</div>
+<div class="section" id="id4">
+<h2>最後に</h2>
+<p>Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">ここ</a> Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。
+BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきていないようなので、年末に向けてさらに期待しています。
+負荷試験している時とかはMinute Metricsは便利ですね、嬉しいです。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Azure Storage ]]></category>
+             <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
+        </item>
+    
+        <item>
             <link>http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html</link>
             <guid>http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html</guid>
             <title><![CDATA[Helios を Azure Cloud Service で使う]]></title>

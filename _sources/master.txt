@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2013/11/28/cors_json_minute_metrics_and_more
    2013/11/28/using_helios_on_azure_cloud_service
    2013/11/24/windows_azure_storage_known_issues_2013_11
    2013/11/24/windows_azure_tables_breaking_changes_2013_11
