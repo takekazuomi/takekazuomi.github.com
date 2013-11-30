@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="_static/plugins.js"></script>
         <script src="_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+        <link rel="next" title="Older" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '1.2.1',
@@ -65,6 +65,174 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>November 30, 2013</span>
+        </div>
+        <div class="section" id="storage-client-2-1-0-4-cast">
+<h1><a href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a></h1>
+<p>Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8216154715"><img alt="red takekazu, on Flickr" src="http://farm9.staticflickr.com/8062/8216154715_53106b0941_z.jpg"/></a>
+<div class="section" id="issue">
+<h2>issueの再現</h2>
+<p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で提示されているものを使います。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<span class="o">{</span>
+    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>nugetで、問題のあるバージョンのライブラリをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.3
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>実行結果</h3>
+<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。
+x-ms-versionは、 2012-02-12 です。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: af7cf5c3-c287-4c1f-a9fe-ee0b6c374317
+x-ms-date: Fri, 29 Nov 2013 23:25:01 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
+Transfer-Encoding: chunked
+Content-Type: application/xml;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: abf14b12-7a80-4b75-a652-604c56bdb817
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:25:01 GMT
+
+131
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;error xmlns=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;&gt;&lt;code&gt;InvalidInput&lt;/code&gt;&lt;message xml:lang=&quot;en-US&quot;&gt;One of the request inputs is not valid.
+RequestId:abf14b12-7a80-4b75-a652-604c56bdb817
+Time:2013-11-29T23:25:02.0389849Z&lt;/message&gt;&lt;/error&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2.1.0.4 での修正確認</h2>
+<p>nugetの履歴によると <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a> 2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。
+同じコードをライブラリのバージョンだけ変更して実行します:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>実行結果</h3>
+<p>GET URLがスッキリして、結果は 200 OK が帰ってきています。FIXされているようです。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.4 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: e9319d53-b9eb-41c6-9a93-63566842984e
+x-ms-date: Fri, 29 Nov 2013 23:33:17 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: d1056e7a-f0ff-4ab4-b5a4-4b546eb48515
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:33:17 GMT
+
+96A
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;feed xml:base=&quot;http://asdpojasldfj001.table.core.windows.net/&quot; xmlns=&quot;http://www.w3.org/2005/Atom&quot; xmlns:d=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices&quot; xmlns:m=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people&lt;/id&gt;&lt;title type=&quot;text&quot;&gt;people&lt;/title&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;link rel=&quot;self&quot; title=&quot;people&quot; href=&quot;people&quot; /&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-28T10%3A24%3A23.5715047Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='1')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='1')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;1&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-28T10:24:23.5715047Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-28T10%3A21%3A02.0298712Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='2')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='2')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;2&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-28T10:21:02.0298712Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-29T23%3A16%3A04.1332012Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='3')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='3')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;3&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-29T23:16:04.1332012Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;/feed&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>おまけの 3.0.0 での修正確認</h2>
+<p>同じことを最新の 3.0.0 でやりました。バッチリ動きます。x-ms-versionが 2013-08-15になって結果がjsonになっています:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2013-08-15
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 3.0;NetFx
+Accept: application/json;odata=minimalmetadata
+x-ms-client-request-id: 5b6e366f-dde8-4ec0-b433-10fac62c117d
+x-ms-date: Fri, 29 Nov 2013 23:17:23 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: fa6db02e-b080-4bc4-8761-1016920fb1b0
+x-ms-version: 2013-08-15
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:17:22 GMT
+
+168
+{&quot;odata.metadata&quot;:&quot;http://asdpojasldfj001.table.core.windows.net/$metadata#people&quot;,&quot;value&quot;:[{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;1&quot;,&quot;Timestamp&quot;:&quot;2013-11-28T10:24:23.5715047Z&quot;,&quot;Data&quot;:&quot;foo&quot;},{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;2&quot;,&quot;Timestamp&quot;:&quot;2013-11-28T10:21:02.0298712Z&quot;,&quot;Data&quot;:&quot;foo&quot;},{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;3&quot;,&quot;Timestamp&quot;:&quot;2013-11-29T23:16:04.1332012Z&quot;,&quot;Data&quot;:&quot;foo&quot;}]}
+0
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>ソースコード上の修正点</h2>
+<p>2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a> では:</p>
+<div class="highlight-none"><div class="highlight"><pre>Issues fixed in 2.1.0.4 :
+  - Tables: Do not send the cast operator in the table query filter string.
+</pre></div>
+</div>
+<p>microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs で、2.1でExpressionをURLに展開するときのUnaryの処理にcastを使ってしまっていたのを削除したようです。</p>
+<p>修正のCommitは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf">XSCL 2.1.0.4 - Hotfix</a> で、ソースは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs">ExpressionWriter.cs</a>  です。</p>
+<p>残念ながら、3.0.0は、まだコードが公開されていないので確認することができません。</p>
+</div>
+<div class="section" id="id6">
+<h2>まとめ</h2>
+<p>2.1.0.4/3.0.0では、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。:ref:<a href="#id7"><span class="problematic" id="id8">`</span></a>Table Query での Cast 問題 &lt;known-issue-201311&gt;`で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。</p>
+<p>本題とは外れますが、今回の場合では、363 byte(json) と、2,436 byte (xml)とhttp responseのbodyのサイズが大きく違い期待以上に良好な結果になっています。今回は、データが非常に小さいのでmeta 情報部分が冗長なxmlのオーバーヘッドが目立つ結果になっているのでしょうが、それにしても大きな違いです。</p>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html#disqus_thread" data-disqus-identifier="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 28, 2013</span>
         </div>
         <div class="section" id="windows-azure-storage-release-corsjsonminute-metrics">
@@ -272,6 +440,14 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
         </div>
         <div class="section" id="windows-azure-storage-known-issues-2013-11">
 <h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
+</div>
+<div class="line-block">
+<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+</div>
+</div></blockquote>
 <p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
 <div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
 <h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
@@ -303,7 +479,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 </pre></div>
 </div>
 <p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
-<ol class="arabic simple" start="2">
+<ol class="arabic simple" id="known-issue-201311" start="2">
 <li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
 これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
 .NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
@@ -349,7 +525,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a></span>
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
@@ -1256,175 +1432,16 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 08, 2012</span>
-        </div>
-        <div class="section" id="azure-storage-gen-2">
-<h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
-<p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
-<p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
-<ul class="simple">
-<li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。<a class="reference external" href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></li>
-</ul>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="azure-storage">
-<h2>Azure Storageのパフォーマンスの向上</h2>
-<p>2012/6/7 以降に作成されたストレージアカウントで、下記のようにパフォーマンスターゲットが引き上げられました。Gen 2と呼ばれているようです。以前のもの（Gen1）に比べ秒間のトランザクションベースだと4倍程度になっています（Azure Table 1Kエンティティの場合）</p>
-<p>詳しくはリンク先を見てもらうとして下記の4点が注目です。</p>
-<ol class="arabic simple">
-<li>ストレージ ノード 間のネットワーク速度が1Gbpsから10Gbpsに向上</li>
-<li>ジャーナリングに使われるストレージデバイスがHDDからSSDに改善</li>
-<li>単一パーテーション  500 エンティティ/秒 -&gt;   2,000 エンティティ/秒 (15Mbps)</li>
-<li>複数パーテーション 5,000 エンティティ/秒 -&gt; 20,000 エンティティ/秒 (156Mbps)</li>
-</ol>
-<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id1">
-<h2>確認しよう</h2>
-<p>ではどれだけ速くなったのか確認しましょう。なるべく実利用環境に近いようにということでC#を使います。ライブライは、最近出たばかりですが、Azure Storage Client 2.0を使います。このライブラリのコードをざっと見た感じだと、従来のコードに比べてシンプルになって読みやすく速度も期待できそうです。</p>
-<p>比較的限界が低い単一パーテーションで確認します。前記のGen2の記事には、エンティティが1KByteで、単一パーテーションの場合、2,000 エンティティ/秒というパフォーマンスターゲットが記述されています。これを確認しようとするとAzure外部からのネットワークアクセスだと厳しいのでWorkerRoleを立てて、リモートデスクトップでログインしてプログラムを実行します。プログラムは秒間2000オブジェクトを計測時間の間は作りづけないといけないのでCPUやGCがボトルネックになるかもしれません、今回はLargeのインスタンスを使うことにしました。</p>
-<p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
-<script src="https://gist.github.com/takekazuomi/4238298.js"> </script><p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
-<p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
-<script src="https://gist.github.com/takekazuomi/4238639.js"> </script><p>この辺りは、下記のサイトが詳しくお勧めです。</p>
-<p>参照：<a class="reference external" href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
-<div class="section" id="waac2012day2-pending">
-<span id="id2"/><h3>非同期で同時接続数が上がらない？</h3>
-<p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
-<p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
-<p>** [2012/12/26 このFIXに関するまとめを書きました](/blog/2012/12/26/asc2-dot-0asyncbug/) **</p>
-<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
-<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
-今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
-<script src="https://gist.github.com/takekazuomi/4238661.js"> </script><p>—</p>
-</div>
-</div>
-<div class="section" id="id3">
-<h2>結果</h2>
-<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。
-単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）
-下記の表の最初のカラムは起動するプロセス数です。</p>
-<p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
-<p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
-<table border="1" class="docutils">
-<caption>表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</caption>
-<colgroup>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">プロセス数</th>
-<th class="head">最少</th>
-<th class="head">中央値</th>
-<th class="head">平均</th>
-<th class="head">最大</th>
-<th class="head">90%点</th>
-<th class="head">95%点</th>
-<th class="head">99%点</th>
-<th class="head">ピークe/s</th>
-<th class="head">成功数</th>
-<th class="head">失敗数</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>2</td>
-<td>97.27</td>
-<td>166.6</td>
-<td>258</td>
-<td>14,800</td>
-<td>359.578</td>
-<td>472.373</td>
-<td>1,106.28</td>
-<td>6,684</td>
-<td>40,000</td>
-<td>0</td>
-</tr>
-<tr class="row-odd"><td>2</td>
-<td>94.17</td>
-<td>260.5</td>
-<td>333.7</td>
-<td>5,320</td>
-<td>564.774</td>
-<td>723.272</td>
-<td>1,339.03</td>
-<td>6,932</td>
-<td>40,000</td>
-<td>0</td>
-</tr>
-<tr class="row-even"><td>3</td>
-<td>90.13</td>
-<td>174.8</td>
-<td>734.1</td>
-<td>21,270</td>
-<td>1,621.49</td>
-<td>1,845.90</td>
-<td>3,434.26</td>
-<td>7,218</td>
-<td>59,377</td>
-<td>623</td>
-</tr>
-<tr class="row-odd"><td>3</td>
-<td>90.35</td>
-<td>341.6</td>
-<td>610.1</td>
-<td>27,490</td>
-<td>1,064.59</td>
-<td>1,380.42</td>
-<td>4,431.79</td>
-<td>8,005</td>
-<td>59,740</td>
-<td>260</td>
-</tr>
-</tbody>
-</table>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id4">
-<h2>最後に</h2>
-<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。
-<a class="reference external" href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a> に計測に使ったコードをいれてあります。</p>
-<p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
-<p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id5">
-<h2>おまけ</h2>
-<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。
-`</p>
-</div>
-</div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
-    </div></article><aside class="sidebar"><section><div class="widget">
+    </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="page2.html">Older</a> &raquo; </li>
+        </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a>
+        </li><li>
             <a href="2013/11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a>
         </li><li>
             <a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a>
@@ -1442,15 +1459,13 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
             <a href="2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a>
         </li><li>
             <a href="2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a>
-        </li><li>
-            <a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (9)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (5)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (10)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (1)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (1)</li><li><a href="categories/azure_table.html">Azure Table</a> (6)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (6), <a href="tags/blob.html">Blob</a> (2), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (6), <a href="tags/table.html">Table</a> (6), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (1), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_table.html">Azure Table</a> (7), <a href="tags/blob.html">Blob</a> (2), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/issue.html">Issue</a> (2), <a href="tags/java.html">Java</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (1), <a href="tags/storage.html">Storage</a> (7), <a href="tags/table.html">Table</a> (7), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

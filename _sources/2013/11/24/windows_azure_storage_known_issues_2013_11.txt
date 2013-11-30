@@ -1,6 +1,11 @@
 ============================================
  Windows Azure Storage Known Issues 2013/11
 ============================================
+ | 2013/11/29 以下の内容は正式な日本語訳が出ています `Windows Azure ストレージの既知の問題 <http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx>`_ 
+
+ | 2013/11/30 :ref:`Table Query での Cast 問題 <known-issue-201311>` が解決されたStorage Client Libraryがリリースされています。検証記事 :doc:`../30/fixed_storage_client_cast_problem_in_2013_08_15_version` 
+
+
 cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog `Windows Azure Storage Known Issues (November 2013) <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx>`_ からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。
 
 
@@ -39,6 +44,7 @@ Windows Azure TablesのIssue
 
 この Issue の解決のためには client 側で `tableServiceContext.ResolveName` delegate の設定を外してください。
 
+.. _known-issue-201311:
 
 2. service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty "cast" があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
    これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
@@ -84,5 +90,5 @@ We apologize for these issues and we are working on a hotfix to address them. (�
 
 .. author:: default
 .. categories:: Azure Table, Azure
-.. tags:: Azure Table, Table, Storage
+.. tags:: Azure Table, Table, Storage, Issue
 .. comments::

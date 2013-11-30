@@ -5,8 +5,166 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
+        <pubDate>Sat, 30 Nov 2013 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html</link>
+            <guid>http://kyrt.in/2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html</guid>
+            <title><![CDATA[Storage Client 2.1.0.4 以降での Cast問題の修正]]></title>
+            <description><![CDATA[<div class="section" id="storage-client-2-1-0-4-cast">
+<h1>Storage Client 2.1.0.4 以降での Cast問題の修正</h1>
+<p>Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた <a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8216154715"><img alt="red takekazu, on Flickr" src="http://farm9.staticflickr.com/8062/8216154715_53106b0941_z.jpg"/></a>
+<div class="section" id="issue">
+<h2>issueの再現</h2>
+<p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは <a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で提示されているものを使います。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<span class="o">{</span>
+    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>nugetで、問題のあるバージョンのライブラリをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.3
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>実行結果</h3>
+<p><a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。
+x-ms-versionは、 2012-02-12 です。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: af7cf5c3-c287-4c1f-a9fe-ee0b6c374317
+x-ms-date: Fri, 29 Nov 2013 23:25:01 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
+Transfer-Encoding: chunked
+Content-Type: application/xml;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: abf14b12-7a80-4b75-a652-604c56bdb817
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:25:01 GMT
+
+131
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;error xmlns=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;&gt;&lt;code&gt;InvalidInput&lt;/code&gt;&lt;message xml:lang=&quot;en-US&quot;&gt;One of the request inputs is not valid.
+RequestId:abf14b12-7a80-4b75-a652-604c56bdb817
+Time:2013-11-29T23:25:02.0389849Z&lt;/message&gt;&lt;/error&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2.1.0.4 での修正確認</h2>
+<p>nugetの履歴によると <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a> 2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。
+同じコードをライブラリのバージョンだけ変更して実行します:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>実行結果</h3>
+<p>GET URLがスッキリして、結果は 200 OK が帰ってきています。FIXされているようです。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.4 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: e9319d53-b9eb-41c6-9a93-63566842984e
+x-ms-date: Fri, 29 Nov 2013 23:33:17 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: d1056e7a-f0ff-4ab4-b5a4-4b546eb48515
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:33:17 GMT
+
+96A
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;feed xml:base=&quot;http://asdpojasldfj001.table.core.windows.net/&quot; xmlns=&quot;http://www.w3.org/2005/Atom&quot; xmlns:d=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices&quot; xmlns:m=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people&lt;/id&gt;&lt;title type=&quot;text&quot;&gt;people&lt;/title&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;link rel=&quot;self&quot; title=&quot;people&quot; href=&quot;people&quot; /&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-28T10%3A24%3A23.5715047Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='1')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='1')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;1&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-28T10:24:23.5715047Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-28T10%3A21%3A02.0298712Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='2')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='2')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;2&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-28T10:21:02.0298712Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag=&quot;W/&amp;quot;datetime'2013-11-29T23%3A16%3A04.1332012Z'&amp;quot;&quot;&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='3')&lt;/id&gt;&lt;category term=&quot;asdpojasldfj001.people&quot; scheme=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot; /&gt;&lt;link rel=&quot;edit&quot; title=&quot;people&quot; href=&quot;people(PartitionKey='1',RowKey='3')&quot; /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type=&quot;application/xml&quot;&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;3&lt;/d:RowKey&gt;&lt;d:Timestamp m:type=&quot;Edm.DateTime&quot;&gt;2013-11-29T23:16:04.1332012Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;/feed&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>おまけの 3.0.0 での修正確認</h2>
+<p>同じことを最新の 3.0.0 でやりました。バッチリ動きます。x-ms-versionが 2013-08-15になって結果がjsonになっています:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2013-08-15
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 3.0;NetFx
+Accept: application/json;odata=minimalmetadata
+x-ms-client-request-id: 5b6e366f-dde8-4ec0-b433-10fac62c117d
+x-ms-date: Fri, 29 Nov 2013 23:17:23 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: fa6db02e-b080-4bc4-8761-1016920fb1b0
+x-ms-version: 2013-08-15
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:17:22 GMT
+
+168
+{&quot;odata.metadata&quot;:&quot;http://asdpojasldfj001.table.core.windows.net/$metadata#people&quot;,&quot;value&quot;:[{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;1&quot;,&quot;Timestamp&quot;:&quot;2013-11-28T10:24:23.5715047Z&quot;,&quot;Data&quot;:&quot;foo&quot;},{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;2&quot;,&quot;Timestamp&quot;:&quot;2013-11-28T10:21:02.0298712Z&quot;,&quot;Data&quot;:&quot;foo&quot;},{&quot;PartitionKey&quot;:&quot;1&quot;,&quot;RowKey&quot;:&quot;3&quot;,&quot;Timestamp&quot;:&quot;2013-11-29T23:16:04.1332012Z&quot;,&quot;Data&quot;:&quot;foo&quot;}]}
+0
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>ソースコード上の修正点</h2>
+<p>2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a> では:</p>
+<div class="highlight-none"><div class="highlight"><pre>Issues fixed in 2.1.0.4 :
+  - Tables: Do not send the cast operator in the table query filter string.
+</pre></div>
+</div>
+<p>microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs で、2.1でExpressionをURLに展開するときのUnaryの処理にcastを使ってしまっていたのを削除したようです。</p>
+<p>修正のCommitは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf">XSCL 2.1.0.4 - Hotfix</a> で、ソースは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs">ExpressionWriter.cs</a>  です。</p>
+<p>残念ながら、3.0.0は、まだコードが公開されていないので確認することができません。</p>
+</div>
+<div class="section" id="id6">
+<h2>まとめ</h2>
+<p>2.1.0.4/3.0.0では、<a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。:ref:<a href="#id7"><span class="problematic" id="id8">`</span></a>Table Query での Cast 問題 &lt;known-issue-201311&gt;`で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。</p>
+<p>本題とは外れますが、今回の場合では、363 byte(json) と、2,436 byte (xml)とhttp responseのbodyのサイズが大きく違い期待以上に良好な結果になっています。今回は、データが非常に小さいのでmeta 情報部分が冗長なxmlのオーバーヘッドが目立つ結果になっているのでしょうが、それにしても大きな違いです。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure Table ]]></category>
+            <category><![CDATA[ Azure ]]></category>
+             <pubDate>Sat, 30 Nov 2013 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html</link>
             <guid>http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html</guid>
@@ -196,6 +354,14 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
             <title><![CDATA[Windows Azure Storage Known Issues 2013/11]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-storage-known-issues-2013-11">
 <h1>Windows Azure Storage Known Issues 2013/11</h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
+</div>
+<div class="line-block">
+<div class="line">2013/11/30 <a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="http://kyrt.in/2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+</div>
+</div></blockquote>
 <p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
 <div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
 <h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
@@ -227,7 +393,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 </pre></div>
 </div>
 <p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
-<ol class="arabic simple" start="2">
+<ol class="arabic simple" id="known-issue-201311" start="2">
 <li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
 これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
 .NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
