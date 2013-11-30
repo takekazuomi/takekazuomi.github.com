@@ -4,7 +4,7 @@
 
  | 2013/11/29 以下の内容は正式な日本語訳が出ています `Windows Azure テーブルにおける重大な（互換性のない）変更 <http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx>`_ 
 
-Azure Storage Team より、Windows Azure Table のJSONサポー 準備のため Table の response が一部変更されている旨アナウンスされmました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。
+Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。
 
 `Windows Azure Tables Breaking Changes (November 2013) <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx>`_ から変更点を紹介します。
 
