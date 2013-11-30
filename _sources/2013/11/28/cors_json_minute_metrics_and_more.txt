@@ -75,5 +75,5 @@ BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきて
 
 .. author:: default
 .. categories:: Azure, Azure Storage
-.. tags:: Table, Blob, Queue, 2013-08-15
+.. tags:: Table, Blob, Queue, 2013-08-15, Translate Selected Passages
 .. comments::

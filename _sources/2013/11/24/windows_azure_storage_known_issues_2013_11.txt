@@ -90,5 +90,5 @@ We apologize for these issues and we are working on a hotfix to address them. (æ
 
 .. author:: default
 .. categories:: Azure Table, Azure
-.. tags:: Azure Table, Table, Storage, Issue
+.. tags:: Azure Table, Table, Storage, Issue, Translate Selected Passages
 .. comments::
