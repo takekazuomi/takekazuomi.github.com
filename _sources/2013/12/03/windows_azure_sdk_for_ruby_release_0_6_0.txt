@@ -1,0 +1,36 @@
+Windows Azure SDK for Ruby Release 0.6.0
+========================================
+Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。
+
+新機能
+------
+0.6.0では、主にmanagement APIの追加が行われました。GEMから
+
+* Add the following service management API
+  * Virtual Machine
+  * Virtual Machine Image
+  * Virtual Network
+  * Cloud Service
+  * Storage
+  * Sql Database
+  * Location and Affinity Group
+
+`ChangeLog.txt <https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1>`_
+`GitHub WindowsAzure/azure-sdk-for-ruby <https://github.com/WindowsAzure/azure-sdk-for-ruby>`_
+`RubyGems Azure <http://rubygems.org/gems/azure>`_
+
+
+get_blob_properties のBUG修正
+-------------------------------
+`5月にPRを出した修正 <https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b>`_ も取り込まれてリリースされました。
+これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。
+
+https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb
+https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb
+https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb
+
+
+.. author:: default
+.. categories:: Azure, Azure SDK, Ruby, GitHub観察日記
+.. tags:: Azure, Storage, Azure SDK
+.. comments::

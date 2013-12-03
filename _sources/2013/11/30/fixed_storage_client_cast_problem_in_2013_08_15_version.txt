@@ -53,7 +53,7 @@ http responseのtrace::
   x-ms-version: 2012-02-12
   X-Content-Type-Options: nosniff
   Date: Fri, 29 Nov 2013 23:25:01 GMT
-
+  
   131
   <?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">One of the request inputs is not valid.
   RequestId:abf14b12-7a80-4b75-a652-604c56bdb817

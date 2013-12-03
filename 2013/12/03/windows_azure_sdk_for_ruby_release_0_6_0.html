@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>Inside SessionAffinityAgent &mdash; Kyrt Blog</title>
+        <title>Windows Azure SDK for Ruby Release 0.6.0 &mdash; Kyrt Blog</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="Storage Client 2.1.0.4 以降での Cast問題の修正" href="../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.2.1',
@@ -65,28 +65,59 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
-            <span>October 24, 2013</span>
+            <span>December 03, 2013</span>
         </div>
-    <div class="section" id="inside-sessionaffinityagent">
-<h1>Inside SessionAffinityAgent</h1>
-<p>httpsを実装する話にもっていく</p>
-<p class="blockdiag">
-<a href="../../../_images/blockdiag-6f1135ccafd85d158cf51b29ba11a2b7ef0cae45.png"><img src="../../../_images/blockdiag_thumb-adc3d6ed397741b076cf02b401409c0e053a7314.png" alt="None" width="600" height="115.384615385" />
-</a></p>
-<p>Windows Azure Plugin for Eclipse with Java には、セッションアフィニティという機能があります。スティッキー クッキーを使ってどのように動いているのか
-<a class="reference external" href="http://satonaoki.wordpress.com/2011/12/25/azure-eclipse-session-affinity/">Webアプリのセッション管理 / Azure Plugin for Eclipseのセッション アフィニティ</a> が詳しいので、そちらを見てもらい。ここでは、SessionAffinityAgent.exe がどうやって</p>
+    <div class="section" id="windows-azure-sdk-for-ruby-release-0-6-0">
+<h1>Windows Azure SDK for Ruby Release 0.6.0</h1>
+<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。</p>
+<div class="section" id="id1">
+<h2>新機能</h2>
+<p>0.6.0では、主にmanagement APIの追加が行われました。GEMから</p>
+<ul class="simple">
+<li>Add the following service management API
+* Virtual Machine
+* Virtual Machine Image
+* Virtual Network
+* Cloud Service
+* Storage
+* Sql Database
+* Location and Affinity Group</li>
+</ul>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a>
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a>
+<a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></p>
+</div>
+<div class="section" id="get-blob-properties-bug">
+<h2>get_blob_properties のBUG修正</h2>
+<p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a> も取り込まれてリリースされました。
+これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb</a>
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb</a>
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb</a></p>
+</div>
 </div>
 
     <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
         </div>
-        
-        
-        </div><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/10/24/inside_sessionaffinityagent";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/azure_sdk.html">Azure SDK</a>, <a href="../../../categories/ruby.html">Ruby</a>, <a href="../../../categories/github.html">GitHub観察日記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="../../../tags/azure.html">Azure</a>, <a href="../../../tags/storage.html">Storage</a>, <a href="../../../tags/azure_sdk.html">Azure SDK</a></span>
+        </div>
+        </div><ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="../../12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
+            <a href="#">Windows Azure SDK for Ruby Release 0.6.0</a>
         </li><li>
             <a href="../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a>
         </li><li>
@@ -98,9 +129,9 @@
         </li><li>
             <a href="../../11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a>
         </li><li>
-            <a href="../17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a>
+            <a href="../../10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a>
         </li><li>
-            <a href="../15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
+            <a href="../../10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
         </li><li>
             <a href="../../../2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a>
         </li><li>
