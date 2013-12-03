@@ -69,31 +69,41 @@
         </div>
     <div class="section" id="windows-azure-sdk-for-ruby-release-0-6-0">
 <h1>Windows Azure SDK for Ruby Release 0.6.0</h1>
-<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。</p>
+<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。
+RubyGemsから入ります:</p>
+<div class="highlight-python"><pre>INISTALL &gt; gem install azure</pre>
+</div>
 <div class="section" id="id1">
 <h2>新機能</h2>
-<p>0.6.0では、主にmanagement APIの追加が行われました。GEMから</p>
+<p>0.6.0では、主にmanagement APIの追加が行われました。</p>
 <ul class="simple">
-<li>Add the following service management API
-* Virtual Machine
-* Virtual Machine Image
-* Virtual Network
-* Cloud Service
-* Storage
-* Sql Database
-* Location and Affinity Group</li>
+<li>下記の service management API が追加されました<ul>
+<li>Virtual Machine</li>
+<li>Virtual Machine Image</li>
+<li>Virtual Network</li>
+<li>Cloud Service</li>
+<li>Storage</li>
+<li>Sql Database</li>
+<li>Location and Affinity Group</li>
 </ul>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a>
-<a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></p>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a></div>
+<div class="line"><a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></div>
+</div>
 </div>
 <div class="section" id="get-blob-properties-bug">
 <h2>get_blob_properties のBUG修正</h2>
 <p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a> も取り込まれてリリースされました。
 これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb</a></p>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">azure/blob/blob_service.rb</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">azure/core/http/http_error.rb</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">azure/core/http/http_response.rb</a></div>
+</div>
+<p>これで出すに出せなかったやつが出せるようになります。</p>
 </div>
 </div>
 
@@ -104,7 +114,7 @@
         <div class="categories">
             <span>
                 Filed under:
-                <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/azure_sdk.html">Azure SDK</a>, <a href="../../../categories/ruby.html">Ruby</a>, <a href="../../../categories/github.html">GitHub観察日記</a></span>
+                <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/azure_sdk.html">Azure SDK</a>, <a href="../../../categories/ruby.html">Ruby</a>, <a href="../../../categories/github.html">GitHub観察記</a></span>
         </div>
         <div class="tags">
             <span>
@@ -140,7 +150,7 @@
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (11)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (2)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (1)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (6)</li><li><a href="../../../categories/github.html">GitHub観察日記</a> (1)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (11)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (2)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (1)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (6)</li><li><a href="../../../categories/github.html">GitHub観察記</a> (1)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (2), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (1), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (7), <a href="../../../tags/blob.html">Blob</a> (2), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/issue.html">Issue</a> (2), <a href="../../../tags/java.html">Java</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (1), <a href="../../../tags/storage.html">Storage</a> (8), <a href="../../../tags/table.html">Table</a> (7), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>

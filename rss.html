@@ -13,37 +13,47 @@
             <title><![CDATA[Windows Azure SDK for Ruby Release 0.6.0]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-sdk-for-ruby-release-0-6-0">
 <h1>Windows Azure SDK for Ruby Release 0.6.0</h1>
-<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。</p>
+<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。
+RubyGemsから入ります:</p>
+<div class="highlight-python"><pre>INISTALL &gt; gem install azure</pre>
+</div>
 <div class="section" id="id1">
 <h2>新機能</h2>
-<p>0.6.0では、主にmanagement APIの追加が行われました。GEMから</p>
+<p>0.6.0では、主にmanagement APIの追加が行われました。</p>
 <ul class="simple">
-<li>Add the following service management API
-* Virtual Machine
-* Virtual Machine Image
-* Virtual Network
-* Cloud Service
-* Storage
-* Sql Database
-* Location and Affinity Group</li>
+<li>下記の service management API が追加されました<ul>
+<li>Virtual Machine</li>
+<li>Virtual Machine Image</li>
+<li>Virtual Network</li>
+<li>Cloud Service</li>
+<li>Storage</li>
+<li>Sql Database</li>
+<li>Location and Affinity Group</li>
 </ul>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a>
-<a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></p>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a></div>
+<div class="line"><a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></div>
+</div>
 </div>
 <div class="section" id="get-blob-properties-bug">
 <h2>get_blob_properties のBUG修正</h2>
 <p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a> も取り込まれてリリースされました。
 これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb</a>
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb</a></p>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">azure/blob/blob_service.rb</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">azure/core/http/http_error.rb</a></div>
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">azure/core/http/http_response.rb</a></div>
+</div>
+<p>これで出すに出せなかったやつが出せるようになります。</p>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>
             <category><![CDATA[ Azure SDK ]]></category>
             <category><![CDATA[ Ruby ]]></category>
-            <category><![CDATA[ GitHub観察日記 ]]></category>
+            <category><![CDATA[ GitHub観察記 ]]></category>
              <pubDate>Tue, 03 Dec 2013 00:00:00 +0900</pubDate>
         </item>
     
