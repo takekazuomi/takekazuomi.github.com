@@ -1,11 +1,16 @@
-Windows Azure SDK for Ruby Release 0.6.0
-========================================
-Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来、7ヶ月ぶりのリリースです。
-RubyGemsから入ります::
+==========================================
+ Windows Azure SDK for Ruby Release 0.6.0
+==========================================
+Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来7ヶ月ぶりのリリースです。
+RubyGemsから入ります
 
-  INISTALL > gem install azure
+.. highlight:: ruby
 
+::
 
+   INISTALL > gem install azure
+
+               
 新機能
 ------
 0.6.0では、主にmanagement APIの追加とBUG修正が行われたようです。

@@ -160,6 +160,6 @@ microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter
 
 
 .. author:: default
-.. categories:: Azure Table, Azure
+.. categories:: Azure Table, Azure, GitHub観察記
 .. tags:: Azure Table, Table, Storage, Issue
 .. comments::
