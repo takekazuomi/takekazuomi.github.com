@@ -8,9 +8,9 @@ RubyGemsから入ります::
 
 新機能
 ------
-0.6.0では、主にmanagement APIの追加が行われました。
+0.6.0では、主にmanagement APIの追加とBUG修正が行われたようです。
 
-* 下記の service management API が追加されました
+* service management API のライブラリとして下記のものが追加されています。
 
   - Virtual Machine
   - Virtual Machine Image
