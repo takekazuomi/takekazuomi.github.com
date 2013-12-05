@@ -24,4 +24,13 @@ About Kyrt
 ====
 近江 武一
 
+`@takekazuomi <https://twitter.com/takekazuomi>`_
+
+`facebook takekazu.omi <https://www.facebook.com/takekazu.omi>`_
+
+`Slide Share <http://www.slideshare.net/takekazuomi/>`_
+
+`Windows Azure Table の利用 ～ 特性とパフォーマンスの検証 <http://bit.ly/nENGjD>`_
+
+
 

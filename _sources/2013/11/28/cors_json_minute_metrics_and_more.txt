@@ -6,6 +6,8 @@
 
  | 2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI `Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど <http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/>`_
 
+ | 2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 `Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入 <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_
+
 
 以下に抜粋で内容を紹介します。
 
