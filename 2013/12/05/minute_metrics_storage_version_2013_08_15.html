@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="Windows Azure SDK for Ruby Release 0.6.0" href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="Windows Azure SDK for Ruby Release 0.6.0" href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html" /><link rel="prev" title="GitHub/Windows Azure Storage Libraries for .NET 3.0.0" href="../06/github_windows_azure_storage_libraries_for_net_3_0.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.2.1',
@@ -324,6 +324,10 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 <h2>まとめ</h2>
 <p>Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。
 今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。</p>
+</div>
+<div class="section" id="id9">
+<h2>訂正 2013/12/06</h2>
+<p>訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> で公開されています。</p>
 <div class="line-block">
 <div class="line"><br /></div>
 <div class="line"><br /></div>
@@ -364,11 +368,13 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
                 <a href="../../../tags/2013_08_15.html">2013-08-15</a>, <a href="../../../tags/azure.html">Azure</a>, <a href="../../../tags/step_by_step.html">Step By Step</a></span>
         </div>
         </div><ul class="related clearfix">
-            <li class="left"></li>
+            <li class="left"> &laquo; <a href="../06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></li>
             <li class="right"><a href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a> &raquo; </li>
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/05/minute_metrics_storage_version_2013_08_15";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
+        </li><li>
             <a href="#">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
         </li><li>
             <a href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
@@ -386,15 +392,13 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
             <a href="../../10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a>
         </li><li>
             <a href="../../10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a>
-        </li><li>
-            <a href="../../../2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (12)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (3)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (2)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (6)</li><li><a href="../../../categories/github.html">GitHub観察記</a> (2)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (13)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (4)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (3)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (6)</li><li><a href="../../../categories/github.html">GitHub観察記</a> (3)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (2), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (3), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (1), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (7), <a href="../../../tags/blob.html">Blob</a> (2), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/issue.html">Issue</a> (2), <a href="../../../tags/java.html">Java</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (8), <a href="../../../tags/table.html">Table</a> (7), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (2), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (4), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (7), <a href="../../../tags/blob.html">Blob</a> (2), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/issue.html">Issue</a> (2), <a href="../../../tags/java.html">Java</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (9), <a href="../../../tags/table.html">Table</a> (7), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

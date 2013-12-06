@@ -1,7 +1,7 @@
 ===================================================================
  Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介
 ===================================================================
-`Windows Azure Storage Team Blog <http://blogs.msdn.com/b/windowsazurestorage/>`_ で、新しいWindows Azure Storageのリリースが紹介されています。`Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_ 
+`Windows Azure Storage Team Blog <http://blogs.msdn.com/b/windowsazurestorage/>`_ で、新しいWindows Azure Storageのリリースが紹介されています。 `Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_ 
 
 
  | 2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI `Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど <http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/>`_
@@ -58,7 +58,7 @@
 * List Containers, List Blobs と List Queues は、2013-08-15 version から、resourceに、URL address field を含みません。 これは、clientで再構築できる fields を削減したためです。
 * Lease Blob と Lease Container は、2013-08-15 version から、ETag と Last Modified Time を response headers で返します。これによって、lease holder は最後に見た時から、リソースが変更されたかどうかを簡単に確認することができます。（つまり、blob や その metadata が更新されたか)。以前と同じくblob の lease operations では、ETagは変更されません。
 
-これらの機能に対応した、Windows Azure Storage Client Library を `ここ <https://github.com/WindowsAzure/azure-storage-net>`_ にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。
+これらの機能に対応した、Windows Azure Storage Client Library を `github:azure-storage-net <https://github.com/WindowsAzure/azure-storage-net>`_ にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。
 
 既知の問題が幾つかあります。下記の記事を参照してください。
 
@@ -70,7 +70,7 @@ http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-sto
 
 最後に
 ======
-Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは `ここ <http://www.nuget.org/packages/WindowsAzure.Storage/>`_ Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。
+Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは `nuget:WindowsAzure.Storage <http://www.nuget.org/packages/WindowsAzure.Storage/>`_ Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。
 BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきていないようなので、年末に向けてさらに期待しています。
 負荷試験している時とかはMinute Metricsは便利ですね、嬉しいです。
 

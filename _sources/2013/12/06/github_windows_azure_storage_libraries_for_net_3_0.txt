@@ -1,0 +1,46 @@
+=======================================================
+ GitHub/Windows Azure Storage Libraries for .NET 3.0.0
+=======================================================
+
+.. image:: http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg
+   :target: http://www.flickr.com/photos/takekazuomi/9269858396
+   :alt: leaf by Takekazu Omi, on Flickr
+   :align: center
+
+3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。
+Storage の .NET Client ライブラリは、2.1までは、 `Windows Azure SDK for .NET github:azure-sdk-for-net <https://github.com/WindowsAzure/azure-sdk-for-net>`_ にありましたが、3.0からは、Storageは独立して `Windows Azure Storage Libraries for .NET github:azure-storage-net <https://github.com/WindowsAzure/azure-storage-net>`_ になりました。
+2.1系は継続して、 `Windows Azure SDK for .NET github:azure-sdk-for-net <https://github.com/WindowsAzure/azure-sdk-for-net>`_ でメンテされるようです。
+現在2.1系の最新は、 `2.1.0.4 <https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4>`_ です。
+
+今後 `Windows Azure SDK for .NET <https://github.com/WindowsAzure/azure-sdk-for-net>`_ は、 `Windows Azure Configuration Manager <http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager/>`_ や `Windows Azure Management Libraries <http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview>`_ の場所ということになりそうです。
+
+最初は、Windows Azure SDK for .NET という名前で、中身がStorageのライブラリで始まって、そのうち Configuration Manager が追加、Management Libraries が追加され、Media関連はディレクトリはあるけど別レポジトリ、とだんだん膨れてわかり辛くなってきたところだったので整理するにはいいタイミングだった気がします。
+
+
+Breaking Changes
+================
+:doc:`../05/minute_metrics_storage_version_2013_08_15` で、3.0の変更点が分からないと書きましたが、レポジトリの `BreakingChanges.txt <https://github.com/WindowsAzure/azure-storage-net/blob/master/BreakingChanges.txt#L33>`_ に記載がありました。
+
+３つあります。簡単にまとめます。
+
+1. テーブルの操作にDataServiceContextを使った場合、OperationContextのresponse received eventは no longer fired（もはや起こらない）
+2. ContinuationToken の WriteXml()/ReadXml()が変更されました。詳細は原文を参照してください。
+3. ServiceProperties では、uploadされたものだけが変更されます。例えば、CORSの設定だけをすると、Logging と Metering 関連の設定は変更されません。
+
+ServicePropertiesのプロパティが変更された件などは、上記 Breaking Changes に書いてありませんので互換性に関しては注意が必要だと思います。
+
+まとめ
+======
+このレポジトリの移動に関して :doc:`../../11/28/cors_json_minute_metrics_and_more`  に下記のような記述があります。
+
+ | これらの機能に対応した、Windows Azure Storage Client Library を `github:azure-storage-net <https://github.com/WindowsAzure/azure-storage-net>`_ にリリースします。
+
+今までのレポジトリを見てソースが上がってこないので、3.0のソースは公開されないのかと思って困惑していましたが、無事ソースも確認できて安心しました。
+
+
+.. author:: default
+.. categories:: Azure, Azure SDK, Azure Storage, GitHub観察記
+.. tags:: Azure, Storage, Azure SDK
+.. comments::
+
+
