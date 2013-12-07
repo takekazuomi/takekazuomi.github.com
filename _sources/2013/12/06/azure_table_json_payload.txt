@@ -1,0 +1,104 @@
+=====================================
+ Windows Azure Table の JSON payload
+=====================================
+2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の `Windows Azure Tables: Introducing JSON <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx>`_  に出ています、興味深い内容です。
+
+.. image:: http://farm4.staticflickr.com/3755/11248464764_54794780d3_z.jpg
+           :target: http://www.flickr.com/photos/takekazuomi/11248464764
+           :alt: mojya mojya by Takekazu Omi, on Flickr
+           :align: center
+
+翻訳は追々出ると思うので、拾い読みしながら気になったことを書きます。
+
+ - [引用]JSON Payloadは、version “2013-08-15”の一部してリリースされました。JSONは従来の AtomPub [#f1]_ フォーマットの OData payload format に比べて著しくサイズが小さくなり latency が低くなっています。また、payload size を削減するため、 insert の payload echo を Off にする方法を提供します。これらの新機能は、新しい  `Windows Azure Storage Client 3.0 <https://github.com/WindowsAzure/azure-storage-net>`_ ではデフォルトの機能として働きます。
+
+従来の HTTP request/response を見ていると無駄が目立ったので、それが削減されるのは大歓迎です。ここには、version “2013-08-15”でのplayloadの削減が書いてありますが、2013年11月（先月）ぐらいから、version "2012-02-12" の AtomPub でも余計な改行や空白を削減するなどの変更が行われています。このあたりの変更については、:doc:`../../11/24/windows_azure_tables_breaking_changes_2013_11` を見て下さい。
+
+Insert の payload echo を Off にする話が出ていますが、version "2011-08-18" でサポートされた `Insert Or Merge Entity (REST API) <http://msdn.microsoft.com/en-us/library/windowsazure/hh452241.aspx>`_ ではレスポンスのBODYが空でステータスコードは204 (No Content) を返すようになっていました、これを insert でも同じように動作するモードを付けたということのようです。 
+Insertの時にサーバー側で付与される情報はETagとTimestampだけで、それ以外は送信した内容と同じです、レスポンスヘッダーにETagは返ってくるので、エンティティ全体が帰ってこなくても困ることはほとんど無いと思います。場合によっては、Timestamp を使う場合があるかもしれませんが、その場合は設計を見直すか、エンティティ全体を返すモードで使うかになります。
+
+What is JSON
+============
+ - [引用] `JSON <http://json.org/>`_  (JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。 `AtomPub <http://www.odata.org/documentation/odata-v3-documentation/atom-format/>`_ と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:
+
+ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、 `OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design <http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038>`_ がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。
+IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込まずに、受信側のクライアントのコードで実装もしくは、JSON内にメタ情報埋め込みという話にしたのは、JSONの手軽さを損なわないという点で評価できます。
+
+nometadata、minimalmetadata、fullmetadata や、JSON payload の詳細については `Payload Format for Table Service Operations <http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx>`_ を見て下さい。
+
+
+AtomPub vs JSON format
+======================
+具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。:ref:`fullatompub` と、:ref:`json_nometadata` を見ると一目瞭然です。:ref:`fullatompub` の方は、元々、`Atom Publishing Protocol <http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol>`_ もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った :ref:`xml_nometadata` というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。
+
+
+Payloadの違いによる比較のテーブルが面白いので引用します
+
+.. csv-table:: To compare JSON and AtomPub
+   :header-rows: 1
+
+   Format, Request Header Size, Request Body Size, Response Header Size, Response Body Size, % Savings in HTTP Body Size only vs. AtomPub, % Savings in total HTTP transfer vs. AtomPub
+   AtomPub,"3,611","2,861","3,211","8,535",N/A,N/A
+   JSON MinimalMetadata,"3,462",771,"3,360","2,529",71%,44%
+   JSON NoMetadata,"3,432","771","3,330","1,805",77%,49%
+
+
+.. _fullatompub:
+
+AtomPub [引用]
+~~~~~~~~~~~~~~
+.. literalinclude:: fullatompub.xml
+   :language: xml
+
+.. _json_minimalmetadata:
+
+JSON minimalmetadata [引用]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: json_minimalmetadata.json
+   :language: json
+
+.. _json_nometadata:
+
+JSON nometadata [引用]
+~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: json_nometadata.json
+   :language: json
+
+.. _xml_nometadata:
+
+XML nometadata （参考までに作ってみました）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude:: xml_nometadata.xml
+   :language: xml
+
+
+最後に
+======
+書き始めたら意外と知らないことが多く。てっきり、OData V3 の JSON [#f2]_  、 `Content-Type: application/json;odata=verbose` 、 `json light (content-type : application/json; odata=light)` が使われているのかと思ったら、いつの間にかOData Version 4.0 JSON [#f3]_ なんてものがあって、そっちが使われていたことに気が付いたり。
+
+`Windows Azure Storage Client 3.0 <https://github.com/WindowsAzure/azure-storage-net>`_ で使っている、 `ODataLib 5.6.0 <http://www.nuget.org/packages/Microsoft.Data.OData/5.6.0>`_ から OData V4をサポートしているらしい [#f4]_ ということが分かったりということで手間取りました。
+
+じゃあ、ODataLib 5.6.0 のコードちょっと見ておくかと思ったら、odata.codeplex.com の ODataLib は2011年から放置状態になっていて（これは知ってました）、 http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0 からコードが確認できるってことに気が付いたりで手間取りました。
+
+今回は前半しか紹介できていないので、そのうち続きを書きたいと思います。
+
+
+
+Resources
+~~~~~~~~~
+.. [#f1] `AtomPub <http://www.odata.org/documentation/odata-v3-documentation/atom-format/>`_
+.. [#f2] `OData V3 JSON Verbose Format <http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format/>`_
+.. [#f3] `OData JSON Format Version 4.0 Candidate OASIS Standard 01 19 November 2013 <http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html>`_
+.. [#f4] OData V4 のstackが、ODataLib として提供されることがコメントに書いてある `WCF Data Services 5.6.0 Release <http://blogs.msdn.com/b/astoriateam/archive/2013/08/26/wcf-data-services-5-6-0-release.aspx>`_ 
+
+
+.. author:: default
+.. categories:: Azure, Azure Storage, Azure SDK
+.. tags:: 2013-08-15, Azure, JSON
+.. comments::
+
+.. highlight:: none
+
+
+

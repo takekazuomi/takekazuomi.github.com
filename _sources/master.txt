@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2013/12/06/azure_table_json_payload
    2013/12/06/github_windows_azure_storage_libraries_for_net_3_0
    2013/12/05/minute_metrics_storage_version_2013_08_15
    2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0
