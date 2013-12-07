@@ -2,3 +2,9 @@ img {
     max-width: 100%; 
     height:auto;
 }
+
+.docutils {
+    overflow:auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
