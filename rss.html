@@ -5,8 +5,104 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 06 Dec 2013 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 11 Dec 2013 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html</link>
+            <guid>http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html</guid>
+            <title><![CDATA[Windows Azure Powershell 0.7.2 リリース]]></title>
+            <description><![CDATA[<div class="section" id="windows-azure-powershell-0-7-2">
+<h1>Windows Azure Powershell 0.7.2 リリース</h1>
+<p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されますね。
+| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
+<p>Web Platform Installer を起動すると、12/10 リリースのWindows Azure Poershell があります。</p>
+<img alt="../../../_images/2013_12_11_webpi001.png" src="http://kyrt.in/_images/2013_12_11_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
+<div class="highlight-python"><pre>$ Get-Module | ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    0.0
+Azure                                                       0.7.2
+Microsoft.PowerShell.Management                             3.1.0.0
+Microsoft.PowerShell.Utility                                3.1.0.0
+posh-git                                                    0.0
+PsEnv                                                       0.0
+PSReadline                                                  1.0.0.1</pre>
+</div>
+<div class="section" id="id1">
+<h2>変更点</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
+<ul class="simple">
+<li>HDInsight cmdlets<ul>
+<li>Add-AzureHDInsightConfigValues</li>
+<li>Add-AzureHDInsightMetastore</li>
+<li>Add-AzureHDInsightStorage</li>
+<li>Get-AzureHDInsightCluster</li>
+<li>Get-AzureHDInsightJob</li>
+<li>Get-AzureHDInsightJobOutput</li>
+<li>Get-AzureHDInsightProperties</li>
+<li>New-AzureHDInsightCluster</li>
+<li>New-AzureHDInsightClusterConfig</li>
+<li>New-AzureHDInsightHiveJobDefinition</li>
+<li>New-AzureHDInsightMapReduceJobDefinition</li>
+<li>New-AzureHDInsightPigJobDefinition</li>
+<li>New-AzureHDInsightSqoopJobDefinition</li>
+<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
+<li>Remove-AzureHDInsightCluster</li>
+<li>Revoke-AzureHDInsightHttpServicesAccess</li>
+<li>Set-AzureHDInsightDefaultStorage</li>
+<li>Start-AzureHDInsightJob</li>
+<li>Stop-AzureHDInsightJob</li>
+<li>Use-AzureHDInsightCluster</li>
+<li>Wait-AzureHDInsightJob</li>
+<li>Grant-AzureHDInsightHttpServicesAccess</li>
+<li>Invoke-AzureHDInsightHiveJob</li>
+</ul>
+</li>
+<li>Web Site の WebSocket と managed pipe mode の設定<ul>
+<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
+</ul>
+</li>
+<li>Web Site の remote debugging 設定<ul>
+<li>Enable-AzureWebsiteDebug -Version</li>
+<li>Disable-AzureWebsiteDebug</li>
+</ul>
+</li>
+<li>VM を削除した時の VHD cleaning up オプション<ul>
+<li>Remove-AzureVM -DeleteVHD</li>
+<li>Remove-AzureService -DeleteAll</li>
+<li>Remove-AzureDeployment -DeleteVHD</li>
+</ul>
+</li>
+<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
+<li>Get-AzureDeployment</li>
+<li>Get-AzureReservedIP</li>
+<li>New-AzureReservedIP</li>
+<li>New-AzureVM</li>
+<li>Remove-AzureReservedIP</li>
+</ul>
+</li>
+<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
+<li>Start-AzureEmulator</li>
+<li>Publish-AzureServiceProject</li>
+<li>Save-AzureServiceProjectPackage</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいのです。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Azure Poershell ]]></category>
+            <category><![CDATA[ GitHub観察記 ]]></category>
+             <pubDate>Wed, 11 Dec 2013 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2013/12/06/azure_table_json_payload.html</link>
             <guid>http://kyrt.in/2013/12/06/azure_table_json_payload.html</guid>

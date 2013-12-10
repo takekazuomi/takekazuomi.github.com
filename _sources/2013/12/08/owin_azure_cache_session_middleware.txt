@@ -1,0 +1,57 @@
+OWIN Azure Cache Session Middleware
+===================================
+アイディア
+
+とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、 `neuecc/Owin.RedisSession <https://github.com/neuecc/Owin.RedisSession>`_ なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ることにした。
+
+基本的な考えは非常に簡単で、Invoke で処理の前後に割り込んでCache Providorの設定と後始末をするというだけ。アプリケーション全体の中での割り込む場所を制御する方法は後で考える（多分無い）
+
+public async Task Invoke(IDictionary<string, object> environment)
+    {
+        foreach (var key in _options.RequestKeys)
+          {
+            _options.Log(key, environment[key]);            
+        }   
+ 
+        await _next(environment);
+ 
+        foreach (var key in _options.ResponseKeys)
+        {
+            _options.Log(key, environment[key]);
+        }   
+    }
+
+
+まずは試しで、OWIN Selft Host環境を作って書いてみる
+
+
+install-package Microsoft.Owin.Hosting 
+install-package Microsoft.Owin.Host.HttpListener
+install-package Microsoft.Owin.Diagnostics
+install-Package Owin.Extensions
+
+
+Console Appliationを作ってmainを下記のようにする
+
+Program.cs
+
+Startup用のクラスを追加する
+
+動かすとこんな感じになる
+
+.. image:: 2013_12_08_scrn-001.png
+
+Windows Azure Cache Client を入れる
+
+Install-Package Microsoft.WindowsAzure.Caching
+
+
+http://www.nuget.org/packages/Microsoft.WindowsAzure.Caching/
+
+OWIN Middleware 定番クラスを３つ追加する
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

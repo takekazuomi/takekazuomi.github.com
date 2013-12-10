@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2013/12/11/windows_azure_powershel_0_7_2_release
    2013/12/06/azure_table_json_payload
    2013/12/06/github_windows_azure_storage_libraries_for_net_3_0
    2013/12/05/minute_metrics_storage_version_2013_08_15
