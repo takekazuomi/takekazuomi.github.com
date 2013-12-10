@@ -9,8 +9,9 @@ Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 
 	   :alt: IMG_0911 by Takekazu Omi, on Flickr
            :align: center
 
-
-Web Platform Installer を起動すると、12/10 リリースのWindows Azure Poershell があります。
+インストール
+============
+最新版はWeb Platform Installer 経由でインストールできます。12/10 リリースのWindows Azure Poershell がを入れます。
 
 .. image:: 2013_12_11_webpi001.png
 
@@ -97,6 +98,7 @@ Web Platform Installer を起動すると、12/10 リリースのWindows Azure P
 個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいのです。
 
 
+.. highlight:: none
 .. author:: default
 .. categories:: Azure, Azure Poershell, GitHub観察記
 .. tags:: Azure, Azure Powershell, Powershell, posh
