@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>Azure SDK for Java 0.4.6 long値のfilter BUG &mdash; Kyrt Blog</title>
+        <title>Windows Azure Storage Client 3.0.1 &mdash; Kyrt Blog</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1" href="../15/windows_azure_plugin_for_eclipse_with_java.html" /><link rel="prev" title="Windows Azure Tables の Breaking Changes 2013/11" href="../../11/24/windows_azure_tables_breaking_changes_2013_11.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="Windows Azure Powershell 0.7.2 リリース" href="windows_azure_powershel_0_7_2_release.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.2.1',
@@ -65,83 +65,57 @@
                 </li>
               </ul>
           </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
-            <span>October 17, 2013</span>
+            <span>December 11, 2013</span>
         </div>
-    <div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
-<h1>Azure SDK for Java 0.4.6 long値のfilter BUG</h1>
-<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の&#8217;L&#8217;が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
-<p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
-<p>修正して、Pull Requestを投げています。(2013/10/13)</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820/"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg" /></a>
-<hr class="docutils" />
+    <div class="section" id="windows-azure-storage-client-3-0-1">
+<h1>Windows Azure Storage Client 3.0.1</h1>
+<p>Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG FIXです。</p>
 <div class="section" id="id1">
-<h2>修正内容</h2>
-<script src="https://gist.github.com/takekazuomi/7031393.js">&nbsp;</script><p>edmType が、EdmType.INT64の場合に、値のpostfixに&#8217;L&#8217;を付けるように変更しました。</p>
+<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">Issues Fixed in 3.0.1.0:</a></h2>
+<ul class="simple">
+<li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
+<li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
+<li>Tables: Nuget package に Microsoft.Data.Services.Client への明示的な参照を追加</li>
+<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細: <a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
+<li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
+</ul>
 </div>
 <div class="section" id="id2">
-<h2>元の仕様</h2>
-<p>どこからこの&#8217;L&#8217;が出てきたかという話をチョットします。
-Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。&#8217;L&#8217;ですね。</p>
-<table border="1" class="docutils">
-<caption>OData Primitive Data Types</caption>
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Primitive Types     Literal Form    Example</th>
-<th class="head">&nbsp;</th>
-<th class="head">&nbsp;</th>
-<th class="head">&nbsp;</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Edm.Int64 Represents a signed 64-bit</td>
-<td>integer value</td>
-<td>[-] [0-9]+L</td>
-<td>Example 1: 64L Example 2: -64L</td>
-</tr>
-</tbody>
-</table>
-<p><a class="reference external" href="http://www.odata.org/documentation/overview/#AbstractTypeSystem">odata.org  6. Primitive Data Types</a> より</p>
-<p>念のため他のデータ型の実装も確認すると、Azure Tableでサポートされているデータ型でリテラル表記に癖があるEdm.Guid, Edm.DateTimeのあたりですは問題なさそうです。</p>
+<h2>メモ</h2>
+<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにしたので、IEnumerableを撮った時に、今までIEnumerable&lt;JToken&gt;)が取れてたところが取れなくなったのに起因するようです。
+５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があります。それも、このバージョンで解決されます。</p>
 </div>
 </div>
 
     <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
+        
         <div class="categories">
             <span>
                 Filed under:
-                <a href="../../../categories/azure_sdk.html">Azure SDK</a></span>
+                <a href="../../../categories/azure_table.html">Azure Table</a>, <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/github観察記.html">GitHub観察記</a></span>
         </div>
         <div class="tags">
             <span>
                 Tags:
-                <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a>, <a href="../../../tags/java.html">Java</a>, <a href="../../../tags/azure_table.html">Azure Table</a>, <a href="../../../tags/bug.html">BUG</a></span>
+                <a href="../../../tags/azure_table.html">Azure Table</a>, <a href="../../../tags/table.html">Table</a>, <a href="../../../tags/storage.html">Storage</a>, <a href="../../../tags/release.html">Release</a></span>
         </div>
         </div><ul class="related clearfix">
-            <li class="left"> &laquo; <a href="../../11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></li>
-            <li class="right"><a href="../15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a> &raquo; </li>
-        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/10/17/azure_java_sdk_long_value_filtering_bug";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+            <li class="left"></li>
+            <li class="right"><a href="windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/11/windows_azure_storage_client_3_0_1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="../../12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+            <a href="#">Windows Azure Storage Client 3.0.1</a>
         </li><li>
-            <a href="../../12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
+            <a href="windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
         </li><li>
-            <a href="../../12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
+            <a href="../06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
         </li><li>
-            <a href="../../12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
+            <a href="../06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
         </li><li>
-            <a href="../../12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
+            <a href="../05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
         </li><li>
-            <a href="../../12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
+            <a href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
         </li><li>
             <a href="../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a>
         </li><li>

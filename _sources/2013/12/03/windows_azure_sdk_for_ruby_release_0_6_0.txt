@@ -44,5 +44,5 @@ get_blob_properties のBUG修正
 
 .. author:: default
 .. categories:: Azure, Azure SDK, Ruby, GitHub観察記
-.. tags:: Azure, Storage, Azure SDK
+.. tags:: Azure, Storage, Azure SDK,Release
 .. comments::
