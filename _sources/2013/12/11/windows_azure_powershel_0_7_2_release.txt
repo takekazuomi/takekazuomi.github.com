@@ -18,20 +18,8 @@ Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 
 
 インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。
 
-::
-
-   $ Get-Module | ft name,version
-
-   Name                                                        Version
-   ----                                                        -------
-   Autoload                                                    0.0
-   Azure                                                       0.7.2
-   Microsoft.PowerShell.Management                             3.1.0.0
-   Microsoft.PowerShell.Utility                                3.1.0.0
-   posh-git                                                    0.0
-   PsEnv                                                       0.0
-   PSReadline                                                  1.0.0.1
-
+.. literalinclude:: checkversion.txt
+   :language: bash
 
 
 変更点
@@ -99,8 +87,9 @@ Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 
 今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいのです。
 
 
-.. highlight:: none
 .. author:: default
 .. categories:: Azure, Azure Poershell, GitHub観察記
 .. tags:: Azure, Azure Powershell, Powershell, posh,Release
 .. comments::
+
+.. highlight:: bash

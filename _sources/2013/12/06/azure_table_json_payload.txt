@@ -98,7 +98,8 @@ Resources
 .. tags:: 2013-08-15, Azure, JSON
 .. comments::
 
-.. highlight:: none
+.. highlight:: bash
+
 
 
 
