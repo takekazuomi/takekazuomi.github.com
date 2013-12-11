@@ -3,7 +3,7 @@
 ====================================
 Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG FIXです。
 
-`Issues Fixed in 3.0.1.0: <https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176>`_
+`修正点 3.0.1.0: <https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176>`_
 ==============================================================================================================
 
 * All (WP): Get/SetACL で明示的に Accept type application/xml を設定

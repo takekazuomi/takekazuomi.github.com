@@ -70,8 +70,8 @@
         <div class="section" id="windows-azure-storage-client-3-0-1">
 <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
 <p>Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG FIXです。</p>
-<div class="section" id="id1">
-<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">Issues Fixed in 3.0.1.0:</a></h2>
+<div class="section" id="id2">
+<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
 <ul class="simple">
 <li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
 <li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
@@ -80,7 +80,7 @@
 <li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
 </ul>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id3">
 <h2>メモ</h2>
 <p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにしたので、IEnumerableを撮った時に、今までIEnumerable&lt;JToken&gt;)が取れてたところが取れなくなったのに起因するようです。
 ５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があります。それも、このバージョンで解決されます。</p>
