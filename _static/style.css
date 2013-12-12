@@ -8,3 +8,43 @@ img {
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
 }
+
+@media only screen and (min-width: 900px) {
+    body { font-size: 1em; }
+}
+
+.section h1 {
+    border-bottom: 8px solid #999999;
+    display: inline-block;
+}
+
+.section h2 {
+    border-bottom: 4px solid #999999;
+    display: inline-block;
+}
+
+.section h3 {
+    border-bottom: 4px solid #999999;
+    display: inline-block;
+}
+
+.section h4 {
+    border-bottom: 4px solid #999999;
+    display: inline-block;
+}
+
+.section h5 {
+    border-bottom: 4px solid #999999;
+    display: inline-block;
+}
+
+.section h6 {
+    border-bottom: 4px solid #999999;
+    display: inline-block;
+}
+
+.section {
+    border-bottom: 1px solid #dedede;
+    margin-bottom: 20px;
+}
+
