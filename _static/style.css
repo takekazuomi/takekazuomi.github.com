@@ -9,6 +9,11 @@ img {
     overflow-scrolling: touch;
 }
 
+body {
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif; 
+    word-break: break-all;
+}
+
 @media only screen and (min-width: 900px) {
     body { font-size: 1em; }
 }
