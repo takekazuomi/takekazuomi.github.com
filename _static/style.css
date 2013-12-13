@@ -15,36 +15,43 @@ img {
 
 .section h1 {
     border-bottom: 8px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section h2 {
     border-bottom: 4px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section h3 {
     border-bottom: 4px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section h4 {
     border-bottom: 4px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section h5 {
     border-bottom: 4px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section h6 {
     border-bottom: 4px solid #999999;
+    margin: 0 0;
     display: inline-block;
 }
 
 .section {
     border-bottom: 1px solid #dedede;
+    margin: 0 0;
     margin-bottom: 20px;
 }
 

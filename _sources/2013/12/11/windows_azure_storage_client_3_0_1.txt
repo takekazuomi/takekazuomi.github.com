@@ -1,10 +1,10 @@
 ====================================
  Windows Azure Storage Client 3.0.1
 ====================================
-Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG FIXです。
+2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。 `nuget:Windows Azure Storage 3.0.1 <http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1>`_ 
 
 `修正点 3.0.1.0: <https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176>`_
-==============================================================================================================
+=====================================================================================================
 
 * All (WP): Get/SetACL で明示的に Accept type application/xml を設定
 * Blobs: Lease operations の後で、LastModified と ETag プロパティを設定
@@ -14,8 +14,9 @@ Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG
 
 メモ
 ====
-Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにしたので、IEnumerableを撮った時に、今までIEnumerable<JToken>)が取れてたところが取れなくなったのに起因するようです。
-５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があります。それも、このバージョンで解決されます。
+Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable<JToken>)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。
+５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。
+
 
 .. categories:: Azure Table, Azure, GitHub観察記
 .. tags:: Azure Table, Table, Storage, Release

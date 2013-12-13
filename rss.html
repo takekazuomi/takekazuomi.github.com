@@ -13,7 +13,7 @@
             <title><![CDATA[Windows Azure Storage Client 3.0.1]]></title>
             <description><![CDATA[<div class="section" id="windows-azure-storage-client-3-0-1">
 <h1>Windows Azure Storage Client 3.0.1</h1>
-<p>Windows Azure Storage Client 3.0.1 がリリースされました。内容はBUG FIXです。</p>
+<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
 <div class="section" id="id2">
 <h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
 <ul class="simple">
@@ -26,8 +26,8 @@
 </div>
 <div class="section" id="id3">
 <h2>メモ</h2>
-<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにしたので、IEnumerableを撮った時に、今までIEnumerable&lt;JToken&gt;)が取れてたところが取れなくなったのに起因するようです。
-５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があります。それも、このバージョンで解決されます。</p>
+<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。
+５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure Table ]]></category>
@@ -127,7 +127,7 @@ PSReadline                                                  1.0.0.1
 </div>
 <div class="section" id="id3">
 <h2>最後に</h2>
-<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいのです。</p>
+<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>
@@ -1085,6 +1085,11 @@ BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきて
             <title><![CDATA[Helios を Azure Cloud Service で使う]]></title>
             <description><![CDATA[<div class="section" id="helios-azure-cloud-service">
 <h1>Helios を Azure Cloud Service で使う</h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><a class="reference internal" href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><em>2013/12/13 追記</em></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a> の問題は解決されました。</div>
+</div>
+</div></blockquote>
 <p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 <a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a> と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
 <a class="reference internal image-reference" href="http://kyrt.in/_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios009.png" style="width: 600px;"/></a>
 <p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
@@ -1147,8 +1152,8 @@ namespace WebRole1
 <p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
 </div>
 <div class="section" id="webrolestartup-task">
-<h3>WebRoleのStartup taskの作成</h3>
-<p>Heliosの中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a> の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
 <img alt="../../../_images/2013_11_helios007.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios007.png"/>
 <p>ServiceDefinition.csdefに下記の定義を追加します:</p>
 <div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
@@ -1183,10 +1188,16 @@ namespace WebRole1
 </div>
 <div class="section" id="id2">
 <h2>まとめ</h2>
-<p>Helios runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>  runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
 vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
 この問題は、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> に起因する。
 このままだとちょっと使いづらいですね。</p>
+</div>
+<div class="section" id="helios-fix-runtime">
+<span id="id4"/><h2>2013/12/13 追記</h2>
+<p>2013/12/02 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>  では、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a> に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、 <a class="reference internal" href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a> のようなことをしないでも動作します。
+これで普通に使えるようになりますね。</p>
+<img alt="../../../_images/2013_11_helios011.png" src="http://kyrt.in/_images/2013_11_helios011.png"/>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>

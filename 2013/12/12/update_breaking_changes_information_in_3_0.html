@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>Windows Azure Storage Client 3.0.1 &mdash; Kyrt Blog</title>
+        <title>Windows Azure Storage Libraries for .NET 3.0のBreaking Changes情報の更新 &mdash; Kyrt Blog</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="Windows Azure Powershell 0.7.2 リリース" href="windows_azure_powershel_0_7_2_release.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.2.1',
@@ -68,7 +68,7 @@
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
-            <span>December 11, 2013</span>
+            <span>December 12, 2013</span>
         </div>
     </div>
     
@@ -79,49 +79,27 @@
     
     </div>
     
-    <div class="section" id="windows-azure-storage-client-3-0-1">
-<h1>Windows Azure Storage Client 3.0.1</h1>
-<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
-<div class="section" id="id2">
-<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
-<ul class="simple">
-<li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
-<li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
-<li>Tables: Nuget package に Microsoft.Data.Services.Client への明示的な参照を追加</li>
-<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細: <a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
-<li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
-</ul>
-</div>
-<div class="section" id="id3">
-<h2>メモ</h2>
-<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。
-５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
-</div>
+    <div class="section" id="windows-azure-storage-libraries-for-net-3-0breaking-changes">
+<h1>Windows Azure Storage Libraries for .NET 3.0のBreaking Changes情報の更新</h1>
+<p>Windows Azure Storage Libraries for .NET 3.0のBreaking Changes情報が更新されました。
+:doc:../06/github_windows_azure_storage_libraries_for_net_3_0 で、3.0のBreaking Changes に付いて書きましたが更新されたようなので</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/issues/6">https://github.com/WindowsAzure/azure-storage-net/issues/6</a></p>
 </div>
 
     <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
         
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="../../../categories/azure_table.html">Azure Table</a>, <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/github観察記.html">GitHub観察記</a></span>
+        
         </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="../../../tags/azure_table.html">Azure Table</a>, <a href="../../../tags/table.html">Table</a>, <a href="../../../tags/storage.html">Storage</a>, <a href="../../../tags/release.html">Release</a></span>
-        </div>
-        </div>
-    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/11/windows_azure_storage_client_3_0_1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<ul class="related clearfix">
-            <li class="left"></li>
-            <li class="right"><a href="windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a> &raquo; </li>
-        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/11/windows_azure_storage_client_3_0_1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/12/update_breaking_changes_information_in_3_0";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/12/update_breaking_changes_information_in_3_0";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="#">Windows Azure Storage Client 3.0.1</a>
+            <a href="../11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
         </li><li>
-            <a href="windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
+            <a href="../11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
         </li><li>
             <a href="../06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
         </li><li>

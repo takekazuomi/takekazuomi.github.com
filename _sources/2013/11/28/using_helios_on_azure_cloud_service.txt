@@ -1,6 +1,8 @@
 ====================================
 Helios を Azure Cloud Service で使う
 ====================================
+ | :ref:`helios_fix_runtime` Microsoft.Owin.Host.IIS 0.1.1-pre では、:ref:`helios_startuptask` の問題は解決されました。 
+
 巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 `Checking out the Helios IIS Owin Web Server Host <http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host>`_ と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。
 
 .. image:: 2013_11_helios009.png
@@ -76,9 +78,11 @@ Startup Classの設定
 
 これで、WebRoleを動かしてみて、動くことを確認します。
 
+.. _helios_startuptask:
+
 WebRoleのStartup taskの作成
 ---------------------------
-Heliosの中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。
+`Helios 0.1.0 <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre>`_ の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。
 
 .. image:: 2013_11_helios007.png
    :align: center
@@ -118,10 +122,19 @@ ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します
 
 まとめ
 ======
-Helios runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
+`Helios 0.1.0 <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre>`_  runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
 vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
 この問題は、厳密に言うと `Microsoft.Owin.Host.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre>`_ が使っている、`Microsoft.AspNet.Loader.IIS 0.1.0-pre <http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre>`_ に起因する。
 このままだとちょっと使いづらいですね。
+
+.. _helios_fix_runtime:
+
+2013/12/13 追記
+===============
+2013/12/02 `Microsoft.Owin.Host.IIS 0.1.1-pre <http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre>`_  では、 `Microsoft.AspNet.Loader.IIS 0.1.1-pre <http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre>`_ に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、 :ref:`helios_startuptask` のようなことをしないでも動作します。
+これで普通に使えるようになりますね。
+
+.. image:: 2013_11_helios011.png
 
 
 .. author:: default

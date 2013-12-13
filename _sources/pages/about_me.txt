@@ -1,7 +1,10 @@
 About Kyrt
 ===========
 
+|
 .. image:: SmallLogo.png
+   :scale: 50%
+   :align: center
 
 カート(kyrt) は、Isaac Asimovの宇宙気流(The Currents of Space)で惑星フロリナの特産品として出てくる繊維の名前からいただきました。宇宙気流は、後に銀河帝国となるトランター帝国が勢力を増して行く時代を書いた作品で昔からのお気に入りの作品です。
 

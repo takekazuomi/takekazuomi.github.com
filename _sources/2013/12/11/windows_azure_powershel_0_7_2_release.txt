@@ -84,7 +84,7 @@ Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 
 
 最後に
 ======
-今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいのです。
+今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。
 
 
 .. author:: default
