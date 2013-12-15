@@ -19,6 +19,17 @@ body {
     body { font-size: 1em; }
 }
 
+
+@media only screen and (max-device-width:480px) {
+    .logo-nav {
+	display : none;
+    }
+
+    .quicklink {
+	display : none;
+    }
+}
+
 h1,h2,h3,h4,h5,h6 
 { 
     font-family: 'Segoe UI Light', 'Segoe WP Light', 'Segoe UI', 'PT Sans', Helvetica, sans-serif; 
@@ -75,3 +86,4 @@ header {
 #kyrt_logo  {
     margin: 20px 0 20px
 }
+
