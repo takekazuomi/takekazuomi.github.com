@@ -10,12 +10,19 @@ img {
 }
 
 body {
-    font-family: 'PT Sans', Helvetica, Arial, sans-serif; 
+    font-family: 'Segoe UI', 'Segoe WP', 'PT Sans', Helvetica, sans-serif; 
     word-break: break-all;
+    background-color: #ffffff;
 }
 
 @media only screen and (min-width: 900px) {
     body { font-size: 1em; }
+}
+
+h1,h2,h3,h4,h5,h6 
+{ 
+    font-family: 'Segoe UI Light', 'Segoe WP Light', 'Segoe UI', 'PT Sans', Helvetica, sans-serif; 
+    font-weight: 100; 
 }
 
 .section h1 {
@@ -60,3 +67,11 @@ body {
     margin-bottom: 20px;
 }
 
+
+header {
+    word-break: normal;
+}
+
+#kyrt_logo  {
+    margin: 20px 0 20px
+}
