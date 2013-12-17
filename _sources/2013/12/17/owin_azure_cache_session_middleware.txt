@@ -186,8 +186,8 @@ OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してく�
 
 
 .. author:: default
-.. categories:: none
-.. tags:: none
+.. categories:: Azure, OWIN
+.. tags:: Azure, Azure Cache, Cache, OWIN, Session
 .. comments::
 
 
