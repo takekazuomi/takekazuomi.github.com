@@ -1,0 +1,24 @@
+Windiows Azure Storage Client の RetryPolicy
+============================================
+Windiows Azure Storage では、動的な負荷分散（Load Balancing）と障害時の自動フェールオーバーが実装されています。そのためアプリケーションを安定して動作させるにはリトライ処理が欠かせません。
+日本語だと、 `Windows Azure ストレージ サービスの構造とリトライ ポリシーの関係について <http://msdn.microsoft.com/ja-jp/windowsazure/jj647756.aspx>`_
+英語だと `Storage Client Library 2.0 – Implementing Retry Policies <http://gauravmantri.com/2012/12/30/storage-client-library-2-0-implementing-retry-policies/>`_ や、 
+`Windows Azure Storage Client Library 2.0 Breaking Changes & Migration Guide http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx>`_ 、
+最新のWindiows Azure Storage Client 3.0 で導入された `ExtendedRetryPolicy` については、
+`Windows Azure Storage Redundancy Options and Read Access Geo Redundant Storage <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx>`_
+に記述されています。
+
+少々情報が散逸していて分かりづらいので最新の Windiows Azure Storage Client 3.0 のコードを確認して調べた範囲をまとめます。
+
+Windiows Azure Storage Client 3.0
+
+
+
+
+
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

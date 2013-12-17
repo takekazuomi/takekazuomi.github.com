@@ -74,6 +74,100 @@
     </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
+        <div class="section" id="windows-azure-storage-known-issues-2013-11">
+<h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
+</div>
+<div class="line-block">
+<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+</div>
+</div></blockquote>
+<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
+<div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
+<h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
+<ul class="simple">
+<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の <cite>“//”</cite> は、 <cite>“/”</cite> に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は <cite>“//”</cite> を送らないようにして下さい</li>
+</ul>
+<p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
+</div>
+<div class="section" id="windows-azure-tablesissue">
+<h2>Windows Azure TablesのIssue</h2>
+<p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
+<ol class="arabic simple">
+<li>clients で、 <cite>DataServiceContext.ResolveName</cite> を定義し、 <cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite> 以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。
+これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。
+ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
+</ol>
+<p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
+<span class="n">TableServiceContext</span> <span class="n">tableServiceContext</span> <span class="o">=</span> <span class="n">cloudTableClient</span><span class="o">.</span><span class="na">GetDataServiceContext</span><span class="o">();</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">ResolveName</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">(</span><span class="n">Type</span> <span class="n">entityType</span><span class="o">)</span>
+<span class="o">{</span>
+<span class="c1">// This would cause class name to be sent as the value for term in the category element and service would return Bad Request.</span>
+<span class="k">return</span> <span class="n">entityType</span><span class="o">.</span><span class="na">FullName</span><span class="o">;</span>
+<span class="o">};</span>
+
+<span class="n">SimpleEntity</span> <span class="n">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SimpleEntity</span><span class="o">(</span><span class="s">&quot;somePK&quot;</span><span class="o">,</span> <span class="s">&quot;someRK&quot;</span><span class="o">);</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">AddObject</span><span class="o">(</span><span class="s">&quot;sometable&quot;</span><span class="o">,</span> <span class="n">entity</span><span class="o">);</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">SaveChanges</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
+<ol class="arabic simple" id="known-issue-201311" start="2">
+<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
+これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
+.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
+それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
+</ol>
+<p>下記は問題があるコードです</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<span class="o">{</span>
+    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">&quot;mypk&quot;</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>このように書くと 2.1 storage client library の IQueryable interface は、下記のUriに展開されて新しい service updateでは、400 (Bad Request) で拒否されます</p>
+<p><cite>http://myaccount.table.core.windows.net/invalidfiltertable?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
+<p>コードを下記のように変更してquery の castを取り除いてください。そうすれば、cast operator は送信されません</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">&quot;mypk&quot;</span><span class="o">);</span>
+<span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>Uri request は下記のようになり、service に受け付けられます</p>
+<p><cite>http://myaccount.table.core.windows.net/validfiltertable?$filter=PartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
+<p>We apologize for these issues and we are working on a hotfix to address them. (我々はこれらの問題について謝罪し、我々はそれらに対処するための修正プログラムに取り組んでいます)</p>
+</div>
+<div class="section" id="id1">
+<h2>感想、コメント等</h2>
+<ul class="simple">
+<li>最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。</li>
+<li>コンテナの前が <cite>//</cite> になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
+<li>ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。</li>
+</ul>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
         <div class="section" id="windows-azure-tables-breaking-changes-2013-11">
 <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
 <blockquote>
@@ -1151,6 +1245,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
+        </li><li>
             <a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
         </li><li>
             <a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
@@ -1168,8 +1264,6 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
             <a href="2013/11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a>
         </li><li>
             <a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a>
-        </li><li>
-            <a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a>
         </li></ul>
 </div>
 </section><section><div class="widget">

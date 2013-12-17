@@ -9,6 +9,11 @@ img {
     overflow-scrolling: touch;
 }
 
+.docutils .label {
+    word-break: normal;
+}
+
+
 body {
     font-family: 'Segoe UI', 'Segoe WP', 'PT Sans', Helvetica, sans-serif; 
     word-break: break-all;
@@ -88,3 +93,8 @@ header h1 {
     margin: 20px 0 20px
 }
 
+.highlight {
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    font-size: 12px;
+    line-height: 1.2;
+}

@@ -1,0 +1,194 @@
+=================================================
+ OWIN - Open Web Interface for .NET を使う
+=================================================
+`OWIN(Open Web Interface for .NET) <http://owin.org/>`_ は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
+2010年の終わりのころに `Benjamin van der Veen 氏 <http://bvanderveen.com/>` が始め、 `Draft 7 12 July 2012 <http://owin.org/spec/owin-1.0.0draft7.html>`_ では、Author: OWIN working group となっている。参照: http://owin.org/spec/history-1.0.html
+
+.. image:: http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg
+           :target: http://www.flickr.com/photos/takekazuomi/7814536388
+	   :alt: arch by Takekazu Omi, on Flickr
+           :align: center
+
+
+.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 `An Overview of Project Katana August 30, 2013 Howard Dierking <http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana>`_  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。
+
+これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
+.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。
+
+その結果出来上がったのが、従来のVB6アプリの習慣に沿ったイベントモデルをベースにしたWeb Formsのアーキテクチャーと論理的に異なる HTTP ObjectとWeb Forms FrameworkがタイトにカップルされたSystem.Web.dll らしい。
+
+昔を振り返ってみると、1993年の終わりころ [#r1]_  `UCSA HTTPd <http://en.wikipedia.org/wiki/NCSA_HTTPd>`_  にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。`ASP.NETのリリースは2002年 <http://en.wikipedia.org/wiki/ASP.NET>`_ なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。
+今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。
+
+その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている `Rack: a Ruby Webserver Interface Feb 2007 <http://rack.github.io/>`_  が生まれる。
+こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。
+
+.NETでは最初に標準的なWeb Server（IIS）と、Framework（System.Web.dll）ありきで始まったため混乱は無かったが自由な発展が阻害され、一方Ruby/Pythonなど標準的なものが無い中では混沌のなかから優れた標準（Rack/WSGI)が生まれたというのは実に面白い。
+
+
+OWINの基本
+==========
+The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。
+
+.. code-block:: c#
+
+   IDictionary<string, object>
+
+
+２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。
+
+.. code-block:: c#
+
+   Func<IDictionary<string, object>, Task>;
+
+
+Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成 [#r2]_ でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、 `neuecc/Owin.RedisSession <https://github.com/neuecc/Owin.RedisSession>`_ なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。
+
+
+OWIN Middleware Azure Cache Session
+===================================
+そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある `OWIN Azure Cache Session Middleware <https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware>`_ 手探りで作った習作だが、簡単に中身を説明する。
+OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。
+
+.. seqdiag::
+   :maxwidth: 600
+
+   diagram {
+     default_fontsize = 20;
+
+     Browser => "Azure Cache\nMiddleware" [label = "Request"] {
+       "Azure Cache\nMiddleware" => "Session Middleware" [label = "Invoke to Next"] {
+         "Session Middleware" => App [label = "Invoke to Next"];
+       }
+     }
+   }
+
+
+
+OWIN SelfHost Applicationの作成
+===============================
+まずは試しで、OWIN Selft Host環境を作って書いてみる。
+
+Console Projectを作成して必要なパッケージを入れる
+-------------------------------------------------
+nugetから必要なパッケージを入れる
+
+.. code-block:: bash
+
+   install-package Microsoft.Owin.Hosting 
+   install-package Microsoft.Owin.Host.HttpListener
+   install-package Microsoft.Owin.Diagnostics
+   install-Package Owin.Extensions
+
+
+Program.csのmainを下記のようにする
+----------------------------------
+`WebApp.Start<Startup>(url)` とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。
+
+.. literalinclude:: Program.cs
+   :language: c#
+
+
+Startup用のクラスを追加する
+---------------------------
+`[assembly: OwinStartup(typeof(SelfHostSample.Startup))]` でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。
+
+.. literalinclude:: Startup.cs.001
+   :language: c#
+
+これで動かすとこんな感じになる
+------------------------------
+このコードでは、`app.UseWelcomePage();` としているので、Welcomeページが表示される。このあたりの実装は、 `katanaproject.codeplex.com <http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs>`_ 見ると非常に参考になる。
+
+.. image:: 2013_12_08_scrn-001.png
+
+
+Azure Cache Session Middleware
+==============================
+ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。
+
+Windows Azure Cache Client を入れる
+-----------------------------------
+
+.. code-block:: bash
+
+   Install-Package Microsoft.WindowsAzure.Caching
+
+
+App.config内のAzure Cacheの設定をする
+-------------------------------------
+App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。
+
+.. literalinclude:: App.config.template
+   :language: xml
+
+OWIN Middleware用のプロジェクトを追加する
+-----------------------------------------
+今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 `Owin.Middleware project <https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware>`_ 
+必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。
+
+.. code-block:: bash
+
+   install-Package Microsoft.Owin
+   install-Package Microsoft.WindowsAzure.Caching
+   install-Package EnterpriseLibrary.TransientFaultHandling.Caching
+
+
+Azrue Cache Middleware
+-----------------------------------------
+OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 [#r3]_ 
+
+
+.. literalinclude:: AzureCacheMiddleware.cs
+   :language: c#
+
+Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。
+
+オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。
+
+.. literalinclude:: AzureCacheOptions.cs
+   :language: c#
+
+| 
+
+.. literalinclude:: AzureCacheExtensions.cs
+   :language: c#
+
+| 
+
+Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。
+
+.. literalinclude:: SessionMiddleware.cs
+   :language: c#
+
+
+アプリケーションの変更
+======================
+最後に、アプリケーションをCacheとSessionを使うように変更する。
+
+
+.. literalinclude:: Startup.cs.002
+   :language: c#
+
+
+まとめ
+======
+OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。 
+`katanaproject.codeplex.com <http://katanaproject.codeplex.com/>`_ を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。
+
+| 
+
+.. [#r1] `Server Scripts, by Rob McCool, www-talk mailing list, Sun, 14 Nov 1993 <http://en.wikipedia.org/wiki/Common_Gateway_Interface#cite_note-1>`_
+
+.. [#r2]  Katana Project のコードを見ると重量級で途方にくれる。System.Web との相互運用性をもたせようとして難しいことになっているらしい。
+
+.. [#r3]  生 Owin だと型の情報がほどんど無い( `IDictionary<string, object>` なので）ので日和ってしまった。
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::
+
+
+

@@ -1,13 +1,13 @@
 =======================================================
  GitHub/Windows Azure Storage Libraries for .NET 3.0.0
 =======================================================
+3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。
 
 .. image:: http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg
    :target: http://www.flickr.com/photos/takekazuomi/9269858396
    :alt: leaf by Takekazu Omi, on Flickr
    :align: center
 
-3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。
 Storage の .NET Client ライブラリは、2.1までは、 `Windows Azure SDK for .NET github:azure-sdk-for-net <https://github.com/WindowsAzure/azure-sdk-for-net>`_ にありましたが、3.0からは、Storageは独立して `Windows Azure Storage Libraries for .NET github:azure-storage-net <https://github.com/WindowsAzure/azure-storage-net>`_ になりました。
 2.1系は継続して、 `Windows Azure SDK for .NET github:azure-sdk-for-net <https://github.com/WindowsAzure/azure-sdk-for-net>`_ でメンテされるようです。
 現在2.1系の最新は、 `2.1.0.4 <https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4>`_ です。

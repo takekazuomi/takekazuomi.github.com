@@ -1,0 +1,517 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>OWIN - Open Web Interface for .NET を使う &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="next" title="Windows Azure Storage Client 3.0.1" href="../11/windows_azure_storage_client_3_0_1.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Scroll to content if on small screen
+            if (screen.width < 480)
+            {
+                $(document).scrollTop(document.getElementsByTagName("article")[0].offsetTop - 44);
+            }
+        });
+    </script></head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header>
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About Kyrt</a>
+        </li>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+    </div></li></ul>
+    </nav><div class="main-container"><div class="main wrapper clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>December 17, 2013</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="owin-open-web-interface-for-net">
+<h1>OWIN - Open Web Interface for .NET を使う</h1>
+<p><a class="reference external" href="http://owin.org/">OWIN(Open Web Interface for .NET)</a> は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
+2010年の終わりのころに <cite>Benjamin van der Veen 氏 &lt;http://bvanderveen.com/&gt;</cite> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg" /></a>
+<p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 <a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
+<p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
+.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。</p>
+<p>その結果出来上がったのが、従来のVB6アプリの習慣に沿ったイベントモデルをベースにしたWeb Formsのアーキテクチャーと論理的に異なる HTTP ObjectとWeb Forms FrameworkがタイトにカップルされたSystem.Web.dll らしい。</p>
+<p>昔を振り返ってみると、1993年の終わりころ <a class="footnote-reference" href="#r1" id="id2">[1]</a>  <a class="reference external" href="http://en.wikipedia.org/wiki/NCSA_HTTPd">UCSA HTTPd</a>  にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。<a class="reference external" href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NETのリリースは2002年</a> なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。
+今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。</p>
+<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている <a class="reference external" href="http://rack.github.io/">Rack: a Ruby Webserver Interface Feb 2007</a>  が生まれる。
+こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
+<p>.NETでは最初に標準的なWeb Server（IIS）と、Framework（System.Web.dll）ありきで始まったため混乱は無かったが自由な発展が阻害され、一方Ruby/Pythonなど標準的なものが無い中では混沌のなかから優れた標準（Rack/WSGI)が生まれたというのは実に面白い。</p>
+<div class="section" id="owin">
+<h2>OWINの基本</h2>
+<p>The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
+</pre></div>
+</div>
+<p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成 <a class="footnote-reference" href="#r2" id="id3">[2]</a> でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、 <a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a> なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
+</div>
+<div class="section" id="owin-middleware-azure-cache-session">
+<h2>OWIN Middleware Azure Cache Session</h2>
+<p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a> 手探りで作った習作だが、簡単に中身を説明する。
+OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
+<p class="seqdiag">
+<a href="../../../_images/seqdiag-8e39e78bf75324a787de834862440035baf46c04.png"><img src="../../../_images/seqdiag_thumb-8e39e78bf75324a787de834862440035baf46c04.png" alt="None" width="600" height="372.115384615" />
+</a></p>
+</div>
+<div class="section" id="owin-selfhost-application">
+<h2>OWIN SelfHost Applicationの作成</h2>
+<p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
+<div class="section" id="console-project">
+<h3>Console Projectを作成して必要なパッケージを入れる</h3>
+<p>nugetから必要なパッケージを入れる</p>
+<div class="highlight-bash"><div class="highlight"><pre>install-package Microsoft.Owin.Hosting
+install-package Microsoft.Owin.Host.HttpListener
+install-package Microsoft.Owin.Diagnostics
+install-Package Owin.Extensions
+</pre></div>
+</div>
+</div>
+<div class="section" id="program-csmain">
+<h3>Program.csのmainを下記のようにする</h3>
+<p><cite>WebApp.Start&lt;Startup&gt;(url)</cite> とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">uri</span> <span class="p">=</span> <span class="n">args</span><span class="p">.</span><span class="n">Length</span> <span class="p">==</span> <span class="m">0</span> <span class="p">?</span> <span class="s">&quot;http://localhost:8081/&quot;</span> <span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">];</span>
+
+            <span class="k">using</span> <span class="p">(</span><span class="n">WebApp</span><span class="p">.</span><span class="n">Start</span><span class="p">&lt;</span><span class="n">Startup</span><span class="p">&gt;(</span><span class="n">uri</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Started&quot;</span><span class="p">);</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Stopping&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="startup">
+<h3>Startup用のクラスを追加する</h3>
+<p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite> でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+
+<span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Configuration</span><span class="p">(</span><span class="n">IAppBuilder</span> <span class="n">app</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseWelcomePage</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>これで動かすとこんな感じになる</h3>
+<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com</a> 見ると非常に参考になる。</p>
+<img alt="../../../_images/2013_12_08_scrn-0011.png" src="../../../_images/2013_12_08_scrn-0011.png" />
+</div>
+</div>
+<div class="section" id="azure-cache-session-middleware">
+<h2>Azure Cache Session Middleware</h2>
+<p>ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。</p>
+<div class="section" id="windows-azure-cache-client">
+<h3>Windows Azure Cache Client を入れる</h3>
+<div class="highlight-bash"><div class="highlight"><pre>Install-Package Microsoft.WindowsAzure.Caching
+</pre></div>
+</div>
+</div>
+<div class="section" id="app-configazure-cache">
+<h3>App.config内のAzure Cacheの設定をする</h3>
+<p>App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+  <span class="nt">&lt;configSections&gt;</span>
+    <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">&quot;dataCacheClients&quot;</span> <span class="na">type=</span><span class="s">&quot;Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core&quot;</span> <span class="na">allowLocation=</span><span class="s">&quot;true&quot;</span> <span class="na">allowDefinition=</span><span class="s">&quot;Everywhere&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">&quot;cacheDiagnostics&quot;</span> <span class="na">type=</span><span class="s">&quot;Microsoft.ApplicationServer.Caching.AzureCommon.DiagnosticsConfigurationSection, Microsoft.ApplicationServer.Caching.AzureCommon&quot;</span> <span class="na">allowLocation=</span><span class="s">&quot;true&quot;</span> <span class="na">allowDefinition=</span><span class="s">&quot;Everywhere&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/configSections&gt;</span>
+  <span class="nt">&lt;startup&gt;</span> 
+    <span class="nt">&lt;supportedRuntime</span> <span class="na">version=</span><span class="s">&quot;v4.0&quot;</span> <span class="na">sku=</span><span class="s">&quot;.NETFramework,Version=v4.5&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/startup&gt;</span>
+  <span class="nt">&lt;dataCacheClients&gt;</span>
+    <span class="nt">&lt;dataCacheClient</span> <span class="na">name=</span><span class="s">&quot;default&quot;</span><span class="nt">&gt;</span>
+      <span class="c">&lt;!--To use the in-role flavor of Windows Azure Cache, set identifier to be the cache cluster role name --&gt;</span>
+      <span class="c">&lt;!--To use the Windows Azure Cache Service, set identifier to be the endpoint of the cache cluster --&gt;</span>
+      <span class="nt">&lt;autoDiscover</span> <span class="na">isEnabled=</span><span class="s">&quot;true&quot;</span> <span class="na">identifier=</span><span class="s">&quot;********.cache.windows.net&quot;</span> <span class="nt">/&gt;</span>
+
+      <span class="c">&lt;!--&lt;localCache isEnabled=&quot;true&quot; sync=&quot;TimeoutBased&quot; objectCount=&quot;100000&quot; ttlValue=&quot;300&quot; /&gt;--&gt;</span>
+      
+      <span class="c">&lt;!--Use this section to specify security settings for connecting to your cache. This section is not required if your cache is hosted on a role that is a part of your cloud service. --&gt;</span>
+      <span class="nt">&lt;securityProperties</span> <span class="na">mode=</span><span class="s">&quot;Message&quot;</span> <span class="na">sslEnabled=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;messageSecurity</span> <span class="na">authorizationInfo=</span><span class="s">&quot;*************************&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/securityProperties&gt;</span>
+    <span class="nt">&lt;/dataCacheClient&gt;</span>
+<span class="nt">&lt;/dataCacheClients&gt;&lt;/configuration&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="owin-middleware">
+<h3>OWIN Middleware用のプロジェクトを追加する</h3>
+<p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>
+必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
+<div class="highlight-bash"><div class="highlight"><pre>install-Package Microsoft.Owin
+install-Package Microsoft.WindowsAzure.Caching
+install-Package EnterpriseLibrary.TransientFaultHandling.Caching
+</pre></div>
+</div>
+</div>
+<div class="section" id="azrue-cache-middleware">
+<h3>Azrue Cache Middleware</h3>
+<p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 <a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheMiddleware</span> <span class="p">:</span> <span class="n">OwinMiddleware</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">CacheKeyName</span> <span class="p">=</span> <span class="s">&quot;Kyrt.CacheKeyName&quot;</span><span class="p">;</span>
+
+        <span class="k">private</span> <span class="k">readonly</span> <span class="n">AzureCacheOptions</span> <span class="n">_options</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="nf">AzureCacheMiddleware</span><span class="p">(</span><span class="n">OwinMiddleware</span> <span class="n">next</span><span class="p">,</span> <span class="n">AzureCacheOptions</span> <span class="n">options</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">next</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_options</span> <span class="p">=</span> <span class="n">options</span> <span class="p">??</span> <span class="k">new</span> <span class="n">AzureCacheOptions</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">override</span> <span class="n">Task</span> <span class="nf">Invoke</span><span class="p">(</span><span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="kt">object</span> <span class="n">cache</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(!</span><span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">TryGetValue</span><span class="p">(</span><span class="n">CacheKeyName</span><span class="p">,</span> <span class="k">out</span> <span class="n">cache</span><span class="p">))</span>
+                <span class="p">{</span>
+                    <span class="n">cache</span> <span class="p">=</span> <span class="k">new</span> <span class="n">AzureCacheClient</span><span class="p">(</span><span class="n">_options</span><span class="p">.</span><span class="n">CacheName</span><span class="p">);</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">[</span><span class="n">CacheKeyName</span><span class="p">]</span> <span class="p">=</span> <span class="n">cache</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">DataCacheException</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">ex</span><span class="p">);</span>
+                <span class="k">throw</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">Next</span><span class="p">.</span><span class="n">Invoke</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。</p>
+<p>オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheOptions</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nf">AzureCacheOptions</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="n">CacheName</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">public</span> <span class="kt">string</span> <span class="n">CacheName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">AzureCacheExtensions</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="n">IAppBuilder</span> <span class="nf">UseAzureCache</span><span class="p">(</span><span class="k">this</span> <span class="n">IAppBuilder</span> <span class="n">builder</span><span class="p">,</span> <span class="n">AzureCacheOptions</span> <span class="n">options</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">builder</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentNullException</span><span class="p">(</span><span class="s">&quot;builder&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">builder</span><span class="p">.</span><span class="n">Use</span><span class="p">(</span><span class="k">typeof</span> <span class="p">(</span><span class="n">AzureCacheMiddleware</span><span class="p">),</span> <span class="n">options</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="n">AzureCacheClient</span> <span class="nf">Cache</span><span class="p">(</span><span class="k">this</span> <span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">context</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentNullException</span><span class="p">(</span><span class="s">&quot;context&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">[</span><span class="n">AzureCacheMiddleware</span><span class="p">.</span><span class="n">CacheKeyName</span><span class="p">]</span> <span class="k">as</span> <span class="n">AzureCacheClient</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">SessionMiddleware</span> <span class="p">:</span> <span class="n">OwinMiddleware</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">SessionKeyName</span> <span class="p">=</span> <span class="s">&quot;Kyrt.Session&quot;</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="nf">SessionMiddleware</span><span class="p">(</span><span class="n">OwinMiddleware</span> <span class="n">next</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">next</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">override</span> <span class="n">Task</span> <span class="nf">Invoke</span><span class="p">(</span><span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">sessionId</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="n">sessionId</span> <span class="p">=</span> <span class="n">AzureCacheSessionProvidor</span><span class="p">.</span><span class="n">PreInvoke</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">SessionKeyName</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">Next</span><span class="p">.</span><span class="n">Invoke</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">ContinueWith</span><span class="p">((</span><span class="n">task</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="p">=&gt;</span>
+            <span class="p">{</span>
+                <span class="k">try</span>
+                <span class="p">{</span>
+                    <span class="kt">var</span> <span class="n">p</span> <span class="p">=</span> <span class="n">state</span> <span class="k">as</span> <span class="n">Tuple</span><span class="p">&lt;</span><span class="n">IOwinContext</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;;</span> 
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">!=</span><span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">p</span><span class="p">.</span><span class="n">Item2</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+                        <span class="n">AzureCacheSessionProvidor</span><span class="p">.</span><span class="n">PostInvoke</span><span class="p">(</span> <span class="n">p</span><span class="p">.</span><span class="n">Item1</span><span class="p">,</span> <span class="n">SessionKeyName</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">Item2</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="n">task</span><span class="p">;</span>
+            <span class="p">},</span> <span class="n">Tuple</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">sessionId</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>アプリケーションの変更</h2>
+<p>最後に、アプリケーションをCacheとSessionを使うように変更する。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin.Middleware</span><span class="p">;</span>
+
+<span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Configuration</span><span class="p">(</span><span class="n">IAppBuilder</span> <span class="n">app</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseAzureCache</span><span class="p">();</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseSession</span><span class="p">();</span>
+
+            <span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">(</span><span class="k">async</span> <span class="n">context</span> <span class="p">=&gt;</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;start app.Run {0}&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Path</span><span class="p">);</span>
+
+                <span class="n">context</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">ContentType</span> <span class="p">=</span> <span class="s">&quot;text/html&quot;</span><span class="p">;</span>
+                <span class="k">try</span>
+                <span class="p">{</span>
+                    <span class="kt">var</span> <span class="n">time</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Cache</span><span class="p">().</span><span class="n">GetOrAdd</span><span class="p">(</span><span class="s">&quot;first time&quot;</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">DateTimeOffset</span><span class="p">.</span><span class="n">Now</span><span class="p">);</span>
+                    <span class="kt">var</span> <span class="n">count</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Cache</span><span class="p">().</span><span class="n">Increment</span><span class="p">(</span><span class="s">&quot;counter&quot;</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+                    <span class="kt">int</span> <span class="n">sessionCount</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Session</span><span class="p">().</span><span class="n">Get</span><span class="p">(</span><span class="s">&quot;sessionCount&quot;</span><span class="p">,</span> <span class="p">-</span><span class="m">1</span><span class="p">);</span>
+                    <span class="n">sessionCount</span><span class="p">++;</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">Session</span><span class="p">()[</span><span class="s">&quot;sessionCount&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="n">sessionCount</span><span class="p">;</span>
+
+                    <span class="kt">var</span> <span class="n">msg</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;Hello, World! {0} {1}/{2} {3}&lt;br&gt;&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">.</span><span class="n">ToString</span><span class="p">(),</span> <span class="n">sessionCount</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Path</span><span class="p">);</span>
+                    <span class="k">await</span> <span class="n">context</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">WriteAsync</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+
+
+                <span class="p">}</span>
+                <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>まとめ</h2>
+<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。
+<a class="reference external" href="http://katanaproject.codeplex.com/">katanaproject.codeplex.com</a> を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Common_Gateway_Interface#cite_note-1">Server Scripts, by Rob McCool, www-talk mailing list, Sun, 14 Nov 1993</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Katana Project のコードを見ると重量級で途方にくれる。System.Web との相互運用性をもたせようとして難しいことになっているらしい。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td>生 Owin だと型の情報がほどんど無い( <cite>IDictionary&lt;string, object&gt;</cite> なので）ので日和ってしまった。</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/17/owin_azure_cache_session_middleware";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/17/owin_azure_cache_session_middleware";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="#">OWIN - Open Web Interface for .NET を使う</a>
+        </li><li>
+            <a href="../11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+        </li><li>
+            <a href="../11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
+        </li><li>
+            <a href="../06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
+        </li><li>
+            <a href="../06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
+        </li><li>
+            <a href="../05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
+        </li><li>
+            <a href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
+        </li><li>
+            <a href="../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a>
+        </li><li>
+            <a href="../../11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a>
+        </li><li>
+            <a href="../../11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (16)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_poershell.html">Azure Poershell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (5)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (4)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (7)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (5)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (3), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (6), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (1), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_table.html">Azure Table</a> (8), <a href="../../../tags/blob.html">Blob</a> (2), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/issue.html">Issue</a> (2), <a href="../../../tags/java.html">Java</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (1), <a href="../../../tags/powershell.html">Powershell</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (3), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (10), <a href="../../../tags/table.html">Table</a> (8), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Search</h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container"><footer class="wrapper">&copy; Copyright 2012-2013, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
