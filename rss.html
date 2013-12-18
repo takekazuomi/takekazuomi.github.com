@@ -14,7 +14,7 @@
             <description><![CDATA[<div class="section" id="owin-open-web-interface-for-net">
 <h1>OWIN - Open Web Interface for .NET を使う</h1>
 <p><a class="reference external" href="http://owin.org">OWIN(Open Web Interface for .NET)</a> は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
-2010年の終わりのころに <cite>Benjamin van der Veen 氏 &lt;http://bvanderveen.com/&gt;</cite> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+2010年の終わりのころに <a class="reference external" href="http://bvanderveen.com">Benjamin van der Veen 氏</a> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg"/></a>
 <p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 <a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
 <p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
@@ -107,8 +107,8 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="id4">
 <h3>これで動かすとこんな感じになる</h3>
-<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com</a> 見ると非常に参考になる。</p>
-<img alt="../../../_images/2013_12_08_scrn-0011.png" src="http://kyrt.in/_images/2013_12_08_scrn-0011.png"/>
+<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com WelcomePageMiddleware</a> 見ると非常に参考になる。</p>
+<img alt="../../../_images/2013_12_08_scrn-001.png" src="http://kyrt.in/_images/2013_12_08_scrn-001.png"/>
 </div>
 </div>
 <div class="section" id="azure-cache-session-middleware">
@@ -2560,7 +2560,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <span id="id2"/><h3>非同期で同時接続数が上がらない？</h3>
 <p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
 <p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
-<p>** [2012/12/26 このFIXに関するまとめを書きました](/blog/2012/12/26/asc2-dot-0asyncbug/) **</p>
+<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html"><em>Azure Storage Client 2.0 CompletedSynchronously FIX</em></a>) **</p>
 <p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
 <p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
 今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>

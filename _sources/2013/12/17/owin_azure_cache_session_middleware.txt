@@ -2,7 +2,7 @@
  OWIN - Open Web Interface for .NET を使う
 =================================================
 `OWIN(Open Web Interface for .NET) <http://owin.org/>`_ は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
-2010年の終わりのころに `Benjamin van der Veen 氏 <http://bvanderveen.com/>` が始め、 `Draft 7 12 July 2012 <http://owin.org/spec/owin-1.0.0draft7.html>`_ では、Author: OWIN working group となっている。参照: http://owin.org/spec/history-1.0.html
+2010年の終わりのころに `Benjamin van der Veen 氏 <http://bvanderveen.com/>`_ が始め、 `Draft 7 12 July 2012 <http://owin.org/spec/owin-1.0.0draft7.html>`_ では、Author: OWIN working group となっている。参照: http://owin.org/spec/history-1.0.html
 
 .. image:: http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg
            :target: http://www.flickr.com/photos/takekazuomi/7814536388
@@ -98,7 +98,7 @@ Startup用のクラスを追加する
 
 これで動かすとこんな感じになる
 ------------------------------
-このコードでは、`app.UseWelcomePage();` としているので、Welcomeページが表示される。このあたりの実装は、 `katanaproject.codeplex.com <http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs>`_ 見ると非常に参考になる。
+このコードでは、`app.UseWelcomePage();` としているので、Welcomeページが表示される。このあたりの実装は、 `katanaproject.codeplex.com WelcomePageMiddleware <http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs>`_ 見ると非常に参考になる。
 
 .. image:: 2013_12_08_scrn-001.png
 

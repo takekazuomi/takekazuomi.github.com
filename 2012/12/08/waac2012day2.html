@@ -121,7 +121,7 @@
 <span id="id2"></span><h3>非同期で同時接続数が上がらない？</h3>
 <p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
 <p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
-<p>** [2012/12/26 このFIXに関するまとめを書きました](/blog/2012/12/26/asc2-dot-0asyncbug/) **</p>
+<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="../26/asc2_dot_0asyncbug.html"><em>Azure Storage Client 2.0 CompletedSynchronously FIX</em></a>) **</p>
 <p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
 <p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
 今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>

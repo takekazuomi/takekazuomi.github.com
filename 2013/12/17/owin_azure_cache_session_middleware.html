@@ -89,7 +89,7 @@
     <div class="section" id="owin-open-web-interface-for-net">
 <h1>OWIN - Open Web Interface for .NET を使う</h1>
 <p><a class="reference external" href="http://owin.org/">OWIN(Open Web Interface for .NET)</a> は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
-2010年の終わりのころに <cite>Benjamin van der Veen 氏 &lt;http://bvanderveen.com/&gt;</cite> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+2010年の終わりのころに <a class="reference external" href="http://bvanderveen.com/">Benjamin van der Veen 氏</a> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg" /></a>
 <p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 <a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
 <p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
@@ -182,8 +182,8 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="id4">
 <h3>これで動かすとこんな感じになる</h3>
-<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com</a> 見ると非常に参考になる。</p>
-<img alt="../../../_images/2013_12_08_scrn-0011.png" src="../../../_images/2013_12_08_scrn-0011.png" />
+<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com WelcomePageMiddleware</a> 見ると非常に参考になる。</p>
+<img alt="../../../_images/2013_12_08_scrn-001.png" src="../../../_images/2013_12_08_scrn-001.png" />
 </div>
 </div>
 <div class="section" id="azure-cache-session-middleware">
