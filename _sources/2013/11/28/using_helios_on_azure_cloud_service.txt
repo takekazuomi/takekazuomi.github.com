@@ -140,5 +140,5 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
 
 .. author:: default
 .. categories:: Azure, Helios
-.. tags:: Cloud Service, WebRole
+.. tags:: Cloud Service, WebRole,OWIN
 .. comments::
