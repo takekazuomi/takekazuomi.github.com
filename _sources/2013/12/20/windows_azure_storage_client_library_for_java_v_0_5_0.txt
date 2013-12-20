@@ -1,0 +1,191 @@
+========================================================
+ Windows Azure Storage Client Library for Java v. 0.5.0
+========================================================
+`Windows Azure Storage Client Library for Java v. 0.5.0 がリリースされました <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx>`_
+
+以下にざっくりと訳します。
+
+抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0
+=============================================================================================
+このリリースでは、logging support, 新しい API overloads、そして 2013-08-15 REST [#r1]_  が完全にサポートされています。今までのようにソースコードは、 `github Windows Azure Storage libraries for Java <https://github.com/WindowsAzure/azure-storage-java>`_ で公開されています。 [#r2]_ 従来のようにmaven のレポジトリに登録されています。
+
+.. literalinclude:: pom.xml
+   :language: xml
+
+エミュレータ ガイダンス
+-----------------------
+現在のAzure SDK(2.2)のエミュレータは、 `2013-08-15 REST <http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx>`_  をサポートしていません。今後数ヶ月以内にサポートしたものを出す予定です。
+
+Samples
+-------
+`github <https://github.com/WindowsAzure/azure-storage-java>`_ のソースのなかに、幾つかの重要なシナリを説明する `サンプル <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx>`_ があります。
+指定されたサンプルを実行するには、サンプルプロジェクトをロードし、ストレージの資格情報を提供するために、Utility.javaの次の行を更新します。
+
+.. literalinclude:: Utility001.java
+   :language: java
+
+
+fiddler を使ってサンプル実行中の traffic を見たい場合は、Utility.java の下記の2行をコメントアウトを外してください。
+
+
+.. literalinclude:: Utility002.java
+   :language: java
+
+
+
+Note about Packaging and Versioning
+-----------------------------------
+このリリースで、大きな Windows Azure SDK for Java から、ストレージパッケージを独立させました。現在、既存のSDKを活用している開発者は、それに応じて依存関係を更新する必要があります。さらに、パッケージ名は、この新しい構造を反映するように変更されました：
+
+* com.microsoft.windowsazure.storage - RetryPolicies、LocationMode、StorageException、StorageAccountなどサービス間で共通しているすべてのpublicクラス
+* com.microsoft.windowsazure.storage.blob -  Blob convenience implementation、Windows Azure Blobを利用しているアプリケーションは、importしてください。
+* com.microsoft.windowsazure.storage.queue - Queue convenience implementation、Windows Azure Queueを利用するアプリケーションは、importしてください。
+* com.microsoft.windowsazure.storage.table - Table convenience implementation、Windows Azure Tableを利用しているアプリケーションは、importしてください。
+
+さらに詳しい情報は、以下の Change Log & Breaking Changes  のセクションを見て下さい。
+
+また、Storage Client SDK componentでは、 `Semantic Versioning <http://semver.org/>`_ を採用します。これは、SDKを活用する開発者に一貫した予測可能なバージョン管理指針を提供するのに役立ちます。
+
+Whats New
+=========
+Java client library の 0.5.0 では、2013-08-15 REST service version の全ての機能 [#r1]_ をサポートします。
+
+Support for Read Access Geo Redundant Storage
+---------------------------------------------
+このリリースでは、secondary region の storage account data の読み取りアクセス (RA-GRS) [#r3]_ を完全にサポートしています。
+クライアントオブジェクト上の位置モードを設定し、getServiceStatsを起動すると、以下の例に示されている。LocationModeもRequestOptionsオブジェクト上に設定することで、リクエストごとに設定することができます。
+
+下記の例では、client objectの location mode を設定して getServiceStats を呼び出すことで、 replication の状態を取得しています。
+
+.. literalinclude:: ragrs001.java
+   :language: java
+
+
+Expanded Table Protocol Support (JSON)
+--------------------------------------
+ table traffic で、JSONがサポートされました。TableClient の setTablePayloadFormat() で、TablePayloadFormatを指定することでJSONformatを使うことができます。 
+
+
+.. literalinclude:: json001.java
+   :language: java
+
+
+JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。
+
+
+.. literalinclude:: json002.java
+   :language: java
+
+この、propertyResolver は、TableRequestOptions にセットします。
+
+.. literalinclude:: json003.java
+   :language: java
+
+
+Table Insert Optimizations
+--------------------------
+以前のバージョンでは、Table Insertのレスポンスでentity全体が返されていましたが、このバージョンから inserts が成功したときは 204 (no-content) でbodyは空がかえるようになりました。
+従来と同じように動作させるには、insert(TableEntity, boolean) method に true を指定します。
+
+
+Table Reflection Optimizations
+------------------------------
+
+clients が、POJOを永続化するときに、繰り返しの reflection calls を無くすために、type や property information をcacheするようにしました。この最適化の結果劇的にCPU時間が削減されます。このCache機能を無効にするには、TableServiceEntity.setReflectedEntityCacheDisabled(true) を使って下さい。
+
+New APIs and overloads
+----------------------
+customer feedback から下記のAPIを追加しました、
+
+* CloudBlob.downloadRange
+* CloudBlob.downloadToByteArray
+* CloudBlob.downloadRangeToByteArray
+* CloudBlob.uploadFromByteArray
+* CloudBlob.uploadFromByteArray
+* CloudBlob.downloadToFile
+* CloudBlob.uploadFromFile
+* CloudBlockBlob.uploadText
+* CloudBlockBlob.downloadText
+
+
+Logging
+-------
+0.5.0 リリースでは、 `SLF4J <http://www.slf4j.org/>`_ logging facade をサポートしています。 
+
+詳細省略
+
+
+Change Log & Breaking Changes
+=============================
+このリリースには、 2013-08-15 REST [#r1]_ のサポート以外にも幾つかの重要な変更があります。要点を下記にまとめます。
+
+Common
+------
+
+* Package の再構築
+* RetryResultが追加機能を提供しRetryInfoに置き換えられています
+* request中に起きるevent operations (event firingを含む) は、同期では無くなりました。 (thread safety は、event listenersのCopyOnWriteArrayList で保証されます)
+* OperationContext.sendingRequest eventは、 headerを変更することができるように connection が established されるまえに fireされます
+  
+Blob
+----
+
+* BlobdownloadRangeはStreamにダウンロードします。以前のdownloadRangeはdownloadRangeToByteArrayに変更されました
+* sparse page blob feature は削除されました
+* CloudBlobContainer.createIfNotExistはCloudBlobContainer.createIfNotExistに改名されました
+* CloudBlobClient.streamMinimumReadSizeInBytesは削除されました。この機能は、はCloudBlob.streamMinimumReadSizeInBytesで提供さえます（これは、Client毎のではなくBlob毎の設定です）
+* CloudBlobClient.pageBlobStreamWriteSizeInBytesとCloudBlobClient.writeBlockSizeInBytesは削除されました。この機能は、CloudBlob.streamWriteSizeInBytesで提供されます
+
+Table
+-----
+
+* TableResultから id field が削除されました（getId、setIdも）
+* CloudTable.createIfNotExistはCloudTable.createIfNotExistに名前が変更されました
+* Insert 操作はcontents echoをしません。
+* デフォルトのPayload形式は、JsonMinimalMetadataになりました。CloudTableClient.setTablePayloadFormatで全てのリクエスト、あるいは個々のリクエストでTableRequestOptions.setTablePayloadFormatを使ってpayload formatを変更することができます
+
+Queue
+-----
+
+* CloudQueue.createIfNotExistはCloudQueue.createIfNotExistに名前が変更されました
+
+
+Resources
+=========
+
+`Source (github) <https://github.com/WindowsAzure/azure-storage-java>`_
+
+`Maven <http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.microsoft.windowsazure.storage%22>`_
+
+`BreakingChanges <https://github.com/WindowsAzure/azure-storage-java/blob/master/BreakingChanges.txt>`_
+
+`ChangeLog <https://github.com/WindowsAzure/azure-storage-java/blob/master/ChangeLog.txt>`_
+
+`Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_
+
+`Windows Azure Tables: Introducing JSON <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx>`_
+
+`Windows Azure Storage Redundancy Options and Read Access Geo Redundant Storage <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx>`_
+
+`SemVer Specification <http://semver.org/>`_
+
+最後に
+======
+0.4.0 にあった、:doc:`../../10/17/azure_java_sdk_long_value_filtering_bug` は無事改修されているようです。https://github.com/WindowsAzure/azure-storage-java/commit/834daae4e23b51e16e65e5bbf13096075d1f47ca#diff-f8d410db4741b0e56a8050948b11115c 
+
+| 互換性の問題などから、0.4を使い続ける場合は引き続き注意が必要です。
+
+|
+|
+
+.. [#r1]  version 2013-08-15 storage `英語 <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_  `日本語 <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_  `SATO NAOKI訳 <http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/>`_  
+
+.. [#r2] 0.4.0 までは、 `azure-sdk-for-java <https://github.com/WindowsAzure/azure-sdk-for-java>`_ だったのですが、レポジトリが変わり。 0.5.0からは、`azure-storage-java <https://github.com/WindowsAzure/azure-storage-java>`_ になりました。.NETのStorage Clientと同じような名前変更がされたようです。
+
+.. [#r3] `Windows Azure ストレージの冗長オプションと読み取りアクセス地理冗長ストレージ <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/19/blog-windows-azure-storage-redundancy-options-and-read-access-geo-redundant-storage.aspx>`_
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::
