@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2013/12/21/windows_azure_storage_client_library_for_c_preview
    2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0
    2013/12/17/owin_azure_cache_session_middleware
    2013/12/11/windows_azure_storage_client_3_0_1

@@ -171,7 +171,7 @@ Resources
 
 最後に
 ======
-0.4.0 にあった、:doc:`../../10/17/azure_java_sdk_long_value_filtering_bug` は無事改修されているようです。https://github.com/WindowsAzure/azure-storage-java/commit/834daae4e23b51e16e65e5bbf13096075d1f47ca#diff-f8d410db4741b0e56a8050948b11115c 
+0.4 にあった、:doc:`../../10/17/azure_java_sdk_long_value_filtering_bug` は無事改修されているようです。https://github.com/WindowsAzure/azure-storage-java/commit/834daae4e23b51e16e65e5bbf13096075d1f47ca#diff-f8d410db4741b0e56a8050948b11115c 
 
 | 互換性の問題などから、0.4を使い続ける場合は引き続き注意が必要です。
 
@@ -180,12 +180,11 @@ Resources
 
 .. [#r1]  version 2013-08-15 storage `英語 <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_  `日本語 <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_  `SATO NAOKI訳 <http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/>`_  
 
-.. [#r2] 0.4.0 までは、 `azure-sdk-for-java <https://github.com/WindowsAzure/azure-sdk-for-java>`_ だったのですが、レポジトリが変わり。 0.5.0からは、`azure-storage-java <https://github.com/WindowsAzure/azure-storage-java>`_ になりました。.NETのStorage Clientと同じような名前変更がされたようです。
+.. [#r2] 0.4 までは、 `azure-sdk-for-java <https://github.com/WindowsAzure/azure-sdk-for-java>`_ だったのですが、レポジトリが変わり。 0.5からは、`azure-storage-java <https://github.com/WindowsAzure/azure-storage-java>`_ になりました。.NETのStorage Clientと同じような名前変更がされたようです。
 
 .. [#r3] `Windows Azure ストレージの冗長オプションと読み取りアクセス地理冗長ストレージ <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/19/blog-windows-azure-storage-redundancy-options-and-read-access-geo-redundant-storage.aspx>`_
 
-
-.. author:: default
-.. categories:: none
-.. tags:: none
+.. categories:: Azure, Azure SDK,Azure Storage
+.. tags:: 2013-08-15, Azure, Java, Release,Azure Storage
 .. comments::
+
