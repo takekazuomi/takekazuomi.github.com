@@ -39,6 +39,7 @@ h1,h2,h3,h4,h5,h6
 { 
     font-family: 'Segoe UI Light', 'Segoe WP Light', 'Segoe UI', 'PT Sans', Helvetica, sans-serif; 
     font-weight: 100; 
+    word-break: normal;
 }
 
 .section h1 {
