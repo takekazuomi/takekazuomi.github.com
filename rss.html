@@ -5,8 +5,60 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sat, 21 Dec 2013 00:00:00 +0900</pubDate>
+        <pubDate>Sun, 22 Dec 2013 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html</link>
+            <guid>http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html</guid>
+            <title><![CDATA[Windows Azure Powershell 0.7.2.1 リリース]]></title>
+            <description><![CDATA[<div class="section" id="windows-azure-powershell-0-7-2-1">
+<h1>Windows Azure Powershell 0.7.2.1 リリース</h1>
+<p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。 <a class="reference internal" href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a> のHotfix です。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">修正点: Hive query “%” が含まれた場合のエンコーディングの問題を修正 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f.jpg"/></a>
+<div class="section" id="id1">
+<h2>インストール</h2>
+<p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_22_webpi001.png" src="http://kyrt.in/_images/2013_12_22_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    0.0
+Azure                                                       0.7.2
+Microsoft.PowerShell.Management                             3.1.0.0
+Microsoft.PowerShell.Utility                                3.1.0.0
+posh-git                                                    0.0
+PsEnv                                                       0.0
+PSReadline                                                  1.0.0.1
+</pre></div>
+</div>
+<p>今回のリリースでは、ModuleVersion が変更されていません。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/WindowsAzurePowershell/src/Commands.Utilities/Azure.psd1#L15">Azure.psd1#L15</a> 要注意です。</p>
+<p>確認のためインストール先のアセンブリを見ます。</p>
+<p>手元の環境では、 <cite>C:Program Files (x86)Microsoft SDKsWindows AzurePowerShellAzure</cite> にインストールされています。 Explorer で、 <cite>Microsoft.WindowsAzure.Commands.dll</cite> のプロパティを確認したら下記のようになっていました。0.7.2.1になっているようです。</p>
+<img alt="../../../_images/2013_12_22_asm001.png" class="align-center" src="http://kyrt.in/_images/2013_12_22_asm001.png"/>
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。
+| この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 <cite>Get-Module | ft name,version</cite> して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
+<p>ちょっと面倒ですね。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Azure Powershell ]]></category>
+            <category><![CDATA[ GitHub観察記 ]]></category>
+             <pubDate>Sun, 22 Dec 2013 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2013/12/21/windows_azure_storage_client_library_for_c_preview.html</link>
             <guid>http://kyrt.in/2013/12/21/windows_azure_storage_client_library_for_c_preview.html</guid>

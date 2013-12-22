@@ -15,31 +15,31 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>Azure Storage Gen 2は速かった &mdash; Kyrt Blog</title>
-            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
-            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
-            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
-            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
-            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
-        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
-        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <title>Page 3 &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="_static/main.css" type="text/css">
+            <link rel="stylesheet" href="_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+        <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
-        <script src="../../../_static/plugins.js"></script>
-        <script src="../../../_static/main.js"></script>
-        <link rel="prev" title="Windows Azure Storage 2.0 の Blob Upload" href="blobasyncinside.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="_static/plugins.js"></script>
+        <script src="_static/main.js"></script>
+        <link rel="prev" title="Newer" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
+        URL_ROOT:    './',
         VERSION:     '1.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
-    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
-<meta property="og:title" content="Azure Storage Gen 2は速かった &mdash; Kyrt Blog" />
+    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script><script type="text/javascript" src="_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Page 3 &mdash; Kyrt Blog" />
 <meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
-<meta property="og:url" content="http://kyrt.in/2012/12/08/waac2012day2.html" />
+<meta property="og:url" content="http://kyrt.in/page3.html" />
 </head>
     <body>
         <!--[if lt IE 7]>
@@ -48,47 +48,35 @@
 
       <div id="container"><header>
             <hgroup>
-              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+              <h1><a href="index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
           </header>
       <nav>
       <ul>
         <li class="main-nav">
-          <a href="../../../index.html">Home</a>
+          <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About Kyrt</a>
         </li>
         <li class="logo-nav">
-	  <a href="../../../pages/about_me.html" >
-            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  <a href="pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container"><div class="main wrapper clearfix"><article>
-    <div class="section_head">
-    <div class="timestamp_layout">
-      <div class="timestamp postmeta">
+    </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
             <span>December 08, 2012</span>
         </div>
-    </div>
-    
-    <div class="buttons">
-      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
-      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    </div>
-    
-    </div>
-    
-    <div class="section" id="azure-storage-gen-2">
-<h1>Azure Storage Gen 2は速かった</h1>
+        <div class="section" id="azure-storage-gen-2">
+<h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
 <p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
 <p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
 <ul class="simple">
 <li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。<a class="reference external" href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></li>
 </ul>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370/"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg" /></a>
-<hr class="docutils" />
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
+<hr class="docutils"/>
 <div class="section" id="azure-storage">
 <h2>Azure Storageのパフォーマンスの向上</h2>
 <p>2012/6/7 以降に作成されたストレージアカウントで、下記のようにパフォーマンスターゲットが引き上げられました。Gen 2と呼ばれているようです。以前のもの（Gen1）に比べ秒間のトランザクションベースだと4倍程度になっています（Azure Table 1Kエンティティの場合）</p>
@@ -99,27 +87,27 @@
 <li>単一パーテーション  500 エンティティ/秒 -&gt;   2,000 エンティティ/秒 (15Mbps)</li>
 <li>複数パーテーション 5,000 エンティティ/秒 -&gt; 20,000 エンティティ/秒 (156Mbps)</li>
 </ol>
-<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9/">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
+<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
 </div>
-<hr class="docutils" />
+<hr class="docutils"/>
 <div class="section" id="id1">
 <h2>確認しよう</h2>
 <p>ではどれだけ速くなったのか確認しましょう。なるべく実利用環境に近いようにということでC#を使います。ライブライは、最近出たばかりですが、Azure Storage Client 2.0を使います。このライブラリのコードをざっと見た感じだと、従来のコードに比べてシンプルになって読みやすく速度も期待できそうです。</p>
 <p>比較的限界が低い単一パーテーションで確認します。前記のGen2の記事には、エンティティが1KByteで、単一パーテーションの場合、2,000 エンティティ/秒というパフォーマンスターゲットが記述されています。これを確認しようとするとAzure外部からのネットワークアクセスだと厳しいのでWorkerRoleを立てて、リモートデスクトップでログインしてプログラムを実行します。プログラムは秒間2000オブジェクトを計測時間の間は作りづけないといけないのでCPUやGCがボトルネックになるかもしれません、今回はLargeのインスタンスを使うことにしました。</p>
 <p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
-<script src="https://gist.github.com/takekazuomi/4238298.js">&nbsp;</script><p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
+<script src="https://gist.github.com/takekazuomi/4238298.js"> </script><p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
 <p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
-<script src="https://gist.github.com/takekazuomi/4238639.js">&nbsp;</script><p>この辺りは、下記のサイトが詳しくお勧めです。</p>
+<script src="https://gist.github.com/takekazuomi/4238639.js"> </script><p>この辺りは、下記のサイトが詳しくお勧めです。</p>
 <p>参照：<a class="reference external" href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
 <div class="section" id="waac2012day2-pending">
-<span id="id2"></span><h3>非同期で同時接続数が上がらない？</h3>
+<span id="id2"/><h3>非同期で同時接続数が上がらない？</h3>
 <p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
 <p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
-<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="../26/asc2_dot_0asyncbug.html"><em>Azure Storage Client 2.0 CompletedSynchronously FIX</em></a>) **</p>
+<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="2012/12/26/asc2_dot_0asyncbug.html"><em>Azure Storage Client 2.0 CompletedSynchronously FIX</em></a>) **</p>
 <p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
 <p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
 今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
-<script src="https://gist.github.com/takekazuomi/4238661.js">&nbsp;</script><p>&#8212;</p>
+<script src="https://gist.github.com/takekazuomi/4238661.js"> </script><p>—</p>
 </div>
 </div>
 <div class="section" id="id3">
@@ -132,17 +120,17 @@
 <table border="1" class="docutils">
 <caption>表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</caption>
 <colgroup>
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">プロセス数</th>
@@ -210,7 +198,7 @@
 </tbody>
 </table>
 </div>
-<hr class="docutils" />
+<hr class="docutils"/>
 <div class="section" id="id4">
 <h2>最後に</h2>
 <p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。
@@ -218,64 +206,65 @@
 <p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
 <p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
 </div>
-<hr class="docutils" />
+<hr class="docutils"/>
 <div class="section" id="id5">
 <h2>おまけ</h2>
 <p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。
 `</p>
 </div>
 </div>
-
-    <div class="postmeta">
+        <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
         </div>
         <div class="categories">
             <span>
                 Filed under:
-                <a href="../../../categories/azure_table.html">Azure Table</a>, <a href="../../../categories/azure.html">Azure</a></span>
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
         </div>
         <div class="tags">
             <span>
                 Tags:
-                <a href="../../../tags/c.html">C#</a>, <a href="../../../tags/azure_table.html">Azure Table</a>, <a href="../../../tags/async.html">Async</a>, <a href="../../../tags/cloud.html">Cloud</a>, <a href="../../../tags/nosql.html">NoSQL</a>, <a href="../../../tags/storage.html">Storage</a>, <a href="../../../tags/table.html">Table</a></span>
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
         </div>
-        </div>
-    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/08/waac2012day2";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<ul class="related clearfix">
-            <li class="left"> &laquo; <a href="blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a></li>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
+        </div></div><div class="archive_link">
+        <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
+    </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="page2.html">Newer</a></li>
             <li class="right"></li>
-        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/08/waac2012day2";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+        </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="../../../2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
+            <a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
         </li><li>
-            <a href="../../../2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
+            <a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
         </li><li>
-            <a href="../../../2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
+            <a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
         </li><li>
-            <a href="../../../2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
+            <a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
         </li><li>
-            <a href="../../../2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+            <a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
         </li><li>
-            <a href="../../../2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
+            <a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
         </li><li>
-            <a href="../../../2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
+            <a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
         </li><li>
-            <a href="../../../2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
+            <a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
         </li><li>
-            <a href="../../../2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
+            <a href="2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
         </li><li>
-            <a href="../../../2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
+            <a href="2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (20)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (6)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (7)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (6)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (20)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (6)</li><li><a href="categories/azure_table.html">Azure Table</a> (7)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (6)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (5), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (10), <a href="../../../tags/azure_blob.html">Azure Blob</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (8), <a href="../../../tags/blob.html">Blob</a> (2), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (4), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (1), <a href="../../../tags/issue.html">Issue</a> (2), <a href="../../../tags/java.html">Java</a> (2), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (5), <a href="../../../tags/session.html">Session</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (10), <a href="../../../tags/table.html">Table</a> (8), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (5), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (10), <a href="tags/azure_blob.html">Azure Blob</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (8), <a href="tags/blob.html">Blob</a> (2), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (1), <a href="tags/hotfix.html">Hotfix</a> (1), <a href="tags/issue.html">Issue</a> (2), <a href="tags/java.html">Java</a> (2), <a href="tags/json.html">JSON</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (5), <a href="tags/session.html">Session</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (10), <a href="tags/table.html">Table</a> (8), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
-    <form action="../../../search.html" method="get">
+    <form action="search.html" method="get">
         <input type="text" name="q" />
         <button type="submit"><span class="webfont">L</span></button>
     </form>
@@ -283,7 +272,7 @@
 
         <div class="footer-container"><footer class="wrapper">&copy; Copyright 2012-2013, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
-      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+      </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
           <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
         <![endif]-->

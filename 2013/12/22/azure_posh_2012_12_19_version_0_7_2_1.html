@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>Inside SessionAffinityAgent &mdash; Kyrt Blog</title>
+        <title>Windows Azure Powershell 0.7.2.1 リリース &mdash; Kyrt Blog</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="next" title="Windows Azure Storage Client Library for C++ Preview" href="../21/windows_azure_storage_client_library_for_c_preview.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.2.1',
@@ -37,9 +37,9 @@
         HAS_SOURCE:  true
       };
     </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
-<meta property="og:title" content="Inside SessionAffinityAgent &mdash; Kyrt Blog" />
+<meta property="og:title" content="Windows Azure Powershell 0.7.2.1 リリース &mdash; Kyrt Blog" />
 <meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
-<meta property="og:url" content="http://kyrt.in/2013/10/24/inside_sessionaffinityagent.html" />
+<meta property="og:url" content="http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html" />
 </head>
     <body>
         <!--[if lt IE 7]>
@@ -69,7 +69,7 @@
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
-            <span>October 24, 2013</span>
+            <span>December 22, 2013</span>
         </div>
     </div>
     
@@ -80,46 +80,90 @@
     
     </div>
     
-    <div class="section" id="inside-sessionaffinityagent">
-<h1>Inside SessionAffinityAgent</h1>
-<p>httpsを実装する話にもっていく</p>
-<p class="blockdiag">
-<a href="../../../_images/blockdiag-6f1135ccafd85d158cf51b29ba11a2b7ef0cae45.png"><img src="../../../_images/blockdiag_thumb-adc3d6ed397741b076cf02b401409c0e053a7314.png" alt="None" width="600" height="115.384615385" />
-</a></p>
-<p>Windows Azure Plugin for Eclipse with Java には、セッションアフィニティという機能があります。スティッキー クッキーを使ってどのように動いているのか
-<a class="reference external" href="http://satonaoki.wordpress.com/2011/12/25/azure-eclipse-session-affinity/">Webアプリのセッション管理 / Azure Plugin for Eclipseのセッション アフィニティ</a> が詳しいので、そちらを見てもらい。ここでは、SessionAffinityAgent.exe がどうやって</p>
+    <div class="section" id="windows-azure-powershell-0-7-2-1">
+<h1>Windows Azure Powershell 0.7.2.1 リリース</h1>
+<p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。 <a class="reference internal" href="../11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a> のHotfix です。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">修正点: Hive query &#8220;%&#8221; が含まれた場合のエンコーディングの問題を修正 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f.jpg" /></a>
+<div class="section" id="id1">
+<h2>インストール</h2>
+<p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_22_webpi001.png" src="../../../_images/2013_12_22_webpi001.png" />
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    0.0
+Azure                                                       0.7.2
+Microsoft.PowerShell.Management                             3.1.0.0
+Microsoft.PowerShell.Utility                                3.1.0.0
+posh-git                                                    0.0
+PsEnv                                                       0.0
+PSReadline                                                  1.0.0.1
+</pre></div>
+</div>
+<p>今回のリリースでは、ModuleVersion が変更されていません。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/WindowsAzurePowershell/src/Commands.Utilities/Azure.psd1#L15">Azure.psd1#L15</a> 要注意です。</p>
+<p>確認のためインストール先のアセンブリを見ます。</p>
+<p>手元の環境では、 <cite>C:Program Files (x86)Microsoft SDKsWindows AzurePowerShellAzure</cite> にインストールされています。 Explorer で、 <cite>Microsoft.WindowsAzure.Commands.dll</cite> のプロパティを確認したら下記のようになっていました。0.7.2.1になっているようです。</p>
+<img alt="../../../_images/2013_12_22_asm001.png" class="align-center" src="../../../_images/2013_12_22_asm001.png" />
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。
+| この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 <cite>Get-Module | ft name,version</cite> して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
+<p>ちょっと面倒ですね。</p>
+</div>
 </div>
 
     <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
         </div>
-        
-        
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/azure_powershell.html">Azure Powershell</a>, <a href="../../../categories/github観察記.html">GitHub観察記</a></span>
         </div>
-    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/10/24/inside_sessionaffinityagent";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/10/24/inside_sessionaffinityagent";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="../../../tags/azure.html">Azure</a>, <a href="../../../tags/azure_powershell.html">Azure Powershell</a>, <a href="../../../tags/powershell.html">Powershell</a>, <a href="../../../tags/posh.html">posh</a>, <a href="../../../tags/hotfix.html">Hotfix</a></span>
+        </div>
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/22/azure_posh_2012_12_19_version_0_7_2_1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/22/azure_posh_2012_12_19_version_0_7_2_1";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="../../12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
+            <a href="#">Windows Azure Powershell 0.7.2.1 リリース</a>
         </li><li>
-            <a href="../../12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
+            <a href="../21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
         </li><li>
-            <a href="../../12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
+            <a href="../20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
         </li><li>
-            <a href="../../12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
+            <a href="../17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
         </li><li>
-            <a href="../../12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+            <a href="../11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
         </li><li>
-            <a href="../../12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
+            <a href="../11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
         </li><li>
-            <a href="../../12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
+            <a href="../06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
         </li><li>
-            <a href="../../12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
+            <a href="../06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a>
         </li><li>
-            <a href="../../12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
+            <a href="../05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a>
         </li><li>
-            <a href="../../12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
+            <a href="../03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
