@@ -1,9 +1,0 @@
-.\drafts\storage_client_library_2_1.rst
-==========================================
-
-
-
-.. author:: default
-.. categories:: none
-.. tags:: none
-.. comments::
