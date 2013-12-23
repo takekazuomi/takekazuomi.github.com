@@ -3,15 +3,16 @@
 ===========================================
 Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。 :doc:`../11/windows_azure_powershel_0_7_2_release` のHotfix です。
 
- | 修正点: Hive query "%" が含まれた場合のエンコーディングの問題を修正 `ChangeLog.txt <https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1>`_
+ | 修正: Hive query "%" が含まれた場合のエンコーディングの問題をFIX `ChangeLog.txt <https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1>`_
 
 | 
 
-.. image:: http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f.jpg
+.. image:: http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f_c.jpg
 	   :target: http://www.flickr.com/photos/takekazuomi/11233678353
 	   :alt: beans persimmon by Takekazu Omi, on Flickr
            :align: center
 
+|
 
 インストール
 ============
@@ -37,10 +38,14 @@ Web Platform Installer を使うと最新版が入ります。12/18 リリース
 最後に
 ======
 更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。
-| この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 `Get-Module | ft name,version` して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。
+
+この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 `Get-Module | ft name,version` して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。
 
 ちょっと面倒ですね。
 
+2013/12/23 追加
+===============
+ModuleVersionが更新されていない件について、GitHubに `Issue <https://github.com/WindowsAzure/azure-sdk-tools/issues/2189>`_ を上げました。
 
 .. author:: default
 .. categories:: Azure, Azure Powershell, GitHub観察記

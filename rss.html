@@ -16,13 +16,16 @@
 <p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。 <a class="reference internal" href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a> のHotfix です。</p>
 <blockquote>
 <div><div class="line-block">
-<div class="line">修正点: Hive query “%” が含まれた場合のエンコーディングの問題を修正 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+<div class="line">修正: Hive query “%” が含まれた場合のエンコーディングの問題をFIX <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
 </div>
 </div></blockquote>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f.jpg"/></a>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f_c.jpg"/></a>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
 <div class="section" id="id1">
 <h2>インストール</h2>
 <p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
@@ -48,9 +51,13 @@ PSReadline                                                  1.0.0.1
 </div>
 <div class="section" id="id2">
 <h2>最後に</h2>
-<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。
-| この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 <cite>Get-Module | ft name,version</cite> して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
+<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。</p>
+<p>この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 <cite>Get-Module | ft name,version</cite> して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
 <p>ちょっと面倒ですね。</p>
+</div>
+<div class="section" id="id3">
+<h2>2013/12/23 追加</h2>
+<p>ModuleVersionが更新されていない件について、GitHubに <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a> を上げました。</p>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>
