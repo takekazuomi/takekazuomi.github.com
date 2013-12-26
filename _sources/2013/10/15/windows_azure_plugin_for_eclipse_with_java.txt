@@ -13,7 +13,7 @@ Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを�
 4. Windows Azure SDK 2.1
 5. Play Framework 2.1
 
-開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。
+Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1の開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。
 
 Windows Azure SDK 2.1のインストール
 -----------------------------------
@@ -43,7 +43,7 @@ Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)
 .. image:: 2013_10_javaplugininstall002.png
 
 
-必要に応じてライブラリを洗濯してください。今回はとりあえず、全部選択します。
+必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。
 
 サポートされているライブラリの種類
 ----------------------------------
@@ -268,7 +268,7 @@ Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必�
 
 .. image:: 2013_10_eclipse013.png
 
-Azure環境では、Azure LoadBarancerが介在するのでport 80で見えます。
+この設定だと、Azure環境ではAzure LoadBarancerが介在して外部から port 80で見えます。
 
 
 

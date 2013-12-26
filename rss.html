@@ -2383,7 +2383,7 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
 <li>Windows Azure SDK 2.1</li>
 <li>Play Framework 2.1</li>
 </ol>
-<p>開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
+<p>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1の開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
 <div class="section" id="windows-azure-sdk-2-1">
 <h3>Windows Azure SDK 2.1のインストール</h3>
 <p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
@@ -2406,7 +2406,7 @@ Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span cl
 プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
 <p>レポジトリとして、 <span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span> を追加すると、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span> が表示されます。</p>
 <img alt="../../../_images/2013_10_javaplugininstall002.png" src="http://kyrt.in/_images/2013_10_javaplugininstall002.png"/>
-<p>必要に応じてライブラリを洗濯してください。今回はとりあえず、全部選択します。</p>
+<p>必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。</p>
 <div class="section" id="id3">
 <h3>サポートされているライブラリの種類</h3>
 <p>Windows Azure Plugin for Eclipse with Javaが、EclipseのUIとツールを提供するもので、その他のものはAzureのAPIをラップしたクラスライブラリです。</p>
@@ -2590,7 +2590,7 @@ java %* -cp &quot;%d%/%ZIP_NAME%/lib/*;&quot; play.core.server.NettyServer %d%
 <h3>Azure環境へのDeploy</h3>
 <p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
 <img alt="../../../_images/2013_10_eclipse013.png" src="http://kyrt.in/_images/2013_10_eclipse013.png"/>
-<p>Azure環境では、Azure LoadBarancerが介在するのでport 80で見えます。</p>
+<p>この設定だと、Azure環境ではAzure LoadBarancerが介在して外部から port 80で見えます。</p>
 </div>
 </div>
 <div class="section" id="bookmarks">
