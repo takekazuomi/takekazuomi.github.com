@@ -8,6 +8,7 @@
 
 cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog `Windows Azure Storage Known Issues (November 2013) <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx>`_ からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。
 
+.. _known-issue-20131101:
 
 Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue
 ==========================================================================
@@ -20,6 +21,8 @@ Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue
 Windows Azure TablesのIssue
 ===========================
 下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。
+
+.. _known-issue-20131102:
 
 1. clients で、 `DataServiceContext.ResolveName` を定義し、 `<Account Name>.<Table Name>` 以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。
    これは、新しい実装では、ATOM の "Category" element の term 属性が、<Account Name>.<Table Name> と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。
