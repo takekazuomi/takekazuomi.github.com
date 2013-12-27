@@ -3,6 +3,8 @@
 ======================================================
 `Windows Azure Storage Client Library for C++ Preview がリリースされました <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx>`_
 
+ | 2013/12/27 Windows Azure Japan Team Blog 公式 谷訳出ました。 `C++ 用 Windows Azure ストレージ クライアント ライブラリのプレビュー版をリリース <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/27/windows-azure-storage-client-library-for-c-preview.aspx>`_
+
 待望のC++用のライブラリです。
 
 以下にざっくりと訳します。

@@ -3,6 +3,9 @@
 ========================================================
 `Windows Azure Storage Client Library for Java v. 0.5.0 がリリースされました <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx>`_
 
+ | 2013/12/27  Windows Azure Japan Team Blog 公式 谷訳出ました。 `Java v. 0.5.0 用 Windows Azure ストレージ クライアント ライブラリ <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/27/blog-windows-azure-storage-client-library-for-java-v-0-5-0.aspx>`_
+
+
 以下にざっくりと訳します。
 
 抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0
@@ -70,7 +73,7 @@ Expanded Table Protocol Support (JSON)
    :language: java
 
 
-JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。
+JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。
 
 
 .. literalinclude:: json002.java
