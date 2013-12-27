@@ -5,19 +5,25 @@ img {
 
 .docutils {
     overflow:auto;
+    word-break:break-all;
+
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
 }
 
-.docutils .label {
+.label {
     word-break: normal;
 }
 
 
 body {
     font-family: 'Segoe UI', 'Segoe WP', 'PT Sans', Helvetica, sans-serif; 
-    word-break: break-all;
     background-color: #ffffff;
+
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
 }
 
 @media only screen and (min-width: 900px) {
@@ -40,7 +46,6 @@ h1,h2,h3,h4,h5,h6
 { 
     font-family: 'Segoe UI Light', 'Segoe WP Light', 'Segoe UI', 'PT Sans', Helvetica, sans-serif; 
     font-weight: 100; 
-    word-break: normal;
 }
 
 .section h1 {
@@ -88,7 +93,6 @@ h1,h2,h3,h4,h5,h6
 
 header h1 {
     font-family: 'Segoe UI', 'Segoe WP', 'PT Sans', Helvetica, sans-serif; 
-    word-break: normal;
 }
 
 #kyrt_logo  {
