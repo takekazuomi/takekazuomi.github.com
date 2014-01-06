@@ -18,6 +18,6 @@ Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArr
 ５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。
 
 
-.. categories:: Azure Table, Azure, GitHub観察記
-.. tags:: Azure Table, Table, Storage, Release
+.. categories:: Azure Storage, Azure, GitHub観察記
+.. tags:: Azure Table, Table, Storage, Hotfix
 .. comments::
