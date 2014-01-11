@@ -41,6 +41,16 @@
 <p>#if WINDOWS_PHONE で AssertInBounds に、 <span class="docutils literal"><span class="pre">[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]</span></span>  を指定しています。この指定は、JITやNGENでのコード最適化を抑制するもので、 <a class="footnote-reference" href="#r1" id="id2">[1]</a> Windows Phone の場合だけ native code 生成に問題があったので抑制するオプションを付けたということです。</p>
 <p>Windows Phone というだけで、どのような場合に発生する問題かなどわかりませんが、WP アプリのコードが挙動不審の場合は試してみると良いかもしれません。Storage Clinet Library内では、この方法で修正されているようなので問題は無いのですが、普通に書いたコードでも起きるとすると、ちょっと困りますね。もう少し詳しい情報が欲しいところです。 <a class="footnote-reference" href="#r2" id="id3">[2]</a></p>
 <p>これ以外は、あまり気になる点はありませんでした。互換性の問題も無さそうなので、3系のStorage Clinetは 3.0.2 を使うのがお勧めです。</p>
+</div>
+<div class="section" id="windows-phone">
+<span id="scl302-more-info"/><h2>2014/1/11 追記 Windows Phoneの問題</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331">PR に質問</a> に返事を貰いました。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる</div>
+</div>
+</div></blockquote>
+<p><span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min,</span> <span class="pre">T</span> <span class="pre">max)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> と、 <span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> の両方が同一 assembly にあるのが問題のようです。 必ず起きるというわけでも無さそうなので、Windows Phone で嵌ったら思い出してみるという程度で良さそうです。</p>
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
@@ -429,13 +439,8 @@ PSReadline                                                  1.0.0.1
 <p>ちょっと面倒ですね。</p>
 </div>
 <div class="section" id="id3">
-<h2>2013/12/23 追記</h2>
+<h2>2013/12/23 追加</h2>
 <p>ModuleVersionが更新されていない件について、GitHubに <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a> を上げました。</p>
-</div>
-<div class="section" id="azure-posh-0721-verfix">
-<span id="id4"/><h2>2014/1/8 追記</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a> に「0.7.3 で直すよ」と返事をもらいました <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189#issuecomment-31790944">This will be fixed in 0.7.3</a> まだ、0.x ですし、バージョン番号を変更するためにリリースするのもどうかと思うので妥当な判断だと思います。</p>
-<p>ちなみに、バージョン番号は、 <a class="reference external" href="http://semver.org">Semantic Versioning</a> に沿って付けられているそうです。nugetでは、 <a class="reference external" href="http://docs.nuget.org/docs/reference/versioning">Versioning</a> は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。</p>
 </div>
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>
@@ -2574,7 +2579,6 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
 </div>]]></description>
             <category><![CDATA[ Azure ]]></category>
             <category><![CDATA[ Helios ]]></category>
-            <category><![CDATA[ OWIN ]]></category>
              <pubDate>Thu, 28 Nov 2013 00:00:00 +0900</pubDate>
         </item>
     

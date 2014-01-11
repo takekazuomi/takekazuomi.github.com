@@ -43,17 +43,9 @@ Web Platform Installer を使うと最新版が入ります。12/18 リリース
 
 ちょっと面倒ですね。
 
-2013/12/23 追記
+2013/12/23 追加
 ===============
 ModuleVersionが更新されていない件について、GitHubに `Issue <https://github.com/WindowsAzure/azure-sdk-tools/issues/2189>`_ を上げました。
-
-.. _azure_posh_0721_verfix:
-
-2014/1/8 追記
-=============
-`Issue <https://github.com/WindowsAzure/azure-sdk-tools/issues/2189>`_ に「0.7.3 で直すよ」と返事をもらいました `This will be fixed in 0.7.3 <https://github.com/WindowsAzure/azure-sdk-tools/issues/2189#issuecomment-31790944>`_ まだ、0.x ですし、バージョン番号を変更するためにリリースするのもどうかと思うので妥当な判断だと思います。
-
-ちなみに、バージョン番号は、 `Semantic Versioning <http://semver.org/>`_ に沿って付けられているそうです。nugetでは、 `Versioning <http://docs.nuget.org/docs/reference/versioning>`_ は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。
 
 .. author:: default
 .. categories:: Azure, Azure Powershell, GitHub観察記
