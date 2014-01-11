@@ -50,7 +50,7 @@ Windows Phone というだけで、どのような場合に発生する問題か
 
 2014/1/11 追記 Windows Phoneの問題
 ==================================
-`PR に質問 <https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331>`_ に返事を貰いました。
+`PR の質問 <https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331>`_ に返事を貰いました。
 
  | この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる
 
