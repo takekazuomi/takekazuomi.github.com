@@ -47,7 +47,6 @@ Windows Phone というだけで、どのような場合に発生する問題か
 
 .. _scl302_more_info:
 
-
 2014/1/11 追記 Windows Phoneの問題
 ==================================
 `PR の質問 <https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331>`_ に返事を貰いました。

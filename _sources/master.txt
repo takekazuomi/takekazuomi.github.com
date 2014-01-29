@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release
    2014/01/06/windows_azure_storage_3_0_2_hotfix
    2013/12/27/azure_storage_known_issues_november_2013_resolved
    2013/12/22/azure_posh_2012_12_19_version_0_7_2_1

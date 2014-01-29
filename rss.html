@@ -5,8 +5,172 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Mon, 06 Jan 2014 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 29 Jan 2014 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html</link>
+            <guid>http://kyrt.in/2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html</guid>
+            <title><![CDATA[Windows Azure Storage Emulator 2.2.1 Preview]]></title>
+            <description><![CDATA[<div class="section" id="windows-azure-storage-emulator-2-2-1-preview">
+<h1>Windows Azure Storage Emulator 2.2.1 Preview</h1>
+<p>Azure Storage 愛好者待望の、Azure Storage Emulator の 2013-08-15 version サポートがリリースされました。（まだ、preview ですが）</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2014/01/27/windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx">Windows Azure Storage Emulator 2.2.1 Preview Release with support for “2013-08-15” version</a></p>
+<p>Windows Azure Storage Emulator 2.2.1 Preview Release の MSI package は、 <a class="reference external" href="http://www.microsoft.com/en-us/download/details.aspx?id=41670">ここ</a> からダンロードできます。</p>
+<a class="reference external image-reference" href="http://flic.kr/p/f7UbCg"><img alt="insect by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3809/9267075295_acaa930254.jpg"/></a>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="id2">
+<h2>インストールの手順</h2>
+<p>この release では、Windows Azure SDK 2.2 が予めインストールされている必要があります。
+これは preview release で、インストーラーは、Windows Azure Storage Emulator 2.2 のバイナリーを自動では入れ替えません。代わりに、32bit OSでは、<span class="docutils literal"><span class="pre">&quot;%ProgramFiles%\Windows</span> <span class="pre">Azure</span> <span class="pre">Storage</span> <span class="pre">Emulator</span> <span class="pre">2.2.1\devstore&quot;</span></span> に、64 bit OSでは <span class="docutils literal"><span class="pre">&quot;%ProgramFiles(x86)%\Windows</span> <span class="pre">Azure</span> <span class="pre">Storage</span> <span class="pre">Emulator</span> <span class="pre">2.2.1\devstore&quot;</span></span> にバイナリーを展開します。</p>
+<p>更新されたエミュレータ(2.2.1 preview)を利用する場合は下記のステップを踏んでください。</p>
+<ol class="arabic simple">
+<li>Storage Emuratorの停止</li>
+<li><span class="docutils literal"><span class="pre">&quot;%ProgramFiles%\Microsoft</span> <span class="pre">SDKs\Windows</span> <span class="pre">Azure\Emulator\devstore&quot;</span></span> にある既存のファイル(2.2)を他のディレクトリに保存</li>
+<li>新たにインストールされた2.2.1 preview のファイルを <span class="docutils literal"><span class="pre">&quot;%ProgramFiles%\Microsoft</span> <span class="pre">SDKs\Windows</span> <span class="pre">Azure\Emulator\devstore&quot;</span></span> へ上書き</li>
+</ol>
+<p>以前のエミュレータ(2.2)に戻す場合は、Storage Emuratorを停止して保存したファイルを戻します。この方法で、簡単に2.2のStorage Emuratorに戻すことができ、SDK 2.2の再インストールなどは必要ありません。</p>
+<p>これはちょっと手間ですが、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2014/01/27/windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx">Windows Azure Storage Emulator 2.2.1 Preview Release with support for “2013-08-15” version</a> によると、preview のための暫定的な処理のようです。</p>
+</div>
+<div class="section" id="do-it">
+<h2>Do It</h2>
+<p>やってみます。
+まず、最初にAzure Storage Emulatorが動いていたら止めます。</p>
+<img alt="../../../_images/2014-01-29-WASE221-005.png" src="http://kyrt.in/_images/2014-01-29-WASE221-005.png"/>
+<p>Windows Azure Storage Emulator 2.2.1 Preview Release の MSI package を、 <a class="reference external" href="http://www.microsoft.com/en-us/download/details.aspx?id=41670">ここ</a> からダンロードしてきてインストールします。</p>
+<img alt="../../../_images/2014-01-29-WASE221-001.png" src="http://kyrt.in/_images/2014-01-29-WASE221-001.png"/>
+<p>インストールが終わると、README.txt が表示されます。上に書いたようなことが書いてあります。</p>
+<img alt="../../../_images/2014-01-29-WASE221-002.png" src="http://kyrt.in/_images/2014-01-29-WASE221-002.png"/>
+<p>手元はx64環境なので、 <span class="docutils literal"><span class="pre">&quot;%ProgramFiles(x86)%\Windows</span> <span class="pre">Azure</span> <span class="pre">Storage</span> <span class="pre">Emulator</span> <span class="pre">2.2.1\devstore&quot;</span></span> にファイルが有るかを確認します。インストーラーは、ここにファイルを展開しますが、ここだと実行されません。
+これから規定の場所にコピーします。</p>
+<img alt="../../../_images/2014-01-29-WASE221-003.png" src="http://kyrt.in/_images/2014-01-29-WASE221-003.png"/>
+<p>問題無さそうなので、 <span class="docutils literal"><span class="pre">&quot;%ProgramFiles%\Microsoft</span> <span class="pre">SDKs\Windows</span> <span class="pre">Azure\Emulator\devstore&quot;</span></span> のファイルをZIPで固めて避難してから、2.2.1のファイルをコピー上書きします。</p>
+</div>
+<div class="section" id="id5">
+<h2>確認</h2>
+<p>まずはStorage Emulatorを実行して起動を確認します</p>
+<p>普通に　Windows Azure Storage Emulator - v2.2 のショートカットをクリックする方法以外に、下記のようにコマンドラインから起動をすることも出来ます。</p>
+<div class="highlight-none"><div class="highlight"><pre>$ .\csrun.exe /devstore
+Windows(R) Azure(TM) Desktop Execution Tool version 2.2.0.0
+for Microsoft(R) .NET Framework 4.0
+Copyright c Microsoft Corporation. All rights reserved.
+
+Starting the storage emulator...
+$
+</pre></div>
+</div>
+<p>起動してきたので、念のためバージョン番号を確認します。残念ながら変わっていません…</p>
+<img alt="../../../_images/2014-01-29-WASE221-004.png" src="http://kyrt.in/_images/2014-01-29-WASE221-004.png"/>
+<p>次にJSONでアクセスしてみます。 <span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span> 後、下記のようなコードを書いて実行します。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Linq</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage.Table</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">WASE221pre</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">acct</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">DevelopmentStorageAccount</span><span class="p">;</span>
+            <span class="kt">var</span> <span class="n">tableClient</span> <span class="p">=</span> <span class="n">acct</span><span class="p">.</span><span class="n">CreateCloudTableClient</span><span class="p">();</span>
+            <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">&quot;TestTable&quot;</span><span class="p">);</span>
+            <span class="n">table</span><span class="p">.</span><span class="n">CreateIfNotExists</span><span class="p">();</span>
+
+            <span class="kt">var</span> <span class="n">entity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableEntity</span>
+            <span class="p">{</span>
+                <span class="n">PartitionKey</span> <span class="p">=</span> <span class="s">&quot;pk&quot;</span><span class="p">,</span>
+                <span class="n">RowKey</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;rk{0}&quot;</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">UtcNow</span><span class="p">.</span><span class="n">Ticks</span><span class="p">)</span>
+            <span class="p">};</span>
+
+            <span class="n">table</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">TableOperation</span><span class="p">.</span><span class="n">Insert</span><span class="p">(</span><span class="n">entity</span><span class="p">));</span>
+
+            <span class="kt">var</span> <span class="n">rows</span> <span class="p">=</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuery</span><span class="p">(</span><span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">TableEntity</span><span class="p">&gt;()).</span><span class="n">ToArray</span><span class="p">();</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">testEntity</span> <span class="k">in</span> <span class="n">rows</span><span class="p">)</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;{0}, {1}&quot;</span><span class="p">,</span> <span class="n">testEntity</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">,</span> <span class="n">testEntity</span><span class="p">.</span><span class="n">RowKey</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="highlight-c#"><div class="highlight"><pre><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="p">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">?&gt;</span>
+<span class="p">&lt;</span><span class="n">packages</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;Microsoft.Data.Edm&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;5.6.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;Microsoft.Data.OData&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;5.6.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;Microsoft.Data.Services.Client&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;5.6.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;Microsoft.WindowsAzure.ConfigurationManager&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;1.8.0.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;Newtonsoft.Json&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;5.0.8&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;System.Spatial&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;5.6.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">&quot;WindowsAzure.Storage&quot;</span> <span class="n">version</span><span class="p">=</span><span class="s">&quot;3.0.2.0&quot;</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">&quot;net451&quot;</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="n">packages</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>実行結果</p>
+<div class="highlight-none"><div class="highlight"><pre>$ WASE221pre.exe
+pk, rk635265773262439816
+pk, rk635265773303542415
+pk, rk635265773965590960
+pk, rk635265774455960355
+pk, rk635265824937388844
+</pre></div>
+</div>
+<p>上手く行きました。（何度か実行したので複数のエンティティがあります）</p>
+<p>本当にJSONで流れているのかどうか念のために確認します。</p>
+<p>接続文字列を、 <span class="docutils literal"><span class="pre">&quot;UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler&quot;</span></span> に変更します。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// var acct = CloudStorageAccount.DevelopmentStorageAccount;</span>
+<span class="kt">var</span> <span class="n">acct</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&quot;UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>実行してCaptureを確認します。</p>
+<p>リクエスト</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://127.0.0.1:10002/devstoreaccount1/TestTable?timeout=90 HTTP/1.1
+User-Agent: WA-Storage/3.0.2 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2013-08-15
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 3.0;NetFx
+Accept: application/json;odata=minimalmetadata
+x-ms-client-request-id: a4ed326b-e3a6-43f9-bb6e-8fb295014473
+x-ms-date: Wed, 29 Jan 2014 09:04:42 GMT
+Authorization: SharedKey devstoreaccount1:7Wt86EphqhTZTwLxkMrAkPGNV9WDSKa0df5Feaw8zkU=
+Host: 127.0.0.1:10002
+</pre></div>
+</div>
+<p>レスポンス</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: fdd3f33e-e2d7-401e-a4c6-7654bd7ae584
+x-ms-version: 2013-08-15
+X-Content-Type-Options: nosniff
+Date: Wed, 29 Jan 2014 09:04:42 GMT
+
+285
+{&quot;odata.metadata&quot;:&quot;http://127.0.0.1:10002/devstoreaccount1/$metadata#TestTable&quot;,&quot;value&quot;:[{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265773262439816&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T07:28:46.35Z&quot;},{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265773303542415&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T07:28:50.513Z&quot;},{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265773965590960&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T07:29:56.707Z&quot;},{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265774455960355&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T07:30:45.74Z&quot;},{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265824937388844&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T08:54:54.147Z&quot;},{&quot;PartitionKey&quot;:&quot;pk&quot;,&quot;RowKey&quot;:&quot;rk635265830822644693&quot;,&quot;Timestamp&quot;:&quot;2014-01-29T09:04:42.46Z&quot;}]}
+0
+</pre></div>
+</div>
+<p>無事に動いていることを確認できました。</p>
+</div>
+<div class="section" id="id6">
+<h2>最後に</h2>
+<p>preview ですが、Storage Emulatorが 2013-08-15 versionをサポートし、軽くですがJSONでのアクセスが動くことを確認できました。
+12月の <a class="reference internal" href="http://kyrt.in/2013/12/21/windows_azure_storage_client_library_for_c_preview.html"><em>Windows Azure Storage Client Library for C++ Preview</em></a> では、2013-08-15 version 対応のStorage　Emulator が、来月には出せそうということだったので、ほぼ予定通りですね。
+どうしても手元で確認したい場合は、Storage Emulator 2.2.1 previewを使って、そうでない場合は本番を利用して開発ということになりそうです。</p>
+</div>
+</div>]]></description>
+            <category><![CDATA[ Azure Storage ]]></category>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Azure Table ]]></category>
+             <pubDate>Wed, 29 Jan 2014 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html</link>
             <guid>http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html</guid>
