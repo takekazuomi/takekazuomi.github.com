@@ -5,7 +5,7 @@
 2014/1/4 `Windows Azure Storage 3.0.2 <http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2>`_ がリリースされました。
 2013/11/27 3.0のリリース 「 :doc:`/2013/11/28/cors_json_minute_metrics_and_more` 」、2013/12/11 の 3.0.1 hotfix 「 :doc:`/2013/12/11/windows_azure_storage_client_3_0_1` 」 に続く３回めのリリースです。
 
-.. image:: http://farm4.staticflickr.com/3665/11730616035_d5730064f3.jpg
+.. image:: http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg
 	   :target: http://flic.kr/p/iSAtsB
 	   :alt: zenko-ji by Takekazu Omi, on Flickr
            :align: center

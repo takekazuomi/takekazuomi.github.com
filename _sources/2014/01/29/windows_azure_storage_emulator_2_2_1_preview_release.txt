@@ -5,9 +5,11 @@ Azure Storage 愛好者待望の、Azure Storage Emulator の 2013-08-15 version
 
 `Windows Azure Storage Emulator 2.2.1 Preview Release with support for "2013-08-15" version <http://blogs.msdn.com/b/windowsazurestorage/archive/2014/01/27/windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx>`_
 
+ | 日本語訳 `"2013-08-15" バージョンをサポートした Windows Azure ストレージ エミュレーター 2.2.1 のプレビューをリリース <http://blogs.msdn.com/b/windowsazurej/archive/2014/01/29/blog-windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx>`_
+
 Windows Azure Storage Emulator 2.2.1 Preview Release の MSI package は、 `ここ <http://www.microsoft.com/en-us/download/details.aspx?id=41670>`_ からダンロードできます。
 
-.. image:: http://farm4.staticflickr.com/3809/9267075295_acaa930254.jpg
+.. image:: http://farm4.staticflickr.com/3809/9267075295_acaa930254_c.jpg
 	   :target: http://flic.kr/p/f7UbCg
 	   :alt: insect by Takekazu Omi, on Flickr
            :align: center
@@ -113,6 +115,6 @@ preview ですが、Storage Emulatorが 2013-08-15 versionをサポートし、�
 
 
 .. author:: default
-.. categories:: Azure Storage, Azure, Azure Table, 
+.. categories:: Azure Storage, Azure, Azure Table 
 .. tags:: Azure Table, Table, Storage, Emulator, preview, 2013-08-15
 .. comments::
