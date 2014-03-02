@@ -1,7 +1,7 @@
 =========================================================
 FiddlerCoreでRead-Access Geo Redundant Storage を検証する
 =========================================================
-先日、`Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会 <http://atnd.org/event/2014azurejpdc>`_ のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで書きます。
+`Windows Azure – 技術者でつなぐ日めくりカレンダー <http://www.windowsazure.com/ja-jp/community/calender/>`_ の 3/2 の記事です。先日、`Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会 <http://atnd.org/event/2014azurejpdc>`_ のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz
 
 まずはLTの内容の復習から、簡単にまとめると下記のような内容です。
 
@@ -25,11 +25,12 @@ SDKの対応状況
 =============
 RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDKが必要。ただし、RESTでEndpointが違うだけだから自前でもアクセスするだけならそんなに難しくない。
 
-.NETだと `Storage Client Library 3.0 <http://www.nuget.org/packages/WindowsAzure.Storage>`_ 以降
-| Javaだと、`Windows Azure Storage SDK for Java 0.5.0 <https://github.com/WindowsAzure/azure-storage-java>`_ 以降
+1. .NETだと、`Storage Client Library 3.0 <http://www.nuget.org/packages/WindowsAzure.Storage>`_ 以降
+2. Javaだと、`Windows Azure Storage SDK for Java 0.5.0 <https://github.com/WindowsAzure/azure-storage-java>`_ 以降
+3. その他、各自対応
 
-これらのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary がtimes outしたときに secondary に自動的に retry する機能がある。
-LocationMode で参照先の設定、IExtendedRetryPolicy ではリトライ時に参照先を切り替えが可能。
+上記2つのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary にアクセしできなかった時に secondary に自動的に retry する機能、並びにLocationMode で参照先の設定がる。
+リトライは、IRetryPolicyを拡張した IExtendedRetryPolicy が追加されている。これではリトライ時に参照先を切り替えするようになっている。
 
  | LTの資料
 
@@ -40,11 +41,11 @@ LocationMode で参照先の設定、IExtendedRetryPolicy ではリトライ時�
 `RA-GRS Windows Azure Storage LT <http://www.slideshare.net/takekazuomi/20140226-ragrs-windows-azure-storage-lt>`_
 
 
-ここからが本記事の本題です。
+ここからが本題です。
 
 確認する
 ========
-RA-GRSで障害が起きた時の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで `CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。
+RA-GRSで障害が起きた時の ``IExtendedRetryPolicy`` の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで `CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。
 
 .. image:: http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg
    :target: http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163
@@ -107,6 +108,8 @@ Primary へのアクセスが ``502 Bad Gateway`` なのはちょっとイマイ
 ======
 実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 `GitHub azure-storage-net HttpMangler.cs <https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs>`_ 
 今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。
+
+`CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_ はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。
 
 最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・
 
