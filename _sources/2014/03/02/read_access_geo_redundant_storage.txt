@@ -1,11 +1,14 @@
 =========================================================
 FiddlerCoreでRead-Access Geo Redundant Storage を検証する
 =========================================================
-先日、`Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会 <http://atnd.org/event/2014azurejpdc>`_ のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで」ということで書きます。
+先日、`Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会 <http://atnd.org/event/2014azurejpdc>`_ のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで書きます。
 
 まずはLTの内容の復習から、簡単にまとめると下記のような内容です。
 
-Azure Storageの可用性設定（冗長構成）には3種類ある。
+振り返り
+========
+
+ | Azure Storageの可用性設定（冗長構成）には3種類ある。
 
 1. ローカル冗長ストレージ (LRS=Locally Redundant Storage) 
    データセンター内3箇所、同期
@@ -23,12 +26,12 @@ SDKの対応状況
 RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDKが必要。ただし、RESTでEndpointが違うだけだから自前でもアクセスするだけならそんなに難しくない。
 
 .NETだと `Storage Client Library 3.0 <http://www.nuget.org/packages/WindowsAzure.Storage>`_ 以降
-Javaだと、`Windows Azure Storage SDK for Java 0.5.0 <https://github.com/WindowsAzure/azure-storage-java>`_ 以降
+| Javaだと、`Windows Azure Storage SDK for Java 0.5.0 <https://github.com/WindowsAzure/azure-storage-java>`_ 以降
 
 これらのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary がtimes outしたときに secondary に自動的に retry する機能がある。
 LocationMode で参照先の設定、IExtendedRetryPolicy ではリトライ時に参照先を切り替えが可能。
 
-その時の資料。
+ | LTの資料
 
 .. raw:: html
 
@@ -37,11 +40,11 @@ LocationMode で参照先の設定、IExtendedRetryPolicy ではリトライ時�
 `RA-GRS Windows Azure Storage LT <http://www.slideshare.net/takekazuomi/20140226-ragrs-windows-azure-storage-lt>`_
 
 
-ここからがBlogの本題です。
+ここからが本記事の本題です。
 
 確認する
 ========
-RA-GRSで障害が起きた時の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒なのが厄介です。そんな時に、丁度いいタイミングで `CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_  で過酷な争奪戦に勝利し「実践Fiddler」をいただきました。
+RA-GRSで障害が起きた時の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで `CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。
 
 .. image:: http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg
    :target: http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163
@@ -49,17 +52,18 @@ RA-GRSで障害が起きた時の動作確認をしたいのですが、そう�
    :align: center
    :width: 300px
 
-FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが出来ます。今回は、これを使って LocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。
-すごく便利なので、本の紹介も兼ねて FidddlerCore を使ってみます。
+FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。
+本にはいろいろ詳しく書いてあるので、興味が出た方は是非！
 
 準備
 ====
-ここから、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、 `FiddlerCoreAPI` というディレクトリーに入ります。
+下記の場所から、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、 `FiddlerCoreAPI` というディレクトリーに入ります。
+
 http://www.telerik.com/fiddler/fiddlercore
 
 .. image:: 2014-03-02-ragrs001.png
 
-インストール先の `FiddlerCoreAPI\DotNet4\FiddlerCore4.dll` を参照に追加します。
+インストール先の `FiddlerCoreAPI\\DotNet4\\FiddlerCore4.dll` を参照に追加します。
 
 .. image:: 2014-03-02-ragrs002.png
 
@@ -79,7 +83,6 @@ FiddlerCoreSetup() の中を見てみましょう。基本的には必要な処�
    :language: c#
 
 ちょっと細かく追いかけてみます。
-|
 
 ``AfterSessionComplete`` はHTTP セッションが完了した後に生成されるイベントです。 このイベントハンドラにロギング代わりにコンソールへの書き出しを追加します。。今回は、ここのログを見て何処にアクセスに行っているのかを確認します。
 
@@ -105,7 +108,7 @@ Primary へのアクセスが ``502 Bad Gateway`` なのはちょっとイマイ
 実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 `GitHub azure-storage-net HttpMangler.cs <https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs>`_ 
 今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。
 
-最後に１つだけ、nugetで配布してくれると嬉しいなぁ・・・
+最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・
 
 
 .. author:: default
