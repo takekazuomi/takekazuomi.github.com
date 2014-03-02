@@ -66,6 +66,151 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
     </nav><div class="main-container"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>March 02, 2014</span>
+        </div>
+        <div class="section" id="fiddlercoreread-access-geo-redundant-storage">
+<h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
+<p>先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a> のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで」ということで書きます。</p>
+<p>まずはLTの内容の復習から、簡単にまとめると下記のような内容です。</p>
+<p>Azure Storageの可用性設定（冗長構成）には3種類ある。</p>
+<ol class="arabic simple">
+<li>ローカル冗長ストレージ (LRS=Locally Redundant Storage)
+データセンター内3箇所、同期</li>
+<li>地理冗長ストレージ (GRS=Geo Redundant Storage)
+地理的に離れた場所への複製（Local 3箇所＋リモート3箇所）、リモートは非同期、フェイルオーバー</li>
+<li>読み取りアクセス地理冗長ストレージ (RA-GRS=Read Access - Geo Redundant Storage)　PREVIEW
+地理的に離れた場所にあるデータを読む機能</li>
+</ol>
+<p>読み取りアクセス地理冗長ストレージ (以下、RA-GRS）は、現状Previewなので、まずは <a class="reference external" href="https://account.windowsazure.com/PreviewFeatures">Windows Azure Preview</a>  のページで申し込みをする必要がある。</p>
+<div class="section" id="sdk">
+<h2>SDKの対応状況</h2>
+<p>RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDKが必要。ただし、RESTでEndpointが違うだけだから自前でもアクセスするだけならそんなに難しくない。</p>
+<p>.NETだと <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">Storage Client Library 3.0</a> 以降
+Javaだと、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Windows Azure Storage SDK for Java 0.5.0</a> 以降</p>
+<p>これらのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary がtimes outしたときに secondary に自動的に retry する機能がある。
+LocationMode で参照先の設定、IExtendedRetryPolicy ではリトライ時に参照先を切り替えが可能。</p>
+<p>その時の資料。</p>
+<iframe frameborder="0" height="486" marginheight="0" marginwidth="0" scrolling="no" src="http://www.slideshare.net/slideshow/embed_code/31655208?startSlide=2" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" width="597"> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140226-ragrs-windows-azure-storage-lt">RA-GRS Windows Azure Storage LT</a></p>
+<p>ここからがBlogの本題です。</p>
+</div>
+<div class="section" id="id1">
+<h2>確認する</h2>
+<p>RA-GRSで障害が起きた時の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒なのが厄介です。そんな時に、丁度いいタイミングで <a class="reference external" href="http://clr-h.jp">CLR/H in Tokyo 第1回</a>  で過酷な争奪戦に勝利し「実践Fiddler」をいただきました。</p>
+<a class="reference external image-reference" href="http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163"><img alt="実践 Fiddler Eric Lawrence　著、日本マイクロソフト株式会社 エバンジェリスト 物江 修 監訳、長尾 高弘 訳" class="align-center" src="http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg" style="width: 300px;"/></a>
+<p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが出来ます。今回は、これを使って LocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。
+すごく便利なので、本の紹介も兼ねて FidddlerCore を使ってみます。</p>
+</div>
+<div class="section" id="id2">
+<h2>準備</h2>
+<p>ここから、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、 <cite>FiddlerCoreAPI</cite> というディレクトリーに入ります。
+<a class="reference external" href="http://www.telerik.com/fiddler/fiddlercore">http://www.telerik.com/fiddler/fiddlercore</a></p>
+<img alt="../../../_images/2014-03-02-ragrs001.png" src="_images/2014-03-02-ragrs001.png"/>
+<p>インストール先の <cite>FiddlerCoreAPIDotNet4FiddlerCore4.dll</cite> を参照に追加します。</p>
+<img alt="../../../_images/2014-03-02-ragrs002.png" src="_images/2014-03-02-ragrs002.png"/>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<p>今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。</p>
+<p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。
+try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">var</span> <span class="n">connectionString</span> <span class="p">=</span> <span class="n">CloudConfigurationManager</span><span class="p">.</span><span class="n">GetSetting</span><span class="p">(</span><span class="s">&quot;ConnectionString&quot;</span><span class="p">)</span> <span class="p">??</span> <span class="s">&quot;UseDevelopmentStorage=true&quot;</span><span class="p">;</span>
+  <span class="kt">var</span> <span class="n">account</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
+  <span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="n">account</span><span class="p">.</span><span class="n">CreateCloudBlobClient</span><span class="p">();</span>
+
+  <span class="k">try</span>
+  <span class="p">{</span>
+    <span class="n">FiddlerCoreSetup</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">StorageUri</span><span class="p">.</span><span class="n">PrimaryUri</span><span class="p">.</span><span class="n">Host</span><span class="p">);</span>
+
+    <span class="c1">// プライマリ→セカンダリで切り替え</span>
+    <span class="n">client</span><span class="p">.</span><span class="n">LocationMode</span> <span class="p">=</span> <span class="n">LocationMode</span><span class="p">.</span><span class="n">PrimaryThenSecondary</span><span class="p">;</span>
+
+    <span class="kt">var</span> <span class="n">container</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">GetContainerReference</span><span class="p">(</span><span class="s">&quot;jejeje&quot;</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">blob</span> <span class="p">=</span> <span class="n">container</span><span class="p">.</span><span class="n">GetBlockBlobReference</span><span class="p">(</span><span class="s">&quot;cray.png&quot;</span><span class="p">);</span>
+    <span class="n">blob</span><span class="p">.</span><span class="n">DownloadToFile</span><span class="p">(</span><span class="s">&quot;cray.png&quot;</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">.</span><span class="n">OpenOrCreate</span><span class="p">);</span>
+    
+  <span class="p">}</span>
+  <span class="k">finally</span>
+  <span class="p">{</span>
+    <span class="n">FiddlerCoreShutdown</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>FiddlerCoreSetup() の中を見てみましょう。基本的には必要な処理をFiddlerのイベントハンドラに追加して、FidderCore プロキシを起動するだけです。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">AfterSessionComplete</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;AfterSessionComplete Session {0}({4}):{1} {2} {3}&quot;</span><span class="p">,</span>
+      <span class="n">os</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">responseCode</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">RequestMethod</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">fullUrl</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">oResponse</span><span class="p">.</span><span class="n">MIMEType</span><span class="p">);</span>
+
+  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">BeforeRequest</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">HostnameIs</span><span class="p">(</span><span class="n">blockedHostName</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;BeforeRequest Session {0} {1} {2}&quot;</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">host</span><span class="p">);</span>
+      <span class="n">os</span><span class="p">.</span><span class="n">host</span> <span class="p">=</span> <span class="n">blockedHostName</span> <span class="p">+</span> <span class="s">&quot;.jejeje&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">Startup</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">FiddlerCoreStartupFlags</span><span class="p">.</span><span class="n">ChainToUpstreamGateway</span><span class="p">);</span>
+
+  <span class="kt">var</span> <span class="n">endpoint</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;127.0.0.1:{0}&quot;</span><span class="p">,</span> <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">oProxy</span><span class="p">.</span><span class="n">ListenPort</span><span class="p">);</span>
+
+  <span class="kt">var</span> <span class="n">feddlerProxy</span> <span class="p">=</span> <span class="k">new</span> <span class="n">WebProxy</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
+  <span class="n">WebRequest</span><span class="p">.</span><span class="n">DefaultWebProxy</span> <span class="p">=</span> <span class="n">feddlerProxy</span><span class="p">;</span>
+  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreShutdown</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">Shutdown</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>ちょっと細かく追いかけてみます。
+|</p>
+<p><span class="docutils literal"><span class="pre">AfterSessionComplete</span></span> はHTTP セッションが完了した後に生成されるイベントです。 このイベントハンドラにロギング代わりにコンソールへの書き出しを追加します。。今回は、ここのログを見て何処にアクセスに行っているのかを確認します。</p>
+<p><span class="docutils literal"><span class="pre">BeforeRequest</span></span> はHttp リクエストのデータが揃いサーバーに接続する前に生成されるイベントです。このイベントハンドラに、Primary のホストが接続先だったときに、存在しないhostに繋ぎに行くようなハンドラを追加します。</p>
+<p><span class="docutils literal"><span class="pre">FiddlerApplication.Startup()</span></span> を呼び出して、FeddlerCoreプロキシインスタンスを起動します。ポートに0を指定すると、FeddlerCore が自動的に空いているポートを探してリスニングに入ってくれます。ポートが使用中の問題が発生しないので便利なので、ポート番号を固定したいとき以外は0で良いと思います。自動で割り当てられたポート番号は FiddlerApplication.oProxy.ListenPort で確認できます。</p>
+<p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、 <span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span> に <span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span> を指定します。その他に、システム全体のProxyに入りたい場合は、 <cite>RegisterAsSystemProxy</cite> を使います。</p>
+<p>そして、 <cite>WebRequest</cite> の <cite>DefaultWebProxy</cite> を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
+<p>これで、実行すると下記のようになります。</p>
+<div class="highlight-text"><div class="highlight"><pre>127.0.0.1:19282
+BeforeRequest Session 1 ragrsomi001jp.blob.core.windows.net ragrsomi001jp.blob.core.windows.net
+AfterSessionComplete Session 1(text/html):502 GET http://ragrsomi001jp.blob.core.windows.net.jejeje/jejeje/cray.png?timeout=90
+AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary.blob.core.windows.net/jejeje/cray.png?timeout=90
+</pre></div>
+</div>
+<p>最初に、Primary にアクセスし、その後 Secondary にアクセスし直しているのがわかります。</p>
+<p>Primary へのアクセスが <span class="docutils literal"><span class="pre">502</span> <span class="pre">Bad</span> <span class="pre">Gateway</span></span> なのはちょっとイマイチですが、FeddlerCoreがProxyで入るので仕方がないのかもしれません。</p>
+</div>
+<div class="section" id="id3">
+<h2>まとめ</h2>
+<p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>
+今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
+<p>最後に１つだけ、nugetで配布してくれると嬉しいなぁ・・・</p>
+</div>
+</div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/blob.html">Blob</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/how_to.html">How-to</a>, <a href="tags/fiddler.html">Fiddler</a>, <a href="tags/debug.html">Debug</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2014/03/02/read_access_geo_redundant_storage.html#disqus_thread" data-disqus-identifier="2014/03/02/read_access_geo_redundant_storage">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 29, 2014</span>
         </div>
         <div class="section" id="windows-azure-storage-emulator-2-2-1-preview">
@@ -1819,335 +1964,6 @@ PSReadline                                                  1.0.0.1
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 06, 2013</span>
-        </div>
-        <div class="section" id="windows-azure-table-json-payload">
-<h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
-<p>2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a>  に出ています、興味深い内容です。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11248464764"><img alt="mojya mojya by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3755/11248464764_54794780d3_z.jpg"/></a>
-<p>翻訳は追々出ると思うので、拾い読みしながら気になったことを書きます。</p>
-<blockquote>
-<div><ul class="simple">
-<li>[引用]JSON Payloadは、version “2013-08-15”の一部してリリースされました。JSONは従来の AtomPub <a class="footnote-reference" href="#f1" id="id1">[1]</a> フォーマットの OData payload format に比べて著しくサイズが小さくなり latency が低くなっています。また、payload size を削減するため、 insert の payload echo を Off にする方法を提供します。これらの新機能は、新しい  <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a> ではデフォルトの機能として働きます。</li>
-</ul>
-</div></blockquote>
-<p>従来の HTTP request/response を見ていると無駄が目立ったので、それが削減されるのは大歓迎です。ここには、version “2013-08-15”でのplayloadの削減が書いてありますが、2013年11月（先月）ぐらいから、version “2012-02-12” の AtomPub でも余計な改行や空白を削減するなどの変更が行われています。このあたりの変更については、<a class="reference internal" href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html"><em>Windows Azure Tables の Breaking Changes 2013/11</em></a> を見て下さい。</p>
-<p>Insert の payload echo を Off にする話が出ていますが、version “2011-08-18” でサポートされた <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh452241.aspx">Insert Or Merge Entity (REST API)</a> ではレスポンスのBODYが空でステータスコードは204 (No Content) を返すようになっていました、これを insert でも同じように動作するモードを付けたということのようです。
-Insertの時にサーバー側で付与される情報はETagとTimestampだけで、それ以外は送信した内容と同じです、レスポンスヘッダーにETagは返ってくるので、エンティティ全体が帰ってこなくても困ることはほとんど無いと思います。場合によっては、Timestamp を使う場合があるかもしれませんが、その場合は設計を見直すか、エンティティ全体を返すモードで使うかになります。</p>
-<div class="section" id="what-is-json">
-<h2>What is JSON</h2>
-<blockquote>
-<div><ul class="simple">
-<li>[引用] <a class="reference external" href="http://json.org">JSON</a>  (JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a> と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
-</ul>
-</div></blockquote>
-<p>ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、 <a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038">OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design</a> がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。
-IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込まずに、受信側のクライアントのコードで実装もしくは、JSON内にメタ情報埋め込みという話にしたのは、JSONの手軽さを損なわないという点で評価できます。</p>
-<p>nometadata、minimalmetadata、fullmetadata や、JSON payload の詳細については <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">Payload Format for Table Service Operations</a> を見て下さい。</p>
-</div>
-<div class="section" id="atompub-vs-json-format">
-<h2>AtomPub vs JSON format</h2>
-<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a> と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><em>JSON nometadata [引用]</em></a> を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a> の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a> もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った <a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><em>XML nometadata （参考までに作ってみました）</em></a> というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
-<p>Payloadの違いによる比較のテーブルが面白いので引用します</p>
-<table border="1" class="docutils">
-<caption>To compare JSON and AtomPub</caption>
-<colgroup>
-<col width="14%"/>
-<col width="14%"/>
-<col width="14%"/>
-<col width="14%"/>
-<col width="14%"/>
-<col width="14%"/>
-<col width="14%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Format</th>
-<th class="head">Request Header Size</th>
-<th class="head">Request Body Size</th>
-<th class="head">Response Header Size</th>
-<th class="head">Response Body Size</th>
-<th class="head">% Savings in HTTP Body Size only vs. AtomPub</th>
-<th class="head">% Savings in total HTTP transfer vs. AtomPub</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>AtomPub</td>
-<td>3,611</td>
-<td>2,861</td>
-<td>3,211</td>
-<td>8,535</td>
-<td>N/A</td>
-<td>N/A</td>
-</tr>
-<tr class="row-odd"><td>JSON MinimalMetadata</td>
-<td>3,462</td>
-<td>771</td>
-<td>3,360</td>
-<td>2,529</td>
-<td>71%</td>
-<td>44%</td>
-</tr>
-<tr class="row-even"><td>JSON NoMetadata</td>
-<td>3,432</td>
-<td>771</td>
-<td>3,330</td>
-<td>1,805</td>
-<td>77%</td>
-<td>49%</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="fullatompub">
-<span id="id2"/><h3>AtomPub [引用]</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-<span class="nt">&lt;feed</span> <span class="na">xml:base=</span><span class="s">&quot;http://someaccount.table.core.windows.net/&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/2005/Atom&quot;</span> <span class="na">xmlns:d=</span><span class="s">&quot;http://schemas.microsoft.com/ado/2007/08/dataservices&quot;</span> <span class="na">xmlns:m=</span><span class="s">&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;</span> <span class="na">xmlns:georss=</span><span class="s">&quot;http://www.georss.org/georss&quot;</span> <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers<span class="nt">&lt;/id&gt;</span>
-  <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span><span class="nt">&gt;</span>Customers<span class="nt">&lt;/title&gt;</span>
-  <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
-  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;self&quot;</span> <span class="na">title=</span><span class="s">&quot;Customers&quot;</span> <span class="na">href=</span><span class="s">&quot;Customers&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">&quot;W/&amp;quot;datetime'2013-12-03T06%3A37%3A20.9709094Z'&amp;quot;&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Jonathan',RowKey='Foster')<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">&quot;someaccount.Customers&quot;</span> <span class="na">scheme=</span><span class="s">&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;edit&quot;</span> <span class="na">title=</span><span class="s">&quot;Customers&quot;</span> <span class="na">href=</span><span class="s">&quot;Customers(PartitionKey='Jonathan',RowKey='Foster')&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
-    <span class="nt">&lt;author&gt;</span>
-      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/author&gt;</span>
-    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">&quot;application/xml&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;m:properties&gt;</span>
-        <span class="nt">&lt;d:PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/d:PartitionKey&gt;</span>
-        <span class="nt">&lt;d:RowKey&gt;</span>Foster<span class="nt">&lt;/d:RowKey&gt;</span>
-        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2013-12-03T06:37:20.9709094Z<span class="nt">&lt;/d:Timestamp&gt;</span>
-        <span class="nt">&lt;d:Address&gt;</span>1234 SomeStreet St, Bellevue, WA 75001<span class="nt">&lt;/d:Address&gt;</span>
-        <span class="nt">&lt;d:Email&gt;</span>Jonathan@fourthcoffee.com<span class="nt">&lt;/d:Email&gt;</span>
-        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
-        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2005-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
-        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">&quot;Edm.Int32&quot;</span><span class="nt">&gt;</span>3<span class="nt">&lt;/d:Rating&gt;</span>
-      <span class="nt">&lt;/m:properties&gt;</span>
-    <span class="nt">&lt;/content&gt;</span>
-  <span class="nt">&lt;/entry&gt;</span>
-  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">&quot;W/&amp;quot;datetime'2013-12-03T06%3A37%3A21.1259249Z'&amp;quot;&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Lisa',RowKey='Miller')<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">&quot;someaccount.Customers&quot;</span> <span class="na">scheme=</span><span class="s">&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;edit&quot;</span> <span class="na">title=</span><span class="s">&quot;Customers&quot;</span> <span class="na">href=</span><span class="s">&quot;Customers(PartitionKey='Lisa',RowKey='Miller')&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
-    <span class="nt">&lt;author&gt;</span>
-      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/author&gt;</span>
-    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">&quot;application/xml&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;m:properties&gt;</span>
-        <span class="nt">&lt;d:PartitionKey&gt;</span>Lisa<span class="nt">&lt;/d:PartitionKey&gt;</span>
-        <span class="nt">&lt;d:RowKey&gt;</span>Miller<span class="nt">&lt;/d:RowKey&gt;</span>
-        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2013-12-03T06:37:21.1259249Z<span class="nt">&lt;/d:Timestamp&gt;</span>
-        <span class="nt">&lt;d:Address&gt;</span>4567 NiceStreet St, Seattle, WA 54332<span class="nt">&lt;/d:Address&gt;</span>
-        <span class="nt">&lt;d:Email&gt;</span>Lisa@northwindtraders.com<span class="nt">&lt;/d:Email&gt;</span>
-        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
-        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2003-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
-        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">&quot;Edm.Int32&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/d:Rating&gt;</span>
-      <span class="nt">&lt;/m:properties&gt;</span>
-    <span class="nt">&lt;/content&gt;</span>
-  <span class="nt">&lt;/entry&gt;</span>
-  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">&quot;W/&amp;quot;datetime'2013-12-03T06%3A37%3A20.7628886Z'&amp;quot;&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Walter',RowKey='Harp')<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">&quot;someaccount.Customers&quot;</span> <span class="na">scheme=</span><span class="s">&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/scheme&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;edit&quot;</span> <span class="na">title=</span><span class="s">&quot;Customers&quot;</span> <span class="na">href=</span><span class="s">&quot;Customers(PartitionKey='Walter',RowKey='Harp')&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
-    <span class="nt">&lt;author&gt;</span>
-      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/author&gt;</span>
-    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">&quot;application/xml&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;m:properties&gt;</span>
-        <span class="nt">&lt;d:PartitionKey&gt;</span>Walter<span class="nt">&lt;/d:PartitionKey&gt;</span>
-        <span class="nt">&lt;d:RowKey&gt;</span>Harp<span class="nt">&lt;/d:RowKey&gt;</span>
-        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2013-12-03T06:37:20.7628886Z<span class="nt">&lt;/d:Timestamp&gt;</span>
-        <span class="nt">&lt;d:Address&gt;</span>1345 Fictitious St, St Buffalo, NY 98052<span class="nt">&lt;/d:Address&gt;</span>
-        <span class="nt">&lt;d:Email&gt;</span>Walter@contoso.com<span class="nt">&lt;/d:Email&gt;</span>
-        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
-        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">&quot;Edm.DateTime&quot;</span><span class="nt">&gt;</span>2010-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
-        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">&quot;Edm.Int32&quot;</span><span class="nt">&gt;</span>4<span class="nt">&lt;/d:Rating&gt;</span>
-      <span class="nt">&lt;/m:properties&gt;</span>
-    <span class="nt">&lt;/content&gt;</span>
-  <span class="nt">&lt;/entry&gt;</span>
-<span class="nt">&lt;/feed&gt;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="json-minimalmetadata">
-<span id="id3"/><h3>JSON minimalmetadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
-    <span class="nt">&quot;odata.metadata&quot;</span><span class="p">:</span><span class="s2">&quot;http://someaccount.table.core.windows.net/$metadata#Customers&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;value&quot;</span><span class="p">:[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Jonathan&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Foster&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:39:56.6443475Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;1234 SomeStreet St, Bellevue, WA 75001&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Jonathan@fourthcoffee.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince@odata.type&quot;</span><span class="p">:</span><span class="s2">&quot;Edm.DateTime&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2005-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">3</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Lisa&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Miller&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:39:56.7943625Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;4567 NiceStreet St, Seattle, WA 54332&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Lisa@northwindtraders.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince@odata.type&quot;</span><span class="p">:</span><span class="s2">&quot;Edm.DateTime&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2003-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">2</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Walter&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Harp&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:39:56.4743305Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;1345 Fictitious St, St Buffalo, NY 98052&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Walter@contoso.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince@odata.type&quot;</span><span class="p">:</span><span class="s2">&quot;Edm.DateTime&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2010-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">4</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="json-nometadata">
-<span id="id4"/><h3>JSON nometadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
-    <span class="nt">&quot;value&quot;</span><span class="p">:[</span>
-	<span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Jonathan&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Foster&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:45:00.7254269Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;1234 SomeStreet St, Bellevue, WA 75001&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Jonathan@fourthcoffee.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2005-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">3</span>
-	<span class="p">},</span>
-	<span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Lisa&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Miller&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:45:00.8834427Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;4567 NiceStreet St, Seattle, WA 54332&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Lisa@northwindtraders.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2003-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">2</span>
-	<span class="p">},</span>
-	<span class="p">{</span>
-            <span class="nt">&quot;PartitionKey&quot;</span><span class="p">:</span><span class="s2">&quot;Walter&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;RowKey&quot;</span><span class="p">:</span><span class="s2">&quot;Harp&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-12-03T06:45:00.5384082Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Address&quot;</span><span class="p">:</span><span class="s2">&quot;1345 Fictitious St, St Buffalo, NY 98052&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Email&quot;</span><span class="p">:</span><span class="s2">&quot;Walter@contoso.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;PhoneNumber&quot;</span><span class="p">:</span><span class="s2">&quot;425-555-0101&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;CustomerSince&quot;</span><span class="p">:</span><span class="s2">&quot;2010-01-05T00:00:00Z&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;Rating&quot;</span><span class="p">:</span><span class="mi">4</span>
-	<span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="xml-nometadata">
-<span id="id5"/><h3>XML nometadata （参考までに作ってみました）</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; ?&gt;</span>
-<span class="nt">&lt;Feed&gt;</span>
-  <span class="nt">&lt;Properties&gt;</span>
-    <span class="nt">&lt;PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/PartitionKey&gt;</span>
-    <span class="nt">&lt;RowKey&gt;</span>Foster<span class="nt">&lt;/RowKey&gt;</span>
-    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.6443475Z<span class="nt">&lt;/Timestamp&gt;</span>
-    <span class="nt">&lt;Address&gt;</span>1234 SomeStreet St, Bellevue, WA 75001<span class="nt">&lt;/Address&gt;</span>
-    <span class="nt">&lt;Email&gt;</span>Jonathan@fourthcoffee.com<span class="nt">&lt;/Email&gt;</span>
-    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
-    <span class="nt">&lt;CustomerSince&gt;</span>2005-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
-    <span class="nt">&lt;Rating&gt;</span>3<span class="nt">&lt;/Rating&gt;</span>
-  <span class="nt">&lt;/Properties&gt;</span>
-  <span class="nt">&lt;Properties&gt;</span>
-    <span class="nt">&lt;PartitionKey&gt;</span>Lisa<span class="nt">&lt;/PartitionKey&gt;</span>
-    <span class="nt">&lt;RowKey&gt;</span>Miller<span class="nt">&lt;/RowKey&gt;</span>
-    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.7943625Z<span class="nt">&lt;/Timestamp&gt;</span>
-    <span class="nt">&lt;Address&gt;</span>4567 NiceStreet St, Seattle, WA 54332<span class="nt">&lt;/Address&gt;</span>
-    <span class="nt">&lt;Email&gt;</span>Lisa@northwindtraders.com<span class="nt">&lt;/Email&gt;</span>
-    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
-    <span class="nt">&lt;CustomerSince&gt;</span>2003-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
-    <span class="nt">&lt;Rating&gt;</span>2<span class="nt">&lt;/Rating&gt;</span>
-  <span class="nt">&lt;/Properties&gt;</span>
-  <span class="nt">&lt;Properties&gt;</span>
-    <span class="nt">&lt;PartitionKey&gt;</span>Walter<span class="nt">&lt;/PartitionKey&gt;</span>
-    <span class="nt">&lt;RowKey&gt;</span>Harp<span class="nt">&lt;/RowKey&gt;</span>
-    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.4743305Z<span class="nt">&lt;/Timestamp&gt;</span>
-    <span class="nt">&lt;Address&gt;</span>1345 Fictitious St, St Buffalo, NY 98052<span class="nt">&lt;/Address&gt;</span>
-    <span class="nt">&lt;Email&gt;</span>Walter@contoso.com<span class="nt">&lt;/Email&gt;</span>
-    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
-    <span class="nt">&lt;CustomerSince&gt;</span>2010-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
-    <span class="nt">&lt;Rating&gt;</span>4<span class="nt">&lt;/Rating&gt;</span>
-  <span class="nt">&lt;/Properties&gt;</span>
-<span class="nt">&lt;/Feed&gt;</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id6">
-<h2>最後に</h2>
-<p>書き始めたら案外知らないことが多く。てっきり、OData V3 の JSON <a class="footnote-reference" href="#f2" id="id7">[2]</a>  、 <cite>Content-Type: application/json;odata=verbose</cite> 、 <cite>json light (content-type : application/json; odata=light)</cite> が使われているのかと思ったら、いつの間にかOData Version 4.0 JSON <a class="footnote-reference" href="#f3" id="id8">[3]</a> なんてものがあって、そっちが使われていたことに気が付いたり。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a> で使っている、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Data.OData/5.6.0">ODataLib 5.6.0</a> から OData V4をサポートしているらしい <a class="footnote-reference" href="#f4" id="id10">[4]</a> ということが分かったりということで手間取りました。</p>
-<p>じゃあ、ODataLib 5.6.0 のコードちょっと見ておくかと思ったら、odata.codeplex.com の ODataLib は2011年から放置状態になっていて（これは知ってました）、 <a class="reference external" href="http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0">http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0</a> からコードが確認できるってことに気が付いたりで手間取りました。</p>
-<p>今回は前半しか紹介できていないので、そのうち続きを書きたいと思います。</p>
-<div class="section" id="resources">
-<h3>Resources</h3>
-<table class="docutils footnote" frame="void" id="f1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format">OData V3 JSON Verbose Format</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td><a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">OData JSON Format Version 4.0 Candidate OASIS Standard 01 19 November 2013</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[4]</a></td><td>OData V4 のstackが、ODataLib として提供されることがコメントに書いてある <a class="reference external" href="http://blogs.msdn.com/b/astoriateam/archive/2013/08/26/wcf-data-services-5-6-0-release.aspx">WCF Data Services 5.6.0 Release</a></td></tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure_sdk.html">Azure SDK</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/json.html">JSON</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/06/azure_table_json_payload.html#disqus_thread" data-disqus-identifier="2013/12/06/azure_table_json_payload">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -2156,6 +1972,8 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
+        </li><li>
             <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li><li>
             <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
@@ -2173,15 +1991,13 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
             <a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
         </li><li>
             <a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a>
-        </li><li>
-            <a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (23)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (9)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (24)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (10)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (10), <a href="tags/azure_blob.html">Azure Blob</a> (2), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/blob.html">Blob</a> (2), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (2), <a href="tags/json.html">JSON</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (13), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (10), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (2), <a href="tags/json.html">JSON</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (14), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
