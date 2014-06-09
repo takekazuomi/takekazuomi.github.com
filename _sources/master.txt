@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2014/06/08/snowflake_c
    2014/03/02/read_access_geo_redundant_storage
    2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release
    2014/01/06/windows_azure_storage_3_0_2_hotfix
@@ -30,4 +31,3 @@ Sitemap
    2012/12/08/blobasyncinside
    2012/12/08/waac2012day2
    pages/about_me
-

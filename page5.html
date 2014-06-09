@@ -1,0 +1,967 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Page 5 &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="_static/main.css" type="text/css">
+            <link rel="stylesheet" href="_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+        <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="_static/plugins.js"></script>
+        <script src="_static/main.js"></script>
+        <link rel="next" title="Older" href="page6.html" /><link rel="prev" title="Newer" href="page4.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script><script type="text/javascript" src="_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Page 5 &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/page5.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="pages/about_me.html">About Kyrt</a>
+        </li>
+        <li class="logo-nav">
+	  <a href="pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>October 17, 2013</span>
+        </div>
+        <h1><a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a></h1>
+<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
+<p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
+<p>修正して、Pull Requestを投げています。(2013/10/13)</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="id1">
+<h2>修正内容</h2>
+<script src="https://gist.github.com/takekazuomi/7031393.js">&amp;amp;nbsp;</script><p>edmType が、EdmType.INT64の場合に、値のpostfixに’L’を付けるように変更しました。</p>
+</div>
+<div class="section" id="id2">
+<h2>元の仕様</h2>
+<p>どこからこの’L’が出てきたかという話をチョットします。
+Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
+<table border="1" class="docutils">
+<caption>OData Primitive Data Types</caption>
+<colgroup>
+<col width="25%"/>
+<col width="25%"/>
+<col width="25%"/>
+<col width="25%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Primitive Types     Literal Form    Example</th>
+<th class="head"> </th>
+<th class="head"> </th>
+<th class="head"> </th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Edm.Int64 Represents a signed 64-bit</td>
+<td>integer value</td>
+<td>[-] [0-9]+L</td>
+<td>Example 1: 64L Example 2: -64L</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference external" href="http://www.odata.org/documentation/overview/azure_java_sdk_long_value_filtering_bug.html#AbstractTypeSystem">odata.org  6. Primitive Data Types</a> より</p>
+<p>念のため他のデータ型の実装も確認すると、Azure Tableでサポートされているデータ型でリテラル表記に癖があるEdm.Guid, Edm.DateTimeのあたりですは問題なさそうです。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_sdk.html">Azure SDK</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a>, <a href="tags/java.html">Java</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/bug.html">BUG</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/10/17/azure_java_sdk_long_value_filtering_bug.html#disqus_thread" data-disqus-identifier="2013/10/17/azure_java_sdk_long_value_filtering_bug">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>October 15, 2013</span>
+        </div>
+        <h1><a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></h1>
+<p>Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを簡単に流します。Java, Play Frameworkに付いてある程度知識があって、Windows Azureを使ってみようという人を前提としています。</p>
+<div class="section" id="id1">
+<h2>必要環境</h2>
+<p>確認は下記の環境で行いました。</p>
+<ol class="arabic simple">
+<li>Windows 8</li>
+<li>Java Developer Kit (JDK), v1.7</li>
+<li>Eclipse IDE for Java EE Developers Kepler</li>
+<li>Windows Azure SDK 2.1</li>
+<li>Play Framework 2.1</li>
+</ol>
+<p>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1の開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
+<div class="section" id="windows-azure-sdk-2-1">
+<h3>Windows Azure SDK 2.1のインストール</h3>
+<p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
+<p>Web Platform Installerを起動して、右上の検索ボックス①に <span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span> と入力して改行すると検索結果が表示されます。その中の <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> ② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> だけです。</p>
+<p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
+<img alt="../../../_images/2013_10_webpi002.png" src="_images/2013_10_webpi002.png"/>
+<ul class="simple">
+<li>Web Platform Installer 4.6 は、 <a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a> からインストールできます。</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>もっと簡単な方法</h3>
+<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using the
+Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> をインストールするplugin(exe)も配布されています。 <a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a> このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
+</div>
+</div>
+<div class="section" id="windows-azure-plugin-for-eclipse-with-java-by-microsoft-open-technologies">
+<h2>Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</h2>
+<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。
+プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
+<p>レポジトリとして、 <span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span> を追加すると、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span> が表示されます。</p>
+<img alt="../../../_images/2013_10_javaplugininstall002.png" src="_images/2013_10_javaplugininstall002.png"/>
+<p>必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。</p>
+<div class="section" id="id3">
+<h3>サポートされているライブラリの種類</h3>
+<p>Windows Azure Plugin for Eclipse with Javaが、EclipseのUIとツールを提供するもので、その他のものはAzureのAPIをラップしたクラスライブラリです。</p>
+<ul class="simple">
+<li>Microsoft JDBC Driver 4.0 for SQL Server: SQL Database 用のコンポーネント</li>
+<li>Package for Apache Qpid Client Libraries for JMS (by MS Open Tech): Azureのメッセージングサービス向けのJMS client library （Apache Qpid project が元になっています）</li>
+<li>Package for Windows Azure Libraries for Java (by MS Open Tech): このコンポーネントは、Windows Azure でスケーラブルなクラウドコンピューティングを実現するためのライブラリを提供</li>
+<li>Windows Azure Access Control Services Filter (by MS Open Tech): このコンポーネントはWindows Azure ACS を使った認証アプリケーション向け</li>
+<li>Windows Azure Common Plugin (by MS Open Tech): 他のこのコンポーネントとの共通コンポーネント</li>
+<li>Windows Azure Plugin for Eclipse with Java (by MS Open Tech): このコンポーネントは、project configuration logic、the publish-to-cloud wizard、と user interfaceを含む</li>
+</ul>
+<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span> のチェックを外してみてください。</p>
+<p>ここまでの内容は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a> に詳しく書いてありますので、そちらも参照してください。</p>
+</div>
+</div>
+<div class="section" id="play-frameworkeclipse">
+<h2>Play Frameworkのプロジェクト作成からEclipseへの取り込へ</h2>
+<p>動作確認のためにPlay Frameworkのプロジェクトを作成して、Eclipseへ取り込みます。</p>
+<p>MyFirstAppという名前で、play frameworkのアプリを作ります。今回は全くコードは書かないので関係ありませんが言語はJavaを選択します:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ play new MyFirstApp
+       _            _
+ _ __ | | __ _ _  _| |
+| '_ \| |/ _' | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+The new application will be created in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp
+
+What is the application name? [MyFirstApp]
+&gt;
+
+Which template do you want to use for this new application?
+
+  1             - Create a simple Scala application
+  2             - Create a simple Java application
+
+&gt; 2
+OK, application MyFirstApp is created.
+
+Have fun!
+</pre></div>
+</div>
+<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、 <span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span> の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd .\MyFirstApp
+$ play
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+       _            _
+ _ __ | | __ _ _  _| |
+| '_ \| |/ _' | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+&gt; Type "help play" or "license" for more information.
+&gt; Type "exit" or use Ctrl+D to leave this console.
+
+[MyFirstApp] $ eclipse
+[info] About to create Eclipse project files for your project(s).
+[info] Updating {file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/}MyFirstApp...
+[info] Done updating.
+[info] Compiling 4 Scala sources and 2 Java sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\classes...
+[info] Successfully created Eclipse project files for project(s):
+[info] MyFirstApp
+[MyFirstApp] $ exit
+</pre></div>
+</div>
+<p>AzureのDeploy用のパッケージ(cspkg)に入れるためアプリの配布用zipを作成します:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ play dist
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-sources.jar ...
+[info] Done packaging.
+[info] Generating Scala API documentation for main sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\api...
+[info] Wrote C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.pom
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.jar ...
+[info] Done packaging.
+model contains 17 documentable templates
+[info] Scala API documentation generation successful.
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-javadoc.jar ...
+[info] Done packaging.
+
+Your application is ready in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\dist\myfirstapp-1.0-SNAPSHOT.zip
+
+[success] Total time: 8 s, completed 2013/10/15 14:57:13
+$
+</pre></div>
+</div>
+<p>この時に、 <span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span> の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
+<p>eclipseを起動して、プロジェクトをimportします。</p>
+<img alt="../../../_images/2013_10_eclipse002.png" src="_images/2013_10_eclipse002.png"/>
+<p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
+<p>参考： <a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
+</div>
+<div class="section" id="azure-project">
+<h2>Azure 用のProjectの作成</h2>
+<p>ツールバーの <span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span> を押します。</p>
+<img alt="../../../_images/2013_10_eclipse003.png" src="_images/2013_10_eclipse003.png"/>
+<p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
+<img alt="../../../_images/2013_10_eclipse004.png" src="_images/2013_10_eclipse004.png"/>
+<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。
+今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
+<img alt="../../../_images/2013_10_eclipse005.png" src="_images/2013_10_eclipse005.png"/>
+<p>下記のような内容のプロジェクトが作成されます。</p>
+<img alt="../../../_images/2013_10_eclipse006.png" src="_images/2013_10_eclipse006.png"/>
+<div class="section" id="workerrole1myfirstappdist-zip">
+<h3>プロジェクトのWorkerRole1へMyFirstAppのdist zipを追加する</h3>
+<p>WorkerRole1を選択してプロパティを開き、Windows Azure RoleのTreeを開いてComponentsを選びます。コンポーネントリストにHelloWorld.warがありますが、不要なのでremoveします。その後Addを押してMyFirstAppのdist zipを追加します。</p>
+<img alt="../../../_images/2013_10_eclipse007.png" src="_images/2013_10_eclipse007.png"/>
+<p>「Windows Azure Role Component」のpopupをでは、Import into packageのFrom Pathの部分に、dist zip のフルパス名を入れます。Methodは、copyを選択、As Nameは、dist zipのファイル名入れます（ここは、From Pathのファイル名部分がデフォルトで入力されるはずです）その下の、Deploy from packageの設定は、Methodをunzip、To directoryを.にしてください。今回</p>
+<img alt="../../../_images/2013_10_eclipse008.png" src="_images/2013_10_eclipse008.png"/>
+</div>
+<div class="section" id="id4">
+<h3>環境変数の追加</h3>
+<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、 <span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span> )を定義します。</p>
+<img alt="../../../_images/2013_10_eclipse009.png" src="_images/2013_10_eclipse009.png"/>
+</div>
+<div class="section" id="endpoint">
+<h3>EndPointを変更</h3>
+<p>play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。publicで定義されているのがAzure のload brancer がインターネット上で公開しているポート番号で、privateがAzure インスタンスでアプリが待ち受けているポート番号です。play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。Azure Load brancerがこの定義に基いてポート変換を実行します。</p>
+<img alt="../../../_images/2013_10_eclipse010.png" src="_images/2013_10_eclipse010.png"/>
+</div>
+<div class="section" id="script">
+<h3>scriptの変更</h3>
+<p>MyAzureProject/WorkerRole1/approotにあるstartup.cmdとrun.cmdを下記のように変更します。</p>
+<p>startup.cmd:</p>
+<div class="highlight-none"><div class="highlight"><pre>del /q run_body.cmd
+powershell -ExecutionPolicy RemoteSigned -f replace.ps1 run_body.cmd.template &gt; run_body.cmd
+</pre></div>
+</div>
+<p>run.cmd:</p>
+<div class="highlight-none"><div class="highlight"><pre>rem @ECHO OFF
+
+set _SLEEPLENGTH=15000
+set _FILENAME=run_body.cmd
+
+@REM Create a temporary sleep script in VBScript
+echo WScript.sleep(%_SLEEPLENGTH%) &gt; %Temp%\_mysleep.vbs
+
+:Loop
+if exist %_FILENAME% (goto:StartToRun)
+
+cscript /Nologo %Temp%\_mysleep.vbs
+goto:Loop
+
+del %Temp%\_mysleep.vbs
+
+:StartToRun
+call %_FILENAME%
+</pre></div>
+</div>
+<p>replace.ps1と、run_body.cmd.templateの2つファイルを追加します。</p>
+<p>replace.ps1:</p>
+<div class="highlight-none"><div class="highlight"><pre>cat $args[0] | % {$l = $_ -creplace '__JAVA_HOME__',"$Env:JAVA_HOME"; "$l" } | % {$l = $_ -creplace '__ZIP_NAME__',"$Env:ZIP_NAME"; "$l" }
+</pre></div>
+</div>
+<p>run_body.cmd.template:</p>
+<div class="highlight-none"><div class="highlight"><pre>set JAVA_HOME=__JAVA_HOME__
+set ZIP_NAME=__ZIP_NAME__
+
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+setlocal
+set d=%~dp0
+set d=%d:\=/%
+java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
+</pre></div>
+</div>
+</div>
+<div class="section" id="emulator">
+<h3>Emulatorでの実行</h3>
+<p>これで準備ができました。 <span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span> を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
+<img alt="../../../_images/2013_10_eclipse011.png" src="_images/2013_10_eclipse011.png"/>
+<p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
+<img alt="../../../_images/2013_10_eclipse012.png" src="_images/2013_10_eclipse012.png"/>
+</div>
+<div class="section" id="azuredeploy">
+<h3>Azure環境へのDeploy</h3>
+<p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
+<img alt="../../../_images/2013_10_eclipse013.png" src="_images/2013_10_eclipse013.png"/>
+<p>この設定だと、Azure環境ではAzure LoadBarancerが介在して外部から port 80で見えます。</p>
+</div>
+</div>
+<div class="section" id="bookmarks">
+<h2>Bookmarks</h2>
+<ul class="simple">
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>
+Java開発の入り口</li>
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx">Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a></li>
+</ul>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/java.html">Java</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/emulator.html">Emulator</a>, <a href="tags/deploy.html">Deploy</a>, <a href="tags/tutorial.html">Tutorial</a>, <a href="tags/play_framework.html">Play Framework</a>, <a href="tags/step_by_step.html">Step By Step</a>, <a href="tags/eclipse.html">Eclipse</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>December 26, 2012</span>
+        </div>
+        <h1><a href="2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a></h1>
+<p>以前の記事 <a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> の補足です。その中の <a class="reference internal" href="2012/12/08/waac2012day2.html#waac2012day2-pending"><em>非同期で同時接続数が上がらない？</em></a> で、</p>
+<blockquote>
+<div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。
+<strong>これは、Azure Storage Client 2.0のBUG</strong> だったようです。2.0.2で修正されています。</div></blockquote>
+<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かりました。少々混乱したのでここに顛末をまとめます。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8307052288"><img alt="candle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="bug">
+<h2>BUGの内容</h2>
+<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
+<div class="section" id="id1">
+<h3>参照</h3>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></li>
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></li>
+</ol>
+</div>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id2">
+<h2>再現試験</h2>
+<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは[前の記事] (Azure Storage Gen 2は速かった) とほとんど同じですが、なるべく簡略化したものにしています。</p>
+<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369349.js">&amp;amp;nbsp;</script><p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
+<script src="https://gist.github.com/takekazuomi/4369329.js">&amp;amp;nbsp;</script><p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
+<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a class="reference external" href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7">C#たんっ！ 新機能が入るまで</a> 」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
+</div>
+<div class="section" id="id3">
+<h2>2.0.1 で動かす</h2>
+<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
+</pre></div>
+</div>
+<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
+<div class="section" id="azure-storage-client-2-0-1-resource-moniter">
+<h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
+<img alt="2.0.1時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.1.png"/>
+<p>見事に接続数が伸びません。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>2.0.3では？</h2>
+<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage
+</pre></div>
+</div>
+<div class="section" id="azure-storage-client-2-0-3-resource-moniter">
+<h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
+<img alt="2.0.3時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.3.png"/>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>結論</h2>
+<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
+<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id6">
+<h2>次の問題</h2>
+<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
+<div class="section" id="azure-storage-client-2-0-3-exception">
+<h3>Azure Storage Client 2.0.3 時でのException</h3>
+<img alt="Azure Storage Client 2.0.3 時でのException" src="_images/2012_12_connections-asc2.0.3-cmd.png"/>
+<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
+<p>ここでは、Blob でのUpload処理が参考になります。
+Windows Azure Storage 2.0 の Blob Upload で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
+</div>
+</div>
+<div class="section" id="semaphore">
+<h2>Semaphoreを使う</h2>
+<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御します。SemaphoreSlim という便利がものがあるのでそれを使います。
+こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369880.js">&amp;amp;nbsp;</script></div>
+<hr class="docutils"/>
+<div class="section" id="id7">
+<h2>まとめ</h2>
+<ol class="arabic simple">
+<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
+<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
+<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
+</ol>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>December 22, 2012</span>
+        </div>
+        <h1><a href="2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a></h1>
+<p>twitterで、「 <a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a> 」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。 Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
+<p>Azure Storageの非同期と同期の比較をしようと始めたのだけど、なかなか手間取って進まない。ちょっと寄り道して速くなったというAzure VMを試してみることにした。</p>
+<p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7987640250"><img alt="Triangle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="ubuntu">
+<h2>Ubuntu 環境の準備</h2>
+<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定: Azure Ubuntu 12.04 iozone 速報 2012/7/4 ホストキャッシュの設定はポータルからはできずに、デフォルトでした。
+その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
+<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考： <a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details">Windows Azure の料金と、請求の計測単位の詳細</a></p>
+<p>正確には、今回試そうとしているVirtual Machine はまだ Previewで Cloud Serviceと同じような制限になるかは情報が公開されていない（私は知らないだけかもしれませんが）のですが、同じになってそうな気がしたのでMにしました。</p>
+<p>ちょっと古いものでは、 <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a> という情報もあります。</p>
+<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。
+実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
+<p>ざっと流すと、以下のような手順踏んで用意をします。</p>
+<ol class="arabic simple">
+<li>Ubuntu 12.10 を、azure portalから、virtual machineイメージをインストール</li>
+<li>data disk を、256Gで3つ作成、/dev/sdc, sdd, sdeを確認、キャッシュをそれぞれ「なし、読み取り専用、読み取り/書き込み」と指定</li>
+<li>fdiskして、/dev/sd[cde]1にext4でfilesystemを作成し/mnt/data, /mnt/data1, /mnt/data2へmount</li>
+<li>apt-get update, upgrade して最新に更新</li>
+<li>/etc/apt/sources.list で、multiverse を追加（コメントを外しただけ）</li>
+<li>apt-get install iozone3 でインストール</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>ディスク構成</h2>
+<table border="1" class="docutils">
+<caption>表1 ディスク構成</caption>
+<colgroup>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ディスク</th>
+<th class="head">種類</th>
+<th class="head">ホスト キャッシュ</th>
+<th class="head">サイズ</th>
+<th class="head">備考</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>/dev/sda</td>
+<td>OS ディスク</td>
+<td>読み取り/書き込み</td>
+<td>30GB</td>
+<td> </td>
+</tr>
+<tr class="row-odd"><td>/dev/sdc</td>
+<td>データ ディスク</td>
+<td>なし</td>
+<td>256GB</td>
+<td> </td>
+</tr>
+<tr class="row-even"><td>/dev/sdd</td>
+<td>データ ディスク</td>
+<td>読み取り専用</td>
+<td>256GB</td>
+<td> </td>
+</tr>
+<tr class="row-odd"><td>/dev/sde</td>
+<td>データ ディスク</td>
+<td>読み取り/書き込み</td>
+<td>256GB</td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id3">
+<h2>手順</h2>
+<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。
+(以下sudo省略)</p>
+<ol class="arabic simple">
+<li>ポータルで256Gでdata diskを作成して接続を確認</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg | grep -e <span class="s2">"\[sd[a-z]\]"</span>
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> 62914560 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f 00 10 00
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> 283115520 512-byte logical blocks: <span class="o">(</span>144 GB/135 GiB<span class="o">)</span>
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f 00 10 00
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f 00 10 00
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f 00 10 00
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f 00 10 00
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>parted で全セクタを使ってパーテーションを作成</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo parted /dev/sdc --script mklabel gpt
+<span class="nv">$ </span>sudo parted /dev/sdc --script <span class="s1">'mkpart disk1 ext4 1M -1'</span>
+<span class="nv">$ </span>sudo parted /dev/sdc --script <span class="s1">'print'</span>
+
+Model: Msft Virtual Disk <span class="o">(</span>scsi<span class="o">)</span>
+Disk /dev/sdc: 275GB
+Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 512B/512B
+Partition Table: gpt
+
+Number  Start   End    Size   File system  Name   Flags
+1      1049kB  275GB  275GB  ext4         disk1
+
+<span class="nv">$ </span>sudo parted /dev/sdd --script mklabel gpt
+<span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">'mkpart disk2 ext4 1M -1'</span>
+<span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">'print'</span>
+
+___ snip ___
+
+<span class="nv">$ </span>sudo parted /dev/sde --script mklabel gpt
+<span class="nv">$ </span>sudo parted /dev/sde --script <span class="s1">'mkpart disk3 ext4 1M -1'</span>
+<span class="nv">$ </span>sudo parted /dev/sde --script <span class="s1">'print'</span>
+
+___ snip ___
+
+<span class="nv">$ </span>sudo mkfs.ext4 /dev/sdc1
+___ snip ___
+<span class="nv">$ </span>sudo mkfs.ext4 /dev/sdd1
+___ snip ___
+<span class="nv">$ </span>sudo mkfs.ext4 /dev/sde1
+___ snip ___
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>mount point 作って、/mnt/resouceとともにパーミッションを変更</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir /mnt/data1 /mnt/data2 /mnt/data3
+<span class="nv">$ </span>chmod a+wrx /mnt/data*
+<span class="nv">$ </span>chmod a+wrx /mnt/resource
+<span class="nv">$ </span>ls -l /mnt/
+total 20
+drwx------ 3 root root 4096 Dec 21 15:56 cdrom
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data1
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data2
+drwxrwxrwx 2 root root 4096 Dec 22 22:47 data3
+drwxrwxrwx 4 root root 4096 Dec 21 22:14 resource
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>とりあえず、マウントして確認</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo mount -t ext4 /dev/sdc1 /mnt/data1
+<span class="nv">$ </span>sudo mount -t ext4 /dev/sdd1 /mnt/data2
+<span class="nv">$ </span>sudo mount -t ext4 /dev/sde1 /mnt/data3
+
+<span class="nv">$ </span>df -T
+Filesystem     Type     1K-blocks    Used Available Use% Mounted on
+/dev/sda1      ext4      30953664 1142056  28539332   4% /
+udev           devtmpfs   1751196      12   1751184   1% /dev
+tmpfs          tmpfs       704872     280    704592   1% /run
+none           tmpfs         5120       0      5120   0% /run/lock
+none           tmpfs      1762172       0   1762172   0% /run/shm
+none           tmpfs       102400       0    102400   0% /run/user
+/dev/sdb1      ext4     139334632  192000 132064848   1% /mnt/resource
+/dev/sdc1      ext4     264221700  191576 250608456   1% /mnt/data1
+/dev/sdd1      ext4     264221700  191576 250608456   1% /mnt/data2
+/dev/sde1      ext4     264221700  191576 250608456   1% /mnt/data3
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>再起動してもマウントされるように、UUIDを確認して /etc/fstab に追加。</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>blkid
+/dev/sda1: <span class="nv">LABEL</span><span class="o">=</span><span class="s2">"cloudimg-rootfs"</span> <span class="nv">UUID</span><span class="o">=</span><span class="s2">"56d8a977-c1fe-461e-a328-b19fc47c743f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
+/dev/sdb1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"d063d8a2-32fc-486c-a9b4-e6bcf7e5deae"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
+/dev/sdd1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"88f28b19-fdc6-46dc-a2d7-2daa1754754f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
+/dev/sdc1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"a1cb5045-178a-476e-9821-084f8f6d92a6"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
+/dev/sde1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"15b8b45e-fbd0-4efc-9534-5e38b1877828"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
+
+<span class="nv">$ </span>vi /etc/fstab
+
+___ snip ___
+
+<span class="nv">$ </span>cat /etc/fstab
+<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        0 0
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>最新にして再起動する</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>apt-get update
+___ snip ___
+<span class="nv">$ </span>apt-get upgrade
+___ snip ___
+
+<span class="nv">$ </span>shutdown -r now
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li>iozone3 を入れる</li>
+</ol>
+<p>/etc/apt/sources.list を変更して、multiverse を追加（コメントを外しただけ）</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>vi /etc/apt/sources.list
+
+___ snip ___
+
+<span class="nv">$ </span>apt-get update
+<span class="nv">$ </span>apt-get install iozone3
+</pre></div>
+</div>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id4">
+<h2>測定</h2>
+<p>これで環境が出来たので測定します。基本的には、iozone 一発で細かいオプションの指定はしません。なんとなく、Excelファイルにしたのですが、面倒になるだけであまりメリットは無かったかもしれません。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
+<span class="nv">$ </span>iozone -Ra -f /mnt/data1/tmp/test -b sdc1-001hcnone.xls -s 1g
+<span class="nv">$ </span>iozone -Ra -f /mnt/data2/tmp/test -b sdd1-001hcro.xls -s 1g
+<span class="nv">$ </span>iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
+</pre></div>
+</div>
+<p><a class="reference download internal" href="_downloads/20121222-iozone-azurevm.zip"><span class="xref download docutils literal"><span class="pre">結果のファイル(zip)</span></span></a></p>
+</div>
+<div class="section" id="iozone">
+<h2>iozone の実行結果</h2>
+<p>iozoneの測定結果をローカルドライブ、Data Diskの順で見ていく。それぞれの結果を図にした。</p>
+<div class="section" id="id5">
+<h3>ローカルディスクの性能</h3>
+<p>まずは、ローカルドライブの実行結果から見る。読み込みはレコードサイズが8Kあたりから256KBまでは、2,500,000 KB/sec  - 3,000,000 KB/sec で、レコードサイズが増えていくとだんだん遅くなっていく。書き込み側は同じ軸ではとスケールが違い過ぎてよくわからない。</p>
+<div class="figure">
+<img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="_images/2012_12_sdb2-rw.png"/>
+<p class="caption">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</p>
+</div>
+<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「 Iozone Filesystem Benchmark Download Documentation 」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
+<div class="figure">
+<img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="_images/2012_12_sdb2-note1-w.png"/>
+<p class="caption">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</p>
+</div>
+<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentation から）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。
+同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
+<div class="figure">
+<img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="_images/2012_12_sdb2-w.png"/>
+<p class="caption">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</p>
+</div>
+<p>小さいブロックのランダム書き込みが苦手だということがわかる。これはHDDの一般的な傾向で納得できる。以降では書き込みの図は図2と同じデータ項目を表示する。</p>
+</div>
+<div class="section" id="data-disk">
+<h3>Data Diskの性能</h3>
+<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。
+ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
+<div class="figure">
+<img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="_images/2012_12_sdc1-rw.png"/>
+<p class="caption">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</p>
+</div>
+<div class="figure">
+<img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="_images/2012_12_sdc1-w.png"/>
+<p class="caption">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</p>
+</div>
+<div class="figure">
+<img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="_images/2012_12_sdd1-rw.png"/>
+<p class="caption">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</p>
+</div>
+<div class="figure">
+<img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sdd1-w.png"/>
+<p class="caption">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</p>
+</div>
+<div class="figure">
+<img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="_images/2012_12_sde1-rw.png"/>
+<p class="caption">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</p>
+</div>
+<div class="figure">
+<img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sde1-w.png"/>
+<p class="caption">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</p>
+</div>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id6">
+<h3>結論</h3>
+<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。
+もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
+<p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえる嬉しい。今まで、Azure Tableの性能評価をした時も、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがあるので、明確な数字を出すことは難しい。しかし、いろいろなパターンの性能情報があると設計時の精度もあがるので、この手の情報は重要とは思う。</p>
+</div>
+<div class="section" id="bookmarks">
+<h3>Bookmarks</h3>
+<ol class="arabic simple">
+<li>Iozone Filesystem Benchmark</li>
+<li>Iozone Filesystem Benchmark Download Documentation</li>
+<li>IOzoneによるファイルシステムのパフォーマンス測定</li>
+<li>Azure Ubuntu 12.04 iozone 速報 2012/7/4</li>
+</ol>
+</div>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>December 08, 2012</span>
+        </div>
+        <h1><a href="2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a></h1>
+<p>前の記事 <a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> では非同期呼び出しを使っていますが、これには理由があります。
+以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
+<p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
+<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
+<p>C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うには良い環境が揃ってきていると感じました。それで改めて非同期呼び出しを使ってみることにしました。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8149221698"><img alt="shibuya by takekazu, on Flickr" src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="id1">
+<h2>試行（やってみた）</h2>
+<p>Azure Datacenter内にLargeのインスタンスを用意して適当なファイルを元にして8GBのファイルを用意しました。そのファイルを同一のBlobに4回アップロードして平均の速度を測定します。結果は、 ** 平均473Mbps ** でした。これは、ほぼインスタンスのネットワーク帯域制限値と同じです。なかなか良い結果と言えます。</p>
+<p>確認に使ったコード、（メッセージがドイツ語になっているのは、AzureLargeFileUploader の名残です）</p>
+<script src="https://gist.github.com/takekazuomi/4133960.js">&amp;amp;nbsp;</script><p>このコードのポイントは下記の3点です。</p>
+<ol class="arabic simple">
+<li>18行目ので接続数の制限を1024に設定していること</li>
+<li>59行目で並列度の設定をコア数の12倍にしていること</li>
+<li>55,56行目ではPage/Block Blobのどちらを使うかを切り替えていること</li>
+</ol>
+<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。
+Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
+<p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
+<img alt="../../../_images/2012-08-screen01.png" src="_images/2012-08-screen01.png"/>
+<p>![Resource Monitor](/images/2012-08-screen01.png)</p>
+<hr class="docutils"/>
+<p>** ここからは、ソースを見ながら確認していった過程のメモです。リンクばかりで分かり辛いかもしれませんが参考までに。興味深いのは非同期と同期の処理の境界と並列度の制限をしている部分です。 **</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="paralleloperationthreadcount">
+<h2>どうしてこんなところが変わったの？ ParallelOperationThreadCount のデフォルト値</h2>
+</div>
+<div class="section" id="x">
+<h2>1.x では</h2>
+<p>CloudBlobClientに、ParallelOperationThreadCount というのがあります。１系では、下記のように定義されていました。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L261">StorageClient/CloudBlobClient.cs#L261</a></p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L52">CloudBlobClient.cs#L52</a></p>
+<p>試しに、下記のようなコードでioThreadsを確認したところデスクトップPCでは２，Azure上のLargeのインスタンスでは４でした。どちらの環境でもデフォルトでParallelOperationThreadCountが２以上になり並列で動作します。</p>
+<script src="https://gist.github.com/takekazuomi/4239681.js">&amp;amp;nbsp;</script></div>
+<div class="section" id="id2">
+<h2>2.0 では</h2>
+<p>それに対し、２系では下記のように定義されています。parallelismFactorは、47行目付近で1で初期化されておりデフォルトは1となります。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L232">CloudBlobClientBase.cs#L232</a></p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L47">CloudBlobClientBase.cs#L47</a></p>
+<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a> にも書いてあるBreaking Changesです。</p>
+<p>2.0に移行した後、Block Blobのアップロードが遅くなった場合はParallelOperationThreadCountを確認するといいかもしれません。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id3">
+<h2>ParallelOperationThreadCountの使われ方</h2>
+<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> を用意したのだと思います ** あのソースだけだと分からないですが</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
+<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
+<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
+<hr class="docutils"/>
+</div>
+<div class="section" id="blobasyncinside-borderofsyncasync">
+<span id="id5"/><h2>同期と非同期の境界</h2>
+<p>WriteToSyncの実装は下記のようになっています。
+<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
+<p>ちょっと見ると、WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期していて、並列動作しないような感じです。これだと、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないのかな？と思いますが、その先のtoStream.Write の実装を見ると内部が非同期に処理されています。</p>
+<p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行います。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs">BlobWriteStream.cs</a></p>
+<p>呼び出し側を見ると同期処理のように見えるが、BlobWriteStreamBase で、AsyncSemaphore　parallelOperationSemaphoerをParallelOperationThreadCountの数で初期化しており、ストーリーム内のブロック書き込みは非同期に行われています。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs#L286">BlobWriteStream.cs#L286</a></p>
+<p>この設計はなかなかイイ。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id6">
+<h2>非同期実行数の制限</h2>
+<p>ここで、AsyncSemaphoreは、既定の数以上に処理が実行されないように非同期実行数を制御している役割を果たしている。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Core/Util/AsyncSemaphore.cs">AsyncSemaphore.cs</a></p>
+<p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
+<p>このあたりは、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What’s New in Storage Client Library for .NET (version 2.0)</a> に書いてある説明通りの実装になってるようだ。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id7">
+<h2>結論</h2>
+<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。
+サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id8">
+<h2>おまけ</h2>
+<p>LargeのRoleからStorageにUploadしたら450Mbps程度の速度が出た。ローカルからも、20Mbps程度だったので結構速い。転送中を見ていると、しばらくは複数のコネクションを使ってデータ転送していて最後にコネクションが一本になって終わる。、</p>
+<p>PutBlobを非同期でやって最後にPutBlobListで終了となってるようだ。PutBlobの処理中はCPUはほとんど使われずに、ネットワーク帯域がボトルネックになっるぐらいには効率がいい。最後のPutBlobListの間はStorage側の待ちになってしまう。</p>
+<p>これを考えると、複数のファイルをUploadする場合は、スレッドを分けて個々に処理した方が短時間で終わるのではないかと考えられる。ただ、あまり多くのスレッドを起動するメリットは無さそうだ。</p>
+<p>今回は、UploadFromStreamを使ったが下記の説明にはOpenWriteを使うとStreamのように処理できると書いてある。やってみたら同じように動いた。つまりBlobをStreamとして使えるってことだ素晴らしい。</p>
+<p><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_blob.html">Azure Blob</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/blob.html">Blob</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
+        </div></div><div class="archive_link">
+        <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
+    </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="page4.html">Newer</a></li>
+            <li class="right"><a href="page6.html">Older</a> &raquo; </li>
+        </ul></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
+        </li><li>
+            <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
+        </li><li>
+            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
+        </li><li>
+            <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
+        </li><li>
+            <a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a>
+        </li><li>
+            <a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
+        </li><li>
+            <a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
+        </li><li>
+            <a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
+        </li><li>
+            <a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
+        </li><li>
+            <a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="categories/azure.html">Azure</a> (25)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (10)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (11), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (2), <a href="tags/json.html">JSON</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (1), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (14), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
+    <form action="search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2014, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

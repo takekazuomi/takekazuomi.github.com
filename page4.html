@@ -1,0 +1,650 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Page 4 &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="_static/main.css" type="text/css">
+            <link rel="stylesheet" href="_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+        <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="_static/plugins.js"></script>
+        <script src="_static/main.js"></script>
+        <link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script><script type="text/javascript" src="_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Page 4 &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/page4.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="pages/about_me.html">About Kyrt</a>
+        </li>
+        <li class="logo-nav">
+	  <a href="pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>November 30, 2013</span>
+        </div>
+        <h1><a href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a></h1>
+<p>Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8216154715"><img alt="red takekazu, on Flickr" src="http://farm9.staticflickr.com/8062/8216154715_53106b0941_z.jpg"/></a>
+<div class="section" id="issue">
+<h2>issueの再現</h2>
+<p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で提示されているものを使います。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<span class="o">{</span>
+    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"1"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>nugetで、問題のあるバージョンのライブラリをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.3
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>実行結果</h3>
+<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。
+x-ms-versionは、 2012-02-12 です。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: af7cf5c3-c287-4c1f-a9fe-ee0b6c374317
+x-ms-date: Fri, 29 Nov 2013 23:25:01 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
+Transfer-Encoding: chunked
+Content-Type: application/xml;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: abf14b12-7a80-4b75-a652-604c56bdb817
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:25:01 GMT
+
+131
+&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"&gt;&lt;code&gt;InvalidInput&lt;/code&gt;&lt;message xml:lang="en-US"&gt;One of the request inputs is not valid.
+RequestId:abf14b12-7a80-4b75-a652-604c56bdb817
+Time:2013-11-29T23:25:02.0389849Z&lt;/message&gt;&lt;/error&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2.1.0.4 での修正確認</h2>
+<p>nugetの履歴によると <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a> 2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。
+同じコードをライブラリのバージョンだけ変更して実行します:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>実行結果</h3>
+<p>GET URLがスッキリして、結果は 200 OK が帰ってきています。FIXされているようです。</p>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/2.1.0.4 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2012-02-12
+Accept: application/atom+xml,application/xml
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 2.0;NetFx
+x-ms-client-request-id: e9319d53-b9eb-41c6-9a93-63566842984e
+x-ms-date: Fri, 29 Nov 2013 23:33:17 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: d1056e7a-f0ff-4ab4-b5a4-4b546eb48515
+x-ms-version: 2012-02-12
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:33:17 GMT
+
+96A
+&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;feed xml:base="http://asdpojasldfj001.table.core.windows.net/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people&lt;/id&gt;&lt;title type="text"&gt;people&lt;/title&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;link rel="self" title="people" href="people" /&gt;&lt;entry m:etag="W/&amp;quot;datetime'2013-11-28T10%3A24%3A23.5715047Z'&amp;quot;"&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='1')&lt;/id&gt;&lt;category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /&gt;&lt;link rel="edit" title="people" href="people(PartitionKey='1',RowKey='1')" /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type="application/xml"&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;1&lt;/d:RowKey&gt;&lt;d:Timestamp m:type="Edm.DateTime"&gt;2013-11-28T10:24:23.5715047Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag="W/&amp;quot;datetime'2013-11-28T10%3A21%3A02.0298712Z'&amp;quot;"&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='2')&lt;/id&gt;&lt;category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /&gt;&lt;link rel="edit" title="people" href="people(PartitionKey='1',RowKey='2')" /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type="application/xml"&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;2&lt;/d:RowKey&gt;&lt;d:Timestamp m:type="Edm.DateTime"&gt;2013-11-28T10:21:02.0298712Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;entry m:etag="W/&amp;quot;datetime'2013-11-29T23%3A16%3A04.1332012Z'&amp;quot;"&gt;&lt;id&gt;http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='3')&lt;/id&gt;&lt;category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /&gt;&lt;link rel="edit" title="people" href="people(PartitionKey='1',RowKey='3')" /&gt;&lt;title /&gt;&lt;updated&gt;2013-11-29T23:33:18Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type="application/xml"&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;1&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;3&lt;/d:RowKey&gt;&lt;d:Timestamp m:type="Edm.DateTime"&gt;2013-11-29T23:16:04.1332012Z&lt;/d:Timestamp&gt;&lt;d:Data&gt;foo&lt;/d:Data&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;&lt;/feed&gt;
+0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>おまけの 3.0.0 での修正確認</h2>
+<p>同じことを最新の 3.0.0 でやりました。バッチリ動きます。x-ms-versionが 2013-08-15になって結果がjsonになっています:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+</pre></div>
+</div>
+<p>http requestのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+x-ms-version: 2013-08-15
+Accept-Charset: UTF-8
+MaxDataServiceVersion: 3.0;NetFx
+Accept: application/json;odata=minimalmetadata
+x-ms-client-request-id: 5b6e366f-dde8-4ec0-b433-10fac62c117d
+x-ms-date: Fri, 29 Nov 2013 23:17:23 GMT
+Authorization: SharedKey asdpojasldfj001:*********************************************
+Host: asdpojasldfj001.table.core.windows.net
+</pre></div>
+</div>
+<p>http responseのtrace:</p>
+<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+Cache-Control: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: fa6db02e-b080-4bc4-8761-1016920fb1b0
+x-ms-version: 2013-08-15
+X-Content-Type-Options: nosniff
+Date: Fri, 29 Nov 2013 23:17:22 GMT
+
+168
+{"odata.metadata":"http://asdpojasldfj001.table.core.windows.net/$metadata#people","value":[{"PartitionKey":"1","RowKey":"1","Timestamp":"2013-11-28T10:24:23.5715047Z","Data":"foo"},{"PartitionKey":"1","RowKey":"2","Timestamp":"2013-11-28T10:21:02.0298712Z","Data":"foo"},{"PartitionKey":"1","RowKey":"3","Timestamp":"2013-11-29T23:16:04.1332012Z","Data":"foo"}]}
+0
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>ソースコード上の修正点</h2>
+<p>2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a> では:</p>
+<div class="highlight-none"><div class="highlight"><pre>Issues fixed in 2.1.0.4 :
+  - Tables: Do not send the cast operator in the table query filter string.
+</pre></div>
+</div>
+<p>microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs で、2.1でExpressionをURLに展開するときのUnaryの処理にcastを使ってしまっていたのを削除したようです。</p>
+<p>修正のCommitは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf">XSCL 2.1.0.4 - Hotfix</a> で、ソースは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs">ExpressionWriter.cs</a>  です。</p>
+<p>残念ながら、3.0.0は、まだコードが公開されていないので確認することができません。</p>
+</div>
+<div class="section" id="id6">
+<h2>まとめ</h2>
+<p>2.1.0.4/3.0.0では、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a> で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。</p>
+<p>本題とは外れますが、今回の場合では、363 byte(json) と、2,436 byte (xml)とhttp responseのbodyのサイズが大きく違い期待以上に良好な結果になっています。今回はデータが非常に小さいのでmeta 情報部分が冗長なxmlのオーバーヘッドが目立つ結果になっているのでしょうが、それにしても大きな違いです。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html#disqus_thread" data-disqus-identifier="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>November 28, 2013</span>
+        </div>
+        <h1><a href="2013/11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a></h1>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
+</div>
+<div class="line-block">
+<div class="line">2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入</a></div>
+</div>
+</div></blockquote>
+<p>以下に抜粋で内容を紹介します。</p>
+<div class="section" id="id2">
+<h2>3つの主要な機能</h2>
+<ol class="arabic">
+<li><p class="first">CORS (Cross Origin Resource Sharing):
+Windows Azure Blobs, Tables, Queues でCORS が有効できるようにになった。これによって、browser から異なったドメインのリソースへのアクセス・操作ができる。
+CORS は、Service Properties の 設定で有効化。詳しくは <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx</a> を参照してください。</p>
+</li>
+<li><p class="first">JSON (JavaScript Object Notation): 現在、Windows Azure Table は、 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation">OData 3.0</a> の <a class="reference external" href="http://www.json.org">JSON format</a> をサポートしている。JSON format では、AtomPub XML payloadの冗長な部分が削減されより効率的な転送になる。</p>
+<p>JSONは下記3つの形式でサポート</p>
+<ul class="simple">
+<li>No Metadata - これは最も効率的なformatで、クライアントがカスタムプロパティのデータ型を知っている場合に便利です</li>
+<li>Minimal Metadata - この形式は、暗黙的に解釈できない特定の種類のカスタムプロパティのデータ型情報が含まれている。例えば、Azure Table Browserのような、一般的なツールのように保存されているEntityのデータ型を知らないで読まなければいけない場合に便利です</li>
+<li>Full Metadata - このフォーマットは、 generic OData readers で読む場合に便利です</li>
+</ul>
+<p>Windows Azure TableのJSONについての詳細情報は <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx</a> を参照してださい。</p>
+</li>
+<li><p class="first">Windows Azure Storage Analytics の Minute Metrics: 今まで、Windows Azure StorageのMetricsは時間集計でした。（ <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a> ） 新しい 2013-08-15 version では、 いくつかの主要な値に付いて 5分以内に 分集計（Minute Metrics） が取得できるようになります。それに伴って下記のテーブルを追加します。</p>
+<ul class="simple">
+<li>$MetricsHourPrimaryTransactionsBlob</li>
+<li>$MetricsHourPrimaryTransactionsTable</li>
+<li>$MetricsHourPrimaryTransactionsQueue</li>
+<li>$MetricsMinutePrimaryTransactionsBlob</li>
+<li>$MetricsMinutePrimaryTransactionsTable</li>
+<li>$MetricsMinutePrimaryTransactionsQueue</li>
+</ul>
+<p>時間集計のテーブル名が変わっているので注意してください。古いテーブルも継続して存在します。</p>
+<p>分集計の設定は、2013-08-15 version を設定して、Set Service Properties REST APIを使います。現在  Windows Azure Portal では設定ができませんが、将来サポートされる予定です。</p>
+<p>詳細情報は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">About Storage Analytics Metrics</a> を見てくだい。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h2>その他の追加機能</h2>
+<p>これらの他の2013-8-15 versionでは、以下の機能を実装しています。2013-8-15 version の変更詳細のリストは： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx</a> にあります。</p>
+<ul class="simple">
+<li>Copy blob で、Shared Access Signature (SAS) を、コピー先にも適応します。（同じstorage accountの場合）</li>
+<li>Windows Azure Blob service は、Content-Disposition と response headers の cache-control などの ability control (via. SAS）をサポートします。Content-Disposition は、Set Blob Properties で設定します。</li>
+<li>Windows Azure Blob service は、Get Blob と Get Blob Propertiesで、複数の HTTP conditional header をサポートします。この機能は、web-browsers which から CDN servers 経由でアクセスする場合に有用です。</li>
+<li>Windows Azure Blob Service は、uncommitted blobはある状態での、Delete Blob operation をサポートします。以前は、事前にcommitしないとdelete Blob出来ませんでした。</li>
+<li>List Containers, List Blobs と List Queues は、2013-08-15 version から、resourceに、URL address field を含みません。 これは、clientで再構築できる fields を削減したためです。</li>
+<li>Lease Blob と Lease Container は、2013-08-15 version から、ETag と Last Modified Time を response headers で返します。これによって、lease holder は最後に見た時から、リソースが変更されたかどうかを簡単に確認することができます。（つまり、blob や その metadata が更新されたか)。以前と同じくblob の lease operations では、ETagは変更されません。</li>
+</ul>
+<p>これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。</p>
+<p>既知の問題が幾つかあります。下記の記事を参照してください。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx</a>
+<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx</a></p>
+<p>以上</p>
+</div>
+<div class="section" id="id4">
+<h2>最後に</h2>
+<p>Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget:WindowsAzure.Storage</a> Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。
+BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきていないようなので、年末に向けてさらに期待しています。
+負荷試験している時とかはMinute Metricsは便利ですね、嬉しいです。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/table.html">Table</a>, <a href="tags/blob.html">Blob</a>, <a href="tags/queue.html">Queue</a>, <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html#disqus_thread" data-disqus-identifier="2013/11/28/cors_json_minute_metrics_and_more">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>November 28, 2013</span>
+        </div>
+        <h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><em>2013/12/13 追記</em></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a> の問題は解決されました。</div>
+</div>
+</div></blockquote>
+<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 <a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a> と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
+<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
+<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
+<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id1">
+<h2>手順の確認</h2>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="webrolehelios">
+<h3>WebRoleの作成からHeliosのインストールまで</h3>
+<ol class="arabic simple">
+<li>Cloud Service を作ってWebRoleを追加します
+普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
+<ol class="arabic simple" start="2">
+<li>projectを、.NET 4.5.1 を使うようにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
+<ol class="arabic" start="3">
+<li><p class="first">コンパイルして問題無いのを確認します。</p>
+</li>
+<li><p class="first">System.Webの参照を全て削除します</p>
+</li>
+<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+</pre></div>
+</div>
+</li>
+</ol>
+<p>下記のような参照になります</p>
+<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
+</div>
+<div class="section" id="startup-class">
+<h3>Startup Classの設定</h3>
+<p>下記のようなStartup classのコードを追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>using System;
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(WebRole1.Startup))]
+
+namespace WebRole1
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+
+            app.Run(async context =&gt;  // IOWinContext
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "text/html";
+
+                await context.Response.WriteAsync("Hello Herios. Time is: " + DateTime.Now.ToString());
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
+</div>
+<div class="section" id="webrolestartup-task">
+<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a> の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
+<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
+  &lt;WebRole name="WebRole1" vmsize="Small"&gt;
+    &lt;Startup&gt;
+      &lt;Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" /&gt;
+    &lt;/Startup&gt;
+
+    &lt;Sites&gt;
+    以下省略・・・・
+</pre></div>
+</div>
+<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
+<dl class="docutils">
+<dt>startup.cmd::</dt>
+<dd>vcredist_x64.exe /install /quiet</dd>
+</dl>
+<p>vcredist_x64.exe は、 <a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a> からダウンロードできます。VS 2013をインストールしている場合は、 <cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite> 等のディレクトリにファイルがあります。</p>
+<p>startup taskについて： <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+</div>
+<div class="section" id="osfamily">
+<h3>osFamilyの変更</h3>
+<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
+<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
+  &lt;Role name="WebRole1"&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>まとめ</h2>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>  runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
+vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
+この問題は、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> に起因する。
+このままだとちょっと使いづらいですね。</p>
+</div>
+<div class="section" id="helios-fix-runtime">
+<span id="id4"/><h2>2013/12/13 追記</h2>
+<p>2013/12/02 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>  では、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a> に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、 <a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a> のようなことをしないでも動作します。
+これで普通に使えるようになりますね。</p>
+<img alt="../../../_images/2013_11_helios011.png" src="_images/2013_11_helios011.png"/>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a>, <a href="categories/owin.html">OWIN</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a>, <a href="tags/owin.html">OWIN</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
+        <h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
+</div>
+<div class="line-block">
+<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+</div>
+</div></blockquote>
+<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
+<div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
+<span id="known-issue-20131101"/><h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
+<ul class="simple">
+<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の <cite>“//”</cite> は、 <cite>“/”</cite> に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は <cite>“//”</cite> を送らないようにして下さい</li>
+</ul>
+<p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
+</div>
+<div class="section" id="windows-azure-tablesissue">
+<h2>Windows Azure TablesのIssue</h2>
+<p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
+<ol class="arabic simple" id="known-issue-20131102">
+<li>clients で、 <cite>DataServiceContext.ResolveName</cite> を定義し、 <cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite> 以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。
+これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。
+ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
+</ol>
+<p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
+<span class="n">TableServiceContext</span> <span class="n">tableServiceContext</span> <span class="o">=</span> <span class="n">cloudTableClient</span><span class="o">.</span><span class="na">GetDataServiceContext</span><span class="o">();</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">ResolveName</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">(</span><span class="n">Type</span> <span class="n">entityType</span><span class="o">)</span>
+<span class="o">{</span>
+<span class="c1">// This would cause class name to be sent as the value for term in the category element and service would return Bad Request.</span>
+<span class="k">return</span> <span class="n">entityType</span><span class="o">.</span><span class="na">FullName</span><span class="o">;</span>
+<span class="o">};</span>
+
+<span class="n">SimpleEntity</span> <span class="n">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SimpleEntity</span><span class="o">(</span><span class="s">"somePK"</span><span class="o">,</span> <span class="s">"someRK"</span><span class="o">);</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">AddObject</span><span class="o">(</span><span class="s">"sometable"</span><span class="o">,</span> <span class="n">entity</span><span class="o">);</span>
+<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">SaveChanges</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
+<ol class="arabic simple" id="known-issue-201311" start="2">
+<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
+これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
+.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
+それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
+</ol>
+<p>下記は問題があるコードです</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<span class="o">{</span>
+    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>このように書くと 2.1 storage client library の IQueryable interface は、下記のUriに展開されて新しい service updateでは、400 (Bad Request) で拒否されます</p>
+<p><cite>http://myaccount.table.core.windows.net/invalidfiltertable?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
+<p>コードを下記のように変更してquery の castを取り除いてください。そうすれば、cast operator は送信されません</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
+<span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>Uri request は下記のようになり、service に受け付けられます</p>
+<p><cite>http://myaccount.table.core.windows.net/validfiltertable?$filter=PartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
+<p>We apologize for these issues and we are working on a hotfix to address them. (我々はこれらの問題について謝罪し、我々はそれらに対処するための修正プログラムに取り組んでいます)</p>
+</div>
+<div class="section" id="id1">
+<h2>感想、コメント等</h2>
+<ul class="simple">
+<li>最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。</li>
+<li>コンテナの前が <cite>//</cite> になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
+<li>ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。</li>
+</ul>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
+        <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx">Windows Azure テーブルにおける重大な（互換性のない）変更</a></div>
+</div>
+</div></blockquote>
+<p>Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a> から変更点を紹介します。</p>
+<div class="section" id="id1">
+<h2>変更点</h2>
+<ol class="arabic simple">
+<li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
+<li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
+<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、 <cite>type=feed</cite> が追加されます
+変更前: Content-Type: application/atom+xml;charset=utf-8
+変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
+<li>MIME type のセキュリティ リスクの削減のための新しいresponse header <cite>X-Content-Type-Options: nosniff</cite> が返されます。
+参照： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>感想等</h2>
+<ul class="simple">
+<li>手元のアカウントで確認してみたら既に上記の通りに変更されていました。事前に予告が欲しいです。</li>
+<li>改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。</li>
+<li>XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。</li>
+<li>AtomPub内のXML elementの順番に関しては、 <a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>  が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
+<li>HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</li>
+</ul>
+<p>json対応に向けて着々と進んでいるのは、とても嬉しいです。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+        </div></div><div class="archive_link">
+        <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
+    </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="page3.html">Newer</a></li>
+            <li class="right"><a href="page5.html">Older</a> &raquo; </li>
+        </ul></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
+        </li><li>
+            <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
+        </li><li>
+            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
+        </li><li>
+            <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
+        </li><li>
+            <a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a>
+        </li><li>
+            <a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
+        </li><li>
+            <a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
+        </li><li>
+            <a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
+        </li><li>
+            <a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
+        </li><li>
+            <a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="categories/azure.html">Azure</a> (25)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (10)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (11), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (2), <a href="tags/json.html">JSON</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (1), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (14), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
+    <form action="search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2014, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>
