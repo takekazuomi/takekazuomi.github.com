@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2014/06/09/websites_gradle_git
    2014/06/08/snowflake_c
    2014/03/02/read_access_geo_redundant_storage
    2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release
