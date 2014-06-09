@@ -159,6 +159,6 @@ kuduの仕組みが良く出来ているので、特別なjava対応などが無
 
 
 .. author:: default
-.. categories:: none
-.. tags:: none
+.. categories:: Java, WebSites
+.. tags:: Java, Gradle, Git, WebSites, Kudu
 .. comments::
