@@ -66,6 +66,27 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>July 02, 2014</span>
+        </div>
+        <h1><a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a></h1>
+<p>2014年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。</p>
+<p>これも一重に皆様から多くの御支援をいただいた結果です。</p>
+<p>今後も、Azure Storage を中心に、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。</p>
+<p>これからも、よろしくお願いいたします。</p>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/mvp.html">MVP</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2014/07/02/mvp_2014_7.html#disqus_thread" data-disqus-identifier="2014/07/02/mvp_2014_7">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>June 09, 2014</span>
         </div>
         <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
@@ -288,7 +309,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <div class="section" id="id2">
 <h2>最後に</h2>
-<p>kuduの仕組みが良く出来ているので、特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 <a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a> にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
+<p>kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 <a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a> にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
 <p>下記のサイトを参考にしました</p>
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
@@ -347,7 +368,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         <div class="categories">
             <span>
                 Filed under:
-                <a href="categories/java.html">Java</a>, <a href="categories/websites.html">WebSites</a></span>
+                <a href="categories/java.html">Java</a>, <a href="categories/websites.html">WebSites</a>, <a href="categories/azure.html">Azure</a></span>
         </div>
         <div class="tags">
             <span>
@@ -942,76 +963,6 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html#disqus_thread" data-disqus-identifier="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>January 06, 2014</span>
-        </div>
-        <h1><a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a></h1>
-<p>2014/1/4 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2">Windows Azure Storage 3.0.2</a> がリリースされました。
-2013/11/27 3.0のリリース 「 <a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><em>Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</em></a> 」、2013/12/11 の 3.0.1 hotfix 「 <a class="reference internal" href="2013/12/11/windows_azure_storage_client_3_0_1.html"><em>Windows Azure Storage Client 3.0.1</em></a> 」 に続く３回めのリリースです。</p>
-<a class="reference external image-reference" href="http://flic.kr/p/iSAtsB"><img alt="zenko-ji by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>修正点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L184">Issues fixed in 3.0.2.0 :</a> :</p>
-<ol class="arabic simple">
-<li>All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</li>
-<li>Queues: 存在するqueueの再度作成で、NullReferenceException になる問題を修正</li>
-<li>Tables: レスポンスがparseできなかったときに、TableServiceContext が NullReferenceException になる問題を修正</li>
-<li>Tables (RT): JSON形式がまだRT library でサポートされていないため、ユーザーは、RTで RequestOptions に JsonFullMetadata formart を設定することはできません</li>
-</ol>
-<p>コードを確認したところ、最初のやつが興味深いものでした。</p>
-</div>
-<div class="section" id="all-wp-api-argumentoutofrangeexception">
-<h2>1. All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</h2>
-<p>対象は、Windows Phone プラットフォームだけで特定のAPIでなく全般的に発生します。
-関連する Issue として 、 <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/issues/16">System.ArgumentOutOfRangeException in Microsoft.WindowsAzure.Storage.Table.CloudTable.EndExecute</a> が出ています。</p>
-<p>共通で使っている、API内のパラメータのバウンダリー検査関数（ <span class="docutils literal"><span class="pre">AssertInBounds</span></span> ）が動いていなくてあちこちで問題が発生するということになっていたようです。（そうは言っても、テストはしているので、そうそう起きるわけでは無いとは思います）</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17">Storage Client Library 3.0.2 のPR</a> でdiffを見みると、WINDOWS_PHONEだけで下記のように修正されていました。</p>
-<img alt="../../../_images/2014-01-06-github001.png" src="_images/2014-01-06-github001.png"/>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160">https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160</a></p>
-<p>#if WINDOWS_PHONE で AssertInBounds に、 <span class="docutils literal"><span class="pre">[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]</span></span>  を指定しています。この指定は、JITやNGENでのコード最適化を抑制するもので、 <a class="footnote-reference" href="#r1" id="id2">[1]</a> Windows Phone の場合だけ native code 生成に問題があったので抑制するオプションを付けたということです。</p>
-<p>Windows Phone というだけで、どのような場合に発生する問題かなどわかりませんが、WP アプリのコードが挙動不審の場合は試してみると良いかもしれません。Storage Clinet Library内では、この方法で修正されているようなので問題は無いのですが、普通に書いたコードでも起きるとすると、ちょっと困りますね。もう少し詳しい情報が欲しいところです。 <a class="footnote-reference" href="#r2" id="id3">[2]</a></p>
-<p>これ以外は、あまり気になる点はありませんでした。互換性の問題も無さそうなので、3系のStorage Clinetは 3.0.2 を使うのがお勧めです。</p>
-</div>
-<div class="section" id="windows-phone">
-<span id="scl302-more-info"/><h2>2014/1/11 追記 Windows Phoneの問題</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331">PR の質問</a> に返事を貰いました。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる</div>
-</div>
-</div></blockquote>
-<p><span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min,</span> <span class="pre">T</span> <span class="pre">max)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> と、 <span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> の両方が同一 assembly にあるのが問題のようです。 必ず起きるというわけでも無さそうなので、Windows Phone で嵌ったら思い出してみるという程度で良さそうです。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/system.runtime.compilerservices.methodimploptions(v=vs.110).aspx">About System.Runtime.CompilerServices.MethodImplOptions</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932">We escalated this internally ...</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        <div class="postmeta">
-        
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/hotfix.html">Hotfix</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html#disqus_thread" data-disqus-identifier="2014/01/06/windows_azure_storage_3_0_2_hotfix">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -1020,6 +971,8 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a>
+        </li><li>
             <a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a>
         </li><li>
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
@@ -1037,13 +990,11 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
             <a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a>
         </li><li>
             <a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a>
-        </li><li>
-            <a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (25)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (10)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (26)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (10)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (11), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (4), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (1), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (14), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1>Search</h1>

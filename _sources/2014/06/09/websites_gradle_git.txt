@@ -136,7 +136,7 @@ srcの下のアプリケーションは、 ``gradle-1.12-(src|all).zip`` に入�
 
 最後に
 ======
-kuduの仕組みが良く出来ているので、特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 `kudu project <https://github.com/projectkudu/kudu>`_ にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。
+kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 `kudu project <https://github.com/projectkudu/kudu>`_ にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。
 
 下記のサイトを参考にしました
 
@@ -149,16 +149,7 @@ kuduの仕組みが良く出来ているので、特別なjava対応などが無
 .. [#r7] `Deployment hooks <https://github.com/projectkudu/kudu/wiki/Deployment-hooks>`_
 .. [#r8] `Custom Deployment Scripts For Windows Azure Website Using Git Deployment <http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/>`_
 
-
-
-
-
-
-
-
-
-
 .. author:: default
-.. categories:: Java, WebSites
+.. categories:: Java, WebSites, Azure
 .. tags:: Java, Gradle, Git, WebSites, Kudu
 .. comments::
