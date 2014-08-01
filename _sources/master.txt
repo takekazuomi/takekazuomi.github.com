@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2014/08/01/cdp_azure
    2014/07/02/mvp_2014_7
    2014/06/09/websites_gradle_git
    2014/06/08/snowflake_c
