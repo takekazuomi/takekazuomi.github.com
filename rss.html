@@ -5,8 +5,215 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 01 Aug 2014 00:00:00 +0900</pubDate>
+        <pubDate>Tue, 02 Dec 2014 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2014/12/02/introduction_to_azure_batch.html</link>
+            <guid>http://kyrt.in/2014/12/02/introduction_to_azure_batch.html</guid>
+            <title><![CDATA[Introduction to Azure Batch]]></title>
+            <description><![CDATA[
+<h1>Introduction to Azure Batch</h1>
+<p>※本記事は、 <a class="reference external" href="http://qiita.com/advent-calendar/2014/azure">Azure Advent Calendar 2014</a> への寄稿記事です。</p>
+<p>最近あまりに Azure の新機能が続々と出てくるので、なかなかフォローが難しですが、そんな時は、 <a class="reference external" href="https://buchizo.wordpress.com">No.1のBlog</a>  と、 twitterで <a class="reference external" href="https://twitter.com/hashtag/azurejp?src=hash">#azurejp</a> を見ておけば良いですね。</p>
+<p>そんな数ある今年のAzure新機能の中で、 <a class="reference external" href="http://azure.microsoft.com/en-us/services/documentdb">DocumentDB</a>  と、 <a class="reference external" href="http://azure.microsoft.com/en-us/services/batch">Batch</a>  の２つがお気に入りです。 <span class="docutils literal"><span class="pre">DocumentDB</span></span> については、過日仙台で話をしたので、その時の <a class="reference external" href="http://www.slideshare.net/takekazuomi/introduction-to-documentdb">資料</a> を観てもらうことににして、今回は <span class="docutils literal"><span class="pre">Azure</span> <span class="pre">Batch</span></span> を紹介します。 公式名称は、 <span class="docutils literal"><span class="pre">Batch</span></span> ということなのですが、一般名称を製品名に使うのは紛らわしいので止めて欲しいですが、ここでは、それを曲げて、 <span class="docutils literal"><span class="pre">Batch</span></span> と書きます。</p>
+<p><span class="docutils literal"><span class="pre">Batch</span></span> は、2014/10/28 に行われた TechEd Europe の Keynote でお披露目されました。その時の動画が公開されています。 開始から 1:11 ぐらいから <span class="docutils literal"><span class="pre">Batch</span></span> の紹介が始まって、1:15 から Mark Russinovich が <a class="reference external" href="http://www.blender.org">blender</a>  を使った3Dレンダリングを見せてくれます。そこだけなら、そんなに長くないしお勧めです。</p>
+<a class="reference external image-reference" href="http://channel9.msdn.com/Events/TechEd/Europe/2014/KEY01"><img alt="TechEd Europe 2014 Keynote" class="align-center" src="http://kyrt.in/_images/batch000.png"/></a>
+<p>.</p>
+<div class="section" id="id2">
+<h2>Batch とは</h2>
+<p>簡単に言うと、バッチ処理向けのPaaSです。WorkerRoleを使ってバッチ処理を組むのに比べると、ジョブ·キュー、スケジューラ、VMのプロビジョニングなどをアプリケーション側で用意する必要がありません。また既存のexeファイルをクラウド上で大量に実行することなどが容易に出来るようになっています。Microsoft内部では、Media Serviceが動画のエンコードの処理の部分で使っているそうです。 <span class="docutils literal"><span class="pre">Batch</span></span> のコンセプトと用語について説明します。</p>
+<div class="section" id="azure-batch-account">
+<h3>Azure Batch Account</h3>
+<p><span class="docutils literal"><span class="pre">Batch</span></span> サービスを使うには、Bach アカウントが必要です。アカウントはポータルで作成します。アカウントを作成すると、サブスクリプション、リージョン、アカウント名とキーが確定します。アカウント名とキーはコードで利用します。</p>
+<img alt="Azure Batch Account" class="align-center" src="http://kyrt.in/_images/batch001.png"/>
+</div>
+<div class="section" id="sdk">
+<h3>SDK</h3>
+<p><span class="docutils literal"><span class="pre">Bach</span></span> では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け  <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud">Batch Apps Cloud SDK</a>  、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps">Batch Apps Client SDK</a> と、 <a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a> が用意されていて、 <a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>  もあります。</p>
+</div>
+<div class="section" id="azure-batch-rest-api">
+<h3>Azure Batch REST API</h3>
+<p>低レベルのHTTP REST API では、VM pool の管理、work item の実行を柔軟にコントロールすることができます。この方法では、あなたのリソースを完全に制御できますが、タスク実行パイプラインを管理するためにクライアントが必要です。</p>
+</div>
+<div class="section" id="azure-batch-apps">
+<h3>Azure Batch Apps</h3>
+<p>もう一つの高レベルの仕組みとして、 <span class="docutils literal"><span class="pre">Batch</span> <span class="pre">Apps</span></span> と呼ばれる機能が用意されています。この仕組みでは、バッチワークロードを登録し、クライアントあるいは、Batch Apps portal から実行することが出来るなどよりユーザーよりの管理機能を用意しています。</p>
+<img alt="Azure Batch Apps portal" class="align-center" src="http://kyrt.in/_images/batch004.png"/>
+</div>
+<div class="section" id="pools">
+<h3>Pools</h3>
+<p>バッチを実行する、ノードのグループです。Poolは、複数のVMで構成され、VMは、auto scaling rules で増減します。PoolへのVMの追加が必要な場合は、自動的に新規ノードが作成・追加されます。</p>
+</div>
+<div class="section" id="task-virtual-machines-tvms">
+<h3>Task Virtual Machines (TVMs)</h3>
+<p>TVMs は、Poolを構成する、compute nodeの１つです。 <span class="docutils literal"><span class="pre">Batch</span></span> 用に構成された Web/Worker Role と思ってください。scalable で stateless な仮想マシンとして利用できます。Poolに TVMs が追加される場合は、新規にクリーンな仮想マシンが用意されます。そのため、Poolの作成には少々時間がかかります。初期ノード数を指定して試してみたところ、1ノードで8分、100ノードぐらいの時間がかかりました。（Japan West、A1）</p>
+<img alt="Pool and TVMs" class="align-center" src="http://kyrt.in/_images/batch006.png"/>
+</div>
+<div class="section" id="work-items">
+<h3>Work Items</h3>
+<p><span class="docutils literal"><span class="pre">Work</span> <span class="pre">Items</span></span> は、アプリケーションがプールでTVMs上で実行される方法を指定するテンプレートです。スケジューリングの設定（execute once とか 実行時間制限など）や、どの Pool でjobを実行するかなどを指定します。</p>
+</div>
+<div class="section" id="jobs">
+<h3>Jobs</h3>
+<p>jobは、work item のスケジュールされたインスタンスで、一度だけ実行されたり、何度か実行されたりします。複数の task の集まりです。個々の task は、pool のどこかのTVM で実行されます。</p>
+</div>
+<div class="section" id="tasks">
+<h3>Tasks</h3>
+<p>task は、job の中の一つの実行ステップです。 work item, job, task の関係は、下記の図のようになります。</p>
+<img alt="work item, job, task" class="align-center" src="http://kyrt.in/_images/batch005.png"/>
+</div>
+</div>
+<div class="section" id="batch-api">
+<h2>Batch APIのサンプルコード</h2>
+<p>現時点では、 <span class="docutils literal"><span class="pre">Batch</span></span> のサンプルコードが6個 <a class="reference external" href="https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=Topic&amp;f%5B0%5D.Value=Azure%20Batch&amp;f%5B0%5D.Text=Azure%20Batch">コードレシピ</a> に上がっています。そのうち、 <a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Azure Batch Sample - Hello World &lt;Batch AppsがBatch APIのサンプルで、 `Microsoft Azure Batch Apps Samples</a> がBatch Apps のサンプルでした。</p>
+<p>Batch APIのサンプルの <a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Hello World</a> の方をざっと眺めます。</p>
+<div class="section" id="packages-config">
+<h3>packages.config</h3>
+<p>まず、 <cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite> を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
+<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch">Azure.Batch</a> を使っています。APIリファレンスは、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a> にあります。</p>
+</div>
+<div class="section" id="id5">
+<h3>設定</h3>
+<p>試しに動かして見ようとするならば、 BatchとStorageのアカウントが必要です。 これらを作成したら、Program.csに書き込みます。変更するのは、赤線部分、blobのendpoint、batchのアカウント、キー、ストレージのアカウント、キーの5箇所です。</p>
+<img alt="hello world setting" class="align-center" src="http://kyrt.in/_images/batch007.png"/>
+</div>
+<div class="section" id="id6">
+<h3>実行</h3>
+<p>VSでビルドして実行すると下記のような感じで動きます。このサンプルを動かすだけならば、VS extension は必要ありません。</p>
+<img alt="hello world exec" class="align-center" src="http://kyrt.in/_images/batch008.png"/>
+</div>
+<div class="section" id="batchclient">
+<h3>1. BatchClient</h3>
+<p>Batch アカウント、キーから、BatchCredentialsを作成して、BatchClient.Connect で BatchClientを取得します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="c1">// Get an instance of the BatchClient for a given Azure Batch account.</span>
+<span class="n">BatchCredentials</span> <span class="n">cred</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BatchCredentials</span><span class="p">(</span><span class="n">Account</span><span class="p">,</span> <span class="n">Key</span><span class="p">);</span>
+<span class="k">using</span> <span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span> <span class="p">=</span> <span class="n">BatchClient</span><span class="p">.</span><span class="n">Connect</span><span class="p">(</span><span class="n">Url</span><span class="p">,</span> <span class="n">cred</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pool">
+<h3>2. Pool</h3>
+<p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。
+Pool作成時に、VMのサイズやOSを指定します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// All Pool and VM operation starts from PoolManager</span>
+    <span class="k">using</span> <span class="p">(</span><span class="n">IPoolManager</span> <span class="n">pm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenPoolManager</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="c1">// go through all the pools and see if it already exists</span>
+        <span class="kt">bool</span> <span class="n">found</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="n">ICloudPool</span> <span class="n">p</span> <span class="k">in</span> <span class="n">pm</span><span class="p">.</span><span class="n">ListPools</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="c1">// pools are uniquely identified by their name</span>
+            <span class="k">if</span> <span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">poolName</span><span class="p">))</span>
+                <span class="p">{</span>
+                    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Found pool {0} already exists"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
+                    <span class="n">found</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(!</span><span class="n">found</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating pool: {0}"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
+                <span class="c1">// if pool not found, call CreatePool</span>
+                <span class="c1">//You can learn more about os families and versions at:</span>
+                <span class="c1">//http://msdn.microsoft.com/en-us/library/azure/ee924680.aspx</span>
+                <span class="n">ICloudPool</span> <span class="n">pool</span> <span class="p">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">CreatePool</span><span class="p">(</span><span class="n">poolName</span><span class="p">,</span> <span class="n">targetDedicated</span><span class="p">:</span> <span class="m">3</span><span class="p">,</span> <span class="n">vmSize</span><span class="p">:</span> <span class="s">"small"</span><span class="p">,</span> <span class="n">osFamily</span><span class="p">:</span> <span class="s">"3"</span><span class="p">);</span>
+                <span class="n">pool</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-item">
+<h3>3. work item</h3>
+<p>ここはちょっと分かり辛い。CloudTask がTaskで、
+次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。
+最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。
+WorkItemManager.GetJobでJobは取得できます。
+Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="p">(</span><span class="n">IWorkItemManager</span> <span class="n">wm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenWorkItemManager</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="c1">//The toolbox contains some helper mechanisms to ease submission and monitoring of tasks.</span>
+        <span class="n">IToolbox</span> <span class="n">toolbox</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenToolbox</span><span class="p">();</span>
+
+        <span class="c1">// to submit a batch of tasks, the TaskSubmissionHelper is useful.</span>
+        <span class="n">ITaskSubmissionHelper</span> <span class="n">taskSubmissionHelper</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskSubmissionHelper</span><span class="p">(</span><span class="n">wm</span><span class="p">,</span> <span class="n">Program</span><span class="p">.</span><span class="n">PoolName</span><span class="p">);</span>
+
+        <span class="c1">// workitem is uniquely identified by its name so we will use a timestamp as suffix</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s">"USERNAME"</span><span class="p">)</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"yyyyMMdd-HHmmss"</span><span class="p">);</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating work item: {0}"</span><span class="p">,</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+
+        <span class="c1">// add 2 quick tasks. Tasks within a job must have unique names</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task1"</span><span class="p">,</span> <span class="s">"hostname"</span><span class="p">));</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task2"</span><span class="p">,</span> <span class="s">"cmd /c dir /s"</span><span class="p">));</span>
+
+        <span class="c1">//Commit the tasks to the Batch Service</span>
+        <span class="n">IJobCommitUnboundArtifacts</span> <span class="n">artifacts</span> <span class="p">=</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">Commit</span><span class="p">()</span> <span class="k">as</span> <span class="n">IJobCommitUnboundArtifacts</span><span class="p">;</span>
+
+        <span class="c1">// TaskSubmissionHelper commit artifacts returns the workitem and job name</span>
+        <span class="n">ICloudJob</span> <span class="n">job</span> <span class="p">=</span> <span class="n">wm</span><span class="p">.</span><span class="n">GetJob</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Waiting for all tasks to complete on work item: {0}, Job: {1} ..."</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
+
+        <span class="c1">//We use the task state monitor to monitor the state of our tasks -- in this case we will wait for them all to complete.</span>
+        <span class="n">ITaskStateMonitor</span> <span class="n">taskStateMonitor</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskStateMonitor</span><span class="p">();</span>
+
+        <span class="c1">// blocking wait on the list of tasks until all tasks reach completed state</span>
+        <span class="kt">bool</span> <span class="n">timedOut</span> <span class="p">=</span> <span class="n">taskStateMonitor</span><span class="p">.</span><span class="n">WaitAll</span><span class="p">(</span><span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">(),</span> <span class="n">TaskState</span><span class="p">.</span><span class="n">Completed</span><span class="p">,</span> <span class="k">new</span> <span class="n">TimeSpan</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">0</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">timedOut</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">TimeoutException</span><span class="p">(</span><span class="s">"Timed out waiting for tasks"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// dump task output</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">t</span> <span class="k">in</span> <span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Task "</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">" says:\n"</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">GetTaskFile</span><span class="p">(</span><span class="n">Constants</span><span class="p">.</span><span class="n">StandardOutFileName</span><span class="p">).</span><span class="n">ReadAsString</span><span class="p">());</span>
+        <span class="p">}</span>
+
+        <span class="c1">// remember to delete the workitem before exiting</span>
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Deleting work item: {0}"</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+        <span class="n">wm</span><span class="p">.</span><span class="n">DeleteWorkItem</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>4. 結果の取得</h3>
+<p>完了後のJobを、CloudJob.ListTasks()して、個々のTaskの実行結果を拾うことができます。このコードでは、 GetTaskFile(Constants.StandardOutFileName) して標準出力を拾っています。</p>
+</div>
+<div class="section" id="id8">
+<h3>終わり</h3>
+<p>最後に、work item を消したり、BatchClientをdisposeしたりなどの後処理をします。基本的な流れは割りとシンプルだと思います。Batch Appsを使うと、予めクラウド側にアプリを登録して置いて、ポータルから実行したり、モニターもポータル経由で出来たりなど諸々便利機能が使えます。その分ちょっと面倒になる部分もありますが、VS extension がその辺りのデバッグなどを支援してくれるようです。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>最後に</h2>
+<p><span class="docutils literal"><span class="pre">Batch</span></span> は、非常に定型的なコードで、ラージスケールなバッチ処理を実行できる面白い仕組みになっています。Azureの諸々の仕組みと上手く組み合わって、簡単なことならHadoop よりシンプルに同じようなことが実現できると言えそうです。ただ、ちょっとWork Item周りの処理が分かり辛く残念です。わりと簡単に使えるし、日本のデータセンターにも来ているので、興味があれば使ってみれば、良いのではないでしょうか。</p>
+<p>この前Blogを書いてからだいぶ時間が空いてしました。今年はJAZUG でやっている <a class="reference external" href="http://jazug.doorkeeper.jp/events/17739">CDP勉強会</a> が次回第五回で延べ400人ほどの参加になりそうな勢い、 <a class="reference external" href="http://www.slideshare.net/takekazuomi/presentations">slideshareの資料</a> は累積で7万PVを超える勢いで、Microsoft Azure の熱を肌に感じる１年でした。（slideshare のPVは2014/1/1 時点で5千ほどだったので急激に増えました）</p>
+</div>
+<div class="section" id="goazure-2015">
+<h2>GoAzure 2015</h2>
+<img alt="GoAzure" class="align-center" src="http://kyrt.in/_images/batch009.png"/>
+<p>あの Scott Hanselman が来る！ ～ GoAzure が 1/16 に開催～ の <a class="reference external" href="http://r.jazug.jp/introduction_to_azure_batch.html#event">GoAzure</a> で、Storage周りの話しをします（予定） <a class="reference external" href="http://r.jazug.jp/goazure-sessions.html">Persistence on Azure - Microsoft Azure における永続化</a> お待ちしてます。</p>
+</div>
+]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Batch ]]></category>
+             <pubDate>Tue, 02 Dec 2014 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2014/08/01/cdp_azure.html</link>
             <guid>http://kyrt.in/2014/08/01/cdp_azure.html</guid>
