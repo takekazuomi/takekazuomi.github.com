@@ -5,8 +5,37 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Tue, 02 Dec 2014 00:00:00 +0900</pubDate>
+        <pubDate>Sun, 18 Jan 2015 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2015/01/18/goazure_2015.html</link>
+            <guid>http://kyrt.in/2015/01/18/goazure_2015.html</guid>
+            <title><![CDATA[GoAzure 2015 でAzrueの永続化について話をしてきました]]></title>
+            <description><![CDATA[
+<h1>GoAzure 2015 でAzrueの永続化について話をしてきました</h1>
+<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a> の2つのセッションで喋ってきました。ひとつは、Websites上でクラウドデザインパターン（CDP）を使った場合についての「しばやん」のセッション( <a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a> )にちょっとお邪魔し、もうひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 <a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a> 」でみっちり53分ほど喋りました。</p>
+<p>しばやんのセッションは、なかなか気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じました、今後の課題です。</p>
+<div class="section" id="id1">
+<h2>Persistence on Azure - Microsoft Azure の永続化</h2>
+<p>スライドは、SlideShareに公開しています。</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
+<p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
+<p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
+<p>榎本さんのセッション 「 <a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a> 」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
+<p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
+</div>
+<div class="section" id="id3">
+<h2>謝辞</h2>
+<p>榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。</p>
+<p>JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。</p>
+<p>参加者の皆様、ありがとうございました。</p>
+</div>
+]]></description>
+            <category><![CDATA[ Session ]]></category>
+            <category><![CDATA[ Azure Storage ]]></category>
+             <pubDate>Sun, 18 Jan 2015 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2014/12/02/introduction_to_azure_batch.html</link>
             <guid>http://kyrt.in/2014/12/02/introduction_to_azure_batch.html</guid>

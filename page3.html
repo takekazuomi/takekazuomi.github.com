@@ -66,6 +66,78 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>December 22, 2013</span>
+        </div>
+        <h1><a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a></h1>
+<p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。 <a class="reference internal" href="2013/12/11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a> のHotfix です。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">修正: Hive query “%” が含まれた場合のエンコーディングの問題をFIX <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f_c.jpg"/></a>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="id1">
+<h2>インストール</h2>
+<p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_22_webpi001.png" src="_images/2013_12_22_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    0.0
+Azure                                                       0.7.2
+Microsoft.PowerShell.Management                             3.1.0.0
+Microsoft.PowerShell.Utility                                3.1.0.0
+posh-git                                                    0.0
+PsEnv                                                       0.0
+PSReadline                                                  1.0.0.1
+</pre></div>
+</div>
+<p>今回のリリースでは、ModuleVersion が変更されていません。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/WindowsAzurePowershell/src/Commands.Utilities/Azure.psd1#L15">Azure.psd1#L15</a> 要注意です。</p>
+<p>確認のためインストール先のアセンブリを見ます。</p>
+<p>手元の環境では、 <cite>C:Program Files (x86)Microsoft SDKsWindows AzurePowerShellAzure</cite> にインストールされています。 Explorer で、 <cite>Microsoft.WindowsAzure.Commands.dll</cite> のプロパティを確認したら下記のようになっていました。0.7.2.1になっているようです。</p>
+<img alt="../../../_images/2013_12_22_asm001.png" class="align-center" src="_images/2013_12_22_asm001.png"/>
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。</p>
+<p>この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、 <cite>Get-Module | ft name,version</cite> して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
+<p>ちょっと面倒ですね。</p>
+</div>
+<div class="section" id="id3">
+<h2>2013/12/23 追記</h2>
+<p>ModuleVersionが更新されていない件について、GitHubに <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a> を上げました。</p>
+</div>
+<div class="section" id="azure-posh-0721-verfix">
+<span id="id4"/><h2>2014/1/8 追記</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a> に「0.7.3 で直すよ」と返事をもらいました <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189#issuecomment-31790944">This will be fixed in 0.7.3</a> まだ、0.x ですし、バージョン番号を変更するためにリリースするのもどうかと思うので妥当な判断だと思います。</p>
+<p>ちなみに、バージョン番号は、 <a class="reference external" href="http://semver.org">Semantic Versioning</a> に沿って付けられているそうです。nugetでは、 <a class="reference external" href="http://docs.nuget.org/docs/reference/versioning">Versioning</a> は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure Powershell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure Powershell</a>, <a href="tags/powershell.html">Powershell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/hotfix.html">Hotfix</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html#disqus_thread" data-disqus-identifier="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 21, 2013</span>
         </div>
         <h1><a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a></h1>
@@ -1055,114 +1127,6 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/11/windows_azure_storage_client_3_0_1.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_storage_client_3_0_1">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 11, 2013</span>
-        </div>
-        <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
-<p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
-| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
-<div class="section" id="id1">
-<h2>インストール</h2>
-<p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
-<img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
-<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
-
-Name                                                        Version
-----                                                        -------
-Autoload                                                    0.0
-Azure                                                       0.7.2
-Microsoft.PowerShell.Management                             3.1.0.0
-Microsoft.PowerShell.Utility                                3.1.0.0
-posh-git                                                    0.0
-PsEnv                                                       0.0
-PSReadline                                                  1.0.0.1
-</pre></div>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>変更点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
-<ul class="simple">
-<li>HDInsight cmdlets<ul>
-<li>Add-AzureHDInsightConfigValues</li>
-<li>Add-AzureHDInsightMetastore</li>
-<li>Add-AzureHDInsightStorage</li>
-<li>Get-AzureHDInsightCluster</li>
-<li>Get-AzureHDInsightJob</li>
-<li>Get-AzureHDInsightJobOutput</li>
-<li>Get-AzureHDInsightProperties</li>
-<li>New-AzureHDInsightCluster</li>
-<li>New-AzureHDInsightClusterConfig</li>
-<li>New-AzureHDInsightHiveJobDefinition</li>
-<li>New-AzureHDInsightMapReduceJobDefinition</li>
-<li>New-AzureHDInsightPigJobDefinition</li>
-<li>New-AzureHDInsightSqoopJobDefinition</li>
-<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
-<li>Remove-AzureHDInsightCluster</li>
-<li>Revoke-AzureHDInsightHttpServicesAccess</li>
-<li>Set-AzureHDInsightDefaultStorage</li>
-<li>Start-AzureHDInsightJob</li>
-<li>Stop-AzureHDInsightJob</li>
-<li>Use-AzureHDInsightCluster</li>
-<li>Wait-AzureHDInsightJob</li>
-<li>Grant-AzureHDInsightHttpServicesAccess</li>
-<li>Invoke-AzureHDInsightHiveJob</li>
-</ul>
-</li>
-<li>Web Site の WebSocket と managed pipe mode の設定<ul>
-<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
-</ul>
-</li>
-<li>Web Site の remote debugging 設定<ul>
-<li>Enable-AzureWebsiteDebug -Version</li>
-<li>Disable-AzureWebsiteDebug</li>
-</ul>
-</li>
-<li>VM を削除した時の VHD cleaning up オプション<ul>
-<li>Remove-AzureVM -DeleteVHD</li>
-<li>Remove-AzureService -DeleteAll</li>
-<li>Remove-AzureDeployment -DeleteVHD</li>
-</ul>
-</li>
-<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
-<li>Get-AzureDeployment</li>
-<li>Get-AzureReservedIP</li>
-<li>New-AzureReservedIP</li>
-<li>New-AzureVM</li>
-<li>Remove-AzureReservedIP</li>
-</ul>
-</li>
-<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
-<li>Start-AzureEmulator</li>
-<li>Publish-AzureServiceProject</li>
-<li>Save-AzureServiceProjectPackage</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="id3">
-<h2>最後に</h2>
-<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
-</div>
-
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure Powershell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure Powershell</a>, <a href="tags/powershell.html">Powershell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/release.html">Release</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -1171,6 +1135,8 @@ PSReadline                                                  1.0.0.1
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzrueの永続化について話をしてきました</a>
+        </li><li>
             <a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
         </li><li>
             <a href="2014/08/01/cdp_azure.html">クラウドデザインパターン の監訳に参加しました</a>
@@ -1188,15 +1154,13 @@ PSReadline                                                  1.0.0.1
             <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
         </li><li>
             <a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a>
-        </li><li>
-            <a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (28)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (11)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (28)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (1), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (14), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
