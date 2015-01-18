@@ -1,9 +1,8 @@
 GoAzure 2015 でAzrueの永続化について話をしてきました
 ====================================================
+`GoAzure 2015 <http://r.jazug.jp/goazure>`_ の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 `Persistence on Azure - Microsoft Azure の永続化 <http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure>`_ 」でみっちり53分ほど、もうひとつは、「しばやん」のセッション( `GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました <http://blog.shibayan.jp/entry/20150117/1421492433>`_ ) にちょっとお邪魔。
 
-`GoAzure 2015 <http://r.jazug.jp/goazure>`_ の2つのセッションで喋ってきました。ひとつは、Websites上でクラウドデザインパターン（CDP）を使った場合についての「しばやん」のセッション( `GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました <http://blog.shibayan.jp/entry/20150117/1421492433>`_ )にちょっとお邪魔し、もうひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 `Persistence on Azure - Microsoft Azure の永続化 <http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure>`_ 」でみっちり53分ほど喋りました。
-
-しばやんのセッションは、なかなか気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じました、今後の課題です。
+しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。
 
 
 Persistence on Azure - Microsoft Azure の永続化
