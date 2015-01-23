@@ -1,4 +1,4 @@
-GoAzure 2015 でAzrueの永続化について話をしてきました
+GoAzure 2015 でAzureの永続化について話をしてきました
 ====================================================
 `GoAzure 2015 <http://r.jazug.jp/goazure>`_ の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 `Persistence on Azure - Microsoft Azure の永続化 <http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure>`_ 」でみっちり53分ほど、もうひとつは、「しばやん」のセッション( `GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました <http://blog.shibayan.jp/entry/20150117/1421492433>`_ ) にちょっとお邪魔。
 
