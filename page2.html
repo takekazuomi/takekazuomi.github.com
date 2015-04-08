@@ -66,6 +66,297 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>June 09, 2014</span>
+        </div>
+        <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
+<p>5/12 - 15 に行われた、TechEd North America 2014 で、待望のWebSitesのJavaサポートが発表されました。TechEdでは、AzureのJavaサポートとして、仮想マシン、クラウドサービス、WebSites の話がされていました。Azureの各種SDKはJavaは.NETと並ぶぐらい順調に進んでいるようなので今後も注目です。</p>
+<p>その中でも、WebSitesのJavaサポートが面白かったので紹介します。</p>
+<p>TechEdのセッションの内容は、 <a class="reference external" href="http://channel9.msdn.com/Events/TechEd/NorthAmerica/2014/DEV-B384">Java on Microsoft Azure</a> を観てもらうことにして、一般的な開発で行われるプロセスを Java on WebSites でやってみます。</p>
+<div class="section" id="id1">
+<h2>道具立て</h2>
+<p>ソースコード管理には、git を使い。ビルドには昨今流行りの gradle 、 手元で動作を確認後、git push すると、kudu の deploy hook でbuildされて Web Sites に deploy というシナリオです。deploy の最終段には、tomcat の autoDeploy を使います。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/14109420833"><img alt="unagi by Takekazu Omi, on Flickr" class="align-center" src="http://farm3.staticflickr.com/2897/14109420833_a4fb730458_c.jpg"/></a>
+</div>
+<div class="section" id="web-sites">
+<h2>Web Sitesを作成</h2>
+<p>まず、azure cli を使うので、インストールしてください。</p>
+<p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir kinmugi006
+<span class="nv">$ </span><span class="nb">cd </span>kinmugi006
+<span class="nv">$ </span>azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
+info:    Executing <span class="nb">command </span>site create
++ Getting sites
++ Getting locations
+info:    Creating a new web site at kinmugi006.azurewebsites.net
+-info:    Created website at kinmugi006.azurewebsites.net
++
+info:    Executing <span class="sb">`</span>git init<span class="sb">`</span>
+info:    Initializing remote Azure repository
++ Updating site information
+info:    Remote azure repository initialized
++ Getting site information
+info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
+info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local </span>git repository
+info:    Use git locally to make changes to your site, commit, and <span class="k">then </span>use <span class="s1">'git push azure master'</span> to deploy to Azure
+info:    site create <span class="nb">command </span>OK
+</pre></div>
+</div>
+<p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git remote -v
+azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
+azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
+origin
+</pre></div>
+</div>
+<p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site browse kinmugi006
+</pre></div>
+</div>
+<p>もし、 <span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span> のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
+<p>このような画面が表示されるはずです。</p>
+<img alt="Web Site の初期画面" class="align-center" src="_images/20140609_azure002.PNG"/>
+</div>
+<div class="section" id="push">
+<h2>試しに、なにか push してみましょう</h2>
+<p>まず、ポータルサイトから git のパスワードを設定します。 <span class="docutils literal"><span class="pre">DASHBOARD</span></span> -&gt; <span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span> で設定できます。</p>
+<img alt="local git のパスワード設定" class="align-center" src="_images/20140609_azure001.PNG"/>
+<p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。
+その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
+Counting objects: 3, <span class="k">done</span>.
+Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, 230 bytes | 0 bytes/s, <span class="k">done</span>.
+Total 3 <span class="o">(</span>delta 0<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+remote: Updating branch <span class="s1">'master'</span>.
+remote: Updating submodules.
+remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">'f522084597'</span>.
+remote: Generating deployment script.
+remote: Generating deployment script <span class="k">for </span>Web Site
+remote: Generated deployment script files
+remote: Running deployment command...
+remote: Handling Basic Web Site deployment.
+remote: KuduSync.NET from: <span class="s1">'D:\home\site\repository'</span> to: <span class="s1">'D:\home\site\wwwroot'</span>
+remote: Deleting file: <span class="s1">'hostingstart.html'</span>
+remote: Copying file: <span class="s1">'index.html'</span>
+remote: Finished successfully.
+remote: Deployment successful.
+To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
+ * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
+</pre></div>
+</div>
+<p>これで、サイトを確認すると、こんな感じで見えます。 ちなみに、 <span class="docutils literal"><span class="pre">azure</span> <span class="pre">site</span> <span class="pre">browse</span> <span class="pre">kinmugi006</span></span> でブラウザが開きます。</p>
+<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
+</div>
+<div class="section" id="java">
+<h2>Java ランタイムの設定</h2>
+<p>これで、git の設定ができたので、次のJava Runtimeの設定をします。ここでもgitのパスワード設定と同じようにポータルを使います。
+Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0_51(バージョン番号は随時変わります）にして、WEB CONTAINER をTOMCAT 7.0.50 にして、SAVEを押します。</p>
+<img alt="Select Java runtime" class="align-center" src="_images/20140609_azure004.PNG"/>
+<p>ここで、<a class="reference external" href="http://kinmugi006.azurewebsites.net">http://kinmugi006.azurewebsites.net/</a> を見ると、さきほどの <span class="docutils literal"><span class="pre">Hello</span> <span class="pre">Java</span></span> から下記のような画面になります。</p>
+<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
+<p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
+<p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net">https://kinmugi006.scm.azurewebsites.net/</a> にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
+<p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
+      <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">"org.apache.catalina.valves.AccessLogValve"</span> <span class="na">directory=</span><span class="s">"${site.logdir}"</span>
+         <span class="na">prefix=</span><span class="s">"site_access_log."</span> <span class="na">suffix=</span><span class="s">".txt"</span>
+         <span class="na">pattern=</span><span class="s">"%h %l %u %t &amp;quot;%r&amp;quot; %s %b"</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/Host&gt;</span>
+</pre></div>
+</div>
+<p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。 <a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property “user.home” does not correspond to “USERPROFILE” (win)</a> Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
+</pre></div>
+</div>
+<p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
+</div>
+<div class="section" id="git-push">
+<h2>git push後の自動ビルド</h2>
+<p>標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive で、kudu.exeを起動します。
+kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。
+今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
+<p>まずは、Javaのアプリの準備をします。</p>
+<p>ビルドにgradleを使うので、 <a class="reference external" href="http://www.gradle.org">gradle公式</a> から、 <a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a> をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。
+srcの下のアプリケーションは、 <span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span> に入っている、 <a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a> です。</p>
+<p>ディレクトリ構成</p>
+<div class="highlight-bash"><div class="highlight"><pre>├─gradle
+│  ├─bin
+│  ├─init.d
+│  ├─lib
+│  │  └─plugins
+│  └─media
+└─src
+    └─main
+        ├─java
+        │  └─org
+        │      └─gradle
+        │          └─sample
+        ├─resources
+        └─webapp
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">.deployemnt</span></span> という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、 <span class="docutils literal"><span class="pre">.deployemnt</span></span> ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>config<span class="o">]</span>
+<span class="nb">command</span> <span class="o">=</span> deploy.cmd
+</pre></div>
+</div>
+<p><span class="docutils literal"><span class="pre">deploy.cmd</span></span> では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
+<div class="highlight-bash"><div class="highlight"><pre>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
+
+SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
+SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
+
+:: Setup
+:: -----
+
+setlocal enabledelayedexpansion
+
+IF NOT DEFINED DEPLOYMENT_SOURCE <span class="o">(</span>
+  SET <span class="nv">DEPLOYMENT_SOURCE</span><span class="o">=</span>%~dp0%.
+<span class="o">)</span>
+
+IF NOT DEFINED DEPLOYMENT_TARGET <span class="o">(</span>
+  SET <span class="nv">DEPLOYMENT_TARGET</span><span class="o">=</span>%~dp0%<span class="se">\.</span>.<span class="se">\w</span>wwroot
+<span class="o">)</span>
+
+IF EXIST <span class="s2">"%GRADLE_HOME_CMD%"</span> <span class="o">(</span>
+  call :ExecuteCmd <span class="s2">"%GRADLE_HOME_CMD%"</span> clean war
+  IF !ERRORLEVEL! NEQ 0 goto error
+<span class="o">)</span>
+
+
+:: copy war file to wwwroot
+
+IF NOT EXIST <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps <span class="o">(</span>
+   mkdir <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;&amp;1
+<span class="o">)</span>
+
+COPY /Y <span class="s2">"%DEPLOYMENT_SOURCE%"</span><span class="se">\b</span>uild<span class="se">\l</span>ibs<span class="se">\k</span>inmugi.war <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps<span class="se">\R</span>OOT.war
+IF !ERRORLEVEL! NEQ 0 goto error
+
+goto end
+
+:: Execute <span class="nb">command </span>routine that will <span class="nb">echo </span>out when error
+:ExecuteCmd
+setlocal
+<span class="nb">set </span><span class="nv">_CMD_</span><span class="o">=</span>%*
+call %_CMD_%
+<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo </span>Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nb">command</span><span class="o">=</span>%_CMD_%
+<span class="nb">exit</span> /b %ERRORLEVEL%
+
+:error
+endlocal
+<span class="nb">echo </span>An error has occurred during web site deployment.
+call :exitSetErrorLevel
+call :exitFromFunction 2&gt;nul
+
+:exitSetErrorLevel
+<span class="nb">exit</span> /b 1
+
+:exitFromFunction
+<span class="o">()</span>
+
+:end
+endlocal
+<span class="nb">echo </span>Finished successfully.
+</pre></div>
+</div>
+<p>ここまでできたら、git add, commit して、pushしてください。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+Counting objects: 189, <span class="k">done</span>.
+Delta compression using up to 4 threads.
+Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
+Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB | 973.00 KiB/s, <span class="k">done</span>.
+Total 188 <span class="o">(</span>delta 3<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+remote: Updating branch <span class="s1">'master'</span>.
+remote: Updating submodules.
+remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">'c190ab30ef'</span>.
+remote: Running custom deployment command...
+remote: Running deployment command...
+remote: ..................
+remote:         1 file<span class="o">(</span>s<span class="o">)</span> copied.
+remote: Finished successfully.
+remote: Deployment successful.
+To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
+   f522084..c190ab3  master -&gt; master
+</pre></div>
+</div>
+<p>ただ一つだけ問題があります。最初に、WebSitesの作成したwebappsには、ROOTのディレクトリがあるのにROOT.warが無いので autoDeploy が上手く動作しません。どこかを修正してpushし直すか、ポータルから redeploy してください。問題があるのは初回だけで２回めからは前回upしたROOT.warがあるので無事自動展開されます。</p>
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 <a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a> にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
+<p>下記のサイトを参考にしました</p>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><a class="reference external" href="http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Git のカスタマイズ - Git フック</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs">kudu.exeは、Kudu.Console</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Investigating-issues">SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs">Well Known Environment Variables</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><a class="reference external" href="https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs">KuduSync のオプション</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[6]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow">Deployment Logic Flow</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[7]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-hooks">Deployment hooks</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r8" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[8]</td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/java.html">Java</a>, <a href="categories/websites.html">WebSites</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/java.html">Java</a>, <a href="tags/gradle.html">Gradle</a>, <a href="tags/git.html">Git</a>, <a href="tags/websites.html">WebSites</a>, <a href="tags/kudu.html">Kudu</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2014/06/09/websites_gradle_git.html#disqus_thread" data-disqus-identifier="2014/06/09/websites_gradle_git">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>June 08, 2014</span>
         </div>
         <h1><a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a></h1>
@@ -721,334 +1012,6 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html#disqus_thread" data-disqus-identifier="2014/01/06/windows_azure_storage_3_0_2_hotfix">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 27, 2013</span>
-        </div>
-        <h1><a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a></h1>
-<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a> の既知の問題が解決されたとアナウンスがありました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013) [Resolved]</a> どんな感じになったのかを確認しました。</p>
-<div class="section" id="id1">
-<h2>引用</h2>
-<blockquote>
-<div><div class="line-block">
-<div class="line">更新 [2013/12/10] : <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">このBlog に記述されている問題</a> <a class="footnote-reference" href="#r1" id="id2">[1]</a> は、service と client library の更新で解決されました。issue 2 の client table の件は、 <a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage/2.1.0.4">2.1.0.4</a>  <a class="footnote-reference" href="#r2" id="id4">[2]</a> と  <a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage">3.x</a> <a class="footnote-reference" href="#r3" id="id5">[3]</a> の client library の releases で解決されています。</div>
-</div>
-</div></blockquote>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742159560"><img alt="matuyama by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7416/9742159560_500e7d6301.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-</div>
-<div class="section" id="id6">
-<h2>問題点の確認</h2>
-<p>問題点は下記の3つが有りました。「3」は、既に、 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a> で、Client Library 2.1.0.4、3.xで修正確認ができているので、ここでは1と2を確認します。</p>
-<ol class="arabic simple">
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の// 問題</em></a></li>
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a></li>
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a></li>
-</ol>
-</div>
-<div class="section" id="sas">
-<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の “//” 問題</em></a></h2>
-<p>下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。
-Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が <span class="docutils literal"><span class="pre">"//"</span></span> になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、 <span class="docutils literal"><span class="pre">"//"</span></span> と書いたら <span class="docutils literal"><span class="pre">"/"</span></span> と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">var</span> <span class="n">blobClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudBlobClient</span><span class="p">();</span>
-
-    <span class="kt">var</span> <span class="n">container</span> <span class="p">=</span> <span class="n">blobClient</span><span class="p">.</span><span class="n">GetContainerReference</span><span class="p">(</span><span class="n">containerName</span><span class="p">);</span>
-
-    <span class="kt">var</span> <span class="n">blockBlob</span> <span class="p">=</span> <span class="n">container</span><span class="p">.</span><span class="n">GetBlockBlobReference</span><span class="p">(</span><span class="n">blobName</span><span class="p">);</span>
-
-    <span class="kt">var</span> <span class="n">startDate</span> <span class="p">=</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">"2013/12/01"</span><span class="p">);</span>
-    <span class="kt">var</span> <span class="n">sas</span> <span class="p">=</span> <span class="n">blockBlob</span><span class="p">.</span><span class="n">GetSharedAccessSignature</span><span class="p">(</span><span class="k">new</span> <span class="n">SharedAccessBlobPolicy</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="n">Permissions</span> <span class="p">=</span> <span class="n">SharedAccessBlobPermissions</span><span class="p">.</span><span class="n">Read</span><span class="p">,</span>
-        <span class="n">SharedAccessStartTime</span> <span class="p">=</span> <span class="n">startDate</span><span class="p">,</span>
-        <span class="n">SharedAccessExpiryTime</span> <span class="p">=</span> <span class="n">startDate</span><span class="p">.</span><span class="n">AddYears</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-    <span class="p">});</span>
-    
-    <span class="k">return</span> <span class="n">blockBlob</span><span class="p">.</span><span class="n">Uri</span><span class="p">.</span><span class="n">ToString</span><span class="p">()</span> <span class="p">+</span> <span class="n">sas</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id7">
-<h3>2.1.0.4での確認結果</h3>
-<p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span> <span class="pre">-Version</span> <span class="pre">2.1.0.4</span></span> で2.1.0.4を入れます。何度も、違うバージョンのライブラリを入れ替えて使っていて、混乱したので念のためpackage.configの内容を併記します。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;packages&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="na">version=</span><span class="s">"5.2.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.OData"</span> <span class="na">version=</span><span class="s">"5.2.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.WindowsAzure.ConfigurationManager"</span> <span class="na">version=</span><span class="s">"1.8.0.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"System.Spatial"</span> <span class="na">version=</span><span class="s">"5.2.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"WindowsAzure.Storage"</span> <span class="na">version=</span><span class="s">"2.1.0.4"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-<span class="nt">&lt;/packages&gt;</span>
-</pre></div>
-</div>
-<p>生成されたURLで成功を確認</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture">http://test.blob.core.windows.net/images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture</a>]</div>
-</div>
-</div></blockquote>
-<p>コンテナの前に、 <span class="docutils literal"><span class="pre">"/"</span></span> を追加して確認、成功！</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture">http://test.blob.core.windows.net//images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture</a>]</div>
-</div>
-</div></blockquote>
-<p><span class="docutils literal"><span class="pre">sv=2012-02-12</span></span> になっていて、versionがわかります。</p>
-</div>
-<div class="section" id="id8">
-<h3>3.0.1での確認結果</h3>
-<p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span> で最新版、3.0.1で確認</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;packages&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.OData"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.Services.Client"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.WindowsAzure.ConfigurationManager"</span> <span class="na">version=</span><span class="s">"1.8.0.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Newtonsoft.Json"</span> <span class="na">version=</span><span class="s">"5.0.8"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"System.Spatial"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"WindowsAzure.Storage"</span> <span class="na">version=</span><span class="s">"3.0.1.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
-<span class="nt">&lt;/packages&gt;</span>
-</pre></div>
-</div>
-<p>生成されたURLで成功を確認</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r">http://test.blob.core.windows.net/images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r</a></div>
-</div>
-</div></blockquote>
-<p>コンテナの前に、 <span class="docutils literal"><span class="pre">"/"</span></span> を追加。これは失敗します。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r">http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r</a></div>
-</div>
-</div></blockquote>
-<p>レスポンスを見ると下記のようになっていました。（XMLは整形してあります）</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 The requested URI does not represent any resource on the server.
-Content-Length: 434
-Content-Type: application/xml
-Server: Microsoft-HTTPAPI/2.0
-x-ms-request-id: a9275897-8810-48b2-bcd5-d45af85f6f14
-Date: Fri, 27 Dec 2013 12:34:46 GMT
-
-&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;Error&gt;
-  &lt;Code&gt;InvalidUri&lt;/Code&gt;
-  &lt;Message&gt;
-    The requested URI does not represent any resource on the server.
-    RequestId:a9275897-8810-48b2-bcd5-d45af85f6f14
-    Time:2013-12-27T12:34:46.6851586Z
-  &lt;/Message&gt;
-  &lt;UriPath&gt;
-  http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&amp;amp;sr=b&amp;amp;sig=[signiture]&amp;amp;se=2014-11-30T15:00:00Z&amp;amp;sp=r
-  &lt;/UriPath&gt;
-&lt;/Error&gt;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="tabledataservicecontext-resolvename">
-<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a></h2>
-<p>同様に、下記のようなコードを使って、2.1.0.4と、3.0.1で確認しました。 2.1.0.4 では、動作しましたが 3.0.1 では動きませんでした。結果はSASと似ているのですが、service側では処理が成功しているのでちょっと違った感じを受けます。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">var</span> <span class="n">cloudTableClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudTableClient</span><span class="p">();</span>
-
-    <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">cloudTableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"sometable"</span><span class="p">);</span>
-    <span class="n">table</span><span class="p">.</span><span class="n">CreateIfNotExists</span><span class="p">();</span>
-
-    <span class="kt">var</span> <span class="n">tableServiceContext</span> <span class="p">=</span> <span class="n">cloudTableClient</span><span class="p">.</span><span class="n">GetTableServiceContext</span><span class="p">();</span>
-    <span class="n">tableServiceContext</span><span class="p">.</span><span class="n">ResolveName</span> <span class="p">=</span> <span class="n">entityType</span> <span class="p">=&gt;</span> <span class="n">entityType</span><span class="p">.</span><span class="n">FullName</span><span class="p">;</span>
-
-    <span class="kt">var</span> <span class="n">entity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SimpleEntity</span><span class="p">(</span><span class="s">"somePK"</span><span class="p">,</span> <span class="s">"someRK2"</span><span class="p">);</span>
-    <span class="n">tableServiceContext</span><span class="p">.</span><span class="n">AddObject</span><span class="p">(</span><span class="s">"sometable"</span><span class="p">,</span> <span class="n">entity</span><span class="p">);</span>
-    <span class="n">tableServiceContext</span><span class="p">.</span><span class="n">SaveChanges</span><span class="p">();</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id9">
-<h3>2.1.0.4での確認結果</h3>
-<p>普通に動いて成功しました。リクエストを見ると、categoryの属性に、 <span class="docutils literal"><span class="pre">term="StorageIssue201311.SimpleEntity"</span></span> と有りますが、正常に処理されてレスポンスが帰ってきているのがわかります。</p>
-<p>参考までに、リクエストとレスポンスを貼っておきます</p>
-<p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
-User-Agent: Microsoft ADO.NET Data Services
-DataServiceVersion: 1.0;NetFx
-MaxDataServiceVersion: 2.0;NetFx
-x-ms-date: Fri, 27 Dec 2013 13:30:17 GMT
-Authorization: SharedKeyLite [signiture]
-x-ms-version: 2012-02-12
-Accept: application/atom+xml,application/xml
-Accept-Charset: UTF-8
-Content-Type: application/atom+xml
-Host: test.table.core.windows.net
-Content-Length: 735
-
-&lt;?xml version="1.0" encoding="utf-8" standalone="yes"?&gt;
-&lt;entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"&gt;
-  &lt;category scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" term="StorageIssue201311.SimpleEntity" /&gt;
-  &lt;title /&gt;
-  &lt;author&gt;
-    &lt;name /&gt;
-  &lt;/author&gt;
-  &lt;updated&gt;2013-12-27T13:30:17.8428287Z&lt;/updated&gt;
-  &lt;id /&gt;
-  &lt;content type="application/xml"&gt;
-    &lt;m:properties&gt;
-      &lt;d:PartitionKey&gt;somePK&lt;/d:PartitionKey&gt;
-      &lt;d:RowKey&gt;someRK7&lt;/d:RowKey&gt;
-      &lt;d:Timestamp m:type="Edm.DateTime"&gt;0001-01-01T00:00:00&lt;/d:Timestamp&gt;
-    &lt;/m:properties&gt;
-  &lt;/content&gt;
-&lt;/entry&gt;
-</pre></div>
-</div>
-<p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
-Cache-Control: no-cache
-Transfer-Encoding: chunked
-Content-Type: application/atom+xml;type=entry;charset=utf-8
-ETag: W/"datetime'2013-12-27T13%3A30%3A08.6638521Z'"
-Location: http://test.table.core.windows.net/sometable(PartitionKey='somePK',RowKey='someRK7')
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 765ae397-974c-4f3c-9d3a-d4e99bdcf9f5
-x-ms-version: 2012-02-12
-X-Content-Type-Options: nosniff
-Date: Fri, 27 Dec 2013 13:30:08 GMT
-
-3AE
-&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;entry xml:base="http://test.table.core.windows.net/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:etag="W/&amp;quot;datetime'2013-12-27T13%3A30%3A08.6638521Z'&amp;quot;"&gt;&lt;id&gt;http://test.table.core.windows.net/sometable(PartitionKey='somePK',RowKey='someRK7')&lt;/id&gt;&lt;category term="test.sometable" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /&gt;&lt;link rel="edit" title="sometable" href="sometable(PartitionKey='somePK',RowKey='someRK7')" /&gt;&lt;title /&gt;&lt;updated&gt;2013-12-27T13:30:08Z&lt;/updated&gt;&lt;author&gt;&lt;name /&gt;&lt;/author&gt;&lt;content type="application/xml"&gt;&lt;m:properties&gt;&lt;d:PartitionKey&gt;somePK&lt;/d:PartitionKey&gt;&lt;d:RowKey&gt;someRK7&lt;/d:RowKey&gt;&lt;d:Timestamp m:type="Edm.DateTime"&gt;2013-12-27T13:30:08.6638521Z&lt;/d:Timestamp&gt;&lt;/m:properties&gt;&lt;/content&gt;&lt;/entry&gt;
-0
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-</div>
-<div class="section" id="id10">
-<h3>3.0.1での確認結果</h3>
-<p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span> として最新版、3.0.1で確認したところ、下記のようにエラーになりました。データ自体は、Tableに入っており正常終了していますが、レスポンスを読み込んでエンティティを更新するのに失敗しているようです。</p>
-<div class="highlight-none"><div class="highlight"><pre>ハンドルされていない例外: System.Data.Services.Client.DataServiceRequestException: この要求の処理中にエラーが発生しました。 ---&gt; System.InvalidOperationException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。 ---&gt; Microsoft.Data.OData.ODataException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。
-   場所 Microsoft.Data.OData.ReaderValidationUtils.ValidateFeedOrEntryMetadataUri(ODataJsonLightMetadataUriParseResult metadataUriParseResult, Scope scope)
-   場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementationSynchronously(DuplicatePropertyNamesChecker duplicatePropertyNamesChecker)
-   場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementation()
-   場所 Microsoft.Data.OData.ODataReaderCore.ReadImplementation()
-   場所 Microsoft.Data.OData.ODataReaderCore.ReadSynchronously()
-   場所 Microsoft.Data.OData.ODataReaderCore.InterceptException[T](Func`1 action)
-   場所 Microsoft.Data.OData.ODataReaderCore.Read()
-   場所 System.Data.Services.Client.Materialization.ODataReaderWrapper.Read()
-   場所 System.Data.Services.Client.Materialization.FeedAndEntryMaterializerAdapter.TryRead()
-   --- 内部例外スタック トレースの終わり ---
-   場所 System.Data.Services.Client.Materialization.FeedAndEntryMaterializerAdapter.TryRead()
-   場所 System.Data.Services.Client.Materialization.FeedAndEntryMaterializerAdapter.TryStartReadFeedOrEntry()
-   場所 System.Data.Services.Client.Materialization.FeedAndEntryMaterializerAdapter.TryReadFeedOrEntry(Boolean lazy, ODataFeed&amp; feed, MaterializerEntry&amp; entry)
-   場所 System.Data.Services.Client.Materialization.FeedAndEntryMaterializerAdapter.Read()
-   場所 System.Data.Services.Client.Materialization.ODataReaderEntityMaterializer.ParseSingleEntityPayload(IODataResponseMessage message, ResponseInfo responseInfo, Type expectedType)
-   場所 System.Data.Services.Client.SaveResult.HandleOperationResponseData(IODataResponseMessage responseMsg, Stream responseStream)
-   --- 内部例外スタック トレースの終わり ---
-   場所 System.Data.Services.Client.SaveResult.HandleResponse()
-   場所 System.Data.Services.Client.BaseSaveResult.EndRequest()
-   場所 System.Data.Services.Client.DataServiceContext.SaveChanges(SaveChangesOptions options)
-   場所 System.Data.Services.Client.DataServiceContext.SaveChanges()
-   場所 StorageIssue201311.Program.ResolveName(CloudStorageAccount storageAccount) 場所 c:\Users\Takekazu\Documents\GitHub\sandbox\csharp\StorageIssue201311\StorageIssue201311\Program.cs:行 52
-   場所 StorageIssue201311.Program.Main(String[] args) 場所 c:\Users\Takekazu\Documents\GitHub\sandbox\csharp\StorageIssue201311\StorageIssue201311\Program.cs:行 59
-</pre></div>
-</div>
-<p>参考までに、リクエストとレスポンスを貼っておきます。これを見ると、x-ms-version: 2013-08-15 で、payloadは、 <span class="docutils literal"><span class="pre">Content-Type:</span> <span class="pre">application/json;odata=minimalmetadata</span></span> になっていますが、 <span class="docutils literal"><span class="pre">Prefer:</span> <span class="pre">return-no-content</span></span> が指定されておらず、レスポンスのBodyにechoが帰ってきているのがわかります。</p>
-<p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
-DataServiceVersion: 3.0;NetFx
-MaxDataServiceVersion: 3.0;NetFx
-Accept: application/json;odata=minimalmetadata
-Accept-Charset: UTF-8
-User-Agent: Microsoft ADO.NET Data Services
-x-ms-date: Fri, 27 Dec 2013 13:07:55 GMT
-Authorization: SharedKeyLite [signiture]
-x-ms-version: 2013-08-15
-Content-Type: application/json;odata=minimalmetadata
-Host: test.table.core.windows.net
-Content-Length: 125
-
-{"odata.type":"StorageIssue201311.SimpleEntity","PartitionKey":"somePK","RowKey":"someRK6","Timestamp":"0001-01-01T00:00:00"}
-</pre></div>
-</div>
-<p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
-Cache-Control: no-cache
-Transfer-Encoding: chunked
-Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-ETag: W/"datetime'2013-12-27T13%3A07%3A45.3753816Z'"
-Location: http://test.table.core.windows.net/sometable(PartitionKey='somePK',RowKey='someRK6')
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: b1797f33-1888-487a-a0cb-0a454fca1356
-x-ms-version: 2013-08-15
-X-Content-Type-Options: nosniff
-Date: Fri, 27 Dec 2013 13:07:45 GMT
-
-B2
-{"odata.metadata":"http://test.table.core.windows.net/$metadata#sometable/@Element","PartitionKey":"somePK","RowKey":"someRK6","Timestamp":"2013-12-27T13:07:45.3753816Z"}
-0
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id11">
-<h2>まとめ</h2>
-<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a> で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。
-ただし、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の “//” 問題</em></a> は、2013-08-15 version では仕様となり、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a> も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。</p>
-<p>2.1系のライブラリを使う場合は上記3点の問題がFIXされた 2.1.0.4 がお勧めです。
-3.x系は、幾つかのBraking Changeが含まれるので既存のコードは移行が必要ですが、2013-08-15 versionのパフォーマンス向上策がちゃんと活用できるのが大きな利点だと言えます。</p>
-<div class="line-block">
-<div class="line"><br/></div>
-<div class="line"><br/></div>
-</div>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>日本語訳 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>gitbugの <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">WindowsAzure/azure-sdk-for-net</a>  レポジトリのmasterには、Storage Clientのコードは既にありません。2.1.0.4を確認するには、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4/microsoft-azure-api/Services/Storage">tag:v2.1.0.4 Storage</a> を見て下さい。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">3.x github</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a>, <a href="tags/fixed.html">Fixed</a>, <a href="tags/azure_blob.html">Azure Blob</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/27/azure_storage_known_issues_november_2013_resolved.html#disqus_thread" data-disqus-identifier="2013/12/27/azure_storage_known_issues_november_2013_resolved">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -1057,6 +1020,8 @@ B2
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
+        </li><li>
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
         </li><li>
             <a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
@@ -1074,15 +1039,13 @@ B2
             <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li><li>
             <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
-        </li><li>
-            <a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (28)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

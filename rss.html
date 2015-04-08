@@ -5,8 +5,123 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sun, 18 Jan 2015 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 08 Apr 2015 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html</link>
+            <guid>http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html</guid>
+            <title><![CDATA[Azure Diagnostics 1.3 PaaS BUGS]]></title>
+            <description><![CDATA[
+<h1>Azure Diagnostics 1.3 PaaS BUGS</h1>
+<p>Azure SDK 2.5 から、Windows Azure Diagnostics (WAD) がVM Extentionになりました。それに伴って、Cloud Service (PaaS)でIISのログ転送と、ローカルストレージのカスタムログ転送が行われないという2つの問題があります。（IaaSでは問題はありません）</p>
+<a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/15852128023"><img alt="Tohaku 2015" class="align-center" src="https://farm8.staticflickr.com/7391/15852128023_dc3fb6ea48_c.jpg"/></a>
+<p>※この情報は、2015/4/8 Azure SDK 2.5.1, VM Extention 1.3.1.6 を元にして書いています。</p>
+<div class="section" id="iis">
+<h2>IISのログ転送</h2>
+<p>デプロイ直後はIISのログ転送が行われず、再起動後に転送が開始されるという問題があります。</p>
+<div class="section" id="id1">
+<h3>原因</h3>
+<p>WADは起動したときにIIS Management Service経由でIIISログの場所探します。デフォルトでは、この場所は、%SystemDrive%inetpublogsLogFiles に設定されています。PaaSでは WebRoleのIISConfigurator がサービス定義に基いてIISの設定を C:Resourcesdirectory{deploymentid.rolename}.DiagnosticStoreLogFilesWeb へ変更します。その結果、WADの構成が、IISConfigurator の前に実行されると、WADは間違ったディレクトリを監視することになってしまいます。</p>
+</div>
+<div class="section" id="id2">
+<h3>対策</h3>
+<p>WADの構成がIISConfiguratorの実行の後に起こればいいので、一度Roleを再起動します。それには、Startup Taskあるいは、Role の OnStartで下記のように処理します。最初の起動の時に、IISConfigurator が行った変更に基いて、2回めの起動でWADが構成を設定します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="p">{</span>
+    <span class="c1">// Write a RebootFlag.txt file to the %RoleRoot%\Approot\bin folder to track if this VM has rebooted to fix WAD 1.3 IIS logs issue</span>
+    <span class="kt">string</span> <span class="n">path</span> <span class="p">=</span> <span class="s">"RebootFlag.txt"</span><span class="p">;</span>
+    <span class="c1">// If RebootFlag.txt already exists then skip rebooting the VM</span>
+    <span class="k">if</span> <span class="p">(!</span><span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">"Writing RebootFlag at "</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"O"</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Trace</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Rebooting"</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"shutdown"</span><span class="p">,</span> <span class="s">"/r /t 0"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">base</span><span class="p">.</span><span class="n">OnStart</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>この方法だと、ファイルをアプリケーションのディレクトリに作成しているので、インプレースアップグレードの度に再起動がかかります。そのかわり、アクセス権の問題が無いため、elevated する必要がありません。
+システムドライブや、Cドライブにファイルを作成する、あるいはレジストリにフラグを作成する方法を使うと、再起動は最小限に抑えられますが、.csdef に &lt;Runtime executionContext=”elevated” /&gt; の設定が必要です。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>カスタムログ転送</h2>
+<p>現在のバージョンでは、従来行っていたローカルストレージからのカスタムログ転送は動作しませんので変わりに絶対ディレクトリからの転送を使います。（ちなみにローカルストレージからのカスタムログ転送はVSからの設定も出来ません）</p>
+<p>注意点は2点、</p>
+<ol class="arabic simple">
+<li>ローカルストレージと違ってquotaが利きません。書き出す量を間違えると、ディスクが溢れて他の動作に影響する可能性があります。</li>
+<li>絶対ディレクトリにはCドライブを指定しますが、指定ディレクトリには転送したいファイルだけが存在するようにします。</li>
+<li>絶対ディレクトリを指定した場合、デプロイID毎に別のディレクトリにローカルストレージの領域が取られますが、絶対パスでは同じディレクトリが使われます。</li>
+<li>アクセス権を設定する必要があります。</li>
+</ol>
+<div class="section" id="id4">
+<h3>対策</h3>
+<p>VSで診断構成のアプリケーションログ転送を開きます。</p>
+<img alt="application log settings" class="align-center" src="http://kyrt.in/_images/screen001.png"/>
+<p>この設定をしたら、IISのログ転送対策と同じように、RoleのOnStartで、下記の処理を入れます。ここでは、ディレクトリの有無を確認していますが、WADが先に起動した場合は、ディレクトリは作成されています。アクセス権が足りないので追加します。必要なIISのアクセス権については、 <a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">しばやん雑記：IIS 7 以降でのアプリケーションプールと権限について調べた</a> を参考にしています。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
+    <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant \"BUILTIN\\IIS_IUSRS:\":(OI)(CI)W"</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>最後に</h2>
+<p>最後に上記の問題を合わせたコード例を上げておきます。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="kt">var</span> <span class="n">path</span> <span class="p">=</span> <span class="s">@"c:\AppLogs\RebootFlag.txt"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(!</span><span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
+        <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
+
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant BUILTIN\\IIS_IUSRS:(OI)(CI)W"</span><span class="p">);</span>
+
+    <span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">"Writing RebootFlag at "</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"O"</span><span class="p">));</span>
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Trace</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Rebooting"</span><span class="p">);</span>
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"shutdown"</span><span class="p">,</span> <span class="s">"/r /t 0"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>csdefに、下記のように、 &lt;Runtime executionContext=”elevated” /&gt; を追加します。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;ServiceDefinition</span> <span class="na">name=</span><span class="s">"AzureCloudService1"</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition"</span> <span class="na">schemaVersion=</span><span class="s">"2014-06.2.4"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;WebRole</span> <span class="na">name=</span><span class="s">"WebRole1"</span> <span class="na">vmsize=</span><span class="s">"Small"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Runtime</span> <span class="na">executionContext=</span><span class="s">"elevated"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Sites&gt;</span>
+      <span class="nt">&lt;Site</span> <span class="na">name=</span><span class="s">"Web"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Bindings&gt;</span>
+          <span class="nt">&lt;Binding</span> <span class="na">name=</span><span class="s">"Endpoint1"</span> <span class="na">endpointName=</span><span class="s">"Endpoint1"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Bindings&gt;</span>
+      <span class="nt">&lt;/Site&gt;</span>
+    <span class="nt">&lt;/Sites&gt;</span>
+    <span class="nt">&lt;Endpoints&gt;</span>
+      <span class="nt">&lt;InputEndpoint</span> <span class="na">name=</span><span class="s">"Endpoint1"</span> <span class="na">protocol=</span><span class="s">"http"</span> <span class="na">port=</span><span class="s">"80"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Endpoints&gt;</span>
+    <span class="nt">&lt;Imports&gt;</span>
+      <span class="nt">&lt;Import</span> <span class="na">moduleName=</span><span class="s">"RemoteAccess"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;Import</span> <span class="na">moduleName=</span><span class="s">"RemoteForwarder"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Imports&gt;</span>
+  <span class="nt">&lt;/WebRole&gt;</span>
+<span class="nt">&lt;/ServiceDefinition&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>参考</h2>
+<ul class="simple">
+<li>MSDN Forum <a class="reference external" href="https://social.msdn.microsoft.com/Forums/en-US/77e09c6b-5a9e-4aa2-b63a-fc4e46842c7e/cannot-configure-diagnostics-for-local-resources-with-sdk-25?forum=windowsazuredevelopment">Cannot configure diagnostics for local resources with SDK 2.5</a></li>
+<li>Windows Azure - Troubleshooting &amp; Debugging <a class="reference external" href="http://blogs.msdn.com/b/kwill/archive/2015/02/23/sdk-2-5-wad-1-2-iis-logs-not-transferring-to-storage-in-paas-webroles.aspx">SDK 2.5 / WAD 1.2 — IIS Logs Not Transferring to Storage in PaaS WebRoles</a></li>
+<li>Mode 13h <a class="reference external" href="http://mode13h.azurewebsites.net/Posts/AzureSdk25Diag">Azure SDK 2.5 Diagnostics Bugs</a></li>
+<li>しばやん雑記 <a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">IIS 7 以降でのアプリケーションプールと権限について調べた</a></li>
+</ul>
+</div>
+]]></description>
+            <category><![CDATA[ Azure ]]></category>
+             <pubDate>Wed, 08 Apr 2015 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2015/01/18/goazure_2015.html</link>
             <guid>http://kyrt.in/2015/01/18/goazure_2015.html</guid>

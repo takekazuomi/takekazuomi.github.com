@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2015/04/08/azure_diagonestics_1_3_bugs
    2015/01/18/goazure_2015
    2014/12/02/introduction_to_azure_batch
    2014/08/01/cdp_azure
