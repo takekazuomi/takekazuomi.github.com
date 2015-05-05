@@ -1,6 +1,6 @@
 About Kyrt
 ===========
-カート(kyrt) は、Isaac Asimovの宇宙気流(The Currents of Space)で惑星フロリナの特産品として出てくる繊維の名前からいただきました。宇宙気流は、後に銀河帝国となるトランター帝国が勢力を増して行く時代を書いた作品で昔からのお気に入りの作品です。
+カート(kyrt) という名称は、Isaac Asimovの宇宙気流(The Currents of Space)から戴きました。この話しの中では惑星フロリナの特産品として出てくる繊維の名前として使われています。宇宙気流は、後に銀河帝国となるトランター帝国が勢力を増して行く時代を書いた作品で昔からのお気に入りの作品です。
 
 
 業務内容
@@ -15,20 +15,27 @@ About Kyrt
 
 創業
 =====
-2013/1/25 
+2013/1/25
 
 代表
 ====
 近江 武一
 
-`@takekazuomi <https://twitter.com/takekazuomi>`_
+* `twitter @takekazuomi <https://twitter.com/takekazuomi>`_
 
-`facebook takekazu.omi <https://www.facebook.com/takekazu.omi>`_
-
-
-`Slide Share <http://www.slideshare.net/takekazuomi/>`_
-
-`Windows Azure Table の利用 ～ 特性とパフォーマンスの検証 <http://bit.ly/nENGjD>`_
+* `facebook takekazu.omi <https://www.facebook.com/takekazu.omi>`_
 
 
+実績
+====
+* `Slide Share <http://www.slideshare.net/takekazuomi/>`_
 
+* `2011, Windows Azure Table の利用 ～ 特性とパフォーマンスの検証 <http://bit.ly/nENGjD>`_
+
+* `2014, de:code 2014 登壇 <http://channel9.msdn.com/events/de-code/2014/SV-005>`_
+
+* `2014, Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞 <2014/07/02/mvp_2014_7.html>`_
+
+* `2014, 日経BP社 「クラウドデザインパターン　Azureを例としたクラウドアプリケーション設計の手引き」監訳 <2014/08/01/cdp_azure.html>`_
+
+* `2015, GoAzure 登壇 Persistence on Azure - Microsoft Azure における永続化 <http://channel9.msdn.com/Series/Microsoft-Virtual-Academy-Japan/Session1-5>`_ 他

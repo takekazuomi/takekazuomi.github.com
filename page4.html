@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.3.0',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -63,12 +63,403 @@
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 17, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a></h1>
+<p><a class="reference external" href="http://owin.org/">OWIN(Open Web Interface for .NET)</a> は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
+2010年の終わりのころに <a class="reference external" href="http://bvanderveen.com/">Benjamin van der Veen 氏</a> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg"/></a>
+<p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 <a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
+<p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
+.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。</p>
+<p>その結果出来上がったのが、従来のVB6アプリの習慣に沿ったイベントモデルをベースにしたWeb Formsのアーキテクチャーと論理的に異なる HTTP ObjectとWeb Forms FrameworkがタイトにカップルされたSystem.Web.dll らしい。</p>
+<p>昔を振り返ってみると、1993年の終わりころ <a class="footnote-reference" href="#r1" id="id2">[1]</a>  <a class="reference external" href="http://en.wikipedia.org/wiki/NCSA_HTTPd">UCSA HTTPd</a>  にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。<a class="reference external" href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NETのリリースは2002年</a> なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。
+今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。</p>
+<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている <a class="reference external" href="http://rack.github.io/">Rack: a Ruby Webserver Interface Feb 2007</a>  が生まれる。
+こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
+<p>.NETでは最初に標準的なWeb Server（IIS）と、Framework（System.Web.dll）ありきで始まったため混乱は無かったが自由な発展が阻害され、一方Ruby/Pythonなど標準的なものが無い中では混沌のなかから優れた標準（Rack/WSGI)が生まれたというのは実に面白い。</p>
+<div class="section" id="owin">
+<h2>OWINの基本</h2>
+<p>The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
+</pre></div>
+</div>
+<p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成 <a class="footnote-reference" href="#r2" id="id3">[2]</a> でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、 <a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a> なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
+</div>
+<div class="section" id="owin-middleware-azure-cache-session">
+<h2>OWIN Middleware Azure Cache Session</h2>
+<p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a> 手探りで作った習作だが、簡単に中身を説明する。
+OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
+<div><a class="reference internal image-reference" href="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png"><img height="372.115384615" src="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png" width="600.0"/></a></div></div>
+<div class="section" id="owin-selfhost-application">
+<h2>OWIN SelfHost Applicationの作成</h2>
+<p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
+<div class="section" id="console-project">
+<h3>Console Projectを作成して必要なパッケージを入れる</h3>
+<p>nugetから必要なパッケージを入れる</p>
+<div class="highlight-bash"><div class="highlight"><pre>install-package Microsoft.Owin.Hosting
+install-package Microsoft.Owin.Host.HttpListener
+install-package Microsoft.Owin.Diagnostics
+install-Package Owin.Extensions
+</pre></div>
+</div>
+</div>
+<div class="section" id="program-csmain">
+<h3>Program.csのmainを下記のようにする</h3>
+<p><cite>WebApp.Start&lt;Startup&gt;(url)</cite> とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">uri</span> <span class="p">=</span> <span class="n">args</span><span class="p">.</span><span class="n">Length</span> <span class="p">==</span> <span class="m">0</span> <span class="p">?</span> <span class="s">"http://localhost:8081/"</span> <span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">];</span>
+
+            <span class="k">using</span> <span class="p">(</span><span class="n">WebApp</span><span class="p">.</span><span class="n">Start</span><span class="p">&lt;</span><span class="n">Startup</span><span class="p">&gt;(</span><span class="n">uri</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Started"</span><span class="p">);</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Stopping"</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="startup">
+<h3>Startup用のクラスを追加する</h3>
+<p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite> でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+
+<span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Configuration</span><span class="p">(</span><span class="n">IAppBuilder</span> <span class="n">app</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseWelcomePage</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>これで動かすとこんな感じになる</h3>
+<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com WelcomePageMiddleware</a> 見ると非常に参考になる。</p>
+<img alt="../../../_images/2013_12_08_scrn-001.png" src="_images/2013_12_08_scrn-001.png"/>
+</div>
+</div>
+<div class="section" id="azure-cache-session-middleware">
+<h2>Azure Cache Session Middleware</h2>
+<p>ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。</p>
+<div class="section" id="windows-azure-cache-client">
+<h3>Windows Azure Cache Client を入れる</h3>
+<div class="highlight-bash"><div class="highlight"><pre>Install-Package Microsoft.WindowsAzure.Caching
+</pre></div>
+</div>
+</div>
+<div class="section" id="app-configazure-cache">
+<h3>App.config内のAzure Cacheの設定をする</h3>
+<p>App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+  <span class="nt">&lt;configSections&gt;</span>
+    <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">"dataCacheClients"</span> <span class="na">type=</span><span class="s">"Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core"</span> <span class="na">allowLocation=</span><span class="s">"true"</span> <span class="na">allowDefinition=</span><span class="s">"Everywhere"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">"cacheDiagnostics"</span> <span class="na">type=</span><span class="s">"Microsoft.ApplicationServer.Caching.AzureCommon.DiagnosticsConfigurationSection, Microsoft.ApplicationServer.Caching.AzureCommon"</span> <span class="na">allowLocation=</span><span class="s">"true"</span> <span class="na">allowDefinition=</span><span class="s">"Everywhere"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/configSections&gt;</span>
+  <span class="nt">&lt;startup&gt;</span> 
+    <span class="nt">&lt;supportedRuntime</span> <span class="na">version=</span><span class="s">"v4.0"</span> <span class="na">sku=</span><span class="s">".NETFramework,Version=v4.5"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/startup&gt;</span>
+  <span class="nt">&lt;dataCacheClients&gt;</span>
+    <span class="nt">&lt;dataCacheClient</span> <span class="na">name=</span><span class="s">"default"</span><span class="nt">&gt;</span>
+      <span class="c">&lt;!--To use the in-role flavor of Windows Azure Cache, set identifier to be the cache cluster role name --&gt;</span>
+      <span class="c">&lt;!--To use the Windows Azure Cache Service, set identifier to be the endpoint of the cache cluster --&gt;</span>
+      <span class="nt">&lt;autoDiscover</span> <span class="na">isEnabled=</span><span class="s">"true"</span> <span class="na">identifier=</span><span class="s">"********.cache.windows.net"</span> <span class="nt">/&gt;</span>
+
+      <span class="c">&lt;!--&lt;localCache isEnabled="true" sync="TimeoutBased" objectCount="100000" ttlValue="300" /&gt;--&gt;</span>
+      
+      <span class="c">&lt;!--Use this section to specify security settings for connecting to your cache. This section is not required if your cache is hosted on a role that is a part of your cloud service. --&gt;</span>
+      <span class="nt">&lt;securityProperties</span> <span class="na">mode=</span><span class="s">"Message"</span> <span class="na">sslEnabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;messageSecurity</span> <span class="na">authorizationInfo=</span><span class="s">"*************************"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/securityProperties&gt;</span>
+    <span class="nt">&lt;/dataCacheClient&gt;</span>
+<span class="nt">&lt;/dataCacheClients&gt;&lt;/configuration&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="owin-middleware">
+<h3>OWIN Middleware用のプロジェクトを追加する</h3>
+<p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>
+必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
+<div class="highlight-bash"><div class="highlight"><pre>install-Package Microsoft.Owin
+install-Package Microsoft.WindowsAzure.Caching
+install-Package EnterpriseLibrary.TransientFaultHandling.Caching
+</pre></div>
+</div>
+</div>
+<div class="section" id="azrue-cache-middleware">
+<h3>Azrue Cache Middleware</h3>
+<p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 <a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheMiddleware</span> <span class="p">:</span> <span class="n">OwinMiddleware</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">CacheKeyName</span> <span class="p">=</span> <span class="s">"Kyrt.CacheKeyName"</span><span class="p">;</span>
+
+        <span class="k">private</span> <span class="k">readonly</span> <span class="n">AzureCacheOptions</span> <span class="n">_options</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="nf">AzureCacheMiddleware</span><span class="p">(</span><span class="n">OwinMiddleware</span> <span class="n">next</span><span class="p">,</span> <span class="n">AzureCacheOptions</span> <span class="n">options</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">next</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_options</span> <span class="p">=</span> <span class="n">options</span> <span class="p">??</span> <span class="k">new</span> <span class="n">AzureCacheOptions</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">override</span> <span class="n">Task</span> <span class="nf">Invoke</span><span class="p">(</span><span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="kt">object</span> <span class="n">cache</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(!</span><span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">TryGetValue</span><span class="p">(</span><span class="n">CacheKeyName</span><span class="p">,</span> <span class="k">out</span> <span class="n">cache</span><span class="p">))</span>
+                <span class="p">{</span>
+                    <span class="n">cache</span> <span class="p">=</span> <span class="k">new</span> <span class="n">AzureCacheClient</span><span class="p">(</span><span class="n">_options</span><span class="p">.</span><span class="n">CacheName</span><span class="p">);</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">[</span><span class="n">CacheKeyName</span><span class="p">]</span> <span class="p">=</span> <span class="n">cache</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">DataCacheException</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">ex</span><span class="p">);</span>
+                <span class="k">throw</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">Next</span><span class="p">.</span><span class="n">Invoke</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。</p>
+<p>オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheOptions</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nf">AzureCacheOptions</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="n">CacheName</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">public</span> <span class="kt">string</span> <span class="n">CacheName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">AzureCacheExtensions</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="n">IAppBuilder</span> <span class="nf">UseAzureCache</span><span class="p">(</span><span class="k">this</span> <span class="n">IAppBuilder</span> <span class="n">builder</span><span class="p">,</span> <span class="n">AzureCacheOptions</span> <span class="n">options</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">builder</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentNullException</span><span class="p">(</span><span class="s">"builder"</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">builder</span><span class="p">.</span><span class="n">Use</span><span class="p">(</span><span class="k">typeof</span> <span class="p">(</span><span class="n">AzureCacheMiddleware</span><span class="p">),</span> <span class="n">options</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="n">AzureCacheClient</span> <span class="nf">Cache</span><span class="p">(</span><span class="k">this</span> <span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">context</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentNullException</span><span class="p">(</span><span class="s">"context"</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">context</span><span class="p">.</span><span class="n">Environment</span><span class="p">[</span><span class="n">AzureCacheMiddleware</span><span class="p">.</span><span class="n">CacheKeyName</span><span class="p">]</span> <span class="k">as</span> <span class="n">AzureCacheClient</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<p>Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">SessionMiddleware</span> <span class="p">:</span> <span class="n">OwinMiddleware</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">SessionKeyName</span> <span class="p">=</span> <span class="s">"Kyrt.Session"</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="nf">SessionMiddleware</span><span class="p">(</span><span class="n">OwinMiddleware</span> <span class="n">next</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">next</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">override</span> <span class="n">Task</span> <span class="nf">Invoke</span><span class="p">(</span><span class="n">IOwinContext</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">sessionId</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="n">sessionId</span> <span class="p">=</span> <span class="n">AzureCacheSessionProvidor</span><span class="p">.</span><span class="n">PreInvoke</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">SessionKeyName</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">Next</span><span class="p">.</span><span class="n">Invoke</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">ContinueWith</span><span class="p">((</span><span class="n">task</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="p">=&gt;</span>
+            <span class="p">{</span>
+                <span class="k">try</span>
+                <span class="p">{</span>
+                    <span class="kt">var</span> <span class="n">p</span> <span class="p">=</span> <span class="n">state</span> <span class="k">as</span> <span class="n">Tuple</span><span class="p">&lt;</span><span class="n">IOwinContext</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;;</span> 
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">!=</span><span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">p</span><span class="p">.</span><span class="n">Item2</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+                        <span class="n">AzureCacheSessionProvidor</span><span class="p">.</span><span class="n">PostInvoke</span><span class="p">(</span> <span class="n">p</span><span class="p">.</span><span class="n">Item1</span><span class="p">,</span> <span class="n">SessionKeyName</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">Item2</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="n">task</span><span class="p">;</span>
+            <span class="p">},</span> <span class="n">Tuple</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">sessionId</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>アプリケーションの変更</h2>
+<p>最後に、アプリケーションをCacheとSessionを使うように変更する。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">Owin.Middleware</span><span class="p">;</span>
+
+<span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
+
+<span class="k">namespace</span> <span class="nn">SelfHostSample</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Configuration</span><span class="p">(</span><span class="n">IAppBuilder</span> <span class="n">app</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseAzureCache</span><span class="p">();</span>
+            <span class="n">app</span><span class="p">.</span><span class="n">UseSession</span><span class="p">();</span>
+
+            <span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">(</span><span class="k">async</span> <span class="n">context</span> <span class="p">=&gt;</span>
+            <span class="p">{</span>
+                <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"start app.Run {0}"</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Path</span><span class="p">);</span>
+
+                <span class="n">context</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">ContentType</span> <span class="p">=</span> <span class="s">"text/html"</span><span class="p">;</span>
+                <span class="k">try</span>
+                <span class="p">{</span>
+                    <span class="kt">var</span> <span class="n">time</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Cache</span><span class="p">().</span><span class="n">GetOrAdd</span><span class="p">(</span><span class="s">"first time"</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">DateTimeOffset</span><span class="p">.</span><span class="n">Now</span><span class="p">);</span>
+                    <span class="kt">var</span> <span class="n">count</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Cache</span><span class="p">().</span><span class="n">Increment</span><span class="p">(</span><span class="s">"counter"</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+                    <span class="kt">int</span> <span class="n">sessionCount</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">Session</span><span class="p">().</span><span class="n">Get</span><span class="p">(</span><span class="s">"sessionCount"</span><span class="p">,</span> <span class="p">-</span><span class="m">1</span><span class="p">);</span>
+                    <span class="n">sessionCount</span><span class="p">++;</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">Session</span><span class="p">()[</span><span class="s">"sessionCount"</span><span class="p">]</span> <span class="p">=</span> <span class="n">sessionCount</span><span class="p">;</span>
+
+                    <span class="kt">var</span> <span class="n">msg</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"Hello, World! {0} {1}/{2} {3}&lt;br&gt;"</span><span class="p">,</span> <span class="n">time</span><span class="p">.</span><span class="n">ToString</span><span class="p">(),</span> <span class="n">sessionCount</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Path</span><span class="p">);</span>
+                    <span class="k">await</span> <span class="n">context</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">WriteAsync</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+
+
+                <span class="p">}</span>
+                <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">context</span><span class="p">.</span><span class="n">TraceOutput</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>まとめ</h2>
+<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。
+<a class="reference external" href="http://katanaproject.codeplex.com/">katanaproject.codeplex.com</a> を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Common_Gateway_Interface#cite_note-1">Server Scripts, by Rob McCool, www-talk mailing list, Sun, 14 Nov 1993</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Katana Project のコードを見ると重量級で途方にくれる。System.Web との相互運用性をもたせようとして難しいことになっているらしい。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td>生 Owin だと型の情報がほどんど無い( <cite>IDictionary&lt;string, object&gt;</cite> なので）ので日和ってしまった。</td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/owin.html">OWIN</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_cache.html">Azure Cache</a>, <a href="tags/cache.html">Cache</a>, <a href="tags/owin.html">OWIN</a>, <a href="tags/session.html">Session</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/17/owin_azure_cache_session_middleware.html#disqus_thread" data-disqus-identifier="2013/12/17/owin_azure_cache_session_middleware">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 11, 2013</span>
         </div>
-        <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
 <p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
 <div class="section" id="id2">
 <h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
@@ -86,6 +477,7 @@
 ５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         
         <div class="categories">
@@ -103,7 +495,8 @@
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 11, 2013</span>
         </div>
-        <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
 <p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
 | 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
@@ -112,7 +505,7 @@
 <p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
 <img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
 <p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module <span class="p">|</span> ft name,version
 
 Name                                                        Version
 ----                                                        -------
@@ -192,6 +585,7 @@ PSReadline                                                  1.0.0.1
 <p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -211,7 +605,8 @@ PSReadline                                                  1.0.0.1
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 06, 2013</span>
         </div>
-        <h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
 <p>2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a>  に出ています、興味深い内容です。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11248464764"><img alt="mojya mojya by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3755/11248464764_54794780d3_z.jpg"/></a>
 <p>翻訳は追々出ると思うので、拾い読みしながら気になったことを書きます。</p>
@@ -227,7 +622,7 @@ Insertの時にサーバー側で付与される情報はETagとTimestampだけ�
 <h2>What is JSON</h2>
 <blockquote>
 <div><ul class="simple">
-<li>[引用] <a class="reference external" href="http://json.org">JSON</a>  (JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a> と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
+<li>[引用] <a class="reference external" href="http://json.org/">JSON</a>  (JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a> と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
 </ul>
 </div></blockquote>
 <p>ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、 <a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038">OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design</a> がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。
@@ -236,10 +631,10 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 </div>
 <div class="section" id="atompub-vs-json-format">
 <h2>AtomPub vs JSON format</h2>
-<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a> と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><em>JSON nometadata [引用]</em></a> を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a> の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a> もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った <a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><em>XML nometadata （参考までに作ってみました）</em></a> というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
+<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span>AtomPub [引用]</span></a> と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><span>JSON nometadata [引用]</span></a> を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span>AtomPub [引用]</span></a> の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a> もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った <a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><span>XML nometadata （参考までに作ってみました）</span></a> というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
 <p>Payloadの違いによる比較のテーブルが面白いので引用します</p>
-<table border="1" class="docutils">
-<caption>To compare JSON and AtomPub</caption>
+<table border="1" class="docutils" id="id12">
+<caption><span class="caption-text">To compare JSON and AtomPub</span></caption>
 <colgroup>
 <col width="14%"/>
 <col width="14%"/>
@@ -496,13 +891,13 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 <table class="docutils footnote" frame="void" id="f1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="f2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format">OData V3 JSON Verbose Format</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format/">OData V3 JSON Verbose Format</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="f3" rules="none">
@@ -520,6 +915,7 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 </div>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -539,13 +935,14 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 06, 2013</span>
         </div>
-        <h1><a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></h1>
 <p>3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9269858396"><img alt="leaf by Takekazu Omi, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg"/></a>
 <p>Storage の .NET Client ライブラリは、2.1までは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a> にありましたが、3.0からは、Storageは独立して <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Libraries for .NET github:azure-storage-net</a> になりました。
 2.1系は継続して、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a> でメンテされるようです。
 現在2.1系の最新は、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4">2.1.0.4</a> です。</p>
-<p>今後 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET</a> は、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager">Windows Azure Configuration Manager</a> や <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview">Windows Azure Management Libraries</a> の場所ということになりそうです。</p>
+<p>今後 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET</a> は、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager/">Windows Azure Configuration Manager</a> や <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview">Windows Azure Management Libraries</a> の場所ということになりそうです。</p>
 <p>最初は、Windows Azure SDK for .NET という名前で、中身がStorageのライブラリで始まって、そのうち Configuration Manager が追加、Management Libraries が追加され、Media関連はディレクトリはあるけど別レポジトリ、とだんだん膨れてわかり辛くなってきたところだったので整理するにはいいタイミングだった気がします。</p>
 <div class="section" id="breaking-changes">
 <h2>Breaking Changes</h2>
@@ -569,6 +966,7 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 <p>今までのレポジトリを見てソースが上がってこないので、3.0のソースは公開されないのかと思って困惑していましたが、無事ソースも確認できて安心しました。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -585,309 +983,6 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html#disqus_thread" data-disqus-identifier="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 05, 2013</span>
-        </div>
-        <h1><a href="2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a></h1>
-<p><a class="reference external" href="http://qiita.com/advent-calendar/2013/azure">Windows Azure Advent Calendar 2013 - Qiita [キータ]</a> の 5 日目の記事です。最初Javaネタを書こうと思ってたのですが、11/27にWindows Azure Storageの新しいバージョン(x-ms-version:2013-08-15)が公開され盛り上がっているのでストレージネタに切り替えました。</p>
-<p>新バージョンに付いては以前に書いているので、それを見て下さい。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></div>
-</div>
-</div></blockquote>
-<p>立派な訳が出てるので、こちらも合わせてどうぞ。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
-</div>
-<div class="line-block">
-<div class="line">2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入</a></div>
-</div>
-</div></blockquote>
-<p>久しぶりのストレージ のリリースで機能盛り沢山なのですが <a class="footnote-reference" href="#f1" id="id2">[1]</a> 、その中でもパフォーマンスジャンキー注目の Minute Metrics （分単位メトリックス）を紹介します。機能紹介だけだと面白くないので脱線しながら書きますのでお楽しみ下さい。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9204218499"><img alt="DEAD END by takekazu, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5498/9204218499_3d95538ae6_z.jpg"/></a>
-<div class="section" id="minute-metrics">
-<h2>Minute Metrics （分単位メトリックス）とは</h2>
-<p>今まで、Windows Azure StorageのMetricsは時間集計でした。  <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a>  新しい 2013-08-15 version のMinute Metrics では、5分以内に 分単位の集計（Minute Metrics） が参照できるようになりました。それに伴って下記のテーブルが追加されています。</p>
-<blockquote>
-<div><ul class="simple">
-<li>$MetricsHourPrimaryTransactionsBlob</li>
-<li>$MetricsHourPrimaryTransactionsTable</li>
-<li>$MetricsHourPrimaryTransactionsQueue</li>
-<li>$MetricsMinutePrimaryTransactionsBlob</li>
-<li>$MetricsMinutePrimaryTransactionsTable</li>
-<li>$MetricsMinutePrimaryTransactionsQueue</li>
-</ul>
-</div></blockquote>
-<p>Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。</p>
-<p>名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。</p>
-<p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。 <a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
-Cache-Control: no-cache
-Transfer-Encoding: chunked
-Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 9e39e71e-70ea-41b3-be3e-b7a6231315b0
-x-ms-version: 2013-08-15
-X-Content-Type-Options: nosniff
-Date: Thu, 05 Dec 2013 12:00:39 GMT
-
-83
-{"odata.metadata":"http://waac2013omi001diag.table.core.windows.net/$metadata#$MetricsMinuteSecondaryTransactionsTable","value":[]}
-0
-</pre></div>
-</div>
-<p>ちなみに、$で始まる適当な名前でリクエストを流すと400 Bad Requestで、リソースに不正な文字が含まれているというエラーになります。</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
-Transfer-Encoding: chunked
-Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 272dce2f-ac46-46b7-b59d-b0338cefa78b
-x-ms-version: 2013-08-15
-X-Content-Type-Options: nosniff
-Date: Thu, 05 Dec 2013 11:57:59 GMT
-
-DE
-{"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The specifed resource name contains invalid characters.\nRequestId:272dce2f-ac46-46b7-b59d-b0338cefa78b\nTime:2013-12-05T11:58:00.5348125Z"}}}
-0
-</pre></div>
-</div>
-<p>メトリックス系のテーブルは下記のようにListTableでも帰ってこないので存在するかどうかは難しいところですが、エラーにならないところを見ると特別扱いされているようで期待してしまいます。</p>
-<div class="highlight-none"><div class="highlight"><pre>var tables = tableClient.ListTables("$Metrics");
-</pre></div>
-</div>
-</div>
-<div class="section" id="id4">
-<h2>Minute Metrics （分単位メトリックス）を有効にする</h2>
-<p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a> を使います。今のところ <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a> のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。
-設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。
-下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。 <a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
-<div class="highlight-none"><div class="highlight"><pre>private static void SetStorageAnalytics(CloudStorageAccount account)
-{
-    var serviceProperty = new ServiceProperties
-    {
-        Logging = new LoggingProperties
-        {
-            Version = "1.0",
-            LoggingOperations = LoggingOperations.All,
-            RetentionDays = 7,
-
-        },
-        HourMetrics = new MetricsProperties
-        {
-            Version = "1.0",
-            MetricsLevel = MetricsLevel.ServiceAndApi,
-            RetentionDays = 7
-        },
-        MinuteMetrics = new MetricsProperties
-        {
-            Version = "1.0",
-            MetricsLevel = MetricsLevel.ServiceAndApi,
-            RetentionDays = 1
-        }
-    };
-    account.CreateCloudBlobClient().SetServiceProperties(serviceProperty);
-    account.CreateCloudTableClient().SetServiceProperties(serviceProperty);
-    account.CreateCloudQueueClient().SetServiceProperties(serviceProperty);
-
-}
-</pre></div>
-</div>
-<p>このコード書いていてServicePropertiesのプロパティで「あれ？」と思いました。以前は、ServicePropertiesは、LoggingProperties と MetricsProperties の２つのプロパティを持っていたのですが、3.0では MetricsProperties が無くなって HourMetrics になってしまっているようです、Table側は古い名前も残してあるのに、ライブラリは Braking Changesにしてしまったようですね。このあたりの判断は難しいところなのでしょうが、古い名前もあっても良い気がします。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/v2.1.0.4/microsoft-azure-api/Services/Storage/Lib/Common/Shared/Protocol/ServiceProperties.cs#L97">2.1.0.4 ServiceProperties.cs</a></p>
-<p>nugetから無条件で最新版として入るのに前のバージョンと互換性が無いっていうのは大胆な気がしますが、なんらかの事情でちょっとドキュメントが遅れているだけなのでしょう。</p>
-<p>実行してリクエスト、レスポンスを覗いてみます。</p>
-<div class="section" id="http-request">
-<h3>http request</h3>
-<div class="highlight-none"><div class="highlight"><pre>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
-User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
-x-ms-version: 2013-08-15
-x-ms-client-request-id: 56bffee5-4626-4835-b254-af38a1520242
-x-ms-date: Thu, 05 Dec 2013 12:39:54 GMT
-Authorization: SharedKey ********************************************************
-Host: waac2013omi001diag.blob.core.windows.net
-Content-Length: 626
-Connection: Keep-Alive
-
-&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;StorageServiceProperties&gt;&lt;Logging&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Delete&gt;true&lt;/Delete&gt;&lt;Read&gt;true&lt;/Read&gt;&lt;Write&gt;true&lt;/Write&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;7&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;/Logging&gt;&lt;HourMetrics&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;7&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;IncludeAPIs&gt;true&lt;/IncludeAPIs&gt;&lt;/HourMetrics&gt;&lt;MinuteMetrics&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;1&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;IncludeAPIs&gt;true&lt;/IncludeAPIs&gt;&lt;/MinuteMetrics&gt;&lt;Cors /&gt;&lt;/StorageServiceProperties&gt;
-</pre></div>
-</div>
-</div>
-<div class="section" id="http-response">
-<h3>http response</h3>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 202 Accepted
-Transfer-Encoding: chunked
-Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 650e2253-9e51-43e5-90bd-6077ef43ef31
-x-ms-version: 2013-08-15
-Date: Thu, 05 Dec 2013 12:39:47 GMT
-
-0
-</pre></div>
-</div>
-<p>リクエストで、ServicePropertiesに設定した内容を投げていますがXMLなんですね。ここはJSONじゃないのかと思ったけど、そんなにトラフィックが多いところじゃないので問題ないですね。シンプルでいい感じです。</p>
-</div>
-</div>
-<div class="section" id="id7">
-<h2>Minute Metrics （分単位メトリックス）の結果</h2>
-<p>細かい確認ができていないのですが、結果自体はテーブル名が違うだけで従来の時間集計と同じものが出てるようです。パーテションキーが単位で採番されています。</p>
-<table border="1" class="docutils">
-<caption>Minute Metricsの例</caption>
-<colgroup>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PartitionKey</th>
-<th class="head">RowKey</th>
-<th class="head">TotalIngress</th>
-<th class="head">TotalEgress</th>
-<th class="head">AverageE2ELatency</th>
-<th class="head">AverageServerLatency</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>20131205T0303</td>
-<td>user;All</td>
-<td>393</td>
-<td>59079</td>
-<td>352</td>
-<td>53</td>
-</tr>
-<tr class="row-odd"><td>20131205T0303</td>
-<td>user;QueryEntities</td>
-<td>393</td>
-<td>59079</td>
-<td>352</td>
-<td>53</td>
-</tr>
-<tr class="row-even"><td>20131205T0304</td>
-<td>system;All</td>
-<td>8057</td>
-<td>9452</td>
-<td>20</td>
-<td>19</td>
-</tr>
-<tr class="row-odd"><td>20131205T0304</td>
-<td>user;All</td>
-<td>2188</td>
-<td>15747</td>
-<td>46.833333</td>
-<td>5.166667</td>
-</tr>
-<tr class="row-even"><td>20131205T0304</td>
-<td>user;QueryEntities</td>
-<td>1478</td>
-<td>14291</td>
-<td>68.5</td>
-<td>6.25</td>
-</tr>
-<tr class="row-odd"><td>20131205T0304</td>
-<td>user;QueryTables</td>
-<td>710</td>
-<td>1456</td>
-<td>3.5</td>
-<td>3</td>
-</tr>
-<tr class="row-even"><td>20131205T0305</td>
-<td>system;All</td>
-<td>24161</td>
-<td>28398</td>
-<td>14.333333</td>
-<td>13.333333</td>
-</tr>
-<tr class="row-odd"><td>20131205T0305</td>
-<td>user;All</td>
-<td>2041</td>
-<td>13787</td>
-<td>268.5</td>
-<td>5.75</td>
-</tr>
-<tr class="row-even"><td>20131205T0305</td>
-<td>user;GetTableServiceProperties</td>
-<td>338</td>
-<td>584</td>
-<td>2</td>
-<td>2</td>
-</tr>
-<tr class="row-odd"><td>20131205T0305</td>
-<td>user;QueryEntities</td>
-<td>1703</td>
-<td>13203</td>
-<td>357.333333</td>
-<td>7</td>
-</tr>
-<tr class="row-even"><td>20131205T0306</td>
-<td>system;All</td>
-<td>32239</td>
-<td>37972</td>
-<td>17.25</td>
-<td>16</td>
-</tr>
-<tr class="row-odd"><td>20131205T0307</td>
-<td>system;All</td>
-<td>23475</td>
-<td>27904</td>
-<td>15</td>
-<td>14.5</td>
-</tr>
-</tbody>
-</table>
-<p><a class="reference download internal" href="_downloads/20131205-minutemetrics-sample.zip"><span class="xref download docutils literal"><span class="pre">表だと厳しいのでcsvをどうぞ</span> <span class="pre">(zip)</span></span></a></p>
-</div>
-<div class="section" id="id8">
-<h2>まとめ</h2>
-<p>Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。
-今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。</p>
-</div>
-<div class="section" id="id9">
-<h2>訂正 2013/12/06</h2>
-<p>訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> で公開されています。</p>
-<div class="line-block">
-<div class="line"><br/></div>
-<div class="line"><br/></div>
-</div>
-<table class="docutils footnote" frame="void" id="f1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>日本リージョン、IaaSのGAなど大きな話題が続いている Azure 全体に比べると地味ですね。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>レスポンスのbodyがJSONですね、このバージョンからJSONがサポートされています。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>当たり前ですね</td></tr>
-</tbody>
-</table>
-</div>
-
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure_sdk.html">Azure SDK</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/step_by_step.html">Step By Step</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/05/minute_metrics_storage_version_2013_08_15.html#disqus_thread" data-disqus-identifier="2013/12/05/minute_metrics_storage_version_2013_08_15">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -896,6 +991,8 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
+        </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
         </li><li>
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
@@ -913,23 +1010,21 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
         </li><li>
             <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
-        </li><li>
-            <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1>Search</h1>
+    <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="webfont">L</span></button>
+        <button type="submit"><span class="fa fa-search"></span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
-        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2014, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
       </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>

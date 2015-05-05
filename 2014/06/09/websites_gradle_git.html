@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="スケーラブルな採番とsnowflake" href="../08/snowflake_c.html" /><link rel="prev" title="2014 Microsoft MVP Award を受賞しました" href="../../07/02/mvp_2014_7.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.3.0',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -63,9 +63,9 @@
             <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
@@ -110,7 +110,7 @@ info:    Remote azure repository initialized
 + Getting site information
 info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
 info:    A new remote, <span class="s1">&#39;azure&#39;</span>, has been added to your <span class="nb">local </span>git repository
-info:    Use git locally to make changes to your site, commit, and <span class="k">then </span>use <span class="s1">&#39;git push azure master&#39;</span> to deploy to Azure
+info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">&#39;git push azure master&#39;</span> to deploy to Azure
 info:    site create <span class="nb">command </span>OK
 </pre></div>
 </div>
@@ -138,13 +138,13 @@ origin
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
 Password <span class="k">for</span> <span class="s1">&#39;https://kinmugi-king@kinmugi006.scm.azurewebsites.net&#39;</span>:
 Counting objects: 3, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, 230 bytes | 0 bytes/s, <span class="k">done</span>.
-Total 3 <span class="o">(</span>delta 0<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
+Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 remote: Updating branch <span class="s1">&#39;master&#39;</span>.
 remote: Updating submodules.
-remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">&#39;f522084597&#39;</span>.
+remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">&#39;f522084597&#39;</span>.
 remote: Generating deployment script.
-remote: Generating deployment script <span class="k">for </span>Web Site
+remote: Generating deployment script <span class="k">for</span> Web Site
 remote: Generated deployment script files
 remote: Running deployment command...
 remote: Handling Basic Web Site deployment.
@@ -237,18 +237,18 @@ IF NOT DEFINED DEPLOYMENT_TARGET <span class="o">(</span>
 
 IF EXIST <span class="s2">&quot;%GRADLE_HOME_CMD%&quot;</span> <span class="o">(</span>
   call :ExecuteCmd <span class="s2">&quot;%GRADLE_HOME_CMD%&quot;</span> clean war
-  IF !ERRORLEVEL! NEQ 0 goto error
+  IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 <span class="o">)</span>
 
 
 :: copy war file to wwwroot
 
 IF NOT EXIST <span class="s2">&quot;%DEPLOYMENT_TARGET%&quot;</span><span class="se">\w</span>ebapps <span class="o">(</span>
-   mkdir <span class="s2">&quot;%DEPLOYMENT_TARGET%&quot;</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;&amp;1
+   mkdir <span class="s2">&quot;%DEPLOYMENT_TARGET%&quot;</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;<span class="p">&amp;</span>1
 <span class="o">)</span>
 
 COPY /Y <span class="s2">&quot;%DEPLOYMENT_SOURCE%&quot;</span><span class="se">\b</span>uild<span class="se">\l</span>ibs<span class="se">\k</span>inmugi.war <span class="s2">&quot;%DEPLOYMENT_TARGET%&quot;</span><span class="se">\w</span>ebapps<span class="se">\R</span>OOT.war
-IF !ERRORLEVEL! NEQ 0 goto error
+IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 
 goto end
 
@@ -280,17 +280,17 @@ endlocal
 <p>ここまでできたら、git add, commit して、pushしてください。</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
 Counting objects: 189, <span class="k">done</span>.
-Delta compression using up to 4 threads.
+Delta compression using up to <span class="m">4</span> threads.
 Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB | 973.00 KiB/s, <span class="k">done</span>.
-Total 188 <span class="o">(</span>delta 3<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB <span class="p">|</span> 973.00 KiB/s, <span class="k">done</span>.
+Total <span class="m">188</span> <span class="o">(</span>delta 3<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 remote: Updating branch <span class="s1">&#39;master&#39;</span>.
 remote: Updating submodules.
-remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">&#39;c190ab30ef&#39;</span>.
+remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">&#39;c190ab30ef&#39;</span>.
 remote: Running custom deployment command...
 remote: Running deployment command...
 remote: ..................
-remote:         1 file<span class="o">(</span>s<span class="o">)</span> copied.
+remote:         <span class="m">1</span> file<span class="o">(</span>s<span class="o">)</span> copied.
 remote: Finished successfully.
 remote: Deployment successful.
 To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
@@ -376,6 +376,8 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2014/06/09/websites_gradle_git";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
+        </li><li>
             <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
         </li><li>
             <a href="../../../2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
@@ -393,23 +395,21 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
             <a href="../../03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
         </li><li>
             <a href="../../01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
-        </li><li>
-            <a href="../../01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (12), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_bug.html">Azure BUG</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1>Search</h1>
+    <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="webfont">L</span></button>
+        <button type="submit"><span class="fa fa-search"></span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
-        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2014, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
       </div> <!--! end of #container --><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>

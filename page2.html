@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page3.html" /><link rel="prev" title="Newer" href="index.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.3.0',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -63,12 +63,36 @@
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>July 02, 2014</span>
+        </div>
+        <div class="section">
+            <h1><a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a></h1>
+<p>2014年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。</p>
+<p>これも一重に皆様から多くの御支援をいただいた結果です。</p>
+<p>今後も、Azure Storage を中心に、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。</p>
+<p>これからも、よろしくお願いいたします。</p>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/mvp.html">MVP</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2014/07/02/mvp_2014_7.html#disqus_thread" data-disqus-identifier="2014/07/02/mvp_2014_7">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>June 09, 2014</span>
         </div>
-        <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
+        <div class="section">
+            <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
 <p>5/12 - 15 に行われた、TechEd North America 2014 で、待望のWebSitesのJavaサポートが発表されました。TechEdでは、AzureのJavaサポートとして、仮想マシン、クラウドサービス、WebSites の話がされていました。Azureの各種SDKはJavaは.NETと並ぶぐらい順調に進んでいるようなので今後も注目です。</p>
 <p>その中でも、WebSitesのJavaサポートが面白かったので紹介します。</p>
 <p>TechEdのセッションの内容は、 <a class="reference external" href="http://channel9.msdn.com/Events/TechEd/NorthAmerica/2014/DEV-B384">Java on Microsoft Azure</a> を観てもらうことにして、一般的な開発で行われるプロセスを Java on WebSites でやってみます。</p>
@@ -97,7 +121,7 @@ info:    Remote azure repository initialized
 + Getting site information
 info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
 info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local </span>git repository
-info:    Use git locally to make changes to your site, commit, and <span class="k">then </span>use <span class="s1">'git push azure master'</span> to deploy to Azure
+info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">'git push azure master'</span> to deploy to Azure
 info:    site create <span class="nb">command </span>OK
 </pre></div>
 </div>
@@ -125,13 +149,13 @@ origin
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
 Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
 Counting objects: 3, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, 230 bytes | 0 bytes/s, <span class="k">done</span>.
-Total 3 <span class="o">(</span>delta 0<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
+Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 remote: Updating branch <span class="s1">'master'</span>.
 remote: Updating submodules.
-remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">'f522084597'</span>.
+remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'f522084597'</span>.
 remote: Generating deployment script.
-remote: Generating deployment script <span class="k">for </span>Web Site
+remote: Generating deployment script <span class="k">for</span> Web Site
 remote: Generated deployment script files
 remote: Running deployment command...
 remote: Handling Basic Web Site deployment.
@@ -152,10 +176,10 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>これで、git の設定ができたので、次のJava Runtimeの設定をします。ここでもgitのパスワード設定と同じようにポータルを使います。
 Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0_51(バージョン番号は随時変わります）にして、WEB CONTAINER をTOMCAT 7.0.50 にして、SAVEを押します。</p>
 <img alt="Select Java runtime" class="align-center" src="_images/20140609_azure004.PNG"/>
-<p>ここで、<a class="reference external" href="http://kinmugi006.azurewebsites.net">http://kinmugi006.azurewebsites.net/</a> を見ると、さきほどの <span class="docutils literal"><span class="pre">Hello</span> <span class="pre">Java</span></span> から下記のような画面になります。</p>
+<p>ここで、<a class="reference external" href="http://kinmugi006.azurewebsites.net/">http://kinmugi006.azurewebsites.net/</a> を見ると、さきほどの <span class="docutils literal"><span class="pre">Hello</span> <span class="pre">Java</span></span> から下記のような画面になります。</p>
 <img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
 <p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
-<p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net">https://kinmugi006.scm.azurewebsites.net/</a> にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
+<p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a> にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
 <p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
       <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
@@ -179,7 +203,7 @@ Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0
 kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。
 今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
 <p>まずは、Javaのアプリの準備をします。</p>
-<p>ビルドにgradleを使うので、 <a class="reference external" href="http://www.gradle.org">gradle公式</a> から、 <a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a> をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。
+<p>ビルドにgradleを使うので、 <a class="reference external" href="http://www.gradle.org/">gradle公式</a> から、 <a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a> をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。
 srcの下のアプリケーションは、 <span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span> に入っている、 <a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a> です。</p>
 <p>ディレクトリ構成</p>
 <div class="highlight-bash"><div class="highlight"><pre>├─gradle
@@ -224,18 +248,18 @@ IF NOT DEFINED DEPLOYMENT_TARGET <span class="o">(</span>
 
 IF EXIST <span class="s2">"%GRADLE_HOME_CMD%"</span> <span class="o">(</span>
   call :ExecuteCmd <span class="s2">"%GRADLE_HOME_CMD%"</span> clean war
-  IF !ERRORLEVEL! NEQ 0 goto error
+  IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 <span class="o">)</span>
 
 
 :: copy war file to wwwroot
 
 IF NOT EXIST <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps <span class="o">(</span>
-   mkdir <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;&amp;1
+   mkdir <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;<span class="p">&amp;</span>1
 <span class="o">)</span>
 
 COPY /Y <span class="s2">"%DEPLOYMENT_SOURCE%"</span><span class="se">\b</span>uild<span class="se">\l</span>ibs<span class="se">\k</span>inmugi.war <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps<span class="se">\R</span>OOT.war
-IF !ERRORLEVEL! NEQ 0 goto error
+IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 
 goto end
 
@@ -267,17 +291,17 @@ endlocal
 <p>ここまでできたら、git add, commit して、pushしてください。</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
 Counting objects: 189, <span class="k">done</span>.
-Delta compression using up to 4 threads.
+Delta compression using up to <span class="m">4</span> threads.
 Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB | 973.00 KiB/s, <span class="k">done</span>.
-Total 188 <span class="o">(</span>delta 3<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB <span class="p">|</span> 973.00 KiB/s, <span class="k">done</span>.
+Total <span class="m">188</span> <span class="o">(</span>delta 3<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 remote: Updating branch <span class="s1">'master'</span>.
 remote: Updating submodules.
-remote: Preparing deployment <span class="k">for </span>commit id <span class="s1">'c190ab30ef'</span>.
+remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'c190ab30ef'</span>.
 remote: Running custom deployment command...
 remote: Running deployment command...
 remote: ..................
-remote:         1 file<span class="o">(</span>s<span class="o">)</span> copied.
+remote:         <span class="m">1</span> file<span class="o">(</span>s<span class="o">)</span> copied.
 remote: Finished successfully.
 remote: Deployment successful.
 To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
@@ -335,11 +359,12 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <table class="docutils footnote" frame="void" id="r8" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[8]</td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
+<tr><td class="label">[8]</td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
 </tbody>
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -359,11 +384,12 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>June 08, 2014</span>
         </div>
-        <h1><a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a></h1>
+        <div class="section">
+            <h1><a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a></h1>
 <p>snowflake は、Twitter 社が作成した、ユニークなID生成のネットワークサービスです。
 いくつかの簡単な保証で高いスケーラビリティを実現しています。
 Twitter 社が、MySQLから Cassandra に移行するにあたって、Cassandra にシーケンシャルな id 生成の仕組みが無かったことから作成したそうです。 snowflake については <a class="reference external" href="https://dev.twitter.com/docs/twitter-ids-json-and-snowflake">Twitter IDs, JSON and Snowflake</a> に書いてあります。</p>
-<p>snowflake のコードは、Apache License, Version 2.0 で <a class="reference external" href="https://github.com/twitter/snowflake">Snowflake</a> に公開されています。</p>
+<p>snowflake のコードは、Apache License, Version 2.0 で <a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a> に公開されています。</p>
 <div class="section" id="id2">
 <h2>スケーラブルな採番、背景的な話</h2>
 <p>Cloudでスケーラビリティのあるサービスを見据えてコードを書いていると採番に関する問題が必ず出てきます。従来、RDBの自動採番などに頼っていたのがコスト、スケーラビリティ、耐障害性の観点から問題となり、別の方法を考える必要が出てくるというのが一般的です。</p>
@@ -497,7 +523,7 @@ coreぐらいあれば、2*100/10000 = 1/50 となって、結構な頻度で衝
 </div>
 <div class="section" id="id8">
 <h2>Snowflake</h2>
-<p>Clock Skew に上手く対応することで、オンメモリの計算と最低限のノード間通信でUNIQなIDを生成する仕組みです。永続化レイヤーの支援無しにUNIQなIDが生成できる、オンメモリなので速い（10k ids per second per process <a class="reference external" href="https://github.com/twitter/snowflake">Snowflake</a> ）というのが特徴です。</p>
+<p>Clock Skew に上手く対応することで、オンメモリの計算と最低限のノード間通信でUNIQなIDを生成する仕組みです。永続化レイヤーの支援無しにUNIQなIDが生成できる、オンメモリなので速い（10k ids per second per process <a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a> ）というのが特徴です。</p>
 <p>ある意味GUIDと似ているのですが、64bit(long) で実現しているところ、おおよそ時系列で増えていく「(Roughly) Time Ordered」なことが異なっています。</p>
 </div>
 <div class="section" id="id10">
@@ -584,13 +610,14 @@ timestamp の精度を下げ、開始時間（0の時の日時、何時からの
 </div>
 <div class="section" id="id12">
 <h2>最後に</h2>
-<p>実は、この記事を書いている途中に、<a class="reference external" href="http://global.windowsazurebootcamp.com">Global Microsoft Azure Bootcamp 2014</a>  があり、このネタで発表してしまったので長らくお蔵入りしていました。
+<p>実は、この記事を書いている途中に、<a class="reference external" href="http://global.windowsazurebootcamp.com/">Global Microsoft Azure Bootcamp 2014</a>  があり、このネタで発表してしまったので長らくお蔵入りしていました。
 読み直してみたら、セッションでは時間の都合で話をしなかった内容もあり、それなりに役に立つかなと思ったので公開します。
 肝心のsnowflake の採番が速い理由が書いてありませんが、採番node間の通信が最低限で（生きているかどうか）、重複採番の防止にしか使われていないのが、一番効いている気がします。</p>
 <p>合わせて、セッション資料も御覧ください。</p>
 <iframe src="http://www.slideshare.net/slideshow/embed_code/32853065" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140329-jazug-gwabgeenerating-unique-id-numbers-in-cloud">Generating unique id numbers in Azure</a></p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -610,8 +637,9 @@ timestamp の精度を下げ、開始時間（0の時の日時、何時からの
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>March 02, 2014</span>
         </div>
-        <h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
-<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender">Windows Azure – 技術者でつなぐ日めくりカレンダー</a> の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a> のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
+        <div class="section">
+            <h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
+<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender/">Windows Azure – 技術者でつなぐ日めくりカレンダー</a> の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a> のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
 <p>まずはLTの内容の復習から、簡単にまとめると下記のような内容です。</p>
 <div class="section" id="id1">
 <h2>振り返り</h2>
@@ -650,7 +678,7 @@ timestamp の精度を下げ、開始時間（0の時の日時、何時からの
 </div>
 <div class="section" id="id2">
 <h2>確認する</h2>
-<p>RA-GRSで障害が起きた時の <span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span> の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで <a class="reference external" href="http://clr-h.jp">CLR/H in Tokyo 第1回</a>  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
+<p>RA-GRSで障害が起きた時の <span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span> の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで <a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
 <a class="reference external image-reference" href="http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163"><img alt="実践 Fiddler Eric Lawrence　著、日本マイクロソフト株式会社 エバンジェリスト 物江 修 監訳、長尾 高弘 訳" class="align-center" src="http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg" style="width: 300px;"/></a>
 <p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。
 本にはいろいろ詳しく書いてあるので、興味が出た方は是非！</p>
@@ -745,10 +773,11 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
 <h2>まとめ</h2>
 <p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>
 今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
-<p><a class="reference external" href="http://clr-h.jp">CLR/H in Tokyo 第1回</a> はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
+<p><a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a> はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
 <p>最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -768,7 +797,8 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 29, 2014</span>
         </div>
-        <h1><a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a></h1>
+        <div class="section">
+            <h1><a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a></h1>
 <p>Azure Storage 愛好者待望の、Azure Storage Emulator の 2013-08-15 version サポートがリリースされました。（まだ、preview ですが）</p>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2014/01/27/windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx">Windows Azure Storage Emulator 2.2.1 Preview Release with support for “2013-08-15” version</a></p>
 <blockquote>
@@ -926,6 +956,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 どうしても手元で確認したい場合は、Storage Emulator 2.2.1 previewを使って、そうでない場合は本番を利用して開発ということになりそうです。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -942,76 +973,6 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html#disqus_thread" data-disqus-identifier="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>January 06, 2014</span>
-        </div>
-        <h1><a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a></h1>
-<p>2014/1/4 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2">Windows Azure Storage 3.0.2</a> がリリースされました。
-2013/11/27 3.0のリリース 「 <a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><em>Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</em></a> 」、2013/12/11 の 3.0.1 hotfix 「 <a class="reference internal" href="2013/12/11/windows_azure_storage_client_3_0_1.html"><em>Windows Azure Storage Client 3.0.1</em></a> 」 に続く３回めのリリースです。</p>
-<a class="reference external image-reference" href="http://flic.kr/p/iSAtsB"><img alt="zenko-ji by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>修正点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L184">Issues fixed in 3.0.2.0 :</a> :</p>
-<ol class="arabic simple">
-<li>All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</li>
-<li>Queues: 存在するqueueの再度作成で、NullReferenceException になる問題を修正</li>
-<li>Tables: レスポンスがparseできなかったときに、TableServiceContext が NullReferenceException になる問題を修正</li>
-<li>Tables (RT): JSON形式がまだRT library でサポートされていないため、ユーザーは、RTで RequestOptions に JsonFullMetadata formart を設定することはできません</li>
-</ol>
-<p>コードを確認したところ、最初のやつが興味深いものでした。</p>
-</div>
-<div class="section" id="all-wp-api-argumentoutofrangeexception">
-<h2>1. All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</h2>
-<p>対象は、Windows Phone プラットフォームだけで特定のAPIでなく全般的に発生します。
-関連する Issue として 、 <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/issues/16">System.ArgumentOutOfRangeException in Microsoft.WindowsAzure.Storage.Table.CloudTable.EndExecute</a> が出ています。</p>
-<p>共通で使っている、API内のパラメータのバウンダリー検査関数（ <span class="docutils literal"><span class="pre">AssertInBounds</span></span> ）が動いていなくてあちこちで問題が発生するということになっていたようです。（そうは言っても、テストはしているので、そうそう起きるわけでは無いとは思います）</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17">Storage Client Library 3.0.2 のPR</a> でdiffを見みると、WINDOWS_PHONEだけで下記のように修正されていました。</p>
-<img alt="../../../_images/2014-01-06-github001.png" src="_images/2014-01-06-github001.png"/>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160">https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160</a></p>
-<p>#if WINDOWS_PHONE で AssertInBounds に、 <span class="docutils literal"><span class="pre">[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]</span></span>  を指定しています。この指定は、JITやNGENでのコード最適化を抑制するもので、 <a class="footnote-reference" href="#r1" id="id2">[1]</a> Windows Phone の場合だけ native code 生成に問題があったので抑制するオプションを付けたということです。</p>
-<p>Windows Phone というだけで、どのような場合に発生する問題かなどわかりませんが、WP アプリのコードが挙動不審の場合は試してみると良いかもしれません。Storage Clinet Library内では、この方法で修正されているようなので問題は無いのですが、普通に書いたコードでも起きるとすると、ちょっと困りますね。もう少し詳しい情報が欲しいところです。 <a class="footnote-reference" href="#r2" id="id3">[2]</a></p>
-<p>これ以外は、あまり気になる点はありませんでした。互換性の問題も無さそうなので、3系のStorage Clinetは 3.0.2 を使うのがお勧めです。</p>
-</div>
-<div class="section" id="windows-phone">
-<span id="scl302-more-info"/><h2>2014/1/11 追記 Windows Phoneの問題</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331">PR の質問</a> に返事を貰いました。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる</div>
-</div>
-</div></blockquote>
-<p><span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min,</span> <span class="pre">T</span> <span class="pre">max)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> と、 <span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span> の両方が同一 assembly にあるのが問題のようです。 必ず起きるというわけでも無さそうなので、Windows Phone で嵌ったら思い出してみるという程度で良さそうです。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/system.runtime.compilerservices.methodimploptions(v=vs.110).aspx">About System.Runtime.CompilerServices.MethodImplOptions</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932">We escalated this internally ...</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        <div class="postmeta">
-        
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/hotfix.html">Hotfix</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html#disqus_thread" data-disqus-identifier="2014/01/06/windows_azure_storage_3_0_2_hotfix">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -1020,6 +981,8 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
+        </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
         </li><li>
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
@@ -1037,23 +1000,21 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
         </li><li>
             <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
-        </li><li>
-            <a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1>Search</h1>
+    <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="webfont">L</span></button>
+        <button type="submit"><span class="fa fa-search"></span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
-        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2014, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
       </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
