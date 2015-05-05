@@ -34,8 +34,8 @@ About Kyrt
 
 * `2014, de:code 2014 登壇 <http://channel9.msdn.com/events/de-code/2014/SV-005>`_
 
-* `2014, Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞 <2014/07/02/mvp_2014_7.html>`_
+* `2014, Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞 <../2014/07/02/mvp_2014_7.html>`_
 
-* `2014, 日経BP社 「クラウドデザインパターン　Azureを例としたクラウドアプリケーション設計の手引き」監訳 <2014/08/01/cdp_azure.html>`_
+* `2014, 日経BP社 「クラウドデザインパターン　Azureを例としたクラウドアプリケーション設計の手引き」監訳 <../2014/08/01/cdp_azure.html>`_
 
 * `2015, GoAzure 登壇 Persistence on Azure - Microsoft Azure における永続化 <http://channel9.msdn.com/Series/Microsoft-Virtual-Academy-Japan/Session1-5>`_ 他
