@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Azure Storage Gen 2は速かった" href="waac2012day2.html" /><link rel="prev" title="Azure Virtual MachineのDISK性能" href="../22/azurevmfix1221.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,16 +56,16 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About Kyrt</a>
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="../../../pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
@@ -82,10 +82,9 @@
     
     <div class="section" id="windows-azure-storage-2-0-blob-upload">
 <h1>Windows Azure Storage 2.0 の Blob Upload</h1>
-<p>前の記事 <a class="reference internal" href="waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> では非同期呼び出しを使っていますが、これには理由があります。
-以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
+<p>前の記事<a class="reference internal" href="waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a>では非同期呼び出しを使っていますが、これには理由があります。以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
-<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
+<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
 <p>C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うには良い環境が揃ってきていると感じました。それで改めて非同期呼び出しを使ってみることにしました。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8149221698/"><img alt="shibuya by takekazu, on Flickr" src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg" /></a>
 <hr class="docutils" />
@@ -99,8 +98,7 @@
 <li>59行目で並列度の設定をコア数の12倍にしていること</li>
 <li>55,56行目ではPage/Block Blobのどちらを使うかを切り替えていること</li>
 </ol>
-<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。
-Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
+<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
 <p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
 <img alt="../../../_images/2012-08-screen01.png" src="../../../_images/2012-08-screen01.png" />
 <p>![Resource Monitor](/images/2012-08-screen01.png)</p>
@@ -123,24 +121,21 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p>それに対し、２系では下記のように定義されています。parallelismFactorは、47行目付近で1で初期化されておりデフォルトは1となります。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L232">CloudBlobClientBase.cs#L232</a></p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L47">CloudBlobClientBase.cs#L47</a></p>
-<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a> にも書いてあるBreaking Changesです。</p>
+<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a>にも書いてあるBreaking Changesです。</p>
 <p>2.0に移行した後、Block Blobのアップロードが遅くなった場合はParallelOperationThreadCountを確認するといいかもしれません。</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="id3">
 <h2>ParallelOperationThreadCountの使われ方</h2>
-<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> を用意したのだと思います ** あのソースだけだと分からないですが</p>
+<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>を用意したのだと思います ** あのソースだけだと分からないですが</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
-<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
-<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
+<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
+<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
 <hr class="docutils" />
 </div>
 <div class="section" id="blobasyncinside-borderofsyncasync">
 <span id="id5"></span><h2>同期と非同期の境界</h2>
-<p>WriteToSyncの実装は下記のようになっています。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
+<p>WriteToSyncの実装は下記のようになっています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
 <p>ちょっと見ると、WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期していて、並列動作しないような感じです。これだと、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないのかな？と思いますが、その先のtoStream.Write の実装を見ると内部が非同期に処理されています。</p>
 <p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行います。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs">BlobWriteStream.cs</a></p>
@@ -154,13 +149,12 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p>ここで、AsyncSemaphoreは、既定の数以上に処理が実行されないように非同期実行数を制御している役割を果たしている。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Core/Util/AsyncSemaphore.cs">AsyncSemaphore.cs</a></p>
 <p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
-<p>このあたりは、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What&#8217;s New in Storage Client Library for .NET (version 2.0)</a> に書いてある説明通りの実装になってるようだ。</p>
+<p>このあたりは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What&#8217;s New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="id7">
 <h2>結論</h2>
-<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。
-サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
+<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="id8">
@@ -195,6 +189,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/08/blobasyncinside";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -212,19 +208,17 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
             <a href="../../../2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="../../../2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="../../../2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (30)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (12), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_bug.html">Azure BUG</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (13), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

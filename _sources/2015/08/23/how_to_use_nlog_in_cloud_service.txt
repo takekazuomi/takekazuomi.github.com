@@ -1,0 +1,104 @@
+==============================
+ NLog を Cloud Service で使う
+==============================
+
+先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので作ってみました。
+
+.. image:: https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg
+   :target: https://www.flickr.com/photos/takekazuomi/19430236414/in/dateposted-public/
+   :alt: face
+   :align: center
+
+「 :doc:`/2015/04/08/azure_diagonestics_1_3_bugs` 」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。
+
+1. ローカルストレージからのカスタムログ転送はVSからの設定ができない
+2. ローカルストレージのパスはデプロイ毎に変わる
+
+今回の趣旨は、２のデプロイ毎に変わるパスにNLogから書くにはどうするかという話です。
+
+ローカル ストレージ リソース については、MSDNの 「 `ローカル ストレージ リソースを構成する <https://msdn.microsoft.com/ja-jp/library/azure/Ee758708.aspx>`_ 」 を見てください。
+
+1. ローカルストレージからのカスタムログ転送設定
+===============================================
+ここは前段です。残念ながら現在のVisual Studioでは、GUIでローカルストレージからのカスタムログ転送設定ができません。ここはdiagnostics.wadcfgxに手で書きます。
+たいして面倒でもなくDataSources のタグの中が今回追加した記述です。これだけで、ローカルストレージ LogStorage からBlobコンテナdiagnostics-custom-logs への転送を定義になります。
+
+.. code-block:: xml
+   :emphasize-lines: 10-14
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <DiagnosticsConfiguration xmlns="http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration">
+      <PublicConfig xmlns="http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration">
+        <WadCfg>
+          <DiagnosticMonitorConfiguration overallQuotaInMB="4096">
+            <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter="Error" />
+            <Directories scheduledTransferPeriod="PT1M">
+              <IISLogs containerName="wad-iis-logfiles" />
+              <FailedRequestLogs containerName="wad-failedrequestlogs" />
+              <DataSources>
+                <DirectoryConfiguration containerName="diagnostics-custom-logs">
+                  <LocalResource relativePath="." name="LogStorage" />
+                </DirectoryConfiguration>
+              </DataSources>
+            </Directories>
+
+        ... 省略 ...
+
+    </DiagnosticsConfiguration>
+
+
+2. ローカルストレージのパスはデプロイ毎に変わる
+===============================================
+これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。
+WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、 `Environment layout renderer <https://github.com/NLog/NLog/wiki/Environment-layout-renderer>`_ を使ってパスを展開するという技も使えます。
+しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことです）
+基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。
+そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer `NLog.Azure <https://www.nuget.org/packages/NLog.Azure/>`_ を書きました。（名前がおおざっぱ過ぎたかもしれません）
+
+.. code-block:: none
+
+  $ Install-Package NLog.Azure -Pre
+
+として、NLog.configに書くと実行時にローカルストレージのパスに展開されます。
+
+.. code-block:: xml
+
+  <variable name="logDirectory" value="${azure-local-resource:name=LogStorage:default=c\:/Logs/}"/>
+
+`NLog.configのサンプル <https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure.Example/WebRole1/NLog.config>`_
+
+name という引数に ローカルストレージ名を書きます。default は、ServiceRuntime が存在しないとき、あるいはローカルストレージの定義が無い場合に使われるバスを書きます。Azureの本番環境あるいはエミュレータ環境では、ローカルストレージにログを書き、そうでない場合はdefaultで指定された場所にログを書きます。
+NLogは結構素直な出来で、ここまではすっきり、さくっとできました。log4net よりいい感じですね。
+
+参考までに、簡単なWebRoleのプロジェクトをGitHubに上げてあります。 `NLog.Azure.Example <https://github.com/takekazuomi/NLog.Azure/tree/master/NLog.Azure.Example>`_
+
+
+
+おまけ
+======
+実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、使ってないくてもAzure SDK を入れないと開発/実行できないということです。
+Storageなどのライブラリは、Azure SDK無しでもnuget から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。なかなかメンドクサイ。
+今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに **意味が無い** 。
+
+こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出します。しかし、今回はGACに登録されているけど、物理パスがわからない！、そんなとき Fusion API でGACから探し出します。 [#r1]_  普通に暮らしてるとあまり出番ないですが。
+Fusion (Unmanaged API Reference) [#r2]_ は、GACに登録されているアセンブリを操作する Unmanaged API です。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、 `GetAssemblyPath() <https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19>`_ のあたり。
+あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに **メンドクサイ**
+
+
+最後に
+======
+ずいぶん間が空いてしまいましたが、2015/5/12 に、株式会社 kyrt しました、先月には、2015年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞をいただきました。
+これらかもよろしくお願いいたします。
+
+File System をバッファーとして使うロギングシステムではパフォーマンスに注意した方が良さそうです。Azure Diagonesticsを使うと、out-process の log collector でよしなにBlobへの転送をしてくれるので、直にBlobやTableに書くより良いとは思いますが、アプリとout-process の間のつなぎがFile System なのは信頼性は良いけどパフォーマンスが疑問です。そんなにログ書くのかという話はあると思いますが。そう考えるとアプリとlog collectorの間はETWが良いような気もします。
+ついでに、log collector でアーカイブだけじゃなくてリアルタイム系のフィルタリングとかやってくれると便利なんだけど。SLABに期待ですね。
+
+
+.. [#r1] `How to programmatically determine if .NET assembly is installed in GAC? <http://stackoverflow.com/questions/19456547/how-to-programmatically-determine-if-net-assembly-is-installed-in-gac>`_
+.. [#r2] `Fusion (Unmanaged API Reference) <https://msdn.microsoft.com/en-us/library/ms404523.aspx>`_
+
+
+.. author:: default
+.. categories:: Azure
+.. tags:: Diagonestics, NLog
+.. comments::

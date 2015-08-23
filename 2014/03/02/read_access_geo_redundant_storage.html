@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Windows Azure Storage Emulator 2.2.1 Preview" href="../../01/29/windows_azure_storage_emulator_2_2_1_preview_release.html" /><link rel="prev" title="スケーラブルな採番とsnowflake" href="../../06/08/snowflake_c.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,16 +56,16 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About Kyrt</a>
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="../../../pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
@@ -82,7 +82,7 @@
     
     <div class="section" id="fiddlercoreread-access-geo-redundant-storage">
 <h1>FiddlerCoreでRead-Access Geo Redundant Storage を検証する</h1>
-<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender/">Windows Azure – 技術者でつなぐ日めくりカレンダー</a> の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a> のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
+<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender/">Windows Azure – 技術者でつなぐ日めくりカレンダー</a>の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a>のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
 <p>まずはLTの内容の復習から、簡単にまとめると下記のような内容です。</p>
 <div class="section" id="id1">
 <h2>振り返り</h2>
@@ -92,25 +92,21 @@
 </div>
 </div></blockquote>
 <ol class="arabic simple">
-<li>ローカル冗長ストレージ (LRS=Locally Redundant Storage)
-データセンター内3箇所、同期</li>
-<li>地理冗長ストレージ (GRS=Geo Redundant Storage)
-地理的に離れた場所への複製（Local 3箇所＋リモート3箇所）、リモートは非同期、フェイルオーバー</li>
-<li>読み取りアクセス地理冗長ストレージ (RA-GRS=Read Access - Geo Redundant Storage)　PREVIEW
-地理的に離れた場所にあるデータを読む機能</li>
+<li>ローカル冗長ストレージ (LRS=Locally Redundant Storage)データセンター内3箇所、同期</li>
+<li>地理冗長ストレージ (GRS=Geo Redundant Storage)地理的に離れた場所への複製（Local 3箇所＋リモート3箇所）、リモートは非同期、フェイルオーバー</li>
+<li>読み取りアクセス地理冗長ストレージ (RA-GRS=Read Access - Geo Redundant Storage)　PREVIEW地理的に離れた場所にあるデータを読む機能</li>
 </ol>
-<p>読み取りアクセス地理冗長ストレージ (以下、RA-GRS）は、現状Previewなので、まずは <a class="reference external" href="https://account.windowsazure.com/PreviewFeatures">Windows Azure Preview</a>  のページで申し込みをする必要がある。</p>
+<p>読み取りアクセス地理冗長ストレージ (以下、RA-GRS）は、現状Previewなので、まずは<a class="reference external" href="https://account.windowsazure.com/PreviewFeatures">Windows Azure Preview</a>のページで申し込みをする必要がある。</p>
 </div>
 <div class="section" id="sdk">
 <h2>SDKの対応状況</h2>
 <p>RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDKが必要。ただし、RESTでEndpointが違うだけだから自前でもアクセスするだけならそんなに難しくない。</p>
 <ol class="arabic simple">
-<li>.NETだと、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">Storage Client Library 3.0</a> 以降</li>
-<li>Javaだと、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Windows Azure Storage SDK for Java 0.5.0</a> 以降</li>
+<li>.NETだと、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">Storage Client Library 3.0</a>以降</li>
+<li>Javaだと、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Windows Azure Storage SDK for Java 0.5.0</a>以降</li>
 <li>その他、各自対応</li>
 </ol>
-<p>上記2つのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary にアクセしできなかった時に secondary に自動的に retry する機能、並びにLocationMode で参照先の設定がる。
-リトライは、IRetryPolicyを拡張した IExtendedRetryPolicy が追加されている。これではリトライ時に参照先を切り替えするようになっている。</p>
+<p>上記2つのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary にアクセしできなかった時に secondary に自動的に retry する機能、並びにLocationMode で参照先の設定がる。リトライは、IRetryPolicyを拡張した IExtendedRetryPolicy が追加されている。これではリトライ時に参照先を切り替えするようになっている。</p>
 <blockquote>
 <div><div class="line-block">
 <div class="line">LTの資料</div>
@@ -121,24 +117,22 @@
 </div>
 <div class="section" id="id2">
 <h2>確認する</h2>
-<p>RA-GRSで障害が起きた時の <span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span> の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで <a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>  で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
+<p>RA-GRSで障害が起きた時の<span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span>の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで<a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
 <a class="reference external image-reference" href="http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163"><img alt="実践 Fiddler Eric Lawrence　著、日本マイクロソフト株式会社 エバンジェリスト 物江 修 監訳、長尾 高弘 訳" class="align-center" src="http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg" style="width: 300px;" /></a>
-<p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。
-本にはいろいろ詳しく書いてあるので、興味が出た方は是非！</p>
+<p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。本にはいろいろ詳しく書いてあるので、興味が出た方は是非！</p>
 </div>
 <div class="section" id="id3">
 <h2>準備</h2>
-<p>下記の場所から、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、 <cite>FiddlerCoreAPI</cite> というディレクトリーに入ります。</p>
+<p>下記の場所から、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、<cite>FiddlerCoreAPI</cite>というディレクトリーに入ります。</p>
 <p><a class="reference external" href="http://www.telerik.com/fiddler/fiddlercore">http://www.telerik.com/fiddler/fiddlercore</a></p>
 <img alt="../../../_images/2014-03-02-ragrs001.png" src="../../../_images/2014-03-02-ragrs001.png" />
-<p>インストール先の <cite>FiddlerCoreAPI\DotNet4\FiddlerCore4.dll</cite> を参照に追加します。</p>
+<p>インストール先の<cite>FiddlerCoreAPI\DotNet4\FiddlerCore4.dll</cite>を参照に追加します。</p>
 <img alt="../../../_images/2014-03-02-ragrs002.png" src="../../../_images/2014-03-02-ragrs002.png" />
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <p>今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。</p>
-<p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。
-try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
+<p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">connectionString</span> <span class="p">=</span> <span class="n">CloudConfigurationManager</span><span class="p">.</span><span class="n">GetSetting</span><span class="p">(</span><span class="s">&quot;ConnectionString&quot;</span><span class="p">)</span> <span class="p">??</span> <span class="s">&quot;UseDevelopmentStorage=true&quot;</span><span class="p">;</span>
@@ -197,11 +191,11 @@ try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設�
 </pre></div>
 </div>
 <p>ちょっと細かく追いかけてみます。</p>
-<p><span class="docutils literal"><span class="pre">AfterSessionComplete</span></span> はHTTP セッションが完了した後に生成されるイベントです。 このイベントハンドラにロギング代わりにコンソールへの書き出しを追加します。。今回は、ここのログを見て何処にアクセスに行っているのかを確認します。</p>
-<p><span class="docutils literal"><span class="pre">BeforeRequest</span></span> はHttp リクエストのデータが揃いサーバーに接続する前に生成されるイベントです。このイベントハンドラに、Primary のホストが接続先だったときに、存在しないhostに繋ぎに行くようなハンドラを追加します。</p>
-<p><span class="docutils literal"><span class="pre">FiddlerApplication.Startup()</span></span> を呼び出して、FeddlerCoreプロキシインスタンスを起動します。ポートに0を指定すると、FeddlerCore が自動的に空いているポートを探してリスニングに入ってくれます。ポートが使用中の問題が発生しないので便利なので、ポート番号を固定したいとき以外は0で良いと思います。自動で割り当てられたポート番号は FiddlerApplication.oProxy.ListenPort で確認できます。</p>
-<p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、 <span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span> に <span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span> を指定します。その他に、システム全体のProxyに入りたい場合は、 <cite>RegisterAsSystemProxy</cite> を使います。</p>
-<p>そして、 <cite>WebRequest</cite> の <cite>DefaultWebProxy</cite> を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
+<p><span class="docutils literal"><span class="pre">AfterSessionComplete</span></span>はHTTP セッションが完了した後に生成されるイベントです。 このイベントハンドラにロギング代わりにコンソールへの書き出しを追加します。。今回は、ここのログを見て何処にアクセスに行っているのかを確認します。</p>
+<p><span class="docutils literal"><span class="pre">BeforeRequest</span></span>はHttp リクエストのデータが揃いサーバーに接続する前に生成されるイベントです。このイベントハンドラに、Primary のホストが接続先だったときに、存在しないhostに繋ぎに行くようなハンドラを追加します。</p>
+<p><span class="docutils literal"><span class="pre">FiddlerApplication.Startup()</span></span>を呼び出して、FeddlerCoreプロキシインスタンスを起動します。ポートに0を指定すると、FeddlerCore が自動的に空いているポートを探してリスニングに入ってくれます。ポートが使用中の問題が発生しないので便利なので、ポート番号を固定したいとき以外は0で良いと思います。自動で割り当てられたポート番号は FiddlerApplication.oProxy.ListenPort で確認できます。</p>
+<p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、<span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span>に<span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span>を指定します。その他に、システム全体のProxyに入りたい場合は、<cite>RegisterAsSystemProxy</cite>を使います。</p>
+<p>そして、<cite>WebRequest</cite>の<cite>DefaultWebProxy</cite>を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
 <p>これで、実行すると下記のようになります。</p>
 <div class="highlight-text"><div class="highlight"><pre>127.0.0.1:19282
 BeforeRequest Session 1 ragrsomi001jp.blob.core.windows.net ragrsomi001jp.blob.core.windows.net
@@ -210,13 +204,12 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
 </pre></div>
 </div>
 <p>最初に、Primary にアクセスし、その後 Secondary にアクセスし直しているのがわかります。</p>
-<p>Primary へのアクセスが <span class="docutils literal"><span class="pre">502</span> <span class="pre">Bad</span> <span class="pre">Gateway</span></span> なのはちょっとイマイチですが、FeddlerCoreがProxyで入るので仕方がないのかもしれません。</p>
+<p>Primary へのアクセスが<span class="docutils literal"><span class="pre">502</span> <span class="pre">Bad</span> <span class="pre">Gateway</span></span>なのはちょっとイマイチですが、FeddlerCoreがProxyで入るので仕方がないのかもしれません。</p>
 </div>
 <div class="section" id="id4">
 <h2>まとめ</h2>
-<p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>
-今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
-<p><a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a> はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
+<p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
+<p><a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
 <p>最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・</p>
 </div>
 </div>
@@ -243,6 +236,8 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2014/03/02/read_access_geo_redundant_storage";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -260,19 +255,17 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
             <a href="../../06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="#">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="../../01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (30)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (12), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_bug.html">Azure BUG</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (13), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

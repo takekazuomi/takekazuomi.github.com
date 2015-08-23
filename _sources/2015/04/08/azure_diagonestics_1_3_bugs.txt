@@ -1,6 +1,9 @@
 =================================
  Azure Diagnostics 1.3 PaaS BUGS
 =================================
+
+** 更新: 2015/4/17 にリリースされた。Diagnostics Extention 1.4 で下記の問題は修正されました **
+
 Azure SDK 2.5 から、Windows Azure Diagnostics (WAD) がVM Extentionになりました。それに伴って、Cloud Service (PaaS)でIISのログ転送と、ローカルストレージのカスタムログ転送が行われないという2つの問題があります。（IaaSでは問題はありません）
 
 .. image:: https://farm8.staticflickr.com/7391/15852128023_dc3fb6ea48_c.jpg
@@ -78,5 +81,5 @@ csdefに、下記のように、 <Runtime executionContext="elevated" /> を追�
 
 .. author:: default
 .. categories:: Azure
-.. tags:: Azure BUG
+.. tags:: Azure, BUG, Diagonestics
 .. comments::

@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,29 +56,118 @@
           <a href="#">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>August 23, 2015</span>
+        </div>
+        <h1><a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a></h1>
+<p>先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので作ってみました。</p>
+<a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/19430236414/in/dateposted-public"><img alt="face" class="align-center" src="https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg"/></a>
+<p>「<a class="reference internal" href="2015/04/08/azure_diagonestics_1_3_bugs.html"><em>Azure Diagnostics 1.3 PaaS BUGS</em></a>」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。</p>
+<ol class="arabic simple">
+<li>ローカルストレージからのカスタムログ転送はVSからの設定ができない</li>
+<li>ローカルストレージのパスはデプロイ毎に変わる</li>
+</ol>
+<p>今回の趣旨は、２のデプロイ毎に変わるパスにNLogから書くにはどうするかという話です。</p>
+<p>ローカル ストレージ リソース については、MSDNの 「<a class="reference external" href="https://msdn.microsoft.com/ja-jp/library/azure/Ee758708.aspx">ローカル ストレージ リソースを構成する</a>」 を見てください。</p>
+<div class="section" id="id2">
+<h2>1. ローカルストレージからのカスタムログ転送設定</h2>
+<p>ここは前段です。残念ながら現在のVisual Studioでは、GUIでローカルストレージからのカスタムログ転送設定ができません。ここはdiagnostics.wadcfgxに手で書きます。たいして面倒でもなくDataSources のタグの中が今回追加した記述です。これだけで、ローカルストレージ LogStorage からBlobコンテナdiagnostics-custom-logs への転送を定義になります。</p>
+<div class="highlight-xml"><div class="highlight"><pre> <span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+ <span class="nt">&lt;DiagnosticsConfiguration</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;PublicConfig</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;WadCfg&gt;</span>
+       <span class="nt">&lt;DiagnosticMonitorConfiguration</span> <span class="na">overallQuotaInMB=</span><span class="s">"4096"</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;DiagnosticInfrastructureLogs</span> <span class="na">scheduledTransferLogLevelFilter=</span><span class="s">"Error"</span> <span class="nt">/&gt;</span>
+         <span class="nt">&lt;Directories</span> <span class="na">scheduledTransferPeriod=</span><span class="s">"PT1M"</span><span class="nt">&gt;</span>
+           <span class="nt">&lt;IISLogs</span> <span class="na">containerName=</span><span class="s">"wad-iis-logfiles"</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;FailedRequestLogs</span> <span class="na">containerName=</span><span class="s">"wad-failedrequestlogs"</span> <span class="nt">/&gt;</span>
+<span class="hll">           <span class="nt">&lt;DataSources&gt;</span>
+</span><span class="hll">             <span class="nt">&lt;DirectoryConfiguration</span> <span class="na">containerName=</span><span class="s">"diagnostics-custom-logs"</span><span class="nt">&gt;</span>
+</span><span class="hll">               <span class="nt">&lt;LocalResource</span> <span class="na">relativePath=</span><span class="s">"."</span> <span class="na">name=</span><span class="s">"LogStorage"</span> <span class="nt">/&gt;</span>
+</span><span class="hll">             <span class="nt">&lt;/DirectoryConfiguration&gt;</span>
+</span><span class="hll">           <span class="nt">&lt;/DataSources&gt;</span>
+</span>         <span class="nt">&lt;/Directories&gt;</span>
+
+     ... 省略 ...
+
+ <span class="nt">&lt;/DiagnosticsConfiguration&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>2. ローカルストレージのパスはデプロイ毎に変わる</h2>
+<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことです）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
+<div class="highlight-none"><div class="highlight"><pre>$ Install-Package NLog.Azure -Pre
+</pre></div>
+</div>
+<p>として、NLog.configに書くと実行時にローカルストレージのパスに展開されます。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;variable</span> <span class="na">name=</span><span class="s">"logDirectory"</span> <span class="na">value=</span><span class="s">"${azure-local-resource:name=LogStorage:default=c\:/Logs/}"</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure.Example/WebRole1/NLog.config">NLog.configのサンプル</a></p>
+<p>name という引数に ローカルストレージ名を書きます。default は、ServiceRuntime が存在しないとき、あるいはローカルストレージの定義が無い場合に使われるバスを書きます。Azureの本番環境あるいはエミュレータ環境では、ローカルストレージにログを書き、そうでない場合はdefaultで指定された場所にログを書きます。NLogは結構素直な出来で、ここまではすっきり、さくっとできました。log4net よりいい感じですね。</p>
+<p>参考までに、簡単なWebRoleのプロジェクトをGitHubに上げてあります。<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/tree/master/NLog.Azure.Example">NLog.Azure.Example</a></p>
+</div>
+<div class="section" id="id4">
+<h2>おまけ</h2>
+<p>実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、使ってないくてもAzure SDK を入れないと開発/実行できないということです。Storageなどのライブラリは、Azure SDK無しでもnuget から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。なかなかメンドクサイ。今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに<strong>意味が無い</strong>。</p>
+<p>こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出します。しかし、今回はGACに登録されているけど、物理パスがわからない！、そんなとき Fusion API でGACから探し出します。<a class="footnote-reference" href="#r1" id="id5">[1]</a>普通に暮らしてるとあまり出番ないですが。Fusion (Unmanaged API Reference)<a class="footnote-reference" href="#r2" id="id6">[2]</a>は、GACに登録されているアセンブリを操作する Unmanaged API です。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19">GetAssemblyPath()</a>のあたり。あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに<strong>メンドクサイ</strong></p>
+</div>
+<div class="section" id="id7">
+<h2>最後に</h2>
+<p>ずいぶん間が空いてしまいましたが、2015/5/12 に、株式会社 kyrt しました、先月には、2015年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞をいただきました。これらかもよろしくお願いいたします。</p>
+<p>File System をバッファーとして使うロギングシステムではパフォーマンスに注意した方が良さそうです。Azure Diagonesticsを使うと、out-process の log collector でよしなにBlobへの転送をしてくれるので、直にBlobやTableに書くより良いとは思いますが、アプリとout-process の間のつなぎがFile System なのは信頼性は良いけどパフォーマンスが疑問です。そんなにログ書くのかという話はあると思いますが。そう考えるとアプリとlog collectorの間はETWが良いような気もします。ついでに、log collector でアーカイブだけじゃなくてリアルタイム系のフィルタリングとかやってくれると便利なんだけど。SLABに期待ですね。</p>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td><a class="reference external" href="http://stackoverflow.com/questions/19456547/how-to-programmatically-determine-if-net-assembly-is-installed-in-gac">How to programmatically determine if .NET assembly is installed in GAC?</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[2]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/ms404523.aspx">Fusion (Unmanaged API Reference)</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/diagonestics.html">Diagonestics</a>, <a href="tags/nlog.html">NLog</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/08/23/how_to_use_nlog_in_cloud_service.html#disqus_thread" data-disqus-identifier="2015/08/23/how_to_use_nlog_in_cloud_service">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>May 05, 2015</span>
         </div>
-        <div class="section">
-            <h1><a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a></h1>
+        <h1><a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a></h1>
 <p>ゴールデンウェークでちょっと時間が出来たのでblobのbackendを更新しました</p>
 <a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/16637835634"><img alt="bubble by Takekazu Omi" class="align-center" src="https://farm8.staticflickr.com/7650/16637835634_2127f916be_c.jpg"/></a>
 <ul class="simple">
-<li>sphinx を 1.3.1 へ <a class="reference external" href="http://docs.sphinx-users.jp/changes.html#release-1-3-1-released-mar-17-2015">更新内容 リリース 1.3.1 (2015年3月17日)</a></li>
-<li>tinkerer を 1.5 へ <a class="reference external" href="http://tinkerer.me/2014/11/09/tinkerer_1_5_released.html">リリースノート</a></li>
+<li>sphinx を 1.3.1 へ<a class="reference external" href="http://docs.sphinx-users.jp/changes.html#release-1-3-1-released-mar-17-2015">更新内容 リリース 1.3.1 (2015年3月17日)</a></li>
+<li>tinkerer を 1.5 へ<a class="reference external" href="http://tinkerer.me/2014/11/09/tinkerer_1_5_released.html">リリースノート</a></li>
 </ul>
 <p>テンプレートを変更してないので、見た目は変わりませんね。</p>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -94,8 +183,8 @@
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>April 08, 2015</span>
         </div>
-        <div class="section">
-            <h1><a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a></h1>
+        <h1><a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a></h1>
+<p>** 更新: 2015/4/17 にリリースされた。Diagnostics Extention 1.4 で下記の問題は修正されました **</p>
 <p>Azure SDK 2.5 から、Windows Azure Diagnostics (WAD) がVM Extentionになりました。それに伴って、Cloud Service (PaaS)でIISのログ転送と、ローカルストレージのカスタムログ転送が行われないという2つの問題があります。（IaaSでは問題はありません）</p>
 <a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/15852128023"><img alt="Tohaku 2015" class="align-center" src="https://farm8.staticflickr.com/7391/15852128023_dc3fb6ea48_c.jpg"/></a>
 <p>※この情報は、2015/4/8 Azure SDK 2.5.1, VM Extention 1.3.1.6 を元にして書いています。</p>
@@ -124,8 +213,7 @@
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>この方法だと、ファイルをアプリケーションのディレクトリに作成しているので、インプレースアップグレードの度に再起動がかかります。そのかわり、アクセス権の問題が無いため、elevated する必要がありません。
-システムドライブや、Cドライブにファイルを作成する、あるいはレジストリにフラグを作成する方法を使うと、再起動は最小限に抑えられますが、.csdef に &lt;Runtime executionContext=”elevated” /&gt; の設定が必要です。</p>
+<p>この方法だと、ファイルをアプリケーションのディレクトリに作成しているので、インプレースアップグレードの度に再起動がかかります。そのかわり、アクセス権の問題が無いため、elevated する必要がありません。システムドライブや、Cドライブにファイルを作成する、あるいはレジストリにフラグを作成する方法を使うと、再起動は最小限に抑えられますが、.csdef に &lt;Runtime executionContext=”elevated” /&gt; の設定が必要です。</p>
 </div>
 </div>
 <div class="section" id="id3">
@@ -142,7 +230,7 @@
 <h3>対策</h3>
 <p>VSで診断構成のアプリケーションログ転送を開きます。</p>
 <img alt="application log settings" class="align-center" src="_images/screen001.png"/>
-<p>この設定をしたら、IISのログ転送対策と同じように、RoleのOnStartで、下記の処理を入れます。ここでは、ディレクトリの有無を確認していますが、WADが先に起動した場合は、ディレクトリは作成されています。アクセス権が足りないので追加します。必要なIISのアクセス権については、 <a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">しばやん雑記：IIS 7 以降でのアプリケーションプールと権限について調べた</a> を参考にしています。</p>
+<p>この設定をしたら、IISのログ転送対策と同じように、RoleのOnStartで、下記の処理を入れます。ここでは、ディレクトリの有無を確認していますが、WADが先に起動した場合は、ディレクトリは作成されています。アクセス権が足りないので追加します。必要なIISのアクセス権については、<a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">しばやん雑記：IIS 7 以降でのアプリケーションプールと権限について調べた</a>を参考にしています。</p>
 <div class="highlight-csharp"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
     <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
 <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant \"BUILTIN\\IIS_IUSRS:\":(OI)(CI)W"</span><span class="p">);</span>
@@ -194,14 +282,13 @@
 <div class="section" id="id6">
 <h2>参考</h2>
 <ul class="simple">
-<li>MSDN Forum <a class="reference external" href="https://social.msdn.microsoft.com/Forums/en-US/77e09c6b-5a9e-4aa2-b63a-fc4e46842c7e/cannot-configure-diagnostics-for-local-resources-with-sdk-25?forum=windowsazuredevelopment">Cannot configure diagnostics for local resources with SDK 2.5</a></li>
-<li>Windows Azure - Troubleshooting &amp; Debugging <a class="reference external" href="http://blogs.msdn.com/b/kwill/archive/2015/02/23/sdk-2-5-wad-1-2-iis-logs-not-transferring-to-storage-in-paas-webroles.aspx">SDK 2.5 / WAD 1.2 — IIS Logs Not Transferring to Storage in PaaS WebRoles</a></li>
-<li>Mode 13h <a class="reference external" href="http://mode13h.azurewebsites.net/Posts/AzureSdk25Diag">Azure SDK 2.5 Diagnostics Bugs</a></li>
-<li>しばやん雑記 <a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">IIS 7 以降でのアプリケーションプールと権限について調べた</a></li>
+<li>MSDN Forum<a class="reference external" href="https://social.msdn.microsoft.com/Forums/en-US/77e09c6b-5a9e-4aa2-b63a-fc4e46842c7e/cannot-configure-diagnostics-for-local-resources-with-sdk-25?forum=windowsazuredevelopment">Cannot configure diagnostics for local resources with SDK 2.5</a></li>
+<li>Windows Azure - Troubleshooting &amp; Debugging<a class="reference external" href="http://blogs.msdn.com/b/kwill/archive/2015/02/23/sdk-2-5-wad-1-2-iis-logs-not-transferring-to-storage-in-paas-webroles.aspx">SDK 2.5 / WAD 1.2 — IIS Logs Not Transferring to Storage in PaaS WebRoles</a></li>
+<li>Mode 13h<a class="reference external" href="http://mode13h.azurewebsites.net/Posts/AzureSdk25Diag">Azure SDK 2.5 Diagnostics Bugs</a></li>
+<li>しばやん雑記<a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">IIS 7 以降でのアプリケーションプールと権限について調べた</a></li>
 </ul>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -214,16 +301,15 @@
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/azure_bug.html">Azure BUG</a></span>
+                <a href="tags/azure.html">Azure</a>, <a href="tags/bug.html">BUG</a>, <a href="tags/diagonestics.html">Diagonestics</a></span>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html#disqus_thread" data-disqus-identifier="2015/04/08/azure_diagonestics_1_3_bugs">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 18, 2015</span>
         </div>
-        <div class="section">
-            <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
-<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a> の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 <a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a> 」でみっちり53分ほど、もうひとつは、「しばやん」のセッション( <a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a> ) にちょっとお邪魔。</p>
+        <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
+<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a>の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「<a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a>」でみっちり53分ほど、もうひとつは、「しばやん」のセッション(<a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a>) にちょっとお邪魔。</p>
 <p>しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。</p>
 <div class="section" id="id1">
 <h2>Persistence on Azure - Microsoft Azure の永続化</h2>
@@ -231,7 +317,7 @@
 <iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
 <p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
 <p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
-<p>榎本さんのセッション 「 <a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a> 」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
+<p>榎本さんのセッション 「<a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a>」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
 <p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
 </div>
 <div class="section" id="id3">
@@ -241,7 +327,6 @@
 <p>参加者の皆様、ありがとうございました。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -261,25 +346,24 @@
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 02, 2014</span>
         </div>
-        <div class="section">
-            <h1><a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a></h1>
-<p>※本記事は、 <a class="reference external" href="http://qiita.com/advent-calendar/2014/azure">Azure Advent Calendar 2014</a> への寄稿記事です。</p>
-<p>最近あまりに Azure の新機能が続々と出てくるので、なかなかフォローが難しですが、そんな時は、 <a class="reference external" href="https://buchizo.wordpress.com/">No.1のBlog</a>  と、 twitterで <a class="reference external" href="https://twitter.com/hashtag/azurejp?src=hash">#azurejp</a> を見ておけば良いですね。</p>
-<p>そんな数ある今年のAzure新機能の中で、 <a class="reference external" href="http://azure.microsoft.com/en-us/services/documentdb/">DocumentDB</a>  と、 <a class="reference external" href="http://azure.microsoft.com/en-us/services/batch/">Batch</a>  の２つがお気に入りです。 <span class="docutils literal"><span class="pre">DocumentDB</span></span> については、過日仙台で話をしたので、その時の <a class="reference external" href="http://www.slideshare.net/takekazuomi/introduction-to-documentdb">資料</a> を観てもらうことににして、今回は <span class="docutils literal"><span class="pre">Azure</span> <span class="pre">Batch</span></span> を紹介します。 公式名称は、 <span class="docutils literal"><span class="pre">Batch</span></span> ということなのですが、一般名称を製品名に使うのは紛らわしいので止めて欲しいですが、ここでは、それを曲げて、 <span class="docutils literal"><span class="pre">Batch</span></span> と書きます。</p>
-<p><span class="docutils literal"><span class="pre">Batch</span></span> は、2014/10/28 に行われた TechEd Europe の Keynote でお披露目されました。その時の動画が公開されています。 開始から 1:11 ぐらいから <span class="docutils literal"><span class="pre">Batch</span></span> の紹介が始まって、1:15 から Mark Russinovich が <a class="reference external" href="http://www.blender.org/">blender</a>  を使った3Dレンダリングを見せてくれます。そこだけなら、そんなに長くないしお勧めです。</p>
+        <h1><a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a></h1>
+<p>※本記事は、<a class="reference external" href="http://qiita.com/advent-calendar/2014/azure">Azure Advent Calendar 2014</a>への寄稿記事です。</p>
+<p>最近あまりに Azure の新機能が続々と出てくるので、なかなかフォローが難しですが、そんな時は、<a class="reference external" href="https://buchizo.wordpress.com">No.1のBlog</a>と、 twitterで<a class="reference external" href="https://twitter.com/hashtag/azurejp?src=hash">#azurejp</a>を見ておけば良いですね。</p>
+<p>そんな数ある今年のAzure新機能の中で、<a class="reference external" href="http://azure.microsoft.com/en-us/services/documentdb">DocumentDB</a>と、<a class="reference external" href="http://azure.microsoft.com/en-us/services/batch">Batch</a>の２つがお気に入りです。<span class="docutils literal"><span class="pre">DocumentDB</span></span>については、過日仙台で話をしたので、その時の<a class="reference external" href="http://www.slideshare.net/takekazuomi/introduction-to-documentdb">資料</a>を観てもらうことににして、今回は<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">Batch</span></span>を紹介します。 公式名称は、<span class="docutils literal"><span class="pre">Batch</span></span>ということなのですが、一般名称を製品名に使うのは紛らわしいので止めて欲しいですが、ここでは、それを曲げて、<span class="docutils literal"><span class="pre">Batch</span></span>と書きます。</p>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>は、2014/10/28 に行われた TechEd Europe の Keynote でお披露目されました。その時の動画が公開されています。 開始から 1:11 ぐらいから<span class="docutils literal"><span class="pre">Batch</span></span>の紹介が始まって、1:15 から Mark Russinovich が<a class="reference external" href="http://www.blender.org">blender</a>を使った3Dレンダリングを見せてくれます。そこだけなら、そんなに長くないしお勧めです。</p>
 <a class="reference external image-reference" href="http://channel9.msdn.com/Events/TechEd/Europe/2014/KEY01"><img alt="TechEd Europe 2014 Keynote" class="align-center" src="_images/batch000.png"/></a>
 <p>.</p>
 <div class="section" id="id2">
 <h2>Batch とは</h2>
-<p>簡単に言うと、バッチ処理向けのPaaSです。WorkerRoleを使ってバッチ処理を組むのに比べると、ジョブ·キュー、スケジューラ、VMのプロビジョニングなどをアプリケーション側で用意する必要がありません。また既存のexeファイルをクラウド上で大量に実行することなどが容易に出来るようになっています。Microsoft内部では、Media Serviceが動画のエンコードの処理の部分で使っているそうです。 <span class="docutils literal"><span class="pre">Batch</span></span> のコンセプトと用語について説明します。</p>
+<p>簡単に言うと、バッチ処理向けのPaaSです。WorkerRoleを使ってバッチ処理を組むのに比べると、ジョブ·キュー、スケジューラ、VMのプロビジョニングなどをアプリケーション側で用意する必要がありません。また既存のexeファイルをクラウド上で大量に実行することなどが容易に出来るようになっています。Microsoft内部では、Media Serviceが動画のエンコードの処理の部分で使っているそうです。<span class="docutils literal"><span class="pre">Batch</span></span>のコンセプトと用語について説明します。</p>
 <div class="section" id="azure-batch-account">
 <h3>Azure Batch Account</h3>
-<p><span class="docutils literal"><span class="pre">Batch</span></span> サービスを使うには、Bach アカウントが必要で、そのアカウントはポータルで作成します。アカウントを作成すると、サブスクリプション、リージョン、アカウント名とキーが確定します。アカウント名とキーはコードで利用します。</p>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>サービスを使うには、Bach アカウントが必要で、そのアカウントはポータルで作成します。アカウントを作成すると、サブスクリプション、リージョン、アカウント名とキーが確定します。アカウント名とキーはコードで利用します。</p>
 <img alt="Azure Batch Account" class="align-center" src="_images/batch001.png"/>
 </div>
 <div class="section" id="sdk">
 <h3>SDK</h3>
-<p><span class="docutils literal"><span class="pre">Bach</span></span> では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け  <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/">Batch Apps Cloud SDK</a>  、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/">Batch Apps Client SDK</a> と、 <a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a> が用意されていて、 <a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>  もあります。</p>
+<p><span class="docutils literal"><span class="pre">Bach</span></span>では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud">Batch Apps Cloud SDK</a>、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps">Batch Apps Client SDK</a>と、<a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a>が用意されていて、<a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>もあります。</p>
 </div>
 <div class="section" id="azure-batch-rest-api">
 <h3>Azure Batch REST API</h3>
@@ -287,7 +371,7 @@
 </div>
 <div class="section" id="azure-batch-apps">
 <h3>Azure Batch Apps</h3>
-<p>もう一つの高レベルの仕組みとして、 <span class="docutils literal"><span class="pre">Batch</span> <span class="pre">Apps</span></span> と呼ばれる機能が用意されています。この仕組みでは、バッチワークロードを登録し、クライアントあるいは、Batch Apps portal から実行することが出来るなどよりユーザーよりの管理機能を用意しています。</p>
+<p>もう一つの高レベルの仕組みとして、<span class="docutils literal"><span class="pre">Batch</span> <span class="pre">Apps</span></span>と呼ばれる機能が用意されています。この仕組みでは、バッチワークロードを登録し、クライアントあるいは、Batch Apps portal から実行することが出来るなどよりユーザーよりの管理機能を用意しています。</p>
 <img alt="Azure Batch Apps portal" class="align-center" src="_images/batch004.png"/>
 </div>
 <div class="section" id="pools">
@@ -296,12 +380,12 @@
 </div>
 <div class="section" id="task-virtual-machines-tvms">
 <h3>Task Virtual Machines (TVMs)</h3>
-<p>TVMs は、Poolを構成する、compute nodeの１つです。 <span class="docutils literal"><span class="pre">Batch</span></span> 用に構成された Web/Worker Role と思ってください。scalable で stateless な仮想マシンとして利用できます。Poolに TVMs が追加される場合は、新規にクリーンな仮想マシンが用意されます。そのため、Poolの作成には少々時間がかかります。初期ノード数を指定して試してみたところ、1ノードで8分、100ノードぐらいの時間がかかりました。（Japan West、A1）</p>
+<p>TVMs は、Poolを構成する、compute nodeの１つです。<span class="docutils literal"><span class="pre">Batch</span></span>用に構成された Web/Worker Role と思ってください。scalable で stateless な仮想マシンとして利用できます。Poolに TVMs が追加される場合は、新規にクリーンな仮想マシンが用意されます。そのため、Poolの作成には少々時間がかかります。初期ノード数を指定して試してみたところ、1ノードで8分、100ノードぐらいの時間がかかりました。（Japan West、A1）</p>
 <img alt="Pool and TVMs" class="align-center" src="_images/batch006.png"/>
 </div>
 <div class="section" id="work-items">
 <h3>Work Items</h3>
-<p><span class="docutils literal"><span class="pre">Work</span> <span class="pre">Items</span></span> は、アプリケーションがプールでTVMs上で実行される方法を指定するテンプレートです。スケジューリングの設定（execute once とか 実行時間制限など）や、どの Pool でjobを実行するかなどを指定します。</p>
+<p><span class="docutils literal"><span class="pre">Work</span> <span class="pre">Items</span></span>は、アプリケーションがプールでTVMs上で実行される方法を指定するテンプレートです。スケジューリングの設定（execute once とか 実行時間制限など）や、どの Pool でjobを実行するかなどを指定します。</p>
 </div>
 <div class="section" id="jobs">
 <h3>Jobs</h3>
@@ -315,12 +399,12 @@
 </div>
 <div class="section" id="batch-api">
 <h2>Batch APIのサンプルコード</h2>
-<p>現時点では、 <span class="docutils literal"><span class="pre">Batch</span></span> のサンプルコードが6個 <a class="reference external" href="https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=Topic&amp;f%5B0%5D.Value=Azure%20Batch&amp;f%5B0%5D.Text=Azure%20Batch">コードレシピ</a> に上がっています。そのうち、 <a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Azure Batch Sample - Hello World &lt;Batch AppsがBatch APIのサンプルで、 `Microsoft Azure Batch Apps Samples</a> がBatch Apps のサンプルでした。</p>
-<p>Batch APIのサンプルの <a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Hello World</a> の方をざっと眺めます。</p>
+<p>現時点では、<span class="docutils literal"><span class="pre">Batch</span></span>のサンプルコードが6個<a class="reference external" href="https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=Topic&amp;f%5B0%5D.Value=Azure%20Batch&amp;f%5B0%5D.Text=Azure%20Batch">コードレシピ</a>に上がっています。そのうち、<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Azure Batch Sample - Hello World &lt;Batch AppsがBatch APIのサンプルで、 `Microsoft Azure Batch Apps Samples</a>がBatch Apps のサンプルでした。</p>
+<p>Batch APIのサンプルの<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Hello World</a>の方をざっと眺めます。</p>
 <div class="section" id="packages-config">
 <h3>packages.config</h3>
-<p>まず、 <cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite> を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
-<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch/">Azure.Batch</a> を使っています。APIリファレンスは、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a> にあります。</p>
+<p>まず、<cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite>を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
+<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch">Azure.Batch</a>を使っています。APIリファレンスは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a>にあります。</p>
 </div>
 <div class="section" id="id5">
 <h3>設定</h3>
@@ -345,8 +429,7 @@
 </div>
 <div class="section" id="pool">
 <h3>2. Pool</h3>
-<p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。
-Pool作成時に、VMのサイズやOSを指定します。</p>
+<p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。Pool作成時に、VMのサイズやOSを指定します。</p>
 <div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// All Pool and VM operation starts from PoolManager</span>
@@ -382,11 +465,7 @@ Pool作成時に、VMのサイズやOSを指定します。</p>
 </div>
 <div class="section" id="work-item">
 <h3>3. work item</h3>
-<p>ここはちょっと分かり辛い。CloudTask がTaskで、
-次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。
-最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。
-WorkItemManager.GetJobでJobは取得できます。
-Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
+<p>ここはちょっと分かり辛い。CloudTask がTaskで、次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。WorkItemManager.GetJobでJobは取得できます。Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
 <div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">using</span> <span class="p">(</span><span class="n">IWorkItemManager</span> <span class="n">wm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenWorkItemManager</span><span class="p">())</span>
@@ -450,16 +529,15 @@ Jobの実行状況は、TaskStateMonitor で確認することができます。
 </div>
 <div class="section" id="id9">
 <h2>最後に</h2>
-<p><span class="docutils literal"><span class="pre">Batch</span></span> は、非常に定型的なコードで、ラージスケールなバッチ処理を実行できる面白い仕組みになっています。Azureの諸々の仕組みと上手く組み合わって、簡単なことならHadoop よりシンプルに同じようなことが実現できると言えそうです。ただ、ちょっとWork Item周りの処理が分かり辛く残念です。わりと簡単に使えるし、日本のデータセンターにも来ているので、興味があれば使ってみれば、良いのではないでしょうか。</p>
-<p>この前Blogを書いてからだいぶ時間が空いてしました。今年はJAZUG でやっている <a class="reference external" href="http://jazug.doorkeeper.jp/events/17739">CDP勉強会</a> が次回第五回で延べ400人ほどの参加になりそうな勢い、 <a class="reference external" href="http://www.slideshare.net/takekazuomi/presentations">slideshareの資料</a> は累積で7万PVを超える勢いで、Microsoft Azure の熱を肌に感じる１年でした。（slideshare のPVは2014/1/1 時点で5千ほどだったので急激に増えました）</p>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>は、非常に定型的なコードで、ラージスケールなバッチ処理を実行できる面白い仕組みになっています。Azureの諸々の仕組みと上手く組み合わって、簡単なことならHadoop よりシンプルに同じようなことが実現できると言えそうです。ただ、ちょっとWork Item周りの処理が分かり辛く残念です。わりと簡単に使えるし、日本のデータセンターにも来ているので、興味があれば使ってみれば、良いのではないでしょうか。</p>
+<p>この前Blogを書いてからだいぶ時間が空いてしました。今年はJAZUG でやっている<a class="reference external" href="http://jazug.doorkeeper.jp/events/17739">CDP勉強会</a>が次回第五回で延べ400人ほどの参加になりそうな勢い、<a class="reference external" href="http://www.slideshare.net/takekazuomi/presentations">slideshareの資料</a>は累積で7万PVを超える勢いで、Microsoft Azure の熱を肌に感じる１年でした。（slideshare のPVは2014/1/1 時点で5千ほどだったので急激に増えました）</p>
 </div>
 <div class="section" id="goazure-2015">
 <h2>GoAzure 2015</h2>
 <img alt="GoAzure" class="align-center" src="_images/batch009.png"/>
-<p>あの Scott Hanselman が来る！ ～ GoAzure が 1/16 に開催～ の <a class="reference external" href="http://r.jazug.jp/#event">GoAzure</a> で、Storage周りの話しをします（予定） <a class="reference external" href="http://r.jazug.jp/goazure-sessions.html">Persistence on Azure - Microsoft Azure における永続化</a> お待ちしてます。</p>
+<p>あの Scott Hanselman が来る！ ～ GoAzure が 1/16 に開催～ の<a class="reference external" href="http://r.jazug.jp/introduction_to_azure_batch.html#event">GoAzure</a>で、Storage周りの話しをします（予定）<a class="reference external" href="http://r.jazug.jp/goazure-sessions.html">Persistence on Azure - Microsoft Azure における永続化</a>お待ちしてます。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -476,57 +554,6 @@ Jobの実行状況は、TaskStateMonitor で確認することができます。
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/12/02/introduction_to_azure_batch.html#disqus_thread" data-disqus-identifier="2014/12/02/introduction_to_azure_batch">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>August 01, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/08/01/cdp_azure.html">クラウドデザインパターン の監訳に参加しました</a></h1>
-<p>「クラウドデザインパターン　Azureを例としたクラウドアプリケーション設計の手引き」という本が 日経BP から出ました。</p>
-<p>Microsoft patterns &amp; practices チームの人達が書いた、「Cloud Design Patterns: Prescriptive Architecture Guidance for Cloud Applications」 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/dn568099.aspx">http://msdn.microsoft.com/en-us/library/dn568099.aspx</a> の翻訳本です。
-JAZUG繋がりで話があって、監訳に参加させていただきました。</p>
-<p>ここのところ、日本語のデザインパターン本出ていませんでしたが、重要な課題が拾われていてお勧めな内容です。</p>
-<p>とても気に入ったので機会を設けて、この本をネタにして7月に2回ほど話をさせてもらいました。最初は、ネタを被らせるていけば、大丈夫かな？と思っていたのですが、書いてみたらかぶりが殆ど無くさらに26,30日の日程にしたので、ちょっと辛かったです。</p>
-<img alt="&#x30AF;&#x30E9;&#x30A6;&#x30C9;&#x30C7;&#x30B6;&#x30A4;&#x30F3;&#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3000;Azure&#x3092;&#x4F8B;&#x3068;&#x3057;&#x305F;&#x30AF;&#x30E9;&#x30A6;&#x30C9;&#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x8A2D;&#x8A08;&#x306E;&#x624B;&#x5F15;&#x304D;" class="align-center" src="_images/cdpazure001.png"/>
-<p><a class="reference external" href="http://ec.nikkeibp.co.jp/item/books/P98330.html">http://ec.nikkeibp.co.jp/item/books/P98330.html</a></p>
-<div class="section" id="the-return-of-f-7-26-27">
-<h2>クラウド温泉4.0＠小樽 - The Return of F# 7/26-27</h2>
-<p>内容は全く知らず、なんとなくクラウドって付いているから良いかなと思って行ってみたら、ケンブリッジと名古屋から怖い人達が集まるガチなヤツでした。非常に濃いF#成分のなか、現時点でPublic Cloud で、Data Management をどう扱うのか、制約と設計について話をしました。
-話切れないところもあったので、どこかででまた話したいと思っています。
-この集まりは、とても楽しくて中途半端だった、 functional programing の理解に風穴を開けてくれました。</p>
-<p>その時のセッション資料です</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/37515750?rel=0" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/data-management-37515750">クラウドデザイン パターンに見る クラウドファーストな アプリケーション設計 Data Management編</a></p>
-<p><a class="reference external" href="http://connpass.com/event/7177/">クラウド温泉4.0＠小樽 - The Return of F#</a></p>
-</div>
-<div class="section" id="jazug-7-30">
-<h2>JAZUG クラウドデザインパターン勉強会 7/30</h2>
-<p>この本は、コードフラグメントではなくて10個の完全に動作するサンプルコードが付属しています。このセッションでは、サンプルコードを読んで興味を引いたところを紹介するという流れにしました。
-JAZUGで話をするときはいつも、「他ではあまり聞けないような内容で、楽しんでいただこう」と思って題材を選ぶんのですが、あまり「わかりやすかった、良かった」という話を聞くことがありません。もしかすると、題材の選択に問題があるのかもしれないと思い。サンプルコード内の、「Exceptionのハンドリングどうする？」とか、「そのプロパティを設定するとどうなるの？」とかを流しながらパターンを見ていくというストーリにしました。これなら、いつもコーディングしている人なら、あるあるネタになって楽しめるんじゃないかといのが狙いです。
-これなら万人受けするはずと思ったのですが、セッション終わったら「濃かったですね」と言われ、残念ながら目的達成は道半ばだったようです。orz</p>
-<p>その時のセッション資料です</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/37486479?rel=0" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140830">JAZUG クラウドデザインパターンのコードを覗く</a></p>
-</div>
-<div class="section" id="id2">
-<h2>最後に</h2>
-<p>本の中で問題提起されている事柄をどのように扱うのか、それぞれの課題は古くからあるものですが、今回再度クローズアップされているのは何故なのかあたりも面白いと思います。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/cdp.html">CDP</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/session.html">Session</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/08/01/cdp_azure.html#disqus_thread" data-disqus-identifier="2014/08/01/cdp_azure">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -535,6 +562,8 @@ JAZUGで話をするときはいつも、「他ではあまり聞けないよう
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -552,19 +581,17 @@ JAZUGで話をするときはいつも、「他ではあまり聞けないよう
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (30)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

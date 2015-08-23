@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="prev" title="Newer" href="page6.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,34 +56,133 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>December 26, 2012</span>
+        </div>
+        <h1><a href="2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a></h1>
+<p>以前の記事<a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a>の補足です。その中の<a class="reference internal" href="2012/12/08/waac2012day2.html#waac2012day2-pending"><em>非同期で同時接続数が上がらない？</em></a>で、</p>
+<blockquote>
+<div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。<strong>これは、Azure Storage Client 2.0のBUG</strong>だったようです。2.0.2で修正されています。</div></blockquote>
+<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かりました。少々混乱したのでここに顛末をまとめます。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8307052288"><img alt="candle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="bug">
+<h2>BUGの内容</h2>
+<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
+<div class="section" id="id1">
+<h3>参照</h3>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></li>
+<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></li>
+</ol>
+</div>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id2">
+<h2>再現試験</h2>
+<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは[前の記事] (Azure Storage Gen 2は速かった) とほとんど同じですが、なるべく簡略化したものにしています。</p>
+<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369349.js">&amp;amp;nbsp;</script><p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
+<script src="https://gist.github.com/takekazuomi/4369329.js">&amp;amp;nbsp;</script><p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
+<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a class="reference external" href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7">C#たんっ！ 新機能が入るまで</a>」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
+</div>
+<div class="section" id="id3">
+<h2>2.0.1 で動かす</h2>
+<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
+</pre></div>
+</div>
+<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
+<div class="section" id="azure-storage-client-2-0-1-resource-moniter">
+<h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
+<img alt="2.0.1時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.1.png"/>
+<p>見事に接続数が伸びません。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>2.0.3では？</h2>
+<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+&gt; Install-Package  WindowsAzure.Storage
+</pre></div>
+</div>
+<div class="section" id="azure-storage-client-2-0-3-resource-moniter">
+<h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
+<img alt="2.0.3時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.3.png"/>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>結論</h2>
+<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
+<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id6">
+<h2>次の問題</h2>
+<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
+<div class="section" id="azure-storage-client-2-0-3-exception">
+<h3>Azure Storage Client 2.0.3 時でのException</h3>
+<img alt="Azure Storage Client 2.0.3 時でのException" src="_images/2012_12_connections-asc2.0.3-cmd.png"/>
+<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
+<p>ここでは、Blob でのUpload処理が参考になります。Windows Azure Storage 2.0 の Blob Uploadで参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
+</div>
+</div>
+<div class="section" id="semaphore">
+<h2>Semaphoreを使う</h2>
+<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御します。SemaphoreSlim という便利がものがあるのでそれを使います。こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
+<script src="https://gist.github.com/takekazuomi/4369880.js">&amp;amp;nbsp;</script></div>
+<hr class="docutils"/>
+<div class="section" id="id7">
+<h2>まとめ</h2>
+<ol class="arabic simple">
+<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
+<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
+<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
+</ol>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 22, 2012</span>
         </div>
-        <div class="section">
-            <h1><a href="2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a></h1>
-<p>twitterで、「 <a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a> 」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。 Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
+        <h1><a href="2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a></h1>
+<p>twitterで、「<a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a>」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
 <p>Azure Storageの非同期と同期の比較をしようと始めたのだけど、なかなか手間取って進まない。ちょっと寄り道して速くなったというAzure VMを試してみることにした。</p>
 <p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7987640250/"><img alt="Triangle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg"/></a>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7987640250"><img alt="Triangle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg"/></a>
 <hr class="docutils"/>
 <div class="section" id="ubuntu">
 <h2>Ubuntu 環境の準備</h2>
-<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定: Azure Ubuntu 12.04 iozone 速報 2012/7/4 ホストキャッシュの設定はポータルからはできずに、デフォルトでした。
-その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
-<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考： <a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details/">Windows Azure の料金と、請求の計測単位の詳細</a></p>
+<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定:Azure Ubuntu 12.04 iozone 速報 2012/7/4ホストキャッシュの設定はポータルからはできずに、デフォルトでした。その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
+<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考：<a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details">Windows Azure の料金と、請求の計測単位の詳細</a></p>
 <p>正確には、今回試そうとしているVirtual Machine はまだ Previewで Cloud Serviceと同じような制限になるかは情報が公開されていない（私は知らないだけかもしれませんが）のですが、同じになってそうな気がしたのでMにしました。</p>
-<p>ちょっと古いものでは、 <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a> という情報もあります。</p>
-<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。
-実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
+<p>ちょっと古いものでは、<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a>という情報もあります。</p>
+<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
 <p>ざっと流すと、以下のような手順踏んで用意をします。</p>
 <ol class="arabic simple">
 <li>Ubuntu 12.10 を、azure portalから、virtual machineイメージをインストール</li>
@@ -96,8 +195,8 @@
 </div>
 <div class="section" id="id2">
 <h2>ディスク構成</h2>
-<table border="1" class="docutils" id="id7">
-<caption><span class="caption-text">表1 ディスク構成</span></caption>
+<table border="1" class="docutils">
+<caption>表1 ディスク構成</caption>
 <colgroup>
 <col width="20%"/>
 <col width="20%"/>
@@ -144,35 +243,34 @@
 <hr class="docutils"/>
 <div class="section" id="id3">
 <h2>手順</h2>
-<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。
-(以下sudo省略)</p>
+<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。(以下sudo省略)</p>
 <ol class="arabic simple">
 <li>ポータルで256Gでdata diskを作成して接続を確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg <span class="p">|</span> grep -e <span class="s2">"\[sd[a-z]\]"</span>
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg | grep -e <span class="s2">"\[sd[a-z]\]"</span>
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> 62914560 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> 512-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> 283115520 512-byte logical blocks: <span class="o">(</span>144 GB/135 GiB<span class="o">)</span>
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
 </pre></div>
@@ -190,7 +288,7 @@ Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 51
 Partition Table: gpt
 
 Number  Start   End    Size   File system  Name   Flags
-<span class="m">1</span>      1049kB  275GB  275GB  ext4         disk1
+1      1049kB  275GB  275GB  ext4         disk1
 
 <span class="nv">$ </span>sudo parted /dev/sdd --script mklabel gpt
 <span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">'mkpart disk2 ext4 1M -1'</span>
@@ -220,11 +318,11 @@ ___ snip ___
 <span class="nv">$ </span>chmod a+wrx /mnt/resource
 <span class="nv">$ </span>ls -l /mnt/
 total 20
-drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 15:56 cdrom
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data1
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data2
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 22:47 data3
-drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 22:14 resource
+drwx------ 3 root root 4096 Dec 21 15:56 cdrom
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data1
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data2
+drwxrwxrwx 2 root root 4096 Dec 22 22:47 data3
+drwxrwxrwx 4 root root 4096 Dec 21 22:14 resource
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
@@ -236,16 +334,16 @@ drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <s
 
 <span class="nv">$ </span>df -T
 Filesystem     Type     1K-blocks    Used Available Use% Mounted on
-/dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   4% /
-udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   1% /dev
-tmpfs          tmpfs       <span class="m">704872</span>     <span class="m">280</span>    <span class="m">704592</span>   1% /run
-none           tmpfs         <span class="m">5120</span>       <span class="m">0</span>      <span class="m">5120</span>   0% /run/lock
-none           tmpfs      <span class="m">1762172</span>       <span class="m">0</span>   <span class="m">1762172</span>   0% /run/shm
-none           tmpfs       <span class="m">102400</span>       <span class="m">0</span>    <span class="m">102400</span>   0% /run/user
-/dev/sdb1      ext4     <span class="m">139334632</span>  <span class="m">192000</span> <span class="m">132064848</span>   1% /mnt/resource
-/dev/sdc1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data1
-/dev/sdd1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data2
-/dev/sde1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data3
+/dev/sda1      ext4      30953664 1142056  28539332   4% /
+udev           devtmpfs   1751196      12   1751184   1% /dev
+tmpfs          tmpfs       704872     280    704592   1% /run
+none           tmpfs         5120       0      5120   0% /run/lock
+none           tmpfs      1762172       0   1762172   0% /run/shm
+none           tmpfs       102400       0    102400   0% /run/user
+/dev/sdb1      ext4     139334632  192000 132064848   1% /mnt/resource
+/dev/sdc1      ext4     264221700  191576 250608456   1% /mnt/data1
+/dev/sdd1      ext4     264221700  191576 250608456   1% /mnt/data2
+/dev/sde1      ext4     264221700  191576 250608456   1% /mnt/data3
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
@@ -263,10 +361,10 @@ none           tmpfs       <span class="m">102400</span>       <span class="m">0
 ___ snip ___
 
 <span class="nv">$ </span>cat /etc/fstab
-<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        <span class="m">0</span> 0
+<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        0 0
 </pre></div>
 </div>
 <ol class="arabic simple" start="6">
@@ -311,57 +409,54 @@ ___ snip ___
 <div class="section" id="id5">
 <h3>ローカルディスクの性能</h3>
 <p>まずは、ローカルドライブの実行結果から見る。読み込みはレコードサイズが8Kあたりから256KBまでは、2,500,000 KB/sec  - 3,000,000 KB/sec で、レコードサイズが増えていくとだんだん遅くなっていく。書き込み側は同じ軸ではとスケールが違い過ぎてよくわからない。</p>
-<div class="figure" id="id8">
+<div class="figure">
 <img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="_images/2012_12_sdb2-rw.png"/>
-<p class="caption"><span class="caption-text">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</span></p>
+<p class="caption">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</p>
 </div>
-<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「 Iozone Filesystem Benchmark Download Documentation 」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
-<div class="figure" id="id9">
+<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「Iozone Filesystem Benchmark Download Documentation」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
+<div class="figure">
 <img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="_images/2012_12_sdb2-note1-w.png"/>
-<p class="caption"><span class="caption-text">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</span></p>
+<p class="caption">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</p>
 </div>
-<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentation から）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。
-同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
-<div class="figure" id="id10">
+<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentationから）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
+<div class="figure">
 <img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="_images/2012_12_sdb2-w.png"/>
-<p class="caption"><span class="caption-text">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</span></p>
+<p class="caption">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</p>
 </div>
 <p>小さいブロックのランダム書き込みが苦手だということがわかる。これはHDDの一般的な傾向で納得できる。以降では書き込みの図は図2と同じデータ項目を表示する。</p>
 </div>
 <div class="section" id="data-disk">
 <h3>Data Diskの性能</h3>
-<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。
-ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
-<div class="figure" id="id11">
+<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
+<div class="figure">
 <img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="_images/2012_12_sdc1-rw.png"/>
-<p class="caption"><span class="caption-text">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</span></p>
+<p class="caption">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id12">
+<div class="figure">
 <img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="_images/2012_12_sdc1-w.png"/>
-<p class="caption"><span class="caption-text">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</span></p>
+<p class="caption">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</p>
 </div>
-<div class="figure" id="id13">
+<div class="figure">
 <img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="_images/2012_12_sdd1-rw.png"/>
-<p class="caption"><span class="caption-text">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</span></p>
+<p class="caption">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id14">
+<div class="figure">
 <img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sdd1-w.png"/>
-<p class="caption"><span class="caption-text">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</span></p>
+<p class="caption">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id15">
+<div class="figure">
 <img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="_images/2012_12_sde1-rw.png"/>
-<p class="caption"><span class="caption-text">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</span></p>
+<p class="caption">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id16">
+<div class="figure">
 <img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sde1-w.png"/>
-<p class="caption"><span class="caption-text">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</span></p>
+<p class="caption">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</p>
 </div>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id6">
 <h3>結論</h3>
-<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。
-もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
+<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
 <p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえる嬉しい。今まで、Azure Tableの性能評価をした時も、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがあるので、明確な数字を出すことは難しい。しかし、いろいろなパターンの性能情報があると設計時の精度もあがるので、この手の情報は重要とは思う。</p>
 </div>
 <div class="section" id="bookmarks">
@@ -375,7 +470,6 @@ ___ snip ___
 </div>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -395,14 +489,12 @@ ___ snip ___
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 08, 2012</span>
         </div>
-        <div class="section">
-            <h1><a href="2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a></h1>
-<p>前の記事 <a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> では非同期呼び出しを使っていますが、これには理由があります。
-以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
+        <h1><a href="2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a></h1>
+<p>前の記事<a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a>では非同期呼び出しを使っていますが、これには理由があります。以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
 <p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
-<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
+<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
 <p>C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うには良い環境が揃ってきていると感じました。それで改めて非同期呼び出しを使ってみることにしました。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8149221698/"><img alt="shibuya by takekazu, on Flickr" src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg"/></a>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8149221698"><img alt="shibuya by takekazu, on Flickr" src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg"/></a>
 <hr class="docutils"/>
 <div class="section" id="id1">
 <h2>試行（やってみた）</h2>
@@ -414,8 +506,7 @@ ___ snip ___
 <li>59行目で並列度の設定をコア数の12倍にしていること</li>
 <li>55,56行目ではPage/Block Blobのどちらを使うかを切り替えていること</li>
 </ol>
-<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。
-Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
+<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
 <p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
 <img alt="../../../_images/2012-08-screen01.png" src="_images/2012-08-screen01.png"/>
 <p>![Resource Monitor](/images/2012-08-screen01.png)</p>
@@ -438,24 +529,21 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p>それに対し、２系では下記のように定義されています。parallelismFactorは、47行目付近で1で初期化されておりデフォルトは1となります。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L232">CloudBlobClientBase.cs#L232</a></p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L47">CloudBlobClientBase.cs#L47</a></p>
-<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a> にも書いてあるBreaking Changesです。</p>
+<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a>にも書いてあるBreaking Changesです。</p>
 <p>2.0に移行した後、Block Blobのアップロードが遅くなった場合はParallelOperationThreadCountを確認するといいかもしれません。</p>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id3">
 <h2>ParallelOperationThreadCountの使われ方</h2>
-<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a> を用意したのだと思います ** あのソースだけだと分からないですが</p>
+<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>を用意したのだと思います ** あのソースだけだと分からないですが</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
-<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
-<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
+<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
+<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
 <hr class="docutils"/>
 </div>
 <div class="section" id="blobasyncinside-borderofsyncasync">
 <span id="id5"/><h2>同期と非同期の境界</h2>
-<p>WriteToSyncの実装は下記のようになっています。
-<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
+<p>WriteToSyncの実装は下記のようになっています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
 <p>ちょっと見ると、WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期していて、並列動作しないような感じです。これだと、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないのかな？と思いますが、その先のtoStream.Write の実装を見ると内部が非同期に処理されています。</p>
 <p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行います。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs">BlobWriteStream.cs</a></p>
@@ -469,13 +557,12 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p>ここで、AsyncSemaphoreは、既定の数以上に処理が実行されないように非同期実行数を制御している役割を果たしている。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Core/Util/AsyncSemaphore.cs">AsyncSemaphore.cs</a></p>
 <p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
-<p>このあたりは、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What’s New in Storage Client Library for .NET (version 2.0)</a> に書いてある説明通りの実装になってるようだ。</p>
+<p>このあたりは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What’s New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id7">
 <h2>結論</h2>
-<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。
-サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
+<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id8">
@@ -487,7 +574,6 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -507,14 +593,13 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 08, 2012</span>
         </div>
-        <div class="section">
-            <h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
+        <h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
 <p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
 <p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
 <ul class="simple">
 <li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。<a class="reference external" href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></li>
 </ul>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370/"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
 <hr class="docutils"/>
 <div class="section" id="azure-storage">
 <h2>Azure Storageのパフォーマンスの向上</h2>
@@ -526,7 +611,7 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <li>単一パーテーション  500 エンティティ/秒 -&gt;   2,000 エンティティ/秒 (15Mbps)</li>
 <li>複数パーテーション 5,000 エンティティ/秒 -&gt; 20,000 エンティティ/秒 (156Mbps)</li>
 </ol>
-<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9/">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
+<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id1">
@@ -544,20 +629,17 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
 <p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="2012/12/26/asc2_dot_0asyncbug.html"><em>Azure Storage Client 2.0 CompletedSynchronously FIX</em></a>) **</p>
 <p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
-<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。
-今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
+<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
 <script src="https://gist.github.com/takekazuomi/4238661.js">&amp;amp;nbsp;</script><p>—</p>
 </div>
 </div>
 <div class="section" id="id3">
 <h2>結果</h2>
-<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。
-単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）
-下記の表の最初のカラムは起動するプロセス数です。</p>
+<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）下記の表の最初のカラムは起動するプロセス数です。</p>
 <p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
 <p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
-<table border="1" class="docutils" id="id6">
-<caption><span class="caption-text">表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</span></caption>
+<table border="1" class="docutils">
+<caption>表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</caption>
 <colgroup>
 <col width="9%"/>
 <col width="9%"/>
@@ -640,19 +722,16 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
 <hr class="docutils"/>
 <div class="section" id="id4">
 <h2>最後に</h2>
-<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。
-<a class="reference external" href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a> に計測に使ったコードをいれてあります。</p>
+<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。<a class="reference external" href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
 <p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
 <p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
 </div>
 <hr class="docutils"/>
 <div class="section" id="id5">
 <h2>おまけ</h2>
-<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。
-`</p>
+<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。`</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -677,6 +756,8 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -694,19 +775,17 @@ Storage Client 2.0では、55, 56行目のように切り替えるだけで、�
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (30)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

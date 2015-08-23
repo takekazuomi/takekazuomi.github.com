@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page7.html" /><link rel="prev" title="Newer" href="page5.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,33 +56,165 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>November 28, 2013</span>
+        </div>
+        <h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><em>2013/12/13 追記</em></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a> の問題は解決されました。</div>
+</div>
+</div></blockquote>
+<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、<a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a>と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
+<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
+<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
+<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id1">
+<h2>手順の確認</h2>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="webrolehelios">
+<h3>WebRoleの作成からHeliosのインストールまで</h3>
+<ol class="arabic simple">
+<li>Cloud Service を作ってWebRoleを追加します普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
+<ol class="arabic simple" start="2">
+<li>projectを、.NET 4.5.1 を使うようにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
+<ol class="arabic" start="3">
+<li><p class="first">コンパイルして問題無いのを確認します。</p>
+</li>
+<li><p class="first">System.Webの参照を全て削除します</p>
+</li>
+<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+</pre></div>
+</div>
+</li>
+</ol>
+<p>下記のような参照になります</p>
+<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
+</div>
+<div class="section" id="startup-class">
+<h3>Startup Classの設定</h3>
+<p>下記のようなStartup classのコードを追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>using System;
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(WebRole1.Startup))]
+
+namespace WebRole1
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+
+            app.Run(async context =&gt;  // IOWinContext
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "text/html";
+
+                await context.Response.WriteAsync("Hello Herios. Time is: " + DateTime.Now.ToString());
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
+</div>
+<div class="section" id="webrolestartup-task">
+<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
+<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
+  &lt;WebRole name="WebRole1" vmsize="Small"&gt;
+    &lt;Startup&gt;
+      &lt;Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" /&gt;
+    &lt;/Startup&gt;
+
+    &lt;Sites&gt;
+    以下省略・・・・
+</pre></div>
+</div>
+<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
+<dl class="docutils">
+<dt>startup.cmd::</dt>
+<dd>vcredist_x64.exe /install /quiet</dd>
+</dl>
+<p>vcredist_x64.exe は、<a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a>からダウンロードできます。VS 2013をインストールしている場合は、<cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite>等のディレクトリにファイルがあります。</p>
+<p>startup taskについて：<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+</div>
+<div class="section" id="osfamily">
+<h3>osFamilyの変更</h3>
+<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
+<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
+  &lt;Role name="WebRole1"&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>まとめ</h2>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。この問題は、厳密に言うと<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a>が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a>に起因する。このままだとちょっと使いづらいですね。</p>
+</div>
+<div class="section" id="helios-fix-runtime">
+<span id="id4"/><h2>2013/12/13 追記</h2>
+<p>2013/12/02<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>では、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a>に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><em>WebRoleのStartup taskの作成</em></a>のようなことをしないでも動作します。これで普通に使えるようになりますね。</p>
+<img alt="../../../_images/2013_11_helios011.png" src="_images/2013_11_helios011.png"/>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a>, <a href="categories/owin.html">OWIN</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a>, <a href="tags/owin.html">OWIN</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
+        <h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
 <blockquote>
 <div><div class="line-block">
 <div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
 </div>
 <div class="line-block">
-<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
 </div>
 </div></blockquote>
-<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
+<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a>からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
 <div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
 <span id="known-issue-20131101"/><h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
 <ul class="simple">
-<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の <cite>“//”</cite> は、 <cite>“/”</cite> に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は <cite>“//”</cite> を送らないようにして下さい</li>
+<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の<cite>“//”</cite>は、<cite>“/”</cite>に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は<cite>“//”</cite>を送らないようにして下さい</li>
 </ul>
 <p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
 </div>
@@ -90,9 +222,7 @@
 <h2>Windows Azure TablesのIssue</h2>
 <p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
 <ol class="arabic simple" id="known-issue-20131102">
-<li>clients で、 <cite>DataServiceContext.ResolveName</cite> を定義し、 <cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite> 以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。
-これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。
-ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
+<li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
 </ol>
 <p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
@@ -108,12 +238,9 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 <span class="n">tableServiceContext</span><span class="o">.</span><span class="na">SaveChanges</span><span class="o">();</span>
 </pre></div>
 </div>
-<p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
+<p>この Issue の解決のためには client 側で<cite>tableServiceContext.ResolveName</cite>delegate の設定を外してください。</p>
 <ol class="arabic simple" id="known-issue-201311" start="2">
-<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
-これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
-.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
-それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
+<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
 </ol>
 <p>下記は問題があるコードです</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
@@ -138,12 +265,11 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 <h2>感想、コメント等</h2>
 <ul class="simple">
 <li>最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。</li>
-<li>コンテナの前が <cite>//</cite> になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
+<li>コンテナの前が<cite>//</cite>になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
 <li>ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。</li>
 </ul>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -163,25 +289,21 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
+        <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
 <blockquote>
 <div><div class="line-block">
 <div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx">Windows Azure テーブルにおける重大な（互換性のない）変更</a></div>
 </div>
 </div></blockquote>
 <p>Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
-<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a> から変更点を紹介します。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a>から変更点を紹介します。</p>
 <div class="section" id="id1">
 <h2>変更点</h2>
 <ol class="arabic simple">
 <li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
 <li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
-<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、 <cite>type=feed</cite> が追加されます
-変更前: Content-Type: application/atom+xml;charset=utf-8
-変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
-<li>MIME type のセキュリティ リスクの削減のための新しいresponse header <cite>X-Content-Type-Options: nosniff</cite> が返されます。
-参照： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
+<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、<cite>type=feed</cite>が追加されます変更前: Content-Type: application/atom+xml;charset=utf-8変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
+<li>MIME type のセキュリティ リスクの削減のための新しいresponse header<cite>X-Content-Type-Options: nosniff</cite>が返されます。参照：<a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
 </ol>
 </div>
 <div class="section" id="id2">
@@ -190,13 +312,12 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 <li>手元のアカウントで確認してみたら既に上記の通りに変更されていました。事前に予告が欲しいです。</li>
 <li>改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。</li>
 <li>XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。</li>
-<li>AtomPub内のXML elementの順番に関しては、 <a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>  が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
+<li>AtomPub内のXML elementの順番に関しては、<a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
 <li>HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</li>
 </ul>
 <p>json対応に向けて着々と進んでいるのは、とても嬉しいです。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -216,13 +337,12 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 17, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a></h1>
+        <h1><a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a></h1>
 <p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
 <p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
 <p>修正して、Pull Requestを投げています。(2013/10/13)</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820/"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg"/></a>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg"/></a>
 <hr class="docutils"/>
 <div class="section" id="id1">
 <h2>修正内容</h2>
@@ -230,10 +350,9 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 </div>
 <div class="section" id="id2">
 <h2>元の仕様</h2>
-<p>どこからこの’L’が出てきたかという話をチョットします。
-Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
-<table border="1" class="docutils" id="id3">
-<caption><span class="caption-text">OData Primitive Data Types</span></caption>
+<p>どこからこの’L’が出てきたかという話をチョットします。Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
+<table border="1" class="docutils">
+<caption>OData Primitive Data Types</caption>
 <colgroup>
 <col width="25%"/>
 <col width="25%"/>
@@ -255,11 +374,10 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
 </tr>
 </tbody>
 </table>
-<p><a class="reference external" href="http://www.odata.org/documentation/overview/#AbstractTypeSystem">odata.org  6. Primitive Data Types</a> より</p>
+<p><a class="reference external" href="http://www.odata.org/documentation/overview/azure_java_sdk_long_value_filtering_bug.html#AbstractTypeSystem">odata.org  6. Primitive Data Types</a>より</p>
 <p>念のため他のデータ型の実装も確認すると、Azure Tableでサポートされているデータ型でリテラル表記に癖があるEdm.Guid, Edm.DateTimeのあたりですは問題なさそうです。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -279,8 +397,7 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 15, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></h1>
+        <h1><a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></h1>
 <p>Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを簡単に流します。Java, Play Frameworkに付いてある程度知識があって、Windows Azureを使ってみようという人を前提としています。</p>
 <div class="section" id="id1">
 <h2>必要環境</h2>
@@ -296,24 +413,22 @@ Azure Table REST APIは、OData の仕様に準拠しているのでリテラル
 <div class="section" id="windows-azure-sdk-2-1">
 <h3>Windows Azure SDK 2.1のインストール</h3>
 <p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
-<p>Web Platform Installerを起動して、右上の検索ボックス①に <span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span> と入力して改行すると検索結果が表示されます。その中の <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> ② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> だけです。</p>
+<p>Web Platform Installerを起動して、右上の検索ボックス①に<span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span>と入力して改行すると検索結果が表示されます。その中の<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>だけです。</p>
 <p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
 <img alt="../../../_images/2013_10_webpi002.png" src="_images/2013_10_webpi002.png"/>
 <ul class="simple">
-<li>Web Platform Installer 4.6 は、 <a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a> からインストールできます。</li>
+<li>Web Platform Installer 4.6 は、<a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a>からインストールできます。</li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h3>もっと簡単な方法</h3>
-<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using the
-Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span> をインストールするplugin(exe)も配布されています。 <a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a> このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
+<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using theWeb Platform Installer (WebPI) 経由で<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>をインストールするplugin(exe)も配布されています。<a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a>このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
 </div>
 </div>
 <div class="section" id="windows-azure-plugin-for-eclipse-with-java-by-microsoft-open-technologies">
 <h2>Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</h2>
-<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。
-プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
-<p>レポジトリとして、 <span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span> を追加すると、 <span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span> が表示されます。</p>
+<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
+<p>レポジトリとして、<span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span>を追加すると、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span>が表示されます。</p>
 <img alt="../../../_images/2013_10_javaplugininstall002.png" src="_images/2013_10_javaplugininstall002.png"/>
 <p>必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。</p>
 <div class="section" id="id3">
@@ -327,8 +442,8 @@ Web Platform Installer (WebPI) 経由で <span class="docutils literal"><span cl
 <li>Windows Azure Common Plugin (by MS Open Tech): 他のこのコンポーネントとの共通コンポーネント</li>
 <li>Windows Azure Plugin for Eclipse with Java (by MS Open Tech): このコンポーネントは、project configuration logic、the publish-to-cloud wizard、と user interfaceを含む</li>
 </ul>
-<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span> のチェックを外してみてください。</p>
-<p>ここまでの内容は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a> に詳しく書いてありますので、そちらも参照してください。</p>
+<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span>のチェックを外してみてください。</p>
+<p>ここまでの内容は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a>に詳しく書いてありますので、そちらも参照してください。</p>
 </div>
 </div>
 <div class="section" id="play-frameworkeclipse">
@@ -360,7 +475,7 @@ OK, application MyFirstApp is created.
 Have fun!
 </pre></div>
 </div>
-<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、 <span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span> の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
+<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、<span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span>の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ cd .\MyFirstApp
 $ play
 [info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
@@ -407,20 +522,19 @@ Your application is ready in C:\Users\Takekazu\Documents\GitHub\sandbox\java\pla
 $
 </pre></div>
 </div>
-<p>この時に、 <span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span> の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
+<p>この時に、<span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span>の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
 <p>eclipseを起動して、プロジェクトをimportします。</p>
 <img alt="../../../_images/2013_10_eclipse002.png" src="_images/2013_10_eclipse002.png"/>
 <p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
-<p>参考： <a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
+<p>参考：<a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
 </div>
 <div class="section" id="azure-project">
 <h2>Azure 用のProjectの作成</h2>
-<p>ツールバーの <span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span> を押します。</p>
+<p>ツールバーの<span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span>を押します。</p>
 <img alt="../../../_images/2013_10_eclipse003.png" src="_images/2013_10_eclipse003.png"/>
 <p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
 <img alt="../../../_images/2013_10_eclipse004.png" src="_images/2013_10_eclipse004.png"/>
-<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。
-今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
+<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
 <img alt="../../../_images/2013_10_eclipse005.png" src="_images/2013_10_eclipse005.png"/>
 <p>下記のような内容のプロジェクトが作成されます。</p>
 <img alt="../../../_images/2013_10_eclipse006.png" src="_images/2013_10_eclipse006.png"/>
@@ -433,7 +547,7 @@ $
 </div>
 <div class="section" id="id4">
 <h3>環境変数の追加</h3>
-<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、 <span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span> )を定義します。</p>
+<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、<span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span>)を定義します。</p>
 <img alt="../../../_images/2013_10_eclipse009.png" src="_images/2013_10_eclipse009.png"/>
 </div>
 <div class="section" id="endpoint">
@@ -490,7 +604,7 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 </div>
 <div class="section" id="emulator">
 <h3>Emulatorでの実行</h3>
-<p>これで準備ができました。 <span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span> を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
+<p>これで準備ができました。<span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span>を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
 <img alt="../../../_images/2013_10_eclipse011.png" src="_images/2013_10_eclipse011.png"/>
 <p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
 <img alt="../../../_images/2013_10_eclipse012.png" src="_images/2013_10_eclipse012.png"/>
@@ -505,13 +619,11 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 <div class="section" id="bookmarks">
 <h2>Bookmarks</h2>
 <ul class="simple">
-<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>
-Java開発の入り口</li>
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>Java開発の入り口</li>
 <li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx">Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a></li>
 </ul>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -528,113 +640,6 @@ Java開発の入り口</li>
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 26, 2012</span>
-        </div>
-        <div class="section">
-            <h1><a href="2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a></h1>
-<p>以前の記事 <a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a> の補足です。その中の <a class="reference internal" href="2012/12/08/waac2012day2.html#waac2012day2-pending"><span>非同期で同時接続数が上がらない？</span></a> で、</p>
-<blockquote>
-<div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。
-<strong>これは、Azure Storage Client 2.0のBUG</strong> だったようです。2.0.2で修正されています。</div></blockquote>
-<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かりました。少々混乱したのでここに顛末をまとめます。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8307052288/"><img alt="candle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="bug">
-<h2>BUGの内容</h2>
-<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
-<div class="section" id="id1">
-<h3>参照</h3>
-<ol class="arabic simple">
-<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></li>
-<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></li>
-</ol>
-</div>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id2">
-<h2>再現試験</h2>
-<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは[前の記事] (Azure Storage Gen 2は速かった) とほとんど同じですが、なるべく簡略化したものにしています。</p>
-<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
-<script src="https://gist.github.com/takekazuomi/4369349.js">&amp;amp;nbsp;</script><p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
-<script src="https://gist.github.com/takekazuomi/4369329.js">&amp;amp;nbsp;</script><p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
-<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a class="reference external" href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7/">C#たんっ！ 新機能が入るまで</a> 」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
-</div>
-<div class="section" id="id3">
-<h2>2.0.1 で動かす</h2>
-<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
-&gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
-</pre></div>
-</div>
-<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
-<div class="section" id="azure-storage-client-2-0-1-resource-moniter">
-<h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
-<img alt="2.0.1時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.1.png"/>
-<p>見事に接続数が伸びません。</p>
-</div>
-</div>
-<div class="section" id="id4">
-<h2>2.0.3では？</h2>
-<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
-&gt; Install-Package  WindowsAzure.Storage
-</pre></div>
-</div>
-<div class="section" id="azure-storage-client-2-0-3-resource-moniter">
-<h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
-<img alt="2.0.3時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.3.png"/>
-</div>
-</div>
-<div class="section" id="id5">
-<h2>結論</h2>
-<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
-<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id6">
-<h2>次の問題</h2>
-<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
-<div class="section" id="azure-storage-client-2-0-3-exception">
-<h3>Azure Storage Client 2.0.3 時でのException</h3>
-<img alt="Azure Storage Client 2.0.3 時でのException" src="_images/2012_12_connections-asc2.0.3-cmd.png"/>
-<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
-<p>ここでは、Blob でのUpload処理が参考になります。
-Windows Azure Storage 2.0 の Blob Upload で参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
-</div>
-</div>
-<div class="section" id="semaphore">
-<h2>Semaphoreを使う</h2>
-<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御します。SemaphoreSlim という便利がものがあるのでそれを使います。
-こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
-<script src="https://gist.github.com/takekazuomi/4369880.js">&amp;amp;nbsp;</script></div>
-<hr class="docutils"/>
-<div class="section" id="id7">
-<h2>まとめ</h2>
-<ol class="arabic simple">
-<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
-<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
-<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
-</ol>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -643,6 +648,8 @@ Windows Azure Storage 2.0 の Blob Upload で参照している処理を見る�
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -660,19 +667,17 @@ Windows Azure Storage 2.0 の Blob Upload で参照している処理を見る�
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (30)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

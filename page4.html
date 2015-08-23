@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,31 +56,274 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>December 20, 2013</span>
+        </div>
+        <h1><a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a></h1>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">Windows Azure Storage Client Library for Java v. 0.5.0 がリリースされました</a></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/12/27  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/27/blog-windows-azure-storage-client-library-for-java-v-0-5-0.aspx">Java v. 0.5.0 用 Windows Azure ストレージ クライアント ライブラリ</a></div>
+</div>
+</div></blockquote>
+<p>以下にざっくりと訳します。</p>
+<div class="section" id="windows-azure-storage-team-blog-windows-azure-storage-client-library-for-java-v-0-5-0">
+<h2>抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0</h2>
+<p>このリリースでは、logging support, 新しい API overloads、そして 2013-08-15 REST<a class="footnote-reference" href="#r1" id="id2">[1]</a>が完全にサポートされています。今までのようにソースコードは、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github Windows Azure Storage libraries for Java</a>で公開されています。<a class="footnote-reference" href="#r2" id="id3">[2]</a>従来のようにmaven のレポジトリに登録されています。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>  
+     <span class="nt">&lt;groupId&gt;</span>com.microsoft.windowsazure.storage<span class="nt">&lt;/groupId&gt;</span>
+     <span class="nt">&lt;artifactId&gt;</span>microsoft-windowsazure-storage-sdk<span class="nt">&lt;/artifactId&gt;</span>
+     <span class="nt">&lt;version&gt;</span>0.5.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h3>エミュレータ ガイダンス</h3>
+<p>現在のAzure SDK(2.2)のエミュレータは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">2013-08-15 REST</a>をサポートしていません。今後数ヶ月以内にサポートしたものを出す予定です。</p>
+</div>
+<div class="section" id="samples">
+<h3>Samples</h3>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github</a>のソースのなかに、幾つかの重要なシナリを説明する<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">サンプル</a>があります。指定されたサンプルを実行するには、サンプルプロジェクトをロードし、ストレージの資格情報を提供するために、Utility.javaの次の行を更新します。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">"DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]"</span><span class="o">;</span>
+</pre></div>
+</div>
+<p>fiddler を使ってサンプル実行中の traffic を見たい場合は、Utility.java の下記の2行をコメントアウトを外してください。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="c1">// System.setProperty("http.proxyHost", "localhost");</span>
+<span class="c1">// System.setProperty("http.proxyPort", "8888");</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="note-about-packaging-and-versioning">
+<h3>Note about Packaging and Versioning</h3>
+<p>このリリースで、大きな Windows Azure SDK for Java から、ストレージパッケージを独立させました。現在、既存のSDKを活用している開発者は、それに応じて依存関係を更新する必要があります。さらに、パッケージ名は、この新しい構造を反映するように変更されました：</p>
+<ul class="simple">
+<li>com.microsoft.windowsazure.storage - RetryPolicies、LocationMode、StorageException、StorageAccountなどサービス間で共通しているすべてのpublicクラス</li>
+<li>com.microsoft.windowsazure.storage.blob -  Blob convenience implementation、Windows Azure Blobを利用しているアプリケーションは、importしてください。</li>
+<li>com.microsoft.windowsazure.storage.queue - Queue convenience implementation、Windows Azure Queueを利用するアプリケーションは、importしてください。</li>
+<li>com.microsoft.windowsazure.storage.table - Table convenience implementation、Windows Azure Tableを利用しているアプリケーションは、importしてください。</li>
+</ul>
+<p>さらに詳しい情報は、以下の Change Log &amp; Breaking Changes  のセクションを見て下さい。</p>
+<p>また、Storage Client SDK componentでは、<a class="reference external" href="http://semver.org">Semantic Versioning</a>を採用します。これは、SDKを活用する開発者に一貫した予測可能なバージョン管理指針を提供するのに役立ちます。</p>
+</div>
+</div>
+<div class="section" id="whats-new">
+<h2>Whats New</h2>
+<p>Java client library の 0.5.0 では、2013-08-15 REST service version の全ての機能<a class="footnote-reference" href="#r1" id="id6">[1]</a>をサポートします。</p>
+<div class="section" id="support-for-read-access-geo-redundant-storage">
+<h3>Support for Read Access Geo Redundant Storage</h3>
+<p>このリリースでは、secondary region の storage account data の読み取りアクセス (RA-GRS)<a class="footnote-reference" href="#r3" id="id7">[3]</a>を完全にサポートしています。クライアントオブジェクト上の位置モードを設定し、getServiceStatsを起動すると、以下の例に示されている。LocationModeもRequestOptionsオブジェクト上に設定することで、リクエストごとに設定することができます。</p>
+<p>下記の例では、client objectの location mode を設定して getServiceStats を呼び出すことで、 replication の状態を取得しています。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+
+<span class="c1">// Set the LocationMode to SECONDARY_ONLY since getServiceStats is supported only on the secondary endpoints.</span>
+<span class="n">tClient</span><span class="o">.</span><span class="na">setLocationMode</span><span class="o">(</span><span class="n">LocationMode</span><span class="o">.</span><span class="na">SECONDARY_ONLY</span><span class="o">);</span>
+<span class="n">ServiceStats</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">tClient</span><span class="o">.</span><span class="na">getServiceStats</span><span class="o">();</span>
+<span class="n">Date</span> <span class="n">lastSyncTime</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getLastSyncTime</span><span class="o">();</span>
+
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Replication status = %s and LastSyncTime = %s"</span><span class="o">,</span><span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getStatus</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">lastSyncTime</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastSyncTime</span><span class="o">.</span><span class="na">toString</span><span class="o">():</span> <span class="s">"empty"</span><span class="o">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="expanded-table-protocol-support-json">
+<h3>Expanded Table Protocol Support (JSON)</h3>
+<blockquote>
+<div>table traffic で、JSONがサポートされました。TableClient の setTablePayloadFormat() で、TablePayloadFormatを指定することでJSONformatを使うことができます。</div></blockquote>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+
+<span class="c1">// Set the payload format to JsonNoMetadata.</span>
+<span class="n">tableClient</span><span class="o">.</span><span class="na">setTablePayloadFormat</span><span class="o">(</span><span class="n">TablePayloadFormat</span><span class="o">.</span><span class="na">JsonNoMetadata</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="o">{</span>    
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getA</span><span class="o">()</span> <span class="o">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">A</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">getB</span><span class="o">()</span> <span class="o">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">B</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">this</span><span class="o">.</span><span class="na">A</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="o">(</span><span class="kd">final</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">this</span><span class="o">.</span><span class="na">B</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">EdmType</span> <span class="nf">propertyResolver</span><span class="o">(</span><span class="n">String</span> <span class="n">pk</span><span class="o">,</span> <span class="n">String</span> <span class="n">rk</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"A"</span><span class="o">))</span> <span class="o">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">STRING</span><span class="o">;</span>
+	<span class="o">}</span>
+	<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"B"</span><span class="o">))</span> <span class="o">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">BINARY</span><span class="o">;</span>
+	<span class="o">}</span>
+	<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>この、propertyResolver は、TableRequestOptions にセットします。</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="o">();</span>
+<span class="n">ref</span><span class="o">.</span><span class="na">setA</span><span class="o">(</span><span class="s">"myPropVal"</span><span class="o">);</span>
+<span class="n">ref</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span> <span class="o">});</span>
+<span class="n">ref</span><span class="o">.</span><span class="na">setPartitionKey</span><span class="o">(</span><span class="s">"testKey"</span><span class="o">);</span>
+<span class="n">ref</span><span class="o">.</span><span class="na">setRowKey</span><span class="o">(</span><span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+
+<span class="n">options</span><span class="o">.</span><span class="na">setPropertyResolver</span><span class="o">(</span><span class="n">ref</span><span class="o">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="table-insert-optimizations">
+<h3>Table Insert Optimizations</h3>
+<p>以前のバージョンでは、Table Insertのレスポンスでentity全体が返されていましたが、このバージョンから inserts が成功したときは 204 (no-content) でbodyは空がかえるようになりました。従来と同じように動作させるには、insert(TableEntity, boolean) method に true を指定します。</p>
+</div>
+<div class="section" id="table-reflection-optimizations">
+<h3>Table Reflection Optimizations</h3>
+<p>clients が、POJOを永続化するときに、繰り返しの reflection calls を無くすために、type や property information をcacheするようにしました。この最適化の結果劇的にCPU時間が削減されます。このCache機能を無効にするには、TableServiceEntity.setReflectedEntityCacheDisabled(true) を使って下さい。</p>
+</div>
+<div class="section" id="new-apis-and-overloads">
+<h3>New APIs and overloads</h3>
+<p>customer feedback から下記のAPIを追加しました、</p>
+<ul class="simple">
+<li>CloudBlob.downloadRange</li>
+<li>CloudBlob.downloadToByteArray</li>
+<li>CloudBlob.downloadRangeToByteArray</li>
+<li>CloudBlob.uploadFromByteArray</li>
+<li>CloudBlob.uploadFromByteArray</li>
+<li>CloudBlob.downloadToFile</li>
+<li>CloudBlob.uploadFromFile</li>
+<li>CloudBlockBlob.uploadText</li>
+<li>CloudBlockBlob.downloadText</li>
+</ul>
+</div>
+<div class="section" id="logging">
+<h3>Logging</h3>
+<p>0.5.0 リリースでは、<a class="reference external" href="http://www.slf4j.org">SLF4J</a>logging facade をサポートしています。</p>
+<p>詳細省略</p>
+</div>
+</div>
+<div class="section" id="change-log-breaking-changes">
+<h2>Change Log &amp; Breaking Changes</h2>
+<p>このリリースには、 2013-08-15 REST<a class="footnote-reference" href="#r1" id="id8">[1]</a>のサポート以外にも幾つかの重要な変更があります。要点を下記にまとめます。</p>
+<div class="section" id="common">
+<h3>Common</h3>
+<ul class="simple">
+<li>Package の再構築</li>
+<li>RetryResultが追加機能を提供しRetryInfoに置き換えられています</li>
+<li>request中に起きるevent operations (event firingを含む) は、同期では無くなりました。 (thread safety は、event listenersのCopyOnWriteArrayList で保証されます)</li>
+<li>OperationContext.sendingRequest eventは、 headerを変更することができるように connection が established されるまえに fireされます</li>
+</ul>
+</div>
+<div class="section" id="blob">
+<h3>Blob</h3>
+<ul class="simple">
+<li>BlobdownloadRangeはStreamにダウンロードします。以前のdownloadRangeはdownloadRangeToByteArrayに変更されました</li>
+<li>sparse page blob feature は削除されました</li>
+<li>CloudBlobContainer.createIfNotExistはCloudBlobContainer.createIfNotExistに改名されました</li>
+<li>CloudBlobClient.streamMinimumReadSizeInBytesは削除されました。この機能は、はCloudBlob.streamMinimumReadSizeInBytesで提供さえます（これは、Client毎のではなくBlob毎の設定です）</li>
+<li>CloudBlobClient.pageBlobStreamWriteSizeInBytesとCloudBlobClient.writeBlockSizeInBytesは削除されました。この機能は、CloudBlob.streamWriteSizeInBytesで提供されます</li>
+</ul>
+</div>
+<div class="section" id="table">
+<h3>Table</h3>
+<ul class="simple">
+<li>TableResultから id field が削除されました（getId、setIdも）</li>
+<li>CloudTable.createIfNotExistはCloudTable.createIfNotExistに名前が変更されました</li>
+<li>Insert 操作はcontents echoをしません。</li>
+<li>デフォルトのPayload形式は、JsonMinimalMetadataになりました。CloudTableClient.setTablePayloadFormatで全てのリクエスト、あるいは個々のリクエストでTableRequestOptions.setTablePayloadFormatを使ってpayload formatを変更することができます</li>
+</ul>
+</div>
+<div class="section" id="queue">
+<h3>Queue</h3>
+<ul class="simple">
+<li>CloudQueue.createIfNotExistはCloudQueue.createIfNotExistに名前が変更されました</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Source (github)</a></p>
+<p><a class="reference external" href="http://search.maven.org/windows_azure_storage_client_library_for_java_v_0_5_0.html#search%7Cga%7C1%7Cg%3A%22com.microsoft.windowsazure.storage%22">Maven</a></p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java/blob/master/BreakingChanges.txt">BreakingChanges</a></p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java/blob/master/ChangeLog.txt">ChangeLog</a></p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a></p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx">Windows Azure Storage Redundancy Options and Read Access Geo Redundant Storage</a></p>
+<p><a class="reference external" href="http://semver.org">SemVer Specification</a></p>
+</div>
+<div class="section" id="id9">
+<h2>最後に</h2>
+<p>0.4 にあった、<a class="reference internal" href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html"><em>Azure SDK for Java 0.4.6 long値のfilter BUG</em></a>は無事改修されているようです。<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java/commit/834daae4e23b51e16e65e5bbf13096075d1f47ca#diff-f8d410db4741b0e56a8050948b11115c">https://github.com/WindowsAzure/azure-storage-java/commit/834daae4e23b51e16e65e5bbf13096075d1f47ca#diff-f8d410db4741b0e56a8050948b11115c</a></p>
+<div class="line-block">
+<div class="line">互換性の問題などから、0.4を使い続ける場合は引き続き注意が必要です。</div>
+</div>
+<div class="line-block">
+<div class="line"><br/></div>
+<div class="line"><br/></div>
+</div>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id6">2</a>, <a class="fn-backref" href="#id8">3</a>)</em> version 2013-08-15 storage<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">英語</a><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">日本語</a><a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">SATO NAOKI訳</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>0.4 までは、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java">azure-sdk-for-java</a>だったのですが、レポジトリが変わり。 0.5からは、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">azure-storage-java</a>になりました。.NETのStorage Clientと同じような名前変更がされたようです。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/19/blog-windows-azure-storage-redundancy-options-and-read-access-geo-redundant-storage.aspx">Windows Azure ストレージの冗長オプションと読み取りアクセス地理冗長ストレージ</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        <div class="postmeta">
+        
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/java.html">Java</a>, <a href="tags/release.html">Release</a>, <a href="tags/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html#disqus_thread" data-disqus-identifier="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 17, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a></h1>
-<p><a class="reference external" href="http://owin.org/">OWIN(Open Web Interface for .NET)</a> は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。
-2010年の終わりのころに <a class="reference external" href="http://bvanderveen.com/">Benjamin van der Veen 氏</a> が始め、 <a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a> では、Author: OWIN working group となっている。参照: <a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+        <h1><a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a></h1>
+<p><a class="reference external" href="http://owin.org">OWIN(Open Web Interface for .NET)</a>は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。2010年の終わりのころに<a class="reference external" href="http://bvanderveen.com">Benjamin van der Veen 氏</a>が始め、<a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a>では、Author: OWIN working group となっている。参照:<a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg"/></a>
-<p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、 <a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>  に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
-<p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、
-.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。</p>
+<p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、<a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
+<p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。</p>
 <p>その結果出来上がったのが、従来のVB6アプリの習慣に沿ったイベントモデルをベースにしたWeb Formsのアーキテクチャーと論理的に異なる HTTP ObjectとWeb Forms FrameworkがタイトにカップルされたSystem.Web.dll らしい。</p>
-<p>昔を振り返ってみると、1993年の終わりころ <a class="footnote-reference" href="#r1" id="id2">[1]</a>  <a class="reference external" href="http://en.wikipedia.org/wiki/NCSA_HTTPd">UCSA HTTPd</a>  にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。<a class="reference external" href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NETのリリースは2002年</a> なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。
-今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。</p>
-<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている <a class="reference external" href="http://rack.github.io/">Rack: a Ruby Webserver Interface Feb 2007</a>  が生まれる。
-こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
+<p>昔を振り返ってみると、1993年の終わりころ<a class="footnote-reference" href="#r1" id="id2">[1]</a><a class="reference external" href="http://en.wikipedia.org/wiki/NCSA_HTTPd">UCSA HTTPd</a>にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。<a class="reference external" href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NETのリリースは2002年</a>なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。</p>
+<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている<a class="reference external" href="http://rack.github.io">Rack: a Ruby Webserver Interface Feb 2007</a>が生まれる。こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
 <p>.NETでは最初に標準的なWeb Server（IIS）と、Framework（System.Web.dll）ありきで始まったため混乱は無かったが自由な発展が阻害され、一方Ruby/Pythonなど標準的なものが無い中では混沌のなかから優れた標準（Rack/WSGI)が生まれたというのは実に面白い。</p>
 <div class="section" id="owin">
 <h2>OWINの基本</h2>
@@ -92,13 +335,15 @@
 <div class="highlight-c#"><div class="highlight"><pre><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
 </pre></div>
 </div>
-<p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成 <a class="footnote-reference" href="#r2" id="id3">[2]</a> でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、 <a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a> なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
+<p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成<a class="footnote-reference" href="#r2" id="id3">[2]</a>でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、<a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a>なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
 </div>
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
-<p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a> 手探りで作った習作だが、簡単に中身を説明する。
-OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png"><img height="372.115384615" src="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png" width="600.0"/></a></div></div>
+<p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
+<p class="seqdiag">
+<a href="_images/seqdiag-8e39e78bf75324a787de834862440035baf46c04.png"><img src="_images/seqdiag_thumb-8e39e78bf75324a787de834862440035baf46c04.png" alt="None" width="600" height="372.115384615"/>
+</a></p>
+</div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
@@ -114,7 +359,7 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="program-csmain">
 <h3>Program.csのmainを下記のようにする</h3>
-<p><cite>WebApp.Start&lt;Startup&gt;(url)</cite> とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
+<p><cite>WebApp.Start&lt;Startup&gt;(url)</cite>とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
 
@@ -140,7 +385,7 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="startup">
 <h3>Startup用のクラスを追加する</h3>
-<p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite> でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
+<p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite>でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
@@ -161,7 +406,7 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="id4">
 <h3>これで動かすとこんな感じになる</h3>
-<p>このコードでは、<cite>app.UseWelcomePage();</cite> としているので、Welcomeページが表示される。このあたりの実装は、 <a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com WelcomePageMiddleware</a> 見ると非常に参考になる。</p>
+<p>このコードでは、<cite>app.UseWelcomePage();</cite>としているので、Welcomeページが表示される。このあたりの実装は、<a class="reference external" href="http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin.Diagnostics/WelcomePageMiddleware.cs">katanaproject.codeplex.com WelcomePageMiddleware</a>見ると非常に参考になる。</p>
 <img alt="../../../_images/2013_12_08_scrn-001.png" src="_images/2013_12_08_scrn-001.png"/>
 </div>
 </div>
@@ -205,8 +450,7 @@ install-Package Owin.Extensions
 </div>
 <div class="section" id="owin-middleware">
 <h3>OWIN Middleware用のプロジェクトを追加する</h3>
-<p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 <a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>
-必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
+<p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
 <div class="highlight-bash"><div class="highlight"><pre>install-Package Microsoft.Owin
 install-Package Microsoft.WindowsAzure.Caching
 install-Package EnterpriseLibrary.TransientFaultHandling.Caching
@@ -215,7 +459,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <div class="section" id="azrue-cache-middleware">
 <h3>Azrue Cache Middleware</h3>
-<p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 <a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
+<p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。<a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
@@ -413,8 +657,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <div class="section" id="id7">
 <h2>まとめ</h2>
-<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。
-<a class="reference external" href="http://katanaproject.codeplex.com/">katanaproject.codeplex.com</a> を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
+<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。<a class="reference external" href="http://katanaproject.codeplex.com">katanaproject.codeplex.com</a>を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
@@ -433,12 +676,11 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <table class="docutils footnote" frame="void" id="r3" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td>生 Owin だと型の情報がほどんど無い( <cite>IDictionary&lt;string, object&gt;</cite> なので）ので日和ってしまった。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td>生 Owin だと型の情報がほどんど無い(<cite>IDictionary&lt;string, object&gt;</cite>なので）ので日和ってしまった。</td></tr>
 </tbody>
 </table>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -458,26 +700,23 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 11, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
-<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
+        <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
+<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
 <div class="section" id="id2">
 <h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
 <ul class="simple">
 <li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
 <li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
 <li>Tables: Nuget package に Microsoft.Data.Services.Client への明示的な参照を追加</li>
-<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細: <a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
+<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細:<a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
 <li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>メモ</h2>
-<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。
-５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
+<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         
         <div class="categories">
@@ -495,17 +734,15 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 11, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
-<p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
-| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
+        <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
+<p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
 <div class="section" id="id1">
 <h2>インストール</h2>
 <p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
 <img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
 <p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module <span class="p">|</span> ft name,version
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
 
 Name                                                        Version
 ----                                                        -------
@@ -585,7 +822,6 @@ PSReadline                                                  1.0.0.1
 <p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -605,36 +841,33 @@ PSReadline                                                  1.0.0.1
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 06, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
-<p>2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a>  に出ています、興味深い内容です。</p>
+        <h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
+<p>2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a>に出ています、興味深い内容です。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11248464764"><img alt="mojya mojya by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3755/11248464764_54794780d3_z.jpg"/></a>
 <p>翻訳は追々出ると思うので、拾い読みしながら気になったことを書きます。</p>
 <blockquote>
 <div><ul class="simple">
-<li>[引用]JSON Payloadは、version “2013-08-15”の一部してリリースされました。JSONは従来の AtomPub <a class="footnote-reference" href="#f1" id="id1">[1]</a> フォーマットの OData payload format に比べて著しくサイズが小さくなり latency が低くなっています。また、payload size を削減するため、 insert の payload echo を Off にする方法を提供します。これらの新機能は、新しい  <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a> ではデフォルトの機能として働きます。</li>
+<li>[引用]JSON Payloadは、version “2013-08-15”の一部してリリースされました。JSONは従来の AtomPub<a class="footnote-reference" href="#f1" id="id1">[1]</a>フォーマットの OData payload format に比べて著しくサイズが小さくなり latency が低くなっています。また、payload size を削減するため、 insert の payload echo を Off にする方法を提供します。これらの新機能は、新しい<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a>ではデフォルトの機能として働きます。</li>
 </ul>
 </div></blockquote>
-<p>従来の HTTP request/response を見ていると無駄が目立ったので、それが削減されるのは大歓迎です。ここには、version “2013-08-15”でのplayloadの削減が書いてありますが、2013年11月（先月）ぐらいから、version “2012-02-12” の AtomPub でも余計な改行や空白を削減するなどの変更が行われています。このあたりの変更については、<a class="reference internal" href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html"><em>Windows Azure Tables の Breaking Changes 2013/11</em></a> を見て下さい。</p>
-<p>Insert の payload echo を Off にする話が出ていますが、version “2011-08-18” でサポートされた <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh452241.aspx">Insert Or Merge Entity (REST API)</a> ではレスポンスのBODYが空でステータスコードは204 (No Content) を返すようになっていました、これを insert でも同じように動作するモードを付けたということのようです。
-Insertの時にサーバー側で付与される情報はETagとTimestampだけで、それ以外は送信した内容と同じです、レスポンスヘッダーにETagは返ってくるので、エンティティ全体が帰ってこなくても困ることはほとんど無いと思います。場合によっては、Timestamp を使う場合があるかもしれませんが、その場合は設計を見直すか、エンティティ全体を返すモードで使うかになります。</p>
+<p>従来の HTTP request/response を見ていると無駄が目立ったので、それが削減されるのは大歓迎です。ここには、version “2013-08-15”でのplayloadの削減が書いてありますが、2013年11月（先月）ぐらいから、version “2012-02-12” の AtomPub でも余計な改行や空白を削減するなどの変更が行われています。このあたりの変更については、<a class="reference internal" href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html"><em>Windows Azure Tables の Breaking Changes 2013/11</em></a>を見て下さい。</p>
+<p>Insert の payload echo を Off にする話が出ていますが、version “2011-08-18” でサポートされた<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh452241.aspx">Insert Or Merge Entity (REST API)</a>ではレスポンスのBODYが空でステータスコードは204 (No Content) を返すようになっていました、これを insert でも同じように動作するモードを付けたということのようです。Insertの時にサーバー側で付与される情報はETagとTimestampだけで、それ以外は送信した内容と同じです、レスポンスヘッダーにETagは返ってくるので、エンティティ全体が帰ってこなくても困ることはほとんど無いと思います。場合によっては、Timestamp を使う場合があるかもしれませんが、その場合は設計を見直すか、エンティティ全体を返すモードで使うかになります。</p>
 <div class="section" id="what-is-json">
 <h2>What is JSON</h2>
 <blockquote>
 <div><ul class="simple">
-<li>[引用] <a class="reference external" href="http://json.org/">JSON</a>  (JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a> と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
+<li>[引用]<a class="reference external" href="http://json.org">JSON</a>(JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。<a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a>と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
 </ul>
 </div></blockquote>
-<p>ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、 <a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038">OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design</a> がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。
-IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込まずに、受信側のクライアントのコードで実装もしくは、JSON内にメタ情報埋め込みという話にしたのは、JSONの手軽さを損なわないという点で評価できます。</p>
-<p>nometadata、minimalmetadata、fullmetadata や、JSON payload の詳細については <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">Payload Format for Table Service Operations</a> を見て下さい。</p>
+<p>ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、<a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038">OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design</a>がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込まずに、受信側のクライアントのコードで実装もしくは、JSON内にメタ情報埋め込みという話にしたのは、JSONの手軽さを損なわないという点で評価できます。</p>
+<p>nometadata、minimalmetadata、fullmetadata や、JSON payload の詳細については<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">Payload Format for Table Service Operations</a>を見て下さい。</p>
 </div>
 <div class="section" id="atompub-vs-json-format">
 <h2>AtomPub vs JSON format</h2>
-<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span>AtomPub [引用]</span></a> と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><span>JSON nometadata [引用]</span></a> を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span>AtomPub [引用]</span></a> の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a> もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った <a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><span>XML nometadata （参考までに作ってみました）</span></a> というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
+<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a>と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><em>JSON nometadata [引用]</em></a>を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><em>AtomPub [引用]</em></a>の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a>もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><em>XML nometadata （参考までに作ってみました）</em></a>というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
 <p>Payloadの違いによる比較のテーブルが面白いので引用します</p>
-<table border="1" class="docutils" id="id12">
-<caption><span class="caption-text">To compare JSON and AtomPub</span></caption>
+<table border="1" class="docutils">
+<caption>To compare JSON and AtomPub</caption>
 <colgroup>
 <col width="14%"/>
 <col width="14%"/>
@@ -882,22 +1115,22 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 </div>
 <div class="section" id="id6">
 <h2>最後に</h2>
-<p>書き始めたら案外知らないことが多く。てっきり、OData V3 の JSON <a class="footnote-reference" href="#f2" id="id7">[2]</a>  、 <cite>Content-Type: application/json;odata=verbose</cite> 、 <cite>json light (content-type : application/json; odata=light)</cite> が使われているのかと思ったら、いつの間にかOData Version 4.0 JSON <a class="footnote-reference" href="#f3" id="id8">[3]</a> なんてものがあって、そっちが使われていたことに気が付いたり。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a> で使っている、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Data.OData/5.6.0">ODataLib 5.6.0</a> から OData V4をサポートしているらしい <a class="footnote-reference" href="#f4" id="id10">[4]</a> ということが分かったりということで手間取りました。</p>
-<p>じゃあ、ODataLib 5.6.0 のコードちょっと見ておくかと思ったら、odata.codeplex.com の ODataLib は2011年から放置状態になっていて（これは知ってました）、 <a class="reference external" href="http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0">http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0</a> からコードが確認できるってことに気が付いたりで手間取りました。</p>
+<p>書き始めたら案外知らないことが多く。てっきり、OData V3 の JSON<a class="footnote-reference" href="#f2" id="id7">[2]</a>、<cite>Content-Type: application/json;odata=verbose</cite>、<cite>json light (content-type : application/json; odata=light)</cite>が使われているのかと思ったら、いつの間にかOData Version 4.0 JSON<a class="footnote-reference" href="#f3" id="id8">[3]</a>なんてものがあって、そっちが使われていたことに気が付いたり。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a>で使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Data.OData/5.6.0">ODataLib 5.6.0</a>から OData V4をサポートしているらしい<a class="footnote-reference" href="#f4" id="id10">[4]</a>ということが分かったりということで手間取りました。</p>
+<p>じゃあ、ODataLib 5.6.0 のコードちょっと見ておくかと思ったら、odata.codeplex.com の ODataLib は2011年から放置状態になっていて（これは知ってました）、<a class="reference external" href="http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0">http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0</a>からコードが確認できるってことに気が付いたりで手間取りました。</p>
 <p>今回は前半しか紹介できていないので、そのうち続きを書きたいと思います。</p>
 <div class="section" id="resources">
 <h3>Resources</h3>
 <table class="docutils footnote" frame="void" id="f1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format">AtomPub</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="f2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format/">OData V3 JSON Verbose Format</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format">OData V3 JSON Verbose Format</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="f3" rules="none">
@@ -909,13 +1142,12 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
 <table class="docutils footnote" frame="void" id="f4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[4]</a></td><td>OData V4 のstackが、ODataLib として提供されることがコメントに書いてある <a class="reference external" href="http://blogs.msdn.com/b/astoriateam/archive/2013/08/26/wcf-data-services-5-6-0-release.aspx">WCF Data Services 5.6.0 Release</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id10">[4]</a></td><td>OData V4 のstackが、ODataLib として提供されることがコメントに書いてある<a class="reference external" href="http://blogs.msdn.com/b/astoriateam/archive/2013/08/26/wcf-data-services-5-6-0-release.aspx">WCF Data Services 5.6.0 Release</a></td></tr>
 </tbody>
 </table>
 </div>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -932,57 +1164,6 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/06/azure_table_json_payload.html#disqus_thread" data-disqus-identifier="2013/12/06/azure_table_json_payload">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 06, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></h1>
-<p>3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9269858396"><img alt="leaf by Takekazu Omi, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg"/></a>
-<p>Storage の .NET Client ライブラリは、2.1までは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a> にありましたが、3.0からは、Storageは独立して <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Libraries for .NET github:azure-storage-net</a> になりました。
-2.1系は継続して、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a> でメンテされるようです。
-現在2.1系の最新は、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4">2.1.0.4</a> です。</p>
-<p>今後 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET</a> は、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager/">Windows Azure Configuration Manager</a> や <a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview">Windows Azure Management Libraries</a> の場所ということになりそうです。</p>
-<p>最初は、Windows Azure SDK for .NET という名前で、中身がStorageのライブラリで始まって、そのうち Configuration Manager が追加、Management Libraries が追加され、Media関連はディレクトリはあるけど別レポジトリ、とだんだん膨れてわかり辛くなってきたところだったので整理するにはいいタイミングだった気がします。</p>
-<div class="section" id="breaking-changes">
-<h2>Breaking Changes</h2>
-<p><a class="reference internal" href="2013/12/05/minute_metrics_storage_version_2013_08_15.html"><em>Windows Azure Storage 2013-08-15 の Minute Metrics</em></a> で、3.0の変更点が分からないと書きましたが、レポジトリの <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/BreakingChanges.txt#L33">BreakingChanges.txt</a> に記載がありました。</p>
-<p>３つあります。簡単にまとめます。</p>
-<ol class="arabic simple">
-<li>テーブルの操作にDataServiceContextを使った場合、OperationContextのresponse received eventは no longer fired（もはや起こらない）</li>
-<li>ContinuationToken の WriteXml()/ReadXml()が変更されました。詳細は原文を参照してください。</li>
-<li>ServiceProperties では、uploadされたものだけが変更されます。例えば、CORSの設定だけをすると、Logging と Metering 関連の設定は変更されません。</li>
-</ol>
-<p>ServicePropertiesのプロパティが変更された件などは、上記 Breaking Changes に書いてありませんので互換性に関しては注意が必要だと思います。</p>
-</div>
-<div class="section" id="id3">
-<h2>まとめ</h2>
-<p>このレポジトリの移動に関して <a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><em>Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</em></a>  に下記のような記述があります。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> にリリースします。</div>
-</div>
-</div></blockquote>
-<p>今までのレポジトリを見てソースが上がってこないので、3.0のソースは公開されないのかと思って困惑していましたが、無事ソースも確認できて安心しました。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/azure_sdk.html">Azure SDK</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html#disqus_thread" data-disqus-identifier="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -991,6 +1172,8 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -1008,19 +1191,17 @@ IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込ま
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (30)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

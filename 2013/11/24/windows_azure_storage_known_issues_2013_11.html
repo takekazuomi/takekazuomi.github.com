@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Windows Azure Tables の Breaking Changes 2013/11" href="windows_azure_tables_breaking_changes_2013_11.html" /><link rel="prev" title="Helios を Azure Cloud Service で使う" href="../28/using_helios_on_azure_cloud_service.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,16 +56,16 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About Kyrt</a>
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="../../../pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
@@ -87,14 +87,14 @@
 <div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
 </div>
 <div class="line-block">
-<div class="line">2013/11/30 <a class="reference internal" href="#known-issue-201311"><span>Table Query での Cast 問題</span></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="../30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
+<div class="line">2013/11/30 <a class="reference internal" href="#known-issue-201311"><em>Table Query での Cast 問題</em></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="../30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a></div>
 </div>
 </div></blockquote>
-<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a> からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
+<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a>からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
 <div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
 <span id="known-issue-20131101"></span><h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
 <ul class="simple">
-<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の <cite>&#8220;//&#8221;</cite> は、 <cite>&#8220;/&#8221;</cite> に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は <cite>&#8220;//&#8221;</cite> を送らないようにして下さい</li>
+<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の<cite>&#8220;//&#8221;</cite>は、<cite>&#8220;/&#8221;</cite>に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は<cite>&#8220;//&#8221;</cite>を送らないようにして下さい</li>
 </ul>
 <p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
 </div>
@@ -102,9 +102,7 @@
 <h2>Windows Azure TablesのIssue</h2>
 <p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
 <ol class="arabic simple" id="known-issue-20131102">
-<li>clients で、 <cite>DataServiceContext.ResolveName</cite> を定義し、 <cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite> 以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。
-これは、新しい実装では、ATOM の &#8220;Category&#8221; element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。
-ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の &#8220;category&#8221; element は送信されません。</li>
+<li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の &#8220;Category&#8221; element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の &#8220;category&#8221; element は送信されません。</li>
 </ol>
 <p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
@@ -120,12 +118,9 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 <span class="n">tableServiceContext</span><span class="o">.</span><span class="na">SaveChanges</span><span class="o">();</span>
 </pre></div>
 </div>
-<p>この Issue の解決のためには client 側で <cite>tableServiceContext.ResolveName</cite> delegate の設定を外してください。</p>
+<p>この Issue の解決のためには client 側で<cite>tableServiceContext.ResolveName</cite>delegate の設定を外してください。</p>
 <ol class="arabic simple" id="known-issue-201311" start="2">
-<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty &#8220;cast&#8221; があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。
-これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。
-.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )
-それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
+<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty &#8220;cast&#8221; があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
 </ol>
 <p>下記は問題があるコードです</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
@@ -150,7 +145,7 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
 <h2>感想、コメント等</h2>
 <ul class="simple">
 <li>最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。</li>
-<li>コンテナの前が <cite>//</cite> になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
+<li>コンテナの前が<cite>//</cite>になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
 <li>ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。</li>
 </ul>
 </div>
@@ -178,6 +173,8 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/11/24/windows_azure_storage_known_issues_2013_11";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -195,19 +192,17 @@ ResolveName の設定は、Azure Tables では必要無いのでclient applicati
             <a href="../../../2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="../../../2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="../../../2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (30)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (12), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_bug.html">Azure BUG</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (13), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

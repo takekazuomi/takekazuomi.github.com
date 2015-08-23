@@ -1,0 +1,205 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Getting Started - Service Fabric &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Getting Started - Service Fabric &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/2015/05/05/getting_started_service_fabric.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+        </li>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>May 05, 2015</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="getting-started-service-fabric">
+<h1>Getting Started - Service Fabric</h1>
+<p>以下のセクションは、<cite>Set up your Service Fabric development environment &lt;http://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/&gt;_</cite>を元にしています。</p>
+</div>
+<div class="section" id="setup-sdk">
+<h1>Setup SDK</h1>
+<p>サポートされるOS* Windows 8/8.1* Windows Server 2012 R2* Windows 10 Technical Preview</p>
+<p>Visual Studio 2015* Service Fabric Preview 1 は、Visual Studio 2015 RC が必要</p>
+<p>Service Fabric のコンポーネントをWeb Platform Installerを使ってインストールします。<a class="reference external" href="http://www.microsoft.com/web/handlers/webpi.ashx?command=getinstallerredirect&amp;appid=MicrosoftAzure-ServiceFabric">MicrosoftAzure-ServiceFabric</a></p>
+<p>image: sdkinstall.png</p>
+<p>Service Fabric では、VSからのデプロイとローカルの開発用Clusterの作成のためにWindows PowerShell スクリプト使います。Windowsのデフォルトでは、スクリプトがブロックされるので、PowerShell の execution policy を変更します。</p>
+<p>&gt; Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -Scope CurrentUser</p>
+<p>PowerShell のコンソールを administrator で開いて下記ように実行します。実行には数分かかります。</p>
+<p>$ cd &#8220;$env:ProgramFilesMicrosoft SDKsService FabricClusterSetup&#8221;$ ls</p>
+<blockquote>
+<div>ディレクトリ: C:Program FilesMicrosoft SDKsService FabricClusterSetup</div></blockquote>
+<p>Mode                LastWriteTime         Length Name&#8212;-                &#8212;&#8212;&#8212;&#8212;-         &#8212;&#8212; &#8212;-d&#8212;&#8211;       2015/05/05     13:13                NonSecured&#8212;&#8211;       2015/05/05     13:13                Secure-a&#8212;-       2015/04/23     18:47           1673 CleanCluster.ps1-a&#8212;-       2015/04/23     18:47           7462 DevClusterSetup.ps1</p>
+<p>$ ./DevClusterSetup.ps1</p>
+<p>Cleaning existing cluster ...</p>
+<blockquote>
+<div>NOTE: If this powershell command window exits, please re-run the script in a new powershell command window.</div></blockquote>
+<p>Stopping service FabricHostSvc. This may take a few minutes...Removing cluster configurationRemove node configuration succeededCleaning existing certificatesStopping all logman sessionsCleaning log and data folder, the powershell window may close automatically.ClusterPath not provided, will use C:SfDevClusterFabricDataRoot not provided, will use C:SfDevClusterDataFabricLogRoot not provided, will use C:SfDevClusterLog</p>
+<blockquote>
+<div>ディレクトリ: C:</div></blockquote>
+<p>Mode                LastWriteTime         Length Name&#8212;-                &#8212;&#8212;&#8212;&#8212;-         &#8212;&#8212; &#8212;-d&#8212;&#8211;       2015/05/05     13:18                SfDevCluster</p>
+<blockquote>
+<div>ディレクトリ: C:SfDevCluster</div></blockquote>
+<p>Mode                LastWriteTime         Length Name&#8212;-                &#8212;&#8212;&#8212;&#8212;-         &#8212;&#8212; &#8212;-d&#8212;&#8211;       2015/05/05     13:18                ManifestsTrueCreate node configuration succeededStarting service FabricHostSvc. This may take a few minutes...Connecting to Service Fabric Cluster. This may take a few minutes. Please ignore the initial warnings...Connect-ServiceFabricCluster &#8216;localhost:19000&#8217;TrueTrue</p>
+<dl class="docutils">
+<dt>FabricClientSettings <span class="classifier-delimiter">:</span> <span class="classifier">{</span></dt>
+<dd>ClientFriendlyName                   : PowerShell-d7561a85-e422-4d96-80f4-ef4e97168e2aPartitionLocationCacheLimit          : 100000PartitionLocationCacheBucketCount    : 1024ServiceChangePollInterval            : 00:02:00ConnectionInitializationTimeout      : 00:00:02KeepAliveInterval                    : 00:00:20HealthOperationTimeout               : 00:02:00HealthReportSendInterval             : 00:00:00HealthReportRetrySendInterval        : 00:00:30NotificationGatewayConnectionTimeout : 00:00:00NotificationCacheUpdateTimeout       : 00:00:00}</dd>
+<dt>GatewayInformation <span class="classifier-delimiter">:</span> <span class="classifier">{</span></dt>
+<dd>NodeAddress                          : localhost:19000NodeId                               : 1880ec88a3187766a6da323399721f53NodeInstanceId                       : 130752731351796750NodeName                             : Node.1}</dd>
+</dl>
+<p>FabricClient         : System.Fabric.FabricClientConnectionEndpoint   : {localhost:19000}SecurityCredentials  :</p>
+<p>Connected with Service Fabric Cluster</p>
+<p>NodeDeactivationInfo :NodeName             : Node.4IpAddressOrFQDN      : localhostNodeType             : NodeType4CodeVersion          : 4.0.95.9490ConfigVersion        : 1.0NodeStatus           : UpNodeUpTime           : 00:00:33HealthState          : UnknownIsSeedNode           : FalseUpgradeDomain        : UD4FaultDomain          : fd:/FD04NodeId               : 182043d0294b3f36e954e0397268b770NodeInstanceId       : 130752731342886765</p>
+<p>NodeDeactivationInfo :NodeName             : Node.2IpAddressOrFQDN      : localhostNodeType             : NodeType2CodeVersion          : 4.0.95.9490ConfigVersion        : 1.0NodeStatus           : UpNodeUpTime           : 00:00:33HealthState          : UnknownIsSeedNode           : TrueUpgradeDomain        : UD2FaultDomain          : fd:/FD02NodeId               : 1840a58b116c5f9c7a0b1837194c4205NodeInstanceId       : 130752731348016763</p>
+<p>NodeDeactivationInfo :NodeName             : Node.1IpAddressOrFQDN      : localhostNodeType             : NodeType1CodeVersion          : 4.0.95.9490ConfigVersion        : 1.0NodeStatus           : UpNodeUpTime           : 00:00:33HealthState          : UnknownIsSeedNode           : TrueUpgradeDomain        : UD1FaultDomain          : fd:/FD01NodeId               : 1880ec88a3187766a6da323399721f53NodeInstanceId       : 130752731351796750</p>
+<p>NodeDeactivationInfo :NodeName             : Node.5IpAddressOrFQDN      : localhostNodeType             : NodeType5CodeVersion          : 4.0.95.9490ConfigVersion        : 1.0NodeStatus           : UpNodeUpTime           : 00:00:33HealthState          : UnknownIsSeedNode           : FalseUpgradeDomain        : UD5FaultDomain          : fd:/FD05NodeId               : 18a05673ad5b226e2826584627c00a22NodeInstanceId       : 130752731342746765</p>
+<p>NodeDeactivationInfo :NodeName             : Node.3IpAddressOrFQDN      : localhostNodeType             : NodeType3CodeVersion          : 4.0.95.9490ConfigVersion        : 1.0NodeStatus           : UpNodeUpTime           : 00:00:33HealthState          : UnknownIsSeedNode           : TrueUpgradeDomain        : UD3FaultDomain          : fd:/FD03NodeId               : 18c04a60c5c8e287f4f4337ba8642205NodeInstanceId       : 130752731346896749</p>
+<p>NodeDeactivationInfo NodeName IpAddressOrFQDN NodeType  CodeVersion ConfigVersion NodeStatus NodeUpTime&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211; &#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8212;&#8212; &#8212;&#8212;&#8211;  &#8212;&#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8212;- &#8212;&#8212;&#8212;- &#8212;&#8212;&#8212;-</p>
+<blockquote>
+<div>Node.4   localhost       NodeType4 4.0.95.9490 1.0                   Up 00Node.2   localhost       NodeType2 4.0.95.9490 1.0                   Up 00Node.1   localhost       NodeType1 4.0.95.9490 1.0                   Up 00Node.5   localhost       NodeType5 4.0.95.9490 1.0                   Up 00Node.3   localhost       NodeType3 4.0.95.9490 1.0                   Up 00</div></blockquote>
+<p>NodeName FaultDomain UpgradeDomain NodeStatus HealthState&#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8211; &#8212;&#8212;&#8212;&#8212;- &#8212;&#8212;&#8212;- &#8212;&#8212;&#8212;&#8211;Node.4   fd:/FD04    UD4                   Up     UnknownNode.2   fd:/FD02    UD2                   Up     UnknownNode.1   fd:/FD01    UD1                   Up     UnknownNode.5   fd:/FD05    UD5                   Up     UnknownNode.3   fd:/FD03    UD3                   Up     Unknown</p>
+<p>Cluster created successfully警告: CLOSE this powershell Window.To connect using Powershell, open an a new powershell window and connect using &#8216;Connect-ServiceFabricCluster&#8217; command (without any arguments).To connect using ServiceFabricExplorer, run ServiceFabricExplorer and connect using &#8216;Local/OneBox Cluster&#8217;.$</p>
+<p>インストールが終わったら、一旦サインアウトしてログインし直します。</p>
+</div>
+<div class="section" id="id1">
+<h1>確認</h1>
+<p>インストールが上手く行っているか、SDKのService Fabric Explorer で確認します。</p>
+<ol class="arabic simple">
+<li>%programfiles%Microsoft SDKsService FabricToolsServiceFabricExplorer の ServiceFabricExplorer.exe を起動</li>
+<li>Service Fabric Explorer の左上の Onebox/Local Cluster のノードを開きます</li>
+<li>Application と Node views がグリーンになっているのを確認します</li>
+</ol>
+<p>ここで上手く行かない場合は、<a class="reference external" href="http://azure.microsoft.com/en-us/documentation/articles/service-fabric-troubleshoot-local-cluster-setup/">ローカル開発クラスタ設定 のトラブルシューティング</a>を参考にしてください。</p>
+<p>image: clustersetup.png</p>
+</div>
+<div class="section" id="id3">
+<h1>メモ</h1>
+<p>ローカル cluster は Azure上と完全に同じランタイムを使っていて、シミュレーターやエミュレータではない。Azure上の環境と違うのはシングルマシンで動いてるところだけ、Azureでは複数のマシンに分散配置される。</p>
+<p>ここからは、<a class="reference external" href="http://azure.microsoft.com/en-us/documentation/articles/service-fabric-choose-framework/">Choosing a framework for your service</a>に移ります。</p>
+</div>
+<div class="section" id="id4">
+<h1>フレームワークの選択</h1>
+<p>Service Fabric では、サービス構築のために、Reliable Actors APIs と Reliable Services API の２つの high-level frameworks が提供されています。 ２つは同じ Service Fabric コアの上に構築され,、concurrency, partitioning, and communication での単純の柔軟性のトレードオフがあります。あなたのアプリケーションの固有の特性に合わせて、サービスの適切なフレームワークを選択することができるように、両方のモデルを理解しておくといいでしょう。</p>
+<p>RELIABLE ACTORS APIS,RELIABLE SERVICES APIS問題空間が独立の小さな部品に分解できる,複数コンポーネント間のロジックを維持する必要があるスケールと一貫性を維持できる間は、single-threaded objects として扱いたい,状態の管理はreliable collections を使って自分で行う並列性と状態の粒度は、フレームワークで管理して欲しい,状態の粒度と並列性の管理は自分でコントロールしたいプラットフォームが通信を管理して欲しい, 通信の管理、パーティショニングスキマーの制御は自分でしたい</p>
+<p>あなたのアプリケーションの中で、ことなったフレームワークを使うことには合理的な理由があることに注意してください。たとえば、多くのactor が生成したデータを集約するような statefull service などのような例です。</p>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2015/05/05/getting_started_service_fabric";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2015/05/05/getting_started_service_fabric";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="../../08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
+            <a href="update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
+        </li><li>
+            <a href="../../04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
+        </li><li>
+            <a href="../../01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
+        </li><li>
+            <a href="../../../2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
+        </li><li>
+            <a href="../../../2014/08/01/cdp_azure.html">クラウドデザインパターン の監訳に参加しました</a>
+        </li><li>
+            <a href="../../../2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a>
+        </li><li>
+            <a href="../../../2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a>
+        </li><li>
+            <a href="../../../2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
+        </li><li>
+            <a href="../../../2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (30)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (13), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="webfont">L</span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

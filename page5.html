@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page6.html" /><link rel="prev" title="Newer" href="page4.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,41 +56,87 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About Kyrt</a>
+          <a href="pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+            <span>December 06, 2013</span>
+        </div>
+        <h1><a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></h1>
+<p>3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9269858396"><img alt="leaf by Takekazu Omi, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg"/></a>
+<p>Storage の .NET Client ライブラリは、2.1までは、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a>にありましたが、3.0からは、Storageは独立して<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Libraries for .NET github:azure-storage-net</a>になりました。2.1系は継続して、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a>でメンテされるようです。現在2.1系の最新は、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4">2.1.0.4</a>です。</p>
+<p>今後<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET</a>は、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager">Windows Azure Configuration Manager</a>や<a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview">Windows Azure Management Libraries</a>の場所ということになりそうです。</p>
+<p>最初は、Windows Azure SDK for .NET という名前で、中身がStorageのライブラリで始まって、そのうち Configuration Manager が追加、Management Libraries が追加され、Media関連はディレクトリはあるけど別レポジトリ、とだんだん膨れてわかり辛くなってきたところだったので整理するにはいいタイミングだった気がします。</p>
+<div class="section" id="breaking-changes">
+<h2>Breaking Changes</h2>
+<p><a class="reference internal" href="2013/12/05/minute_metrics_storage_version_2013_08_15.html"><em>Windows Azure Storage 2013-08-15 の Minute Metrics</em></a>で、3.0の変更点が分からないと書きましたが、レポジトリの<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/BreakingChanges.txt#L33">BreakingChanges.txt</a>に記載がありました。</p>
+<p>３つあります。簡単にまとめます。</p>
+<ol class="arabic simple">
+<li>テーブルの操作にDataServiceContextを使った場合、OperationContextのresponse received eventは no longer fired（もはや起こらない）</li>
+<li>ContinuationToken の WriteXml()/ReadXml()が変更されました。詳細は原文を参照してください。</li>
+<li>ServiceProperties では、uploadされたものだけが変更されます。例えば、CORSの設定だけをすると、Logging と Metering 関連の設定は変更されません。</li>
+</ol>
+<p>ServicePropertiesのプロパティが変更された件などは、上記 Breaking Changes に書いてありませんので互換性に関しては注意が必要だと思います。</p>
+</div>
+<div class="section" id="id3">
+<h2>まとめ</h2>
+<p>このレポジトリの移動に関して<a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><em>Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</em></a>に下記のような記述があります。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> にリリースします。</div>
+</div>
+</div></blockquote>
+<p>今までのレポジトリを見てソースが上がってこないので、3.0のソースは公開されないのかと思って困惑していましたが、無事ソースも確認できて安心しました。</p>
+</div>
+
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/azure_sdk.html">Azure SDK</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html#disqus_thread" data-disqus-identifier="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 05, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a></h1>
-<p><a class="reference external" href="http://qiita.com/advent-calendar/2013/azure">Windows Azure Advent Calendar 2013 - Qiita [キータ]</a> の 5 日目の記事です。最初Javaネタを書こうと思ってたのですが、11/27にWindows Azure Storageの新しいバージョン(x-ms-version:2013-08-15)が公開され盛り上がっているのでストレージネタに切り替えました。</p>
+        <h1><a href="2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a></h1>
+<p><a class="reference external" href="http://qiita.com/advent-calendar/2013/azure">Windows Azure Advent Calendar 2013 - Qiita [キータ]</a>の 5 日目の記事です。最初Javaネタを書こうと思ってたのですが、11/27にWindows Azure Storageの新しいバージョン(x-ms-version:2013-08-15)が公開され盛り上がっているのでストレージネタに切り替えました。</p>
 <p>新バージョンに付いては以前に書いているので、それを見て下さい。</p>
 <blockquote>
 <div><div class="line-block">
-<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></div>
+<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></div>
 </div>
 </div></blockquote>
 <p>立派な訳が出てるので、こちらも合わせてどうぞ。</p>
 <blockquote>
 <div><div class="line-block">
-<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
+<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
 </div>
 <div class="line-block">
 <div class="line">2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入</a></div>
 </div>
 </div></blockquote>
-<p>久しぶりのストレージ のリリースで機能盛り沢山なのですが <a class="footnote-reference" href="#f1" id="id2">[1]</a> 、その中でもパフォーマンスジャンキー注目の Minute Metrics （分単位メトリックス）を紹介します。機能紹介だけだと面白くないので脱線しながら書きますのでお楽しみ下さい。</p>
+<p>久しぶりのストレージ のリリースで機能盛り沢山なのですが<a class="footnote-reference" href="#f1" id="id2">[1]</a>、その中でもパフォーマンスジャンキー注目の Minute Metrics （分単位メトリックス）を紹介します。機能紹介だけだと面白くないので脱線しながら書きますのでお楽しみ下さい。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9204218499"><img alt="DEAD END by takekazu, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5498/9204218499_3d95538ae6_z.jpg"/></a>
 <div class="section" id="minute-metrics">
 <h2>Minute Metrics （分単位メトリックス）とは</h2>
-<p>今まで、Windows Azure StorageのMetricsは時間集計でした。  <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a>  新しい 2013-08-15 version のMinute Metrics では、5分以内に 分単位の集計（Minute Metrics） が参照できるようになりました。それに伴って下記のテーブルが追加されています。</p>
+<p>今まで、Windows Azure StorageのMetricsは時間集計でした。<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a>新しい 2013-08-15 version のMinute Metrics では、5分以内に 分単位の集計（Minute Metrics） が参照できるようになりました。それに伴って下記のテーブルが追加されています。</p>
 <blockquote>
 <div><ul class="simple">
 <li>$MetricsHourPrimaryTransactionsBlob</li>
@@ -103,7 +149,7 @@
 </div></blockquote>
 <p>Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。</p>
 <p>名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。</p>
-<p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。 <a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
+<p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。<a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
 <div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
@@ -141,9 +187,7 @@ DE
 </div>
 <div class="section" id="id4">
 <h2>Minute Metrics （分単位メトリックス）を有効にする</h2>
-<p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、 <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a> を使います。今のところ <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a> のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。
-設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。
-下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。 <a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
+<p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>を使います。今のところ<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。<a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
 <div class="highlight-none"><div class="highlight"><pre>private static void SetStorageAnalytics(CloudStorageAccount account)
 {
     var serviceProperty = new ServiceProperties
@@ -213,8 +257,8 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 <div class="section" id="id7">
 <h2>Minute Metrics （分単位メトリックス）の結果</h2>
 <p>細かい確認ができていないのですが、結果自体はテーブル名が違うだけで従来の時間集計と同じものが出てるようです。パーテションキーが単位で採番されています。</p>
-<table border="1" class="docutils" id="id10">
-<caption><span class="caption-text">Minute Metricsの例</span></caption>
+<table border="1" class="docutils">
+<caption>Minute Metricsの例</caption>
 <colgroup>
 <col width="17%"/>
 <col width="17%"/>
@@ -323,12 +367,11 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 </div>
 <div class="section" id="id8">
 <h2>まとめ</h2>
-<p>Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。
-今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。</p>
+<p>Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。</p>
 </div>
 <div class="section" id="id9">
 <h2>訂正 2013/12/06</h2>
-<p>訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> で公開されています。</p>
+<p>訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a>で公開されています。</p>
 <div class="line-block">
 <div class="line"><br/></div>
 <div class="line"><br/></div>
@@ -353,7 +396,6 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 </table>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -373,10 +415,8 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 03, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a></h1>
-<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来7ヶ月ぶりのリリースです。
-RubyGemsから入ります</p>
+        <h1><a href="2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a></h1>
+<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来7ヶ月ぶりのリリースです。RubyGemsから入ります</p>
 <div class="highlight-ruby"><div class="highlight"><pre><span class="no">INISTALL</span> <span class="o">&gt;</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">azure</span>
 </pre></div>
 </div>
@@ -403,8 +443,7 @@ RubyGemsから入ります</p>
 </div>
 <div class="section" id="get-blob-properties-bug">
 <h2>get_blob_properties のBUG修正</h2>
-<p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a> も取り込まれてリリースされました。
-これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
+<p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a>も取り込まれてリリースされました。これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
 <div class="line-block">
 <div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">azure/blob/blob_service.rb</a></div>
 <div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">azure/core/http/http_error.rb</a></div>
@@ -413,7 +452,6 @@ RubyGemsから入ります</p>
 <p>これで出すに出せなかったやつが出せるようになります。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -433,13 +471,12 @@ RubyGemsから入ります</p>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 30, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a></h1>
-<p>Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a> が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。</p>
+        <h1><a href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html">Storage Client 2.1.0.4 以降での Cast問題の修正</a></h1>
+<p>Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a>が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8216154715"><img alt="red takekazu, on Flickr" src="http://farm9.staticflickr.com/8062/8216154715_53106b0941_z.jpg"/></a>
 <div class="section" id="issue">
 <h2>issueの再現</h2>
-<p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a> で提示されているものを使います。</p>
+<p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a>で提示されているものを使います。</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
 <span class="o">{</span>
     <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"1"</span><span class="o">);</span>
@@ -453,8 +490,7 @@ RubyGemsから入ります</p>
 </div>
 <div class="section" id="id1">
 <h3>実行結果</h3>
-<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a> で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。
-x-ms-versionは、 2012-02-12 です。</p>
+<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a>で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。x-ms-versionは、 2012-02-12 です。</p>
 <p>http requestのtrace:</p>
 <div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
@@ -489,8 +525,7 @@ Time:2013-11-29T23:25:02.0389849Z&lt;/message&gt;&lt;/error&gt;
 </div>
 <div class="section" id="id2">
 <h2>2.1.0.4 での修正確認</h2>
-<p>nugetの履歴によると <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a> 2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。
-同じコードをライブラリのバージョンだけ変更して実行します:</p>
+<p>nugetの履歴によると<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a>2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。同じコードをライブラリのバージョンだけ変更して実行します:</p>
 <div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
 </pre></div>
 </div>
@@ -567,22 +602,21 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
 <div class="section" id="id5">
 <h2>ソースコード上の修正点</h2>
 <p>2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a> では:</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a>では:</p>
 <div class="highlight-none"><div class="highlight"><pre>Issues fixed in 2.1.0.4 :
   - Tables: Do not send the cast operator in the table query filter string.
 </pre></div>
 </div>
 <p>microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs で、2.1でExpressionをURLに展開するときのUnaryの処理にcastを使ってしまっていたのを削除したようです。</p>
-<p>修正のCommitは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf">XSCL 2.1.0.4 - Hotfix</a> で、ソースは、 <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs">ExpressionWriter.cs</a>  です。</p>
+<p>修正のCommitは、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf">XSCL 2.1.0.4 - Hotfix</a>で、ソースは、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs">ExpressionWriter.cs</a>です。</p>
 <p>残念ながら、3.0.0は、まだコードが公開されていないので確認することができません。</p>
 </div>
 <div class="section" id="id6">
 <h2>まとめ</h2>
-<p>2.1.0.4/3.0.0では、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a> の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a> で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。</p>
+<p>2.1.0.4/3.0.0では、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a>の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a>で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。</p>
 <p>本題とは外れますが、今回の場合では、363 byte(json) と、2,436 byte (xml)とhttp responseのbodyのサイズが大きく違い期待以上に良好な結果になっています。今回はデータが非常に小さいのでmeta 情報部分が冗長なxmlのオーバーヘッドが目立つ結果になっているのでしょうが、それにしても大きな違いです。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -602,12 +636,11 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 28, 2013</span>
         </div>
-        <div class="section">
-            <h1><a href="2013/11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a></h1>
-<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></p>
+        <h1><a href="2013/11/28/cors_json_minute_metrics_and_more.html">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</a></h1>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage">Windows Azure Storage Team Blog</a>で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></p>
 <blockquote>
 <div><div class="line-block">
-<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
+<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
 </div>
 <div class="line-block">
 <div class="line">2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入</a></div>
@@ -617,20 +650,18 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
 <div class="section" id="id2">
 <h2>3つの主要な機能</h2>
 <ol class="arabic">
-<li><p class="first">CORS (Cross Origin Resource Sharing):
-Windows Azure Blobs, Tables, Queues でCORS が有効できるようにになった。これによって、browser から異なったドメインのリソースへのアクセス・操作ができる。
-CORS は、Service Properties の 設定で有効化。詳しくは <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx</a> を参照してください。</p>
+<li><p class="first">CORS (Cross Origin Resource Sharing):Windows Azure Blobs, Tables, Queues でCORS が有効できるようにになった。これによって、browser から異なったドメインのリソースへのアクセス・操作ができる。CORS は、Service Properties の 設定で有効化。詳しくは<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535601.aspx</a>を参照してください。</p>
 </li>
-<li><p class="first">JSON (JavaScript Object Notation): 現在、Windows Azure Table は、 <a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/">OData 3.0</a> の <a class="reference external" href="http://www.json.org/">JSON format</a> をサポートしている。JSON format では、AtomPub XML payloadの冗長な部分が削減されより効率的な転送になる。</p>
+<li><p class="first">JSON (JavaScript Object Notation): 現在、Windows Azure Table は、<a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation">OData 3.0</a>の<a class="reference external" href="http://www.json.org">JSON format</a>をサポートしている。JSON format では、AtomPub XML payloadの冗長な部分が削減されより効率的な転送になる。</p>
 <p>JSONは下記3つの形式でサポート</p>
 <ul class="simple">
 <li>No Metadata - これは最も効率的なformatで、クライアントがカスタムプロパティのデータ型を知っている場合に便利です</li>
 <li>Minimal Metadata - この形式は、暗黙的に解釈できない特定の種類のカスタムプロパティのデータ型情報が含まれている。例えば、Azure Table Browserのような、一般的なツールのように保存されているEntityのデータ型を知らないで読まなければいけない場合に便利です</li>
 <li>Full Metadata - このフォーマットは、 generic OData readers で読む場合に便利です</li>
 </ul>
-<p>Windows Azure TableのJSONについての詳細情報は <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx</a> を参照してださい。</p>
+<p>Windows Azure TableのJSONについての詳細情報は<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx</a>を参照してださい。</p>
 </li>
-<li><p class="first">Windows Azure Storage Analytics の Minute Metrics: 今まで、Windows Azure StorageのMetricsは時間集計でした。（ <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a> ） 新しい 2013-08-15 version では、 いくつかの主要な値に付いて 5分以内に 分集計（Minute Metrics） が取得できるようになります。それに伴って下記のテーブルを追加します。</p>
+<li><p class="first">Windows Azure Storage Analytics の Minute Metrics: 今まで、Windows Azure StorageのMetricsは時間集計でした。（<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a>） 新しい 2013-08-15 version では、 いくつかの主要な値に付いて 5分以内に 分集計（Minute Metrics） が取得できるようになります。それに伴って下記のテーブルを追加します。</p>
 <ul class="simple">
 <li>$MetricsHourPrimaryTransactionsBlob</li>
 <li>$MetricsHourPrimaryTransactionsTable</li>
@@ -641,13 +672,13 @@ CORS は、Service Properties の 設定で有効化。詳しくは <a class="re
 </ul>
 <p>時間集計のテーブル名が変わっているので注意してください。古いテーブルも継続して存在します。</p>
 <p>分集計の設定は、2013-08-15 version を設定して、Set Service Properties REST APIを使います。現在  Windows Azure Portal では設定ができませんが、将来サポートされる予定です。</p>
-<p>詳細情報は、 <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">About Storage Analytics Metrics</a> を見てくだい。</p>
+<p>詳細情報は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">About Storage Analytics Metrics</a>を見てくだい。</p>
 </li>
 </ol>
 </div>
 <div class="section" id="id3">
 <h2>その他の追加機能</h2>
-<p>これらの他の2013-8-15 versionでは、以下の機能を実装しています。2013-8-15 version の変更詳細のリストは： <a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx</a> にあります。</p>
+<p>これらの他の2013-8-15 versionでは、以下の機能を実装しています。2013-8-15 version の変更詳細のリストは：<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx</a>にあります。</p>
 <ul class="simple">
 <li>Copy blob で、Shared Access Signature (SAS) を、コピー先にも適応します。（同じstorage accountの場合）</li>
 <li>Windows Azure Blob service は、Content-Disposition と response headers の cache-control などの ability control (via. SAS）をサポートします。Content-Disposition は、Set Blob Properties で設定します。</li>
@@ -656,20 +687,16 @@ CORS は、Service Properties の 設定で有効化。詳しくは <a class="re
 <li>List Containers, List Blobs と List Queues は、2013-08-15 version から、resourceに、URL address field を含みません。 これは、clientで再構築できる fields を削減したためです。</li>
 <li>Lease Blob と Lease Container は、2013-08-15 version から、ETag と Last Modified Time を response headers で返します。これによって、lease holder は最後に見た時から、リソースが変更されたかどうかを簡単に確認することができます。（つまり、blob や その metadata が更新されたか)。以前と同じくblob の lease operations では、ETagは変更されません。</li>
 </ul>
-<p>これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。</p>
+<p>これらの機能に対応した、Windows Azure Storage Client Library を<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a>にリリースします。数ヶ月で、Windows AzureのSDK 2.2、Windows Azure Storage Emulatorのアップデートをリリースする予定です。この更新は、2013-08-15 version の新機能をサポートします。</p>
 <p>既知の問題が幾つかあります。下記の記事を参照してください。</p>
-<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx</a>
-<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx</a></p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx</a><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx</a></p>
 <p>以上</p>
 </div>
 <div class="section" id="id4">
 <h2>最後に</h2>
-<p>Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは <a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/">nuget:WindowsAzure.Storage</a> Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。
-BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきていないようなので、年末に向けてさらに期待しています。
-負荷試験している時とかはMinute Metricsは便利ですね、嬉しいです。</p>
+<p>Azure Storage Client (Windows Azure Storage)は、3.0.0がリリースされています。nugetは<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget:WindowsAzure.Storage</a>Dependenciesを見ると、Microsoft.Data.OData 5.6以上になっているので、既存のコードとコンフリクトするかもしれません、要注意です。BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきていないようなので、年末に向けてさらに期待しています。負荷試験している時とかはMinute Metricsは便利ですね、嬉しいです。</p>
 </div>
 
-        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -686,146 +713,6 @@ BUILD 2013で話が出てきたStorageの新機能の一部がまだ出てきて
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/11/28/cors_json_minute_metrics_and_more.html#disqus_thread" data-disqus-identifier="2013/11/28/cors_json_minute_metrics_and_more">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>November 28, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><span>2013/12/13 追記</span></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span>WebRoleのStartup taskの作成</span></a> の問題は解決されました。</div>
-</div>
-</div></blockquote>
-<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、 <a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a> と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
-<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
-<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
-<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
-<div class="section" id="id1">
-<h2>手順の確認</h2>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="webrolehelios">
-<h3>WebRoleの作成からHeliosのインストールまで</h3>
-<ol class="arabic simple">
-<li>Cloud Service を作ってWebRoleを追加します
-普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
-</ol>
-<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
-<ol class="arabic simple" start="2">
-<li>projectを、.NET 4.5.1 を使うようにします</li>
-</ol>
-<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
-<ol class="arabic" start="3">
-<li><p class="first">コンパイルして問題無いのを確認します。</p>
-</li>
-<li><p class="first">System.Webの参照を全て削除します</p>
-</li>
-<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
-<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
-</pre></div>
-</div>
-</li>
-</ol>
-<p>下記のような参照になります</p>
-<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
-</div>
-<div class="section" id="startup-class">
-<h3>Startup Classの設定</h3>
-<p>下記のようなStartup classのコードを追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre>using System;
-using Microsoft.Owin;
-using Owin;
-
-[assembly: OwinStartup(typeof(WebRole1.Startup))]
-
-namespace WebRole1
-{
-    public class Startup
-    {
-        public void Configuration(IAppBuilder app)
-        {
-
-            app.Run(async context =&gt;  // IOWinContext
-            {
-                context.Response.StatusCode = 200;
-                context.Response.ContentType = "text/html";
-
-                await context.Response.WriteAsync("Hello Herios. Time is: " + DateTime.Now.ToString());
-            });
-        }
-    }
-}
-</pre></div>
-</div>
-<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
-</div>
-<div class="section" id="webrolestartup-task">
-<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
-<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a> の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
-<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
-<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
-  &lt;WebRole name="WebRole1" vmsize="Small"&gt;
-    &lt;Startup&gt;
-      &lt;Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" /&gt;
-    &lt;/Startup&gt;
-
-    &lt;Sites&gt;
-    以下省略・・・・
-</pre></div>
-</div>
-<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
-<dl class="docutils">
-<dt>startup.cmd::</dt>
-<dd>vcredist_x64.exe /install /quiet</dd>
-</dl>
-<p>vcredist_x64.exe は、 <a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a> からダウンロードできます。VS 2013をインストールしている場合は、 <cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite> 等のディレクトリにファイルがあります。</p>
-<p>startup taskについて： <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
-</div>
-<div class="section" id="osfamily">
-<h3>osFamilyの変更</h3>
-<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
-<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
-  &lt;Role name="WebRole1"&gt;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>まとめ</h2>
-<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>  runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。
-vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。
-この問題は、厳密に言うと <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a> が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a> に起因する。
-このままだとちょっと使いづらいですね。</p>
-</div>
-<div class="section" id="helios-fix-runtime">
-<span id="id4"/><h2>2013/12/13 追記</h2>
-<p>2013/12/02 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>  では、 <a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a> に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、 <a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span>WebRoleのStartup taskの作成</span></a> のようなことをしないでも動作します。
-これで普通に使えるようになりますね。</p>
-<img alt="../../../_images/2013_11_helios011.png" src="_images/2013_11_helios011.png"/>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a>, <a href="categories/owin.html">OWIN</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a>, <a href="tags/owin.html">OWIN</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -834,6 +721,8 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -851,19 +740,17 @@ vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が�
             <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (29)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (30)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (12), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_bug.html">Azure BUG</a> (1), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

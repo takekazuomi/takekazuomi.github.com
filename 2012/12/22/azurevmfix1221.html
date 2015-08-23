@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/webfont.css" type="text/css">
         <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Windows Azure Storage 2.0 の Blob Upload" href="../08/blobasyncinside.html" /><link rel="prev" title="Azure Storage Client 2.0 CompletedSynchronously FIX" href="../26/asc2_dot_0asyncbug.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,16 +56,16 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About Kyrt</a>
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
         </li>
         <li class="logo-nav">
 	  <a href="../../../pages/about_me.html" >
             <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article>
     <div class="section_head">
     <div class="timestamp_layout">
       <div class="timestamp postmeta">
@@ -82,20 +82,18 @@
     
     <div class="section" id="azure-virtual-machinedisk">
 <h1>Azure Virtual MachineのDISK性能</h1>
-<p>twitterで、「 <a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a> 」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。 Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
+<p>twitterで、「<a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a>」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
 <p>Azure Storageの非同期と同期の比較をしようと始めたのだけど、なかなか手間取って進まない。ちょっと寄り道して速くなったというAzure VMを試してみることにした。</p>
 <p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7987640250/"><img alt="Triangle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg" /></a>
 <hr class="docutils" />
 <div class="section" id="ubuntu">
 <h2>Ubuntu 環境の準備</h2>
-<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定: Azure Ubuntu 12.04 iozone 速報 2012/7/4 ホストキャッシュの設定はポータルからはできずに、デフォルトでした。
-その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
-<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考： <a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details/">Windows Azure の料金と、請求の計測単位の詳細</a></p>
+<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定:Azure Ubuntu 12.04 iozone 速報 2012/7/4ホストキャッシュの設定はポータルからはできずに、デフォルトでした。その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
+<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考：<a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details/">Windows Azure の料金と、請求の計測単位の詳細</a></p>
 <p>正確には、今回試そうとしているVirtual Machine はまだ Previewで Cloud Serviceと同じような制限になるかは情報が公開されていない（私は知らないだけかもしれませんが）のですが、同じになってそうな気がしたのでMにしました。</p>
-<p>ちょっと古いものでは、 <a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a> という情報もあります。</p>
-<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。
-実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
+<p>ちょっと古いものでは、<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a>という情報もあります。</p>
+<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
 <p>ざっと流すと、以下のような手順踏んで用意をします。</p>
 <ol class="arabic simple">
 <li>Ubuntu 12.10 を、azure portalから、virtual machineイメージをインストール</li>
@@ -108,8 +106,8 @@
 </div>
 <div class="section" id="id2">
 <h2>ディスク構成</h2>
-<table border="1" class="docutils" id="id7">
-<caption><span class="caption-text">表1 ディスク構成</caption>
+<table border="1" class="docutils">
+<caption>表1 ディスク構成</caption>
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -156,35 +154,34 @@
 <hr class="docutils" />
 <div class="section" id="id3">
 <h2>手順</h2>
-<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。
-(以下sudo省略)</p>
+<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。(以下sudo省略)</p>
 <ol class="arabic simple">
 <li>ポータルで256Gでdata diskを作成して接続を確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg <span class="p">|</span> grep -e <span class="s2">&quot;\[sd[a-z]\]&quot;</span>
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg | grep -e <span class="s2">&quot;\[sd[a-z]\]&quot;</span>
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> 62914560 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> 512-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> 283115520 512-byte logical blocks: <span class="o">(</span>144 GB/135 GiB<span class="o">)</span>
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> 536870912 512-byte logical blocks: <span class="o">(</span>274 GB/256 GiB<span class="o">)</span>
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f 00 10 00
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
 </pre></div>
@@ -202,7 +199,7 @@ Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 51
 Partition Table: gpt
 
 Number  Start   End    Size   File system  Name   Flags
-<span class="m">1</span>      1049kB  275GB  275GB  ext4         disk1
+1      1049kB  275GB  275GB  ext4         disk1
 
 <span class="nv">$ </span>sudo parted /dev/sdd --script mklabel gpt
 <span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">&#39;mkpart disk2 ext4 1M -1&#39;</span>
@@ -232,11 +229,11 @@ ___ snip ___
 <span class="nv">$ </span>chmod a+wrx /mnt/resource
 <span class="nv">$ </span>ls -l /mnt/
 total 20
-drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 15:56 cdrom
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data1
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data2
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 22:47 data3
-drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 22:14 resource
+drwx------ 3 root root 4096 Dec 21 15:56 cdrom
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data1
+drwxrwxrwx 2 root root 4096 Dec 22 21:04 data2
+drwxrwxrwx 2 root root 4096 Dec 22 22:47 data3
+drwxrwxrwx 4 root root 4096 Dec 21 22:14 resource
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
@@ -248,16 +245,16 @@ drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <s
 
 <span class="nv">$ </span>df -T
 Filesystem     Type     1K-blocks    Used Available Use% Mounted on
-/dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   4% /
-udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   1% /dev
-tmpfs          tmpfs       <span class="m">704872</span>     <span class="m">280</span>    <span class="m">704592</span>   1% /run
-none           tmpfs         <span class="m">5120</span>       <span class="m">0</span>      <span class="m">5120</span>   0% /run/lock
-none           tmpfs      <span class="m">1762172</span>       <span class="m">0</span>   <span class="m">1762172</span>   0% /run/shm
-none           tmpfs       <span class="m">102400</span>       <span class="m">0</span>    <span class="m">102400</span>   0% /run/user
-/dev/sdb1      ext4     <span class="m">139334632</span>  <span class="m">192000</span> <span class="m">132064848</span>   1% /mnt/resource
-/dev/sdc1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data1
-/dev/sdd1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data2
-/dev/sde1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data3
+/dev/sda1      ext4      30953664 1142056  28539332   4% /
+udev           devtmpfs   1751196      12   1751184   1% /dev
+tmpfs          tmpfs       704872     280    704592   1% /run
+none           tmpfs         5120       0      5120   0% /run/lock
+none           tmpfs      1762172       0   1762172   0% /run/shm
+none           tmpfs       102400       0    102400   0% /run/user
+/dev/sdb1      ext4     139334632  192000 132064848   1% /mnt/resource
+/dev/sdc1      ext4     264221700  191576 250608456   1% /mnt/data1
+/dev/sdd1      ext4     264221700  191576 250608456   1% /mnt/data2
+/dev/sde1      ext4     264221700  191576 250608456   1% /mnt/data3
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
@@ -275,10 +272,10 @@ none           tmpfs       <span class="m">102400</span>       <span class="m">0
 ___ snip ___
 
 <span class="nv">$ </span>cat /etc/fstab
-<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        <span class="m">0</span> 0
+<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        0 0
+<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        0 0
 </pre></div>
 </div>
 <ol class="arabic simple" start="6">
@@ -323,57 +320,54 @@ ___ snip ___
 <div class="section" id="id5">
 <h3>ローカルディスクの性能</h3>
 <p>まずは、ローカルドライブの実行結果から見る。読み込みはレコードサイズが8Kあたりから256KBまでは、2,500,000 KB/sec  - 3,000,000 KB/sec で、レコードサイズが増えていくとだんだん遅くなっていく。書き込み側は同じ軸ではとスケールが違い過ぎてよくわからない。</p>
-<div class="figure" id="id8">
+<div class="figure">
 <img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="../../../_images/2012_12_sdb2-rw.png" />
-<p class="caption"><span class="caption-text">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</span></p>
+<p class="caption">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</p>
 </div>
-<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「 Iozone Filesystem Benchmark Download Documentation 」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
-<div class="figure" id="id9">
+<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「Iozone Filesystem Benchmark Download Documentation」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
+<div class="figure">
 <img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="../../../_images/2012_12_sdb2-note1-w.png" />
-<p class="caption"><span class="caption-text">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</span></p>
+<p class="caption">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</p>
 </div>
-<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentation から）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。
-同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
-<div class="figure" id="id10">
+<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentationから）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
+<div class="figure">
 <img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="../../../_images/2012_12_sdb2-w.png" />
-<p class="caption"><span class="caption-text">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</span></p>
+<p class="caption">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</p>
 </div>
 <p>小さいブロックのランダム書き込みが苦手だということがわかる。これはHDDの一般的な傾向で納得できる。以降では書き込みの図は図2と同じデータ項目を表示する。</p>
 </div>
 <div class="section" id="data-disk">
 <h3>Data Diskの性能</h3>
-<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。
-ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
-<div class="figure" id="id11">
+<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
+<div class="figure">
 <img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="../../../_images/2012_12_sdc1-rw.png" />
-<p class="caption"><span class="caption-text">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</span></p>
+<p class="caption">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id12">
+<div class="figure">
 <img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="../../../_images/2012_12_sdc1-w.png" />
-<p class="caption"><span class="caption-text">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</span></p>
+<p class="caption">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</p>
 </div>
-<div class="figure" id="id13">
+<div class="figure">
 <img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="../../../_images/2012_12_sdd1-rw.png" />
-<p class="caption"><span class="caption-text">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</span></p>
+<p class="caption">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id14">
+<div class="figure">
 <img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="../../../_images/2012_12_sdd1-w.png" />
-<p class="caption"><span class="caption-text">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</span></p>
+<p class="caption">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id15">
+<div class="figure">
 <img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="../../../_images/2012_12_sde1-rw.png" />
-<p class="caption"><span class="caption-text">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</span></p>
+<p class="caption">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</p>
 </div>
-<div class="figure" id="id16">
+<div class="figure">
 <img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="../../../_images/2012_12_sde1-w.png" />
-<p class="caption"><span class="caption-text">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</span></p>
+<p class="caption">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</p>
 </div>
 </div>
 <hr class="docutils" />
 <div class="section" id="id6">
 <h3>結論</h3>
-<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。
-もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
+<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
 <p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえる嬉しい。今まで、Azure Tableの性能評価をした時も、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがあるので、明確な数字を出すことは難しい。しかし、いろいろなパターンの性能情報があると設計時の精度もあがるので、この手の情報は重要とは思う。</p>
 </div>
 <div class="section" id="bookmarks">
@@ -410,6 +404,8 @@ ___ snip ___
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/22/azurevmfix1221";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">NLog を Cloud Service で使う</a>
+        </li><li>
             <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
@@ -427,19 +423,17 @@ ___ snip ___
             <a href="../../../2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li><li>
             <a href="../../../2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a>
-        </li><li>
-            <a href="../../../2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (29)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (30)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (8)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (12), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_bug.html">Azure BUG</a> (1), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1><a href="#searchbox">Search</a></h1>
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (13), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (3), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Search</h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="fa fa-search"></span></button>
+        <button type="submit"><span class="webfont">L</span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
