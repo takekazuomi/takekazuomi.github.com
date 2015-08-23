@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="もろもろの備忘録、C#とAzureなど">
         <meta name="viewport" content="width=device-width">
-        <title>NLog を Cloud Service で使う &mdash; Kyrt Blog</title>
+        <title>Cloud Service で NLog を使う &mdash; Kyrt Blog</title>
             <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
             <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
@@ -37,7 +37,7 @@
         HAS_SOURCE:  true
       };
     </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
-<meta property="og:title" content="NLog を Cloud Service で使う &mdash; Kyrt Blog" />
+<meta property="og:title" content="Cloud Service で NLog を使う &mdash; Kyrt Blog" />
 <meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
 <meta property="og:url" content="http://kyrt.in/2015/08/23/how_to_use_nlog_in_cloud_service.html" />
 </head>
@@ -80,16 +80,16 @@
     
     </div>
     
-    <div class="section" id="nlog-cloud-service">
-<h1>NLog を Cloud Service で使う</h1>
-<p>先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので作ってみました。</p>
+    <div class="section" id="cloud-service-nlog">
+<h1>Cloud Service で NLog を使う</h1>
+<p>先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので、ローカルストレージの定義を、NLogの設定ファイルに書けるようにした layout renderer ${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を作ってみました。</p>
 <a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/19430236414/in/dateposted-public/"><img alt="face" class="align-center" src="https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg" /></a>
 <p>「<a class="reference internal" href="../../04/08/azure_diagonestics_1_3_bugs.html"><em>Azure Diagnostics 1.3 PaaS BUGS</em></a>」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。</p>
 <ol class="arabic simple">
 <li>ローカルストレージからのカスタムログ転送はVSからの設定ができない</li>
 <li>ローカルストレージのパスはデプロイ毎に変わる</li>
 </ol>
-<p>今回の趣旨は、２のデプロイ毎に変わるパスにNLogから書くにはどうするかという話です。</p>
+<p>今回の趣旨は、２のデプロイ毎に変わるパスをNLogの設定ファイルに書くにはどうするかという話です。</p>
 <p>ローカル ストレージ リソース については、MSDNの 「<a class="reference external" href="https://msdn.microsoft.com/ja-jp/library/azure/Ee758708.aspx">ローカル ストレージ リソースを構成する</a>」 を見てください。</p>
 <div class="section" id="id2">
 <h2>1. ローカルストレージからのカスタムログ転送設定</h2>
@@ -118,37 +118,38 @@
 </div>
 <div class="section" id="id3">
 <h2>2. ローカルストレージのパスはデプロイ毎に変わる</h2>
-<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことです）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
+<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer &#8220;${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
+<p>バイナリがNuGetに上げてあるので、インストールはここからします。微妙な気もするので、まだpreviewにしてあります。</p>
 <div class="highlight-none"><div class="highlight"><pre>$ Install-Package NLog.Azure -Pre
 </pre></div>
 </div>
-<p>として、NLog.configに書くと実行時にローカルストレージのパスに展開されます。</p>
+<p>これでインストールしたら、NLog.configに下記のように書くと実行時にローカルストレージのパスに展開されます。</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;variable</span> <span class="na">name=</span><span class="s">&quot;logDirectory&quot;</span> <span class="na">value=</span><span class="s">&quot;${azure-local-resource:name=LogStorage:default=c\:/Logs/}&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 </div>
 <p><a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure.Example/WebRole1/NLog.config">NLog.configのサンプル</a></p>
-<p>name という引数に ローカルストレージ名を書きます。default は、ServiceRuntime が存在しないとき、あるいはローカルストレージの定義が無い場合に使われるバスを書きます。Azureの本番環境あるいはエミュレータ環境では、ローカルストレージにログを書き、そうでない場合はdefaultで指定された場所にログを書きます。NLogは結構素直な出来で、ここまではすっきり、さくっとできました。log4net よりいい感じですね。</p>
+<p>name という引数に ローカルストレージ名を書きます。default は、ServiceRuntime が存在しないとき、あるいはローカルストレージの定義が無い場合に使われるバスを書きます。Azureの本番環境あるいはエミュレータ環境では、ローカルストレージにログを書き、そうでない場合はdefaultで指定された場所にログを書くという風に使うことを想定しています。NLogは結構素直な出来で、ここまではすっきり、さくっとできました。log4net よりいい感じですね。</p>
 <p>参考までに、簡単なWebRoleのプロジェクトをGitHubに上げてあります。<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/tree/master/NLog.Azure.Example">NLog.Azure.Example</a></p>
 </div>
-<div class="section" id="id4">
+<div class="section" id="id5">
 <h2>おまけ</h2>
-<p>実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、使ってないくてもAzure SDK を入れないと開発/実行できないということです。Storageなどのライブラリは、Azure SDK無しでもnuget から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。なかなかメンドクサイ。今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに<strong>意味が無い</strong>。</p>
-<p>こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出します。しかし、今回はGACに登録されているけど、物理パスがわからない！、そんなとき Fusion API でGACから探し出します。<a class="footnote-reference" href="#r1" id="id5">[1]</a>普通に暮らしてるとあまり出番ないですが。Fusion (Unmanaged API Reference)<a class="footnote-reference" href="#r2" id="id6">[2]</a>は、GACに登録されているアセンブリを操作する Unmanaged API です。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19">GetAssemblyPath()</a>のあたり。あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに<strong>メンドクサイ</strong></p>
+<p>実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、必ず Azure SDK を入れないと開発/実行できないということです。Storageなどのライブラリは、Azure SDK無しでもNuGet から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。NuGetからも入らないのでなかなか<strong>メンドクサイ</strong>ことになります。今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに<strong>意味が無い</strong>、単純なASP.NETのアプリはそのままでに動くようにしておきたいのに。</p>
+<p>こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出すという方法があります。今回はServiceRuntimeのアセンブリはGACに登録されているけど物理パスがわからない！、さて困った。そんなときは Fusion API でGACから探し出すのが上等手段です。<a class="footnote-reference" href="#r1" id="id6">[1]</a>常套手段と言っても普通に暮らしてるとあまり出番ないですが。Fusion (Unmanaged API Reference)<a class="footnote-reference" href="#r2" id="id7">[2]</a>は、GACに登録されているアセンブリを操作する Unmanaged API です、昔はドキュメント無かった気がしますが今は普通に書いてありますね。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19">GetAssemblyPath()</a>のあたり。あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに<strong>メンドクサイ</strong></p>
 </div>
-<div class="section" id="id7">
+<div class="section" id="id8">
 <h2>最後に</h2>
-<p>ずいぶん間が空いてしまいましたが、2015/5/12 に、株式会社 kyrt しました、先月には、2015年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞をいただきました。これらかもよろしくお願いいたします。</p>
-<p>File System をバッファーとして使うロギングシステムではパフォーマンスに注意した方が良さそうです。Azure Diagonesticsを使うと、out-process の log collector でよしなにBlobへの転送をしてくれるので、直にBlobやTableに書くより良いとは思いますが、アプリとout-process の間のつなぎがFile System なのは信頼性は良いけどパフォーマンスが疑問です。そんなにログ書くのかという話はあると思いますが。そう考えるとアプリとlog collectorの間はETWが良いような気もします。ついでに、log collector でアーカイブだけじゃなくてリアルタイム系のフィルタリングとかやってくれると便利なんだけど。SLABに期待ですね。</p>
+<p>ずいぶん間が空いてしまいましたが、2015/5/12 に、株式会社 kyrt にしました、先月には、2015年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞をいただきました。皆さまのおかげです、これらかもよろしくお願いいたします。</p>
+<p>File System をバッファーとして使うロギングシステムではパフォーマンスに注意した方が良さそうです。Azure Diagonesticsを使うと、out-process の log collector でよしなにBlobへの転送をしてくれるので、直にBlobやTableに書くより良いとは思いますが、アプリとout-process の間のつなぎがFile System なのは信頼性は良いけどパフォーマンスが疑問です。そんなにログ書くのかという話はあると思いますが。そう考えるとアプリとlog collectorの間はETWが良いような気もします。ついでに、log collector でアーカイブだけじゃなくてリアルタイム系のフィルタリングとかやってくれると便利なんだけど。<a class="reference external" href="https://github.com/mspnp/semantic-logging">SLAB</a>に期待ですね。</p>
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td><a class="reference external" href="http://stackoverflow.com/questions/19456547/how-to-programmatically-determine-if-net-assembly-is-installed-in-gac">How to programmatically determine if .NET assembly is installed in GAC?</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id6">[1]</a></td><td><a class="reference external" href="http://stackoverflow.com/questions/19456547/how-to-programmatically-determine-if-net-assembly-is-installed-in-gac">How to programmatically determine if .NET assembly is installed in GAC?</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[2]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/ms404523.aspx">Fusion (Unmanaged API Reference)</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/ms404523.aspx">Fusion (Unmanaged API Reference)</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -176,7 +177,7 @@
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2015/08/23/how_to_use_nlog_in_cloud_service";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="#">NLog を Cloud Service で使う</a>
+            <a href="#">Cloud Service で NLog を使う</a>
         </li><li>
             <a href="../../05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
