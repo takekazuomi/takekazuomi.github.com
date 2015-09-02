@@ -5,7 +5,7 @@
 今週末、9/5の `JAZUG <http://r.jazug.jp/index.html>`_  5周年記念イベント `「ごーごー じゃずゆーじー」 Go(5) JAZUG <https://jazug.doorkeeper.jp/events/29529>`_ で、Azure Service Fabric [#r1]_ をネタに `酒井さん <http://tatsuakisakai.net/>`_ と話をします。
 宣伝とメモを兼ねてちょっと予告編です。興味を持たれた方は是非ご来場下さい ↓click↓
 
-.. image:: http://r.jazug.jp/images/go5jazug.svg
+.. image:: 29529_normal_1438663713_logo.png
    :target: https://jazug.doorkeeper.jp/events/29529
    :alt: gogo jazug
    :align: center
@@ -108,5 +108,5 @@ Hadoop MRv1 では JobTrancker がボトルネックとなって働かない Nod
 
 .. author:: default
 .. categories:: Azure, Servcie Fabric
-.. tags:: none
+.. tags:: JAZUG
 .. comments::
