@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.3.0',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -70,12 +70,87 @@
             <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 22, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a></h1>
+<p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。<a class="reference internal" href="2013/12/11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a>のHotfix です。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">修正: Hive query “%” が含まれた場合のエンコーディングの問題をFIX <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f_c.jpg"/></a>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="id1">
+<h2>インストール</h2>
+<p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_22_webpi001.png" src="_images/2013_12_22_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module <span class="p">|</span> ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    0.0
+Azure                                                       0.7.2
+Microsoft.PowerShell.Management                             3.1.0.0
+Microsoft.PowerShell.Utility                                3.1.0.0
+posh-git                                                    0.0
+PsEnv                                                       0.0
+PSReadline                                                  1.0.0.1
+</pre></div>
+</div>
+<p>今回のリリースでは、ModuleVersion が変更されていません。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/WindowsAzurePowershell/src/Commands.Utilities/Azure.psd1#L15">Azure.psd1#L15</a>要注意です。</p>
+<p>確認のためインストール先のアセンブリを見ます。</p>
+<p>手元の環境では、<cite>C:Program Files (x86)Microsoft SDKsWindows AzurePowerShellAzure</cite>にインストールされています。 Explorer で、<cite>Microsoft.WindowsAzure.Commands.dll</cite>のプロパティを確認したら下記のようになっていました。0.7.2.1になっているようです。</p>
+<img alt="../../../_images/2013_12_22_asm001.png" class="align-center" src="_images/2013_12_22_asm001.png"/>
+</div>
+<div class="section" id="id2">
+<h2>最後に</h2>
+<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。</p>
+<p>この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、<cite>Get-Module | ft name,version</cite>して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
+<p>ちょっと面倒ですね。</p>
+</div>
+<div class="section" id="id3">
+<h2>2013/12/23 追記</h2>
+<p>ModuleVersionが更新されていない件について、GitHubに<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a>を上げました。</p>
+</div>
+<div class="section" id="azure-posh-0721-verfix">
+<span id="id4"/><h2>2014/1/8 追記</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a>に「0.7.3 で直すよ」と返事をもらいました<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189#issuecomment-31790944">This will be fixed in 0.7.3</a>まだ、0.x ですし、バージョン番号を変更するためにリリースするのもどうかと思うので妥当な判断だと思います。</p>
+<p>ちなみに、バージョン番号は、<a class="reference external" href="http://semver.org/">Semantic Versioning</a>に沿って付けられているそうです。nugetでは、<a class="reference external" href="http://docs.nuget.org/docs/reference/versioning">Versioning</a>は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure Powershell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure Powershell</a>, <a href="tags/powershell.html">Powershell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/hotfix.html">Hotfix</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html#disqus_thread" data-disqus-identifier="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 21, 2013</span>
         </div>
-        <h1><a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a></h1>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx">Windows Azure Storage Client Library for C++ Preview がリリースされました</a></p>
 <blockquote>
 <div><div class="line-block">
@@ -108,13 +183,13 @@
 </div>
 <div class="section" id="id6">
 <h3>入手方法</h3>
-<p>ライブラリは、<a class="reference external" href="http://www.nuget.org/packages/wastorage">NuGet</a>から、完全なソースコードは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp">GitHub</a>からダウンロードできます。NuGet packageは、<a class="reference external" href="http://coapp.org">CoApp tools</a>を使って作成され、3つのpackage として構成されています。</p>
+<p>ライブラリは、<a class="reference external" href="http://www.nuget.org/packages/wastorage">NuGet</a>から、完全なソースコードは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp">GitHub</a>からダウンロードできます。NuGet packageは、<a class="reference external" href="http://coapp.org/">CoApp tools</a>を使って作成され、3つのpackage として構成されています。</p>
 <ul class="simple">
 <li>wastorage.0.2.0-preview.nupkg：このパッケージには、アプリケーションの開発に必要なヘッダーとLIBファイルが含まれています。これは、再配布（redist） package に依存します。NuGet は、自動的にredist packageのインストールを行います。</li>
 <li>wastorage.redist.0.2.0-preview.nupkg：このパッケージを実行し、アプリケーションを再配布するために必要なDLLファイルが含まれています。</li>
 <li>wastorage.symbols.0.2.0-preview.nupkg：このパッケージには、それぞれのDLLファイルのシンボルが含まれています。オプションのパッケージです。</li>
 </ul>
-<p>パッケージは、<a class="reference external" href="https://www.nuget.org/packages/cpprestsdk">C++ REST SDK</a>に依存しており、それもNuGetで自動的にインストールされます。<a class="reference external" href="http://casablanca.codeplex.com">C++ REST SDK (codename “Casablanca”)</a>は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。</p>
+<p>パッケージは、<a class="reference external" href="https://www.nuget.org/packages/cpprestsdk/">C++ REST SDK</a>に依存しており、それもNuGetで自動的にインストールされます。<a class="reference external" href="http://casablanca.codeplex.com/">C++ REST SDK (codename “Casablanca”)</a>は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。</p>
 </div>
 <div class="section" id="id7">
 <h3>できること</h3>
@@ -325,13 +400,13 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="id14">
 <h2>まとめ</h2>
 <p>C++用のクライアントは良いですね、やっぱり欲しい。</p>
-<p>その他に、今回<a class="reference external" href="http://coapp.org">CoApp tools</a>が気になりました。native code をnugetでpackege化して配布するプロジェクトです。 Windows にapt-getみたいな位置づけに機能を盛り込むのを狙っているようで、期待できます。<a class="footnote-reference" href="#r4" id="id16">[4]</a>これで、python、ruby、node.js で Windows パッケージのバイナリコードのビルドに引っかかる問題も、このレポジトリを参照することで解決できると良いなあと思いますが、今のところプロジェクトのターゲットに入っていないようで、そこはちょっと残念です。</p>
-<p>もう一つ、<a class="reference external" href="http://casablanca.codeplex.com">http://casablanca.codeplex.com/</a>は、<a class="reference external" href="http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx">MSDN C++ REST SDK (Codename “Casablanca”)</a>に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。<a class="reference external" href="http://www.nuget.org/packages/cpprestsdk">C++ REST SDK 1.4.0</a>今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。</p>
+<p>その他に、今回<a class="reference external" href="http://coapp.org/">CoApp tools</a>が気になりました。native code をnugetでpackege化して配布するプロジェクトです。 Windows にapt-getみたいな位置づけに機能を盛り込むのを狙っているようで、期待できます。<a class="footnote-reference" href="#r4" id="id16">[4]</a>これで、python、ruby、node.js で Windows パッケージのバイナリコードのビルドに引っかかる問題も、このレポジトリを参照することで解決できると良いなあと思いますが、今のところプロジェクトのターゲットに入っていないようで、そこはちょっと残念です。</p>
+<p>もう一つ、<a class="reference external" href="http://casablanca.codeplex.com/">http://casablanca.codeplex.com/</a>は、<a class="reference external" href="http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx">MSDN C++ REST SDK (Codename “Casablanca”)</a>に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。<a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a>今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。</p>
 <p>nugetを見てみたところ、C++ REST SDK も、SDK、 Redist、Symbols の３本立てになってました。でも、SDKが1.4.0なのに他が1.3.1のままですね。</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk">C++ REST SDK 1.4.0</a></li>
-<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.redist">C++ REST SDK Redist 1.3.1</a></li>
-<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.symbols">C++ REST SDK Symbols 1.3.1</a></li>
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a></li>
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.redist/">C++ REST SDK Redist 1.3.1</a></li>
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.symbols/">C++ REST SDK Symbols 1.3.1</a></li>
 </ul>
 <p>パッケージマネージャー関連は、nuget を中心に、整備が進んでいるようで、いろいろ期待できますね。</p>
 <div class="line-block">
@@ -364,6 +439,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -383,7 +459,8 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 20, 2013</span>
         </div>
-        <h1><a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0.html">Windows Azure Storage Client Library for Java v. 0.5.0</a></h1>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">Windows Azure Storage Client Library for Java v. 0.5.0 がリリースされました</a></p>
 <blockquote>
 <div><div class="line-block">
@@ -427,7 +504,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <li>com.microsoft.windowsazure.storage.table - Table convenience implementation、Windows Azure Tableを利用しているアプリケーションは、importしてください。</li>
 </ul>
 <p>さらに詳しい情報は、以下の Change Log &amp; Breaking Changes  のセクションを見て下さい。</p>
-<p>また、Storage Client SDK componentでは、<a class="reference external" href="http://semver.org">Semantic Versioning</a>を採用します。これは、SDKを活用する開発者に一貫した予測可能なバージョン管理指針を提供するのに役立ちます。</p>
+<p>また、Storage Client SDK componentでは、<a class="reference external" href="http://semver.org/">Semantic Versioning</a>を採用します。これは、SDKを活用する開発者に一貫した予測可能なバージョン管理指針を提供するのに役立ちます。</p>
 </div>
 </div>
 <div class="section" id="whats-new">
@@ -486,7 +563,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 	<span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"A"</span><span class="o">))</span> <span class="o">{</span>
 	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">STRING</span><span class="o">;</span>
 	<span class="o">}</span>
-	<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"B"</span><span class="o">))</span> <span class="o">{</span>
+	<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"B"</span><span class="o">))</span> <span class="o">{</span>
 	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">BINARY</span><span class="o">;</span>
 	<span class="o">}</span>
 	<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
@@ -531,7 +608,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 </div>
 <div class="section" id="logging">
 <h3>Logging</h3>
-<p>0.5.0 リリースでは、<a class="reference external" href="http://www.slf4j.org">SLF4J</a>logging facade をサポートしています。</p>
+<p>0.5.0 リリースでは、<a class="reference external" href="http://www.slf4j.org/">SLF4J</a>logging facade をサポートしています。</p>
 <p>詳細省略</p>
 </div>
 </div>
@@ -576,13 +653,13 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="resources">
 <h2>Resources</h2>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Source (github)</a></p>
-<p><a class="reference external" href="http://search.maven.org/windows_azure_storage_client_library_for_java_v_0_5_0.html#search%7Cga%7C1%7Cg%3A%22com.microsoft.windowsazure.storage%22">Maven</a></p>
+<p><a class="reference external" href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.microsoft.windowsazure.storage%22">Maven</a></p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java/blob/master/BreakingChanges.txt">BreakingChanges</a></p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java/blob/master/ChangeLog.txt">ChangeLog</a></p>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></p>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a></p>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx">Windows Azure Storage Redundancy Options and Read Access Geo Redundant Storage</a></p>
-<p><a class="reference external" href="http://semver.org">SemVer Specification</a></p>
+<p><a class="reference external" href="http://semver.org/">SemVer Specification</a></p>
 </div>
 <div class="section" id="id9">
 <h2>最後に</h2>
@@ -597,7 +674,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id6">2</a>, <a class="fn-backref" href="#id8">3</a>)</em> version 2013-08-15 storage<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">英語</a><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">日本語</a><a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric">SATO NAOKI訳</a></td></tr>
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id6">2</a>, <a class="fn-backref" href="#id8">3</a>)</em> version 2013-08-15 storage<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">英語</a><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">日本語</a><a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/">SATO NAOKI訳</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r2" rules="none">
@@ -614,6 +691,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         
         <div class="categories">
@@ -631,14 +709,15 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 17, 2013</span>
         </div>
-        <h1><a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a></h1>
-<p><a class="reference external" href="http://owin.org">OWIN(Open Web Interface for .NET)</a>は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。2010年の終わりのころに<a class="reference external" href="http://bvanderveen.com">Benjamin van der Veen 氏</a>が始め、<a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a>では、Author: OWIN working group となっている。参照:<a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
+        <div class="section">
+            <h1><a href="2013/12/17/owin_azure_cache_session_middleware.html">OWIN - Open Web Interface for .NET を使う</a></h1>
+<p><a class="reference external" href="http://owin.org/">OWIN(Open Web Interface for .NET)</a>は、.NET Framework の WebサーバとWebアプリケーション接続するためのインタフェースであり、新しい HTTP Serverのプログラミング抽象化レイヤーを定義するものだ。2010年の終わりのころに<a class="reference external" href="http://bvanderveen.com/">Benjamin van der Veen 氏</a>が始め、<a class="reference external" href="http://owin.org/spec/owin-1.0.0draft7.html">Draft 7 12 July 2012</a>では、Author: OWIN working group となっている。参照:<a class="reference external" href="http://owin.org/spec/history-1.0.html">http://owin.org/spec/history-1.0.html</a></p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7814536388"><img alt="arch by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7126/7814536388_03ac4c1eba_c.jpg"/></a>
 <p>.NETでは、HTTP Serverのプログラミング抽象化レイヤーは、ASP.NETの初期のことに構築されてその後ほぼ変らずに今まで来た、<a class="reference external" href="http://www.asp.net/aspnet/overview/owin-and-katana/an-overview-of-project-katana">An Overview of Project Katana August 30, 2013 Howard Dierking</a>に、初めのころの話としてASP.NET設計時のターゲットの話が書いあり実に面白い。</p>
 <p>これによると、当時（ASP.NETの初期設計時）の主なターゲットは、「Classic ASPを使っている人」と、「VB6等でWindows で業務アプリを書いている人」にWebプラットフォームプログラミングを提供することで、.NET Frameworkの一部としてリリースされるということもありあまり時間も無い中で作られたらしい。</p>
 <p>その結果出来上がったのが、従来のVB6アプリの習慣に沿ったイベントモデルをベースにしたWeb Formsのアーキテクチャーと論理的に異なる HTTP ObjectとWeb Forms FrameworkがタイトにカップルされたSystem.Web.dll らしい。</p>
 <p>昔を振り返ってみると、1993年の終わりころ<a class="footnote-reference" href="#r1" id="id2">[1]</a><a class="reference external" href="http://en.wikipedia.org/wiki/NCSA_HTTPd">UCSA HTTPd</a>にCGI が現れ、1996年には Windows NT 4.0 Option Pack で ASPが登場、1997年には、Java Servlet が出ている。<a class="reference external" href="http://en.wikipedia.org/wiki/ASP.NET">ASP.NETのリリースは2002年</a>なので、ASPのリリースから6年たってほぼ同じモデルを踏襲した設計になっているということになる。今は更に11年後、ASPから数えると17年経ってる、変わらないのは資産の継承という点では良い面もあるが、その間蓄積された知識が十分生かされているかどうかとかんがえるとちょっと期間が長すぎたような気もする。</p>
-<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている<a class="reference external" href="http://rack.github.io">Rack: a Ruby Webserver Interface Feb 2007</a>が生まれる。こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
+<p>その間Rubyを始めとする他のプラットフォームは新しいデザインを模索しており、OWINの発想のもとになっていると言われている<a class="reference external" href="http://rack.github.io/">Rack: a Ruby Webserver Interface Feb 2007</a>が生まれる。こちらは（Ruby)は、.NET と事情が違って、標準的なWebサーバとWebアプリケーション接続するためのインタフェースが存在しない中数多くのWeb サーバー、フレームワークが存在する問題への解法としてRackが生まれている。</p>
 <p>.NETでは最初に標準的なWeb Server（IIS）と、Framework（System.Web.dll）ありきで始まったため混乱は無かったが自由な発展が阻害され、一方Ruby/Pythonなど標準的なものが無い中では混沌のなかから優れた標準（Rack/WSGI)が生まれたというのは実に面白い。</p>
 <div class="section" id="owin">
 <h2>OWINの基本</h2>
@@ -655,10 +734,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<p class="seqdiag">
-<a href="_images/seqdiag-8e39e78bf75324a787de834862440035baf46c04.png"><img src="_images/seqdiag_thumb-8e39e78bf75324a787de834862440035baf46c04.png" alt="None" width="600" height="372.115384615"/>
-</a></p>
-</div>
+<div><a class="reference internal image-reference" href="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png"><img height="372.115384615" src="_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
@@ -972,7 +1048,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <div class="section" id="id7">
 <h2>まとめ</h2>
-<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。<a class="reference external" href="http://katanaproject.codeplex.com">katanaproject.codeplex.com</a>を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
+<p>OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。<a class="reference external" href="http://katanaproject.codeplex.com/">katanaproject.codeplex.com</a>を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。</p>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
@@ -996,6 +1072,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -1015,7 +1092,8 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 11, 2013</span>
         </div>
-        <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
 <p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
 <div class="section" id="id2">
 <h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
@@ -1032,6 +1110,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         
         <div class="categories">
@@ -1046,113 +1125,6 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/11/windows_azure_storage_client_3_0_1.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_storage_client_3_0_1">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 11, 2013</span>
-        </div>
-        <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure Powershell 0.7.2 リリース</a></h1>
-<p>Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
-<div class="section" id="id1">
-<h2>インストール</h2>
-<p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
-<img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
-<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
-
-Name                                                        Version
-----                                                        -------
-Autoload                                                    0.0
-Azure                                                       0.7.2
-Microsoft.PowerShell.Management                             3.1.0.0
-Microsoft.PowerShell.Utility                                3.1.0.0
-posh-git                                                    0.0
-PsEnv                                                       0.0
-PSReadline                                                  1.0.0.1
-</pre></div>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>変更点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
-<ul class="simple">
-<li>HDInsight cmdlets<ul>
-<li>Add-AzureHDInsightConfigValues</li>
-<li>Add-AzureHDInsightMetastore</li>
-<li>Add-AzureHDInsightStorage</li>
-<li>Get-AzureHDInsightCluster</li>
-<li>Get-AzureHDInsightJob</li>
-<li>Get-AzureHDInsightJobOutput</li>
-<li>Get-AzureHDInsightProperties</li>
-<li>New-AzureHDInsightCluster</li>
-<li>New-AzureHDInsightClusterConfig</li>
-<li>New-AzureHDInsightHiveJobDefinition</li>
-<li>New-AzureHDInsightMapReduceJobDefinition</li>
-<li>New-AzureHDInsightPigJobDefinition</li>
-<li>New-AzureHDInsightSqoopJobDefinition</li>
-<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
-<li>Remove-AzureHDInsightCluster</li>
-<li>Revoke-AzureHDInsightHttpServicesAccess</li>
-<li>Set-AzureHDInsightDefaultStorage</li>
-<li>Start-AzureHDInsightJob</li>
-<li>Stop-AzureHDInsightJob</li>
-<li>Use-AzureHDInsightCluster</li>
-<li>Wait-AzureHDInsightJob</li>
-<li>Grant-AzureHDInsightHttpServicesAccess</li>
-<li>Invoke-AzureHDInsightHiveJob</li>
-</ul>
-</li>
-<li>Web Site の WebSocket と managed pipe mode の設定<ul>
-<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
-</ul>
-</li>
-<li>Web Site の remote debugging 設定<ul>
-<li>Enable-AzureWebsiteDebug -Version</li>
-<li>Disable-AzureWebsiteDebug</li>
-</ul>
-</li>
-<li>VM を削除した時の VHD cleaning up オプション<ul>
-<li>Remove-AzureVM -DeleteVHD</li>
-<li>Remove-AzureService -DeleteAll</li>
-<li>Remove-AzureDeployment -DeleteVHD</li>
-</ul>
-</li>
-<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
-<li>Get-AzureDeployment</li>
-<li>Get-AzureReservedIP</li>
-<li>New-AzureReservedIP</li>
-<li>New-AzureVM</li>
-<li>Remove-AzureReservedIP</li>
-</ul>
-</li>
-<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
-<li>Start-AzureEmulator</li>
-<li>Publish-AzureServiceProject</li>
-<li>Save-AzureServiceProjectPackage</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="id3">
-<h2>最後に</h2>
-<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
-</div>
-
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure Powershell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure Powershell</a>, <a href="tags/powershell.html">Powershell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/release.html">Release</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -1161,6 +1133,8 @@ PSReadline                                                  1.0.0.1
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a>
+        </li><li>
             <a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
         </li><li>
             <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
@@ -1178,19 +1152,17 @@ PSReadline                                                  1.0.0.1
             <a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a>
-        </li><li>
-            <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (13)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1>Search</h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (4), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="webfont">L</span></button>
+        <button type="submit"><span class="fa fa-search"></span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 

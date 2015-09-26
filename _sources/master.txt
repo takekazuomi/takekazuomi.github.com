@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2015/09/25/intro_azure_storage_data_movement_library
    2015/09/01/go_5_jazug_service_fabric_session
    2015/08/23/how_to_use_nlog_in_cloud_service
    2015/05/05/update_tinker_1_5_sphinx_1_3

@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="_static/main.css" type="text/css">
             <link rel="stylesheet" href="_static/flat.css" type="text/css">
             <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-            <link rel="stylesheet" href="_static/webfont.css" type="text/css">
+            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
         <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -31,7 +31,7 @@
         <link rel="next" title="Older" href="page4.html" /><link rel="prev" title="Newer" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.3.0',
+        VERSION:     '1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -70,13 +70,183 @@
             <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
-        <a href="rss.html" title="Subscribe via RSS"><span class="webfont">B</span></a>
+        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
-    </nav><div class="main-container" role="main"><div class="main wrapper clearfix"><article><div class="timestamp postmeta">
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>June 08, 2014</span>
+        </div>
+        <div class="section">
+            <h1><a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a></h1>
+<p>snowflake は、Twitter 社が作成した、ユニークなID生成のネットワークサービスです。いくつかの簡単な保証で高いスケーラビリティを実現しています。Twitter 社が、MySQLから Cassandra に移行するにあたって、Cassandra にシーケンシャルな id 生成の仕組みが無かったことから作成したそうです。 snowflake については<a class="reference external" href="https://dev.twitter.com/docs/twitter-ids-json-and-snowflake">Twitter IDs, JSON and Snowflake</a>に書いてあります。</p>
+<p>snowflake のコードは、Apache License, Version 2.0 で<a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a>に公開されています。</p>
+<div class="section" id="id2">
+<h2>スケーラブルな採番、背景的な話</h2>
+<p>Cloudでスケーラビリティのあるサービスを見据えてコードを書いていると採番に関する問題が必ず出てきます。従来、RDBの自動採番などに頼っていたのがコスト、スケーラビリティ、耐障害性の観点から問題となり、別の方法を考える必要が出てくるというのが一般的です。</p>
+<p>「ID＝連番」という話なら始まると話が混乱するので、基本に返って採番の要件を整理するところから初めましょう。ざっと考えたところ4つほどの条件が出てきたので、この線で話を進めます。</p>
+<ol class="arabic simple">
+<li>ユニークである：重複が無い。これはIDをキーにしたいので当然ですね</li>
+<li>時系列で増えていく（または減っていく）：IDが生成される度に増加していくのは連番での重要な性質の一つです</li>
+<li>秒間の発行数：採番を一箇所で行わずに分散してスケールするのがスケールする</li>
+<li>連続性（連続した欠落の無い番号の生成）</li>
+</ol>
+<p>最後の連続性に関しては、スケーラビリティとパフォーマンスを両立させての実現は難しいでしょう。スケールと対象外性を考えて分散環境でID生成の度にどうしてもNode間でメッセージのやりとりをせざるを得ず、パフォーマンスを犠牲にせざる得ないので、今回は外して考えます。オンプレでも限定された条件下でのみ可能な採番ですね。</p>
+<p>これとは別に何処で採番するかという観点もあります。これは２つのパターンがあります。</p>
+<ol class="arabic simple">
+<li>Cluster Service  で採番</li>
+<li>クライアントで採番</li>
+</ol>
+<p>Cluster Service で採番するパターンとしては、memcached/Redis などの カウンター (incr command) を使ったり、storage を使った分散counterを使ったパターンが知られています。Snowfrakeもこの１種です。クライアントでの採番は、通信を伴わないので一番速い（コストが小さい）ですが制約もあります。</p>
+</div>
+<div class="section" id="id3">
+<h2>採番のユニーク性</h2>
+<p>採番と考えると最低限の要求は 「一意であること UNIQUENESS」でしょう。これには、発番した時にユニーク性を担保するか、永続化したときにユニーク性を担保するかの２つの選択肢があります。採番した時に一意性を担保するパターンとしては、<a class="reference external" href="http://ja.wikipedia.org/wiki/GUID">GUID</a>を使う方法よく知られています。ここでは、Guidを使う方法については深くふれません、<a class="reference external" href="http://blogs.msdn.com/b/oldnewthing/archive/2008/06/27/8659071.aspx">GUIDs are globally unique, but substrings of GUIDs aren’t</a>で面白い話が書いてあるんのでぜひ読んでみてください。（中には Snowflakeへのヒントになることも記述されています）</p>
+<p>GUIDは非常に手軽で便利ですが、128bit(longlong)でかなり長い。時系列で並ばないなどの問題があります。</p>
+</div>
+<div class="section" id="id4">
+<h2>永続化レイヤーでの一意性の担保</h2>
+<p>一方永続化したときにユニーク性を担保するという考えもあります。一意なIDを振出すのはコストが高いので、擬似的な（一意性を十分期待できる）IDを振り出して永続化して可否を判断して、ダメならもう一度やってみるというのが「永続化レイヤーでの一意性の担保」の基本的な考え方です。</p>
+<p>これは、永続化レイヤーが用意した限定された条件の下でユニーク制約を実装を利用することでユニーク性を担保するというアーキテクチャです。この場合は、「永続化レイヤーの制約」、「重複時の再試行」の２点を考慮しなければいけません。</p>
+<p>例えば、Azure Tableでは、同一パーテーション内のRow Keyは一意であることが保証されています。他のパーテーションでは同一のRowkeyを持つことができますが、同一パーテーション内同じRawkeyは Insert できません。</p>
+<p>この場合、Partition Key + Row Key でユニークになるので、ランダムなキーを生成して、TableにInsertできればそのパーテーション内ではユニークだと保証されるわけです。RDBのUniq制約でも同様です。Shareding されたデータベースでは、Inserできれば Shard内でユニークだという事になります。いずれも、Partition 内、 Shard 内という条件が付いていることに気を付けてください。永続化レイヤーによって異なった制約となりますが、分散システムではなんからの制約を伴うことが一般的です。</p>
+</div>
+<div class="section" id="id5">
+<h2>重複時の再試行</h2>
+<p>永続化レイヤーでUNIQ性を保証をする場合、「重複時の再試行」を前提としてください。クライアントがデータを永続化するまで、IDが有効かどうかわからないので、永続化した時に重複だった場合は再度IDを生成し直して処理を再試行する必要があります。</p>
+</div>
+<div class="section" id="id6">
+<h2>時系列で増減</h2>
+<p>IDがランダムではなく、時間と共に増加あるいは減少して欲しいことがあります。このようにIDが並んでいると、永続化レイヤーがレンジクエリーをサポートしていれば、前方一致で効率的に目的のデータを取得することができます。しかし時系列で増加するIDを発番しようとしてNodeのクロックを使うと信頼性が問題になります。</p>
+<p>通常、複数Nodeで発番した場合は同一時刻で複数のコードが動くのでIDが重複します。それ以外にもNode内でも問題があります。Nodeのクロックは、外部のtime service に同期させているので、ローカルの時刻は随時進んだり戻ったりします。そのため、時刻だけを元に単純に採番するとIDが重複します。これらの時刻の不安定性に起因する問題を Clock Skew （クロックスキュー）問題と言います。</p>
+<p>分散システムの問題の多くは、時刻の同期問題でもあり根が深いので、ここはスルーで先に行きます。</p>
+<p>これらの問題を回避するために、IDの一部にランダムな要素を付与する方法が一般的に使われています。</p>
+<p>例えば、下記のような感じ</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+  <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"{0:D19}_{1:D4}"</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">Ticks</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">Next</span><span class="p">(</span><span class="m">10000</span><span class="p">));</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>ここで発番しているのは擬似的なUNIQ性を持ったIDでです。最終的なUNIQ性の保証は別のレイヤーに預ける前提です。ランダム桁数は、衝突の頻度と衝突時の再試行のコストを鑑みて決定します。この例だと、4桁取っていますが、昨今のCPUだとシングルCoreで同一Tick内で2-3程度は発番できるようなので、100coreぐらいあれば、2*100/10000 = 1/50 となって、結構な頻度で衝突します。（この数字は結構いい加減なので参考程度で）</p>
+<p>順番を逆にしたい場合は、下記のようにします。</p>
+<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+  <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"{0:D19}_{1:D3}"</span><span class="p">,</span> <span class="kt">long</span><span class="p">.</span><span class="n">MaxValue</span> <span class="p">-</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">Ticks</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">Next</span><span class="p">(</span><span class="m">1000</span><span class="p">));</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>こうすると、最新のものが最初にきます。先頭から指定行を取得するようなクエリーをサポートしている永続化レイヤーで最新の情報を取得する場合にはこの並びが便利に使えます。</p>
+</div>
+<div class="section" id="id7">
+<h2>秒間の発行数</h2>
+<p>秒間どれぐらいの数のIDを生成可能なのかも重要なファクターです。一般的にオンメモリで計算のみで発番するものが一番速く、永続化付きKVS、RDBMSの順の速度になります。</p>
+<p>ID生成はクラスターで行って、分散することでスケールするというのは基本的な考え方で、その場合ID生成クラスターのNodeコストが問題となります。一般的にメモリーで計算のみで発番するものはIDのユニーク性と耐障害性の両立が難しく、なんからの永続化をすることで問題を回避するという方法が取られる場合が多いようです。RDBはID生成を目的としてクラスター化するにはコスト高いのが問題となると思います。</p>
+<p>クライアントで擬似的なUNIQ IDを生成して、永続化時に担保させるという方法はリーズナブルにスケールする方法だと言えます。</p>
+</div>
+<div class="section" id="id8">
+<h2>Snowflake</h2>
+<p>Clock Skew に上手く対応することで、オンメモリの計算と最低限のノード間通信でUNIQなIDを生成する仕組みです。永続化レイヤーの支援無しにUNIQなIDが生成できる、オンメモリなので速い（10k ids per second per process<a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a>）というのが特徴です。</p>
+<p>ある意味GUIDと似ているのですが、64bit(long) で実現しているところ、おおよそ時系列で増えていく「(Roughly) Time Ordered」なことが異なっています。</p>
+</div>
+<div class="section" id="id10">
+<h2>データ構造</h2>
+<p>snowfake では、64bitを下記のように分割して使います。timeが時間由来の数字でミリ秒単位です。machine id は、datacenter id と、worker idで構成されていて、Cluster内のNode固有の値になります。sequence number は、同一時間（timeが同じ）間にカウントアップされていく連番です。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="1%"/>
+<col width="16%"/>
+<col width="29%"/>
+<col width="23%"/>
+<col width="30%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="5">64 bits</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="2">0</td>
+<td rowspan="2"><dl class="first last docutils">
+<dt>time</dt>
+<dd>41 bit</dd>
+</dl>
+</td>
+<td colspan="2">machine id 10bit</td>
+<td rowspan="2"><dl class="first last docutils">
+<dt>sequence number</dt>
+<dd>12bit</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>datacenter id 5bit</td>
+<td>worker id 5bit</td>
+</tr>
+</tbody>
+</table>
+<p>前記の時間ベースのID生成と比較すると、IDにNode固有の番号（machine id）が含まれている、同一時間内の採番では乱数ではなくカウンターを使って重複を避けていることが異なっているのがわかります。</p>
+<p>実は、この構成は GUID V1と似ています。GUID V1 は、 timestamp 60 bits、computer identifier (MAC Address) 48 bits、uniquifier (乱数＋シーケンス）14 bits、fixed （）バージョン等） 6 bits から構成されています。全体的にGUIDの方がBitの使い方がリッチで余裕がある構成です。データは、DWORD-WORD-WORD-WORD-BYTE[8] として扱われます。Endian の問題もあってtimestamp由来なのに時系列で並びません。timestampは、100 ns 単位です。</p>
+<p>snowflake は、GUIDを64 bits (正確には最上位が0固定のなので63 bits）に押し込んでUNIQ性を確保しています。</p>
+<p>ではどうやって64bitに押し込んでいるのでしょう。</p>
+<ol class="arabic simple">
+<li>範囲の制限: 簡単に言うと、GUIDは グローバルにUNIQだけど、snowflakeは発番体系内でUNIQです。別のサービスで使っている snowflake clusterと比較するとUNIQ性は保証されません。ここは大きな違いですが、別サービスとIDが被るのは問題無いので、実用上は制限にはなりません。これで、MAC Address 48 bits の所を10 bits に押し込めています。</li>
+<li>timestampの精度と範囲: GUIDは、100 ns 、snowflakeは、1 ms です。timestamp の精度を下げ、開始時間（0の時の日時、何時からの時間なのか）をサービス開始時などに合わせることで、timerのラップアラウンドの問題を軽減しています。(2^41)*(10^-3)/60/60/24/365 で約69年持ちます。ちなみにGUIDは、(2^60)*(10^-7)/60/60/24/365 で3655年以上持ちます。開始は、1582/10/15 0:00 です（3千年以上もつの開始はあまり重要じゃないですね）69年保てば問題無い気がしますね。これで、41 bitsにしています</li>
+</ol>
+</div>
+<div class="section" id="id11">
+<h2>ソースコード上での工夫</h2>
+<p>なかなか興味深かったので、<a class="reference external" href="https://github.com/twitter/snowflake/blob/master/src/main/scala/com/twitter/service/snowflake/IdWorker.scala">IdWorker.scala</a>をC#で写経してみました。（scala が非常に分かりやすくて感動しました）</p>
+<script src="https://gist.github.com/takekazuomi/9571376.js">&amp;amp;nbsp;</script><p>基本的な流れは、非常にシンブルです。</p>
+<p>NextId()をざっと見てみましょう。</p>
+<ol class="arabic simple">
+<li>現在のtimestamp を取得<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L60">L60</a></li>
+<li>最後に発番してからtimestampが戻っていないか確認<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L63">L63</a></li>
+<li>巻き戻っていればエラーで帰る（呼び出し側が再試行する）<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L66">L66</a></li>
+<li>同一timestampなら、_sequence をインクリメントして採番<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L72">L72</a></li>
+<li>timestamp が進んでいれば、_sequence = 0で採番<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L82">L82</a></li>
+</ol>
+<p>この他は、下記のコードがポイントです。</p>
+<p>timestampの開始時間を、採番開始時間にオフセットさせる<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L87">L87</a></p>
+<p>同一 timestamp 内で、_sequence がオーバーフローした場合は、timestampが変わるまで待つ<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L75">L75</a></p>
+<p>この他に、Worker Idの管理には、zookeeper を使っているなど興味深いところはありますが、今回はこの辺でまとめます。</p>
+</div>
+<div class="section" id="id12">
+<h2>最後に</h2>
+<p>実は、この記事を書いている途中に、<a class="reference external" href="http://global.windowsazurebootcamp.com/">Global Microsoft Azure Bootcamp 2014</a>があり、このネタで発表してしまったので長らくお蔵入りしていました。読み直してみたら、セッションでは時間の都合で話をしなかった内容もあり、それなりに役に立つかなと思ったので公開します。肝心のsnowflake の採番が速い理由が書いてありませんが、採番node間の通信が最低限で（生きているかどうか）、重複採番の防止にしか使われていないのが、一番効いている気がします。</p>
+<p>合わせて、セッション資料も御覧ください。</p>
+<iframe src="http://www.slideshare.net/slideshow/embed_code/32853065" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140329-jazug-gwabgeenerating-unique-id-numbers-in-cloud">Generating unique id numbers in Azure</a></p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/code.html">Code</a>, <a href="tags/snowflake.html">snowflake</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2014/06/08/snowflake_c.html#disqus_thread" data-disqus-identifier="2014/06/08/snowflake_c">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>March 02, 2014</span>
         </div>
-        <h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
-<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender">Windows Azure – 技術者でつなぐ日めくりカレンダー</a>の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a>のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
+        <div class="section">
+            <h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
+<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender/">Windows Azure – 技術者でつなぐ日めくりカレンダー</a>の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a>のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
 <p>まずはLTの内容の復習から、簡単にまとめると下記のような内容です。</p>
 <div class="section" id="id1">
 <h2>振り返り</h2>
@@ -111,7 +281,7 @@
 </div>
 <div class="section" id="id2">
 <h2>確認する</h2>
-<p>RA-GRSで障害が起きた時の<span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span>の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで<a class="reference external" href="http://clr-h.jp">CLR/H in Tokyo 第1回</a>で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
+<p>RA-GRSで障害が起きた時の<span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span>の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで<a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
 <a class="reference external image-reference" href="http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163"><img alt="実践 Fiddler Eric Lawrence　著、日本マイクロソフト株式会社 エバンジェリスト 物江 修 監訳、長尾 高弘 訳" class="align-center" src="http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg" style="width: 300px;"/></a>
 <p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。本にはいろいろ詳しく書いてあるので、興味が出た方は是非！</p>
 </div>
@@ -203,10 +373,11 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
 <div class="section" id="id4">
 <h2>まとめ</h2>
 <p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
-<p><a class="reference external" href="http://clr-h.jp">CLR/H in Tokyo 第1回</a>はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
+<p><a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
 <p>最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -226,7 +397,8 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 29, 2014</span>
         </div>
-        <h1><a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a></h1>
+        <div class="section">
+            <h1><a href="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html">Windows Azure Storage Emulator 2.2.1 Preview</a></h1>
 <p>Azure Storage 愛好者待望の、Azure Storage Emulator の 2013-08-15 version サポートがリリースされました。（まだ、preview ですが）</p>
 <p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2014/01/27/windows-azure-storage-emulator-2-2-1-preview-release-with-support-for-2013-08-15-version.aspx">Windows Azure Storage Emulator 2.2.1 Preview Release with support for “2013-08-15” version</a></p>
 <blockquote>
@@ -379,6 +551,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <p>preview ですが、Storage Emulatorが 2013-08-15 versionをサポートし、軽くですがJSONでのアクセスが動くことを確認できました。12月の<a class="reference internal" href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html"><em>Windows Azure Storage Client Library for C++ Preview</em></a>では、2013-08-15 version 対応のStorage　Emulator が、来月には出せそうということだったので、ほぼ予定通りですね。どうしても手元で確認したい場合は、Storage Emulator 2.2.1 previewを使って、そうでない場合は本番を利用して開発ということになりそうです。</p>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -398,7 +571,8 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 06, 2014</span>
         </div>
-        <h1><a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a></h1>
+        <div class="section">
+            <h1><a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a></h1>
 <p>2014/1/4<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2">Windows Azure Storage 3.0.2</a>がリリースされました。2013/11/27 3.0のリリース 「<a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><em>Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</em></a>」、2013/12/11 の 3.0.1 hotfix 「<a class="reference internal" href="2013/12/11/windows_azure_storage_client_3_0_1.html"><em>Windows Azure Storage Client 3.0.1</em></a>」 に続く３回めのリリースです。</p>
 <a class="reference external image-reference" href="http://flic.kr/p/iSAtsB"><img alt="zenko-ji by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg"/></a>
 <div class="line-block">
@@ -449,6 +623,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         
         <div class="categories">
@@ -466,7 +641,8 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 27, 2013</span>
         </div>
-        <h1><a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a></h1>
+        <div class="section">
+            <h1><a href="2013/12/27/azure_storage_known_issues_november_2013_resolved.html">[Resolved] Windows Azure Storage Known Issues 2013/11</a></h1>
 <p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a>の既知の問題が解決されたとアナウンスがありました。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013) [Resolved]</a>どんな感じになったのかを確認しました。</p>
 <div class="section" id="id1">
 <h2>引用</h2>
@@ -487,13 +663,13 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <h2>問題点の確認</h2>
 <p>問題点は下記の3つが有りました。「3」は、既に、<a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><em>Storage Client 2.1.0.4 以降での Cast問題の修正</em></a>で、Client Library 2.1.0.4、3.xで修正確認ができているので、ここでは1と2を確認します。</p>
 <ol class="arabic simple">
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の// 問題</em></a></li>
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a></li>
-<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><em>Table Query での Cast 問題</em></a></li>
+<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span>SASとコンテナの前の// 問題</span></a></li>
+<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span>TableのDataServiceContext.ResolveName 指定 問題</span></a></li>
+<li><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span>Table Query での Cast 問題</span></a></li>
 </ol>
 </div>
 <div class="section" id="sas">
-<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の “//” 問題</em></a></h2>
+<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span>SASとコンテナの前の “//” 問題</span></a></h2>
 <p>下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が<span class="docutils literal"><span class="pre">"//"</span></span>になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、<span class="docutils literal"><span class="pre">"//"</span></span>と書いたら<span class="docutils literal"><span class="pre">"/"</span></span>と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
 <span class="p">{</span>
@@ -540,7 +716,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <p>コンテナの前に、<span class="docutils literal"><span class="pre">"/"</span></span>を追加して確認、成功！</p>
 <blockquote>
 <div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture">http://test.blob.core.windows.net//images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture</a>]</div>
+<div class="line"><a class="reference external" href="http://test.blob.core.windows.net//images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture">http://test.blob.core.windows.net//images/photo.jpg?sv=2012-02-12&amp;se=2014-11-30T15%3A00%3A00Z&amp;sr=b&amp;sp=r&amp;sig=[signiture</a>]</div>
 </div>
 </div></blockquote>
 <p><span class="docutils literal"><span class="pre">sv=2012-02-12</span></span>になっていて、versionがわかります。</p>
@@ -569,7 +745,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <p>コンテナの前に、<span class="docutils literal"><span class="pre">"/"</span></span>を追加。これは失敗します。</p>
 <blockquote>
 <div><div class="line-block">
-<div class="line"><a class="reference external" href="http://test.blob.core.windows.net/images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r">http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r</a></div>
+<div class="line"><a class="reference external" href="http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r">http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&amp;sr=b&amp;sig=[signiture]&amp;se=2014-11-30T15%3A00%3A00Z&amp;sp=r</a></div>
 </div>
 </div></blockquote>
 <p>レスポンスを見ると下記のようになっていました。（XMLは整形してあります）</p>
@@ -597,7 +773,7 @@ Date: Fri, 27 Dec 2013 12:34:46 GMT
 </div>
 </div>
 <div class="section" id="tabledataservicecontext-resolvename">
-<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a></h2>
+<h2><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span>TableのDataServiceContext.ResolveName 指定 問題</span></a></h2>
 <p>同様に、下記のようなコードを使って、2.1.0.4と、3.0.1で確認しました。 2.1.0.4 では、動作しましたが 3.0.1 では動きませんでした。結果はSASと似ているのですが、service側では処理が成功しているのでちょっと違った感じを受けます。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
 <span class="p">{</span>
@@ -746,7 +922,7 @@ B2
 </div>
 <div class="section" id="id11">
 <h2>まとめ</h2>
-<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a>で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。ただし、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><em>SASとコンテナの前の “//” 問題</em></a>は、2013-08-15 version では仕様となり、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><em>TableのDataServiceContext.ResolveName 指定 問題</em></a>も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。</p>
+<p><a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html"><em>Windows Azure Storage Known Issues 2013/11</em></a>で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。ただし、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span>SASとコンテナの前の “//” 問題</span></a>は、2013-08-15 version では仕様となり、<a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span>TableのDataServiceContext.ResolveName 指定 問題</span></a>も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。</p>
 <p>2.1系のライブラリを使う場合は上記3点の問題がFIXされた 2.1.0.4 がお勧めです。3.x系は、幾つかのBraking Changeが含まれるので既存のコードは移行が必要ですが、2013-08-15 versionのパフォーマンス向上策がちゃんと活用できるのが大きな利点だと言えます。</p>
 <div class="line-block">
 <div class="line"><br/></div>
@@ -761,7 +937,7 @@ B2
 <table class="docutils footnote" frame="void" id="r2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>gitbugの<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">WindowsAzure/azure-sdk-for-net</a>レポジトリのmasterには、Storage Clientのコードは既にありません。2.1.0.4を確認するには、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4/microsoft-azure-api/Services/Storage">tag:v2.1.0.4 Storage</a>を見て下さい。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>gitbugの<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/">WindowsAzure/azure-sdk-for-net</a>レポジトリのmasterには、Storage Clientのコードは既にありません。2.1.0.4を確認するには、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4/microsoft-azure-api/Services/Storage">tag:v2.1.0.4 Storage</a>を見て下さい。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r3" rules="none">
@@ -772,6 +948,7 @@ B2
 </table>
 </div>
 
+        </div>
         <div class="postmeta">
         <div class="author">
             <span>Posted by Takekazu Omi</span>
@@ -788,78 +965,6 @@ B2
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/27/azure_storage_known_issues_november_2013_resolved.html#disqus_thread" data-disqus-identifier="2013/12/27/azure_storage_known_issues_november_2013_resolved">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 22, 2013</span>
-        </div>
-        <h1><a href="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html">Windows Azure Powershell 0.7.2.1 リリース</a></h1>
-<p>Windows Azure Powershello 0.7.2.1 Hotfix がリリースされました。<a class="reference internal" href="2013/12/11/windows_azure_powershel_0_7_2_release.html"><em>Windows Azure Powershell 0.7.2 リリース</em></a>のHotfix です。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">修正: Hive query “%” が含まれた場合のエンコーディングの問題をFIX <a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
-</div>
-</div></blockquote>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11233678353"><img alt="beans persimmon by Takekazu Omi, on Flickr" class="align-center" src="http://farm8.staticflickr.com/7405/11233678353_a8e7a8b12f_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>インストール</h2>
-<p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
-<img alt="../../../_images/2013_12_22_webpi001.png" src="_images/2013_12_22_webpi001.png"/>
-<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module | ft name,version
-
-Name                                                        Version
-----                                                        -------
-Autoload                                                    0.0
-Azure                                                       0.7.2
-Microsoft.PowerShell.Management                             3.1.0.0
-Microsoft.PowerShell.Utility                                3.1.0.0
-posh-git                                                    0.0
-PsEnv                                                       0.0
-PSReadline                                                  1.0.0.1
-</pre></div>
-</div>
-<p>今回のリリースでは、ModuleVersion が変更されていません。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/blob/master/WindowsAzurePowershell/src/Commands.Utilities/Azure.psd1#L15">Azure.psd1#L15</a>要注意です。</p>
-<p>確認のためインストール先のアセンブリを見ます。</p>
-<p>手元の環境では、<cite>C:Program Files (x86)Microsoft SDKsWindows AzurePowerShellAzure</cite>にインストールされています。 Explorer で、<cite>Microsoft.WindowsAzure.Commands.dll</cite>のプロパティを確認したら下記のようになっていました。0.7.2.1になっているようです。</p>
-<img alt="../../../_images/2013_12_22_asm001.png" class="align-center" src="_images/2013_12_22_asm001.png"/>
-</div>
-<div class="section" id="id2">
-<h2>最後に</h2>
-<p>更新だけする場合は、Web Platform Installer を起動して新しいものが出ているかどうかを確認するのが一番簡単です。</p>
-<p>この方法だと、現在入っているバージョンは分からないので、現在入っているバージョンを知りたければ、<cite>Get-Module | ft name,version</cite>して、0.7.2 だったら、アセンプリのバージョンを見て0.7.2.1かどうかの確認をするということになります。</p>
-<p>ちょっと面倒ですね。</p>
-</div>
-<div class="section" id="id3">
-<h2>2013/12/23 追記</h2>
-<p>ModuleVersionが更新されていない件について、GitHubに<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a>を上げました。</p>
-</div>
-<div class="section" id="azure-posh-0721-verfix">
-<span id="id4"/><h2>2014/1/8 追記</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189">Issue</a>に「0.7.3 で直すよ」と返事をもらいました<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/issues/2189#issuecomment-31790944">This will be fixed in 0.7.3</a>まだ、0.x ですし、バージョン番号を変更するためにリリースするのもどうかと思うので妥当な判断だと思います。</p>
-<p>ちなみに、バージョン番号は、<a class="reference external" href="http://semver.org">Semantic Versioning</a>に沿って付けられているそうです。nugetでは、<a class="reference external" href="http://docs.nuget.org/docs/reference/versioning">Versioning</a>は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。</p>
-</div>
-
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure Powershell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure Powershell</a>, <a href="tags/powershell.html">Powershell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/hotfix.html">Hotfix</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/22/azure_posh_2012_12_19_version_0_7_2_1.html#disqus_thread" data-disqus-identifier="2013/12/22/azure_posh_2012_12_19_version_0_7_2_1">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -868,6 +973,8 @@ PSReadline                                                  1.0.0.1
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a>
+        </li><li>
             <a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
         </li><li>
             <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
@@ -885,19 +992,17 @@ PSReadline                                                  1.0.0.1
             <a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a>
-        </li><li>
-            <a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (12)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (13)</li><li><a href="categories/azure_table.html">Azure Table</a> (8)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (3), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
-    <h1>Search</h1>
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (13), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (4), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />
-        <button type="submit"><span class="webfont">L</span></button>
+        <button type="submit"><span class="fa fa-search"></span></button>
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
