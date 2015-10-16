@@ -137,17 +137,17 @@
 <div class="section" id="id12">
 <h2>資料</h2>
 <p>LTで用意した資料です。</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize">Azure Storage Data Movement Library Page Blob Ptimize</a></p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize">Azure Storage Data Movement Library Page Blob Optimize</a></p>
 </div>
 <div class="section" id="id13">
 <h2>最後に</h2>
-<p>最後に、<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>を聞きながら、思ったことを少し書きます。</p>
+<p>最後に、「<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>」を聞きながら、思ったことを少し書きます。</p>
 <p>プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。</p>
 <p>make -&gt; ant -&gt; nant -&gt; msbuild -&gt; maven ... と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。</p>
 <p>package manager は、dnxで改善されるはずなので、それに期待したいところ。install.ps1 とか必要になるとソウルジェムが濁ります。</p>
 <p>「MEF の、Core CLR 対応ってどうなっているの？」という話が出たので、帰ってきてちょっと見たら、ASP.NET 5 と Entity Framework 7 では、<a class="reference external" href="https://github.com/aspnet/DependencyInjection">Microsoft.Framework.DependencyInjection</a>ってやつが使われていました。聞いたことがあったような気もするけど、使ったこと無かったので少し試してみたら、どうも、container builder、setter injection などが無いようで、えらくシンプルな実装。でもまあ、これはこれで良いのかなという感じでした。</p>
-<p>「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、そのシンプルな基準は「linq がすべてを台無しにしてしまったなぁ」という感じです。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状です。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があるます。</p>
-<p>これは Linq だけの罪かと言うと、そういうわけでは無く、「生産性の高いライブラリを使う場合に起こる一般的な課題」だと言えます。抽象化度の高いものは人間に理解し易く生産性の向上に貢献するが、実際のノイマン型コンピューターの仕組みと乖離が大きくなり、実行ステップとコードの乖離も大きくなります。簡単に言うと、「こう書いたからこう動く」という世界から離れていくことになる。 じゃあ、乖離してはダメなのかという、そうでもない。全てはバランスによって決まる。ズルズルと、長くなったので、これぐらいで。</p>
+<p>「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、その台詞を聞いた瞬間「linq がすべてを台無しにしてしまったなぁ」と思いました。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状でしょう。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があります。</p>
+<p>これは Linq だけの罪かと言うと、そういうわけでは無く、「生産性の高いライブラリを使う場合に起こる一般的な課題」です。抽象化度の高いものは人間に理解し易く生産性の向上に貢献しますが、実際のノイマン型コンピューターの仕組みと乖離が大きくなり、実行ステップとコードの乖離も大きくなります。簡単に言うと、「こう書いたからこう動く」という世界から離れていくことになる。 じゃあ、乖離してはダメなのかという、そうでもない。全てはバランスによって決まる。ズルズルと、長くなったので、これぐらいで。</p>
 <p>プログラムを読むことに関しては、このOSS全盛時代に読むコードに困ることは無いと思うので、ぜひガンガン読んで欲しい。</p>
 <p>などなど、いろいろ思うことがあって面白かった。</p>
 </div>
