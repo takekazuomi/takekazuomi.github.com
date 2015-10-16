@@ -10,8 +10,8 @@
         <item>
             <link>http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html</link>
             <guid>http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html</guid>
-            <title><![CDATA[Niigata.NET 2015-10 DML]]></title>
-            <description><![CDATA[<h1>Niigata.NET 2015-10 DML</h1>
+            <title><![CDATA[Niigata.NET Page Blob Download 最適化]]></title>
+            <description><![CDATA[<h1>Niigata.NET Page Blob Download 最適化</h1>
 <p>10/10(土) に、<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>に参加してきました。日本酒とへぎ蕎麦が美味しかったのでまた行きたいところ。LTで話した（かった）ことをここにまとめておきます。</p>
 <a class="reference external image-reference" href="https://flic.kr/p/zQKV5z"><img alt="soba" class="align-center" src="https://farm6.staticflickr.com/5766/22211533525_cc58e2a2ac_c.jpg"/></a>
 <div class="section" id="id1">
@@ -70,6 +70,11 @@
 <p>ちょっと脱線しますが、Win32 APIでファイルシステムを操作する場合には、DeviceIoControl で FSCTL_QUERY_ALLOCATED_RANGES<a class="footnote-reference" href="#ref10" id="id11">[10]</a>を使うと実際にデータが保持されている range を取得することができます。</p>
 </div>
 <div class="section" id="id12">
+<h2>資料</h2>
+<p>LTで用意した資料です。</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize">Azure Storage Data Movement Library Page Blob Ptimize</a></p>
+</div>
+<div class="section" id="id13">
 <h2>最後に</h2>
 <p>最後に、<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>を聞きながら、思ったことを少し書きます。</p>
 <p>プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。</p>
@@ -81,7 +86,7 @@
 <p>プログラムを読むことに関しては、このOSS全盛時代に読むコードに困ることは無いと思うので、ぜひガンガン読んで欲しい。</p>
 <p>などなど、いろいろ思うことがあって面白かった。</p>
 </div>
-<div class="section" id="id14">
+<div class="section" id="id15">
 <h2>追記</h2>
 <p>Azure Files でも同じように sparse file が、サポートされていて、DMLでは対応しています。</p>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">

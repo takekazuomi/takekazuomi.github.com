@@ -1,6 +1,6 @@
-=========================
- Niigata.NET 2015-10 DML
-=========================
+=======================================
+ Niigata.NET Page Blob Download 最適化
+=======================================
 
 10/10(土) に、 `Niigata.NET 2015-10 <https://ngtnet.doorkeeper.jp/events/30553>`_ に参加してきました。日本酒とへぎ蕎麦が美味しかったのでまた行きたいところ。
 LTで話した（かった）ことをここにまとめておきます。
@@ -25,6 +25,8 @@ AzCopyのライブラリー版 が、 `Azure Storage Data Movement Library (Prev
 2. 転送量の最小化
 
 今回は、Page Blob での転送量の最小化の話をします。（DMLでは、その他にもGCとかLOH周りの工夫も使われています）
+
+
 
 Page Blob Download 最適化
 =========================
@@ -73,6 +75,17 @@ DMでは、PageBlobReader.DoGetRangesAsync() でGetPageRangesAsyncを実行し�
 ここはわかり易いですね。range list は、RangeBasedReader.DoGetRangesAsync() でダウンロードする範囲を決めるのに使われます。
 
 ちょっと脱線しますが、Win32 APIでファイルシステムを操作する場合には、DeviceIoControl で FSCTL_QUERY_ALLOCATED_RANGES [#ref10]_ を使うと実際にデータが保持されている range を取得することができます。
+
+資料
+====
+LTで用意した資料です。
+
+.. raw:: html
+
+   <iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+`Azure Storage Data Movement Library Page Blob Ptimize <http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize>`_
+
 
 最後に
 ======
