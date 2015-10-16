@@ -1,0 +1,119 @@
+=========================
+ Niigata.NET 2015-10 DML
+=========================
+
+10/10(土) に、 `Niigata.NET 2015-10 <https://ngtnet.doorkeeper.jp/events/30553>`_ に参加してきました。日本酒とへぎ蕎麦が美味しかったのでまた行きたいところ。
+LTで話した（かった）ことをここにまとめておきます。
+
+.. image:: https://farm6.staticflickr.com/5766/22211533525_cc58e2a2ac_c.jpg
+   :target: https://flic.kr/p/zQKV5z
+   :alt: soba
+   :align: center
+
+
+最初に
+======
+Azure Storage 上でデータの移動が必要な場合、現時点でもっともお勧めなのは、AzCopy [#ref1]_ です、多めのデータをアップロード、ダウンロードしたい場合には AzCopyを試してください。 [#ref2]_ ほかのツールを使うよりリソースをうまく使って効率的にデータを転送してくれます。転送に必要な時間は、ほぼネットワークインターの速度に依存します。（諸条件に依存しますが、ざっくり言うと）
+
+Azure Storage Data Movement Library (Preview)
+=============================================
+AzCopyのライブラリー版 が、 `Azure Storage Data Movement Library (Preview) <https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement>`_ です。（以下 DML) [#ref3]_ ライブラリなので、スクリプト＋AzCopyではちょっと難しいような細かい制御しながらデータの転送をすることが出来ます。DMLの実装では API の呼び出し方が Azure Storage に合わせてチューニングされていて、パフォーマンスが出るというのが大きな特徴です。DMLについては、 :doc:`../../09/25/intro_azure_storage_data_movement_library` も参考にしてください。
+
+チューニングの基本戦略は２つです。これは、Azure Storage では共通の戦略となります。
+
+1. 並列化 [#ref5]_
+2. 転送量の最小化
+
+今回は、Page Blob での転送量の最小化の話をします。（DMLでは、その他にもGCとかLOH周りの工夫も使われています）
+
+Page Blob Download 最適化
+=========================
+昨今の近代的なファイシステムでは、sparse file という仕組みを持っています。 [#ref6]_ 大きなファイルであっても、zero の部分はDISK上にアロケートされずにデータが書きこまれた部分(緑の部分)だけが確保されます。
+
+.. image:: sparse.png
+
+Azure では、仮想マシンのDisk は VHD ファイルを Azure Storage Page Blob に配置されており、そのPage Blobは sparse data の保存のための仕組みをがあります。仕組は結構簡単で、Page Blob では、データが書き込まれた部分をページ単位(512B)でレンジ管理しており、実際にBlobにデータが保存されるのはこの領域だけです。この領域の外を読むと0 fill のデータが帰ります。（これが、俗に言われるPage Blogが、Disk アクセスに最適化されているという機能の一つです）
+REST APIの GetPageRanges [#ref7]_ では、有効なデータを含むすべての連続したページ範囲のリストを返します。  [#ref8]_
+
+つまり、GetPageRanges APIを使うと、Page Blob から実際にデータが入っている部分だけを取得することができます。例えば、100GBの仮想DISKであっても転送するのは実際使っている10GBだけにすることが可能になります。
+
+DMLでの実装
+===========
+DMでは、PageBlobReader.DoGetRangesAsync() でGetPageRangesAsyncを実行してRangeを取得 [#ref9]_ しています。
+
+.. code-block:: csharp
+
+        protected override async Task<List<Range>> DoGetRangesAsync(RangesSpan rangesSpan)
+        {
+            AccessCondition accessCondition = Utils.GenerateIfMatchConditionWithCustomerCondition(
+                this.Location.Blob.Properties.ETag,
+                this.Location.AccessCondition);
+
+            List<Range> rangeList = new List<Range>();
+
+            foreach (var pageRange in await this.pageBlob.GetPageRangesAsync(
+                    rangesSpan.StartOffset,
+                    rangesSpan.EndOffset - rangesSpan.StartOffset + 1,
+                    accessCondition,
+                    Utils.GenerateBlobRequestOptions(this.Location.BlobRequestOptions),
+                    Utils.GenerateOperationContext(this.Controller.TransferContext),
+                    this.CancellationToken))
+            {
+                rangeList.Add(new Range()
+                {
+                    StartOffset = pageRange.StartOffset,
+                    EndOffset = pageRange.EndOffset,
+                    HasData = true
+                });
+            }
+
+            return rangeList;
+        }
+
+ここはわかり易いですね。range list は、RangeBasedReader.DoGetRangesAsync() でダウンロードする範囲を決めるのに使われます。
+
+ちょっと脱線しますが、Win32 APIでファイルシステムを操作する場合には、DeviceIoControl で FSCTL_QUERY_ALLOCATED_RANGES [#ref10]_ を使うと実際にデータが保持されている range を取得することができます。
+
+最後に
+======
+最後に、 `Niigata.NET 2015-10 <https://ngtnet.doorkeeper.jp/events/30553>`_ を聞きながら、思ったことを少し書きます。
+
+プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。
+
+make -> ant -> nant -> msbuild -> maven ... と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。
+
+package manager は、dnxで改善されるはずなので、それに期待したいところ。install.ps1 とか必要になるとソウルジェムが濁ります。
+
+「MEF の、Core CLR 対応ってどうなっているの？」という話が出たので、帰ってきてちょっと見たら、ASP.NET 5 と Entity Framework 7 では、 `Microsoft.Framework.DependencyInjection <https://github.com/aspnet/DependencyInjection>`_ ってやつが使われていました。聞いたことがあったような気もするけど、使ったこと無かったので少し試してみたら、どうも、container builder、setter injection などが無いようで、えらくシンプルな実装。でもまあ、これはこれで良いのかなという感じでした。
+
+「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、そのシンプルな基準は「linq がすべてを台無しにしてしまったなぁ」という感じです。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状です。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があるます。
+
+これは Linq だけの罪かと言うと、そういうわけでは無く、「生産性の高いライブラリを使う場合に起こる一般的な課題」だと言えます。抽象化度の高いものは人間に理解し易く生産性の向上に貢献するが、実際のノイマン型コンピューターの仕組みと乖離が大きくなり、実行ステップとコードの乖離も大きくなります。簡単に言うと、「こう書いたからこう動く」という世界から離れていくことになる。 じゃあ、乖離してはダメなのかという、そうでもない。全てはバランスによって決まる。ズルズルと、長くなったので、これぐらいで。
+
+プログラムを読むことに関しては、このOSS全盛時代に読むコードに困ることは無いと思うので、ぜひガンガン読んで欲しい。
+
+などなど、いろいろ思うことがあって面白かった。
+
+追記
+====
+Azure Files でも同じように sparse file が、サポートされていて、DMLでは対応しています。
+
+
+
+.. [#ref1] `AzCopy コマンド ライン ユーティリティの概要 <https://azure.microsoft.com/ja-jp/documentation/articles/storage-use-azcopy/>`_
+.. [#ref2] `Azure Storage に関する Build 2015 での発表 <http://blogs.msdn.com/b/windowsazurej/archive/2015/06/05/build-2015-azure-storage-announcements.aspx>`_ によれば、そろそろ日本にも Import/Export が来ます。 `Microsoft Azure Import/Export サービスを使用した BLOB ストレージへのデータの転送 <https://azure.microsoft.com/ja-jp/documentation/articles/storage-import-export-service/>`_
+.. [#ref3] `Introducing Azure Storage Data Movement Library Preview <http://blogs.msdn.com/b/windowsazurestorage/archive/2015/09/23/introducing-azure-storage-data-movement-library-preview.aspx>`_
+.. [#ref4] `Microsoft Azure Storage Data Movement Library (0.1.0) <https://github.com/Azure/azure-storage-net-data-movement>`_  `nuget Microsoft Azure Storage Data Movement... 0.1.0 <https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement>`_
+.. [#ref5] `Intro Azure Storage Data Movement Library <http://kyrt.in/2015/09/25/intro_azure_storage_data_movement_library.html>`_
+.. [#ref6] `Sparse file <https://en.wikipedia.org/wiki/Sparse_file>`_  `MSDN Sparse File Operations <https://msdn.microsoft.com/en-us/library/windows/desktop/aa365566(v=vs.85).aspx>`_
+.. [#ref7] `Get Page Ranges REST API <https://msdn.microsoft.com/en-us/library/azure/ee691973.aspx>`_
+.. [#ref8] `Getting the Page Ranges of a Large Page Blob in Segments <http://blogs.msdn.com/b/windowsazurestorage/archive/2012/03/26/getting-the-page-ranges-of-a-large-page-blob-in-segments.aspx>`_
+.. [#ref9] `DoGetRangesAsync <https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferControllers/TransferReaders/PageBlobReader.cs#L70>`_
+.. [#ref10] `FSCTL_QUERY_ALLOCATED_RANGES control code <https://msdn.microsoft.com/en-us/library/windows/desktop/aa364582(v=vs.85).aspx>`_
+
+
+
+.. author:: default
+.. categories:: Azure Storage
+.. tags:: Blob, DML
+.. comments::
