@@ -3,7 +3,7 @@
 ================================================
 `Microsoft Azure Advent Calendar 2015 2日目 <http://qiita.com/advent-calendar/2015/azure>`_
 
-.NET 用の `Azure Storage Client Library <https://www.nuget.org/packages/WindowsAzure.Storage/6.1.1-preview>`_ が、 6.1.1-preview (2015/10/30リリース) から DNXCore 5.0 にも対応しているので、どれぐらい動くのか簡単なコンソールアプリケーションを作ってみた。 `github.com/takekazuomi/scldnx-sample <https://github.com/takekazuomi/scldnx-sample>`_
+.NET 用の `Azure Storage Client Library <https://www.nuget.org/packages/WindowsAzure.Storage/6.1.1-preview>`_ が、 6.1.1-preview (2015/10/30リリース) から DNXCore 5.0 にも対応しているので、どれぐらい動くのか簡単なコンソールアプリケーションを作ってみた。 ソース `github.com/takekazuomi/scldnx-sample <https://github.com/takekazuomi/scldnx-sample>`_
 
 .. image:: https://farm1.staticflickr.com/616/22023502300_b42e78e1dc_c.jpg
    :target: https://flic.kr/p/zy9cWU
@@ -11,6 +11,7 @@
    :align: center
 
 
+|
 
 環境
 ====
