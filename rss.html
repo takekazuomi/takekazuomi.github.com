@@ -5,8 +5,170 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 16 Oct 2015 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 02 Dec 2015 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2015/12/02/using_dnx_was.html</link>
+            <guid>http://kyrt.in/2015/12/02/using_dnx_was.html</guid>
+            <title><![CDATA[Azure Storage Client Library をDNXで使ってみた]]></title>
+            <description><![CDATA[<h1>Azure Storage Client Library をDNXで使ってみた</h1>
+<p><a class="reference external" href="http://qiita.com/advent-calendar/2015/azure">Microsoft Azure Advent Calendar 2015 2日目</a></p>
+<p>.NET 用の<a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage/6.1.1-preview">Azure Storage Client Library</a>が、 6.1.1-preview (2015/10/30リリース) から DNXCore 5.0 にも対応しているので、どれぐらい動くのか簡単なコンソールアプリケーションを作ってみた。<a class="reference external" href="https://github.com/takekazuomi/scldnx-sample">github.com/takekazuomi/scldnx-sample</a></p>
+<a class="reference external image-reference" href="https://flic.kr/p/zy9cWU"><img alt="butterfly" class="align-center" src="https://farm1.staticflickr.com/616/22023502300_b42e78e1dc_c.jpg"/></a>
+<div class="section" id="id1">
+<h2>環境</h2>
+<p>コードは、 Visual Studio 2015 Update 1 で書いて、dnx 関連のコマンドでコンパイル実行という流れ。最近なんやら、<strong>dotnet</strong>というコマンドも有るらしいが今回は使っていない。新規プロジェクトで、C# -&gt; Web の下の、コンソールアプリケーション(パッケージ）というのを選択。（どうしてWebの下なのかさっぱり分からない）</p>
+<img alt="../../../_images/scl001.png" class="align-center" src="http://kyrt.in/_images/scl001.png"/>
+<p>これで、見慣れぬ構造でプロジェクトが出来る。ソリューションのフォルダーには、sln のファイルと一緒に global.json が出来、プロジェクト本体は、src/[プロジェクト名] の下に作成される。プロジェクトファイルは、project.json とJSONのファイルになっている。（コメント書けないのでJSONは止めて欲しい）</p>
+<p>dnxは、最新の実行環境を使うことにした。今のところ、stable とか release に拘ってもあまり意味ないほどころころとよく変わっている。dnvm コマンドのインストール方法はプラットフォーム毎に違うが、その後はかなり同じような感じで使える。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnvm upgrade -a x86 -r coreclr -u
+</pre></div>
+</div>
+<p>dnvm upgrade で入れると、alias default が定義され PATHも切られる。<cite>dnvm install</cite>と、<cite>dnvm use</cite>を使って方が良いかもしれない。入っているかを、dnvm list で確認する。最後の行が active になっている。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnvm list
+
+Active Version           Runtime Architecture OperatingSystem Alias
+------ -------           ------- ------------ --------------- -----
+       1.0.0-beta5       clr     x64          win
+       1.0.0-beta5       clr     x86          win
+       1.0.0-beta5       coreclr x64          win
+       1.0.0-beta5       coreclr x86          win
+       1.0.0-beta7       clr     x86          win
+       1.0.0-beta7       coreclr x86          win
+       1.0.0-beta8       clr     x64          win             clr
+       1.0.0-beta8       clr     x86          win
+       1.0.0-beta8       coreclr x64          win             coreclr
+       1.0.0-beta8       coreclr x86          win
+       1.0.0-rc1-15838   clr     x86          win
+       1.0.0-rc1-15838   coreclr x86          win
+       1.0.0-rc1-15904   clr     x86          win
+       1.0.0-rc1-15904   coreclr x86          win
+       1.0.0-rc1-update1 clr     x64          win
+       1.0.0-rc1-update1 clr     x86          win
+       1.0.0-rc1-update1 coreclr x64          win
+       1.0.0-rc1-update1 coreclr x86          win
+       1.0.0-rc2-16249   clr     x86          win
+  *    1.0.0-rc2-16249   coreclr x86          win             default
+</pre></div>
+</div>
+<p>このあたりは、ASP.NET 5 の アドベントカレンダー のネタなので軽く飛ばします。<a class="footnote-reference" href="#ref1" id="id2">[1]</a></p>
+</div>
+<div class="section" id="id3">
+<h2>コードの概要</h2>
+<p>基本的に、Azure Storage Client コード部分はほとんど従来の物と変わらない。</p>
+<p>テーブルのリストを取る部分は、こんな感じ。</p>
+<div class="highlight-csharp"><div class="highlight"><pre>TableContinuationToken token = null;
+do
+{
+    var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
+
+    result.Results.ToList().ForEach(table =&gt; Console.WriteLine($"{table.Name}"));
+
+    token = result.ContinuationToken;
+} while (token != null);
+</pre></div>
+</div>
+<p>ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。<a class="footnote-reference" href="#ref2" id="id4">[2]</a>試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
+    <span class="kt">var</span> <span class="n">max</span> <span class="p">=</span> <span class="n">_toDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
+
+    <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">_tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"WADPerformanceCountersTable"</span><span class="p">);</span>
+
+    <span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;()</span>
+        <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">TableQuery</span><span class="p">.</span><span class="n">CombineFilters</span><span class="p">(</span>
+            <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">GreaterThanOrEqual</span><span class="p">,</span> <span class="n">min</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">)),</span>
+            <span class="n">TableOperators</span><span class="p">.</span><span class="n">And</span><span class="p">,</span>
+            <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">LessThan</span><span class="p">,</span> <span class="n">max</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">))));</span>
+
+    <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;();</span>
+    <span class="n">TableContinuationToken</span> <span class="n">token</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+    <span class="k">do</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">segment</span> <span class="p">=</span> <span class="k">await</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuerySegmentedAsync</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span>
+        <span class="n">token</span> <span class="p">=</span> <span class="n">segment</span><span class="p">.</span><span class="n">ContinuationToken</span><span class="p">;</span>
+        <span class="n">result</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">segment</span><span class="p">.</span><span class="n">Results</span><span class="p">);</span>
+        <span class="c1">// Console.Write($"{segment.Results.Count}.");</span>
+
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="p">!=</span> <span class="k">null</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+
+    <span class="n">sw</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec"</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">result</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="n">result</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="p">(</span><span class="n">sw</span><span class="p">.</span><span class="n">ElapsedMilliseconds</span> <span class="p">/</span> <span class="m">1000.0</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>余談だが、WAD(Windows Azure Diagonestics )のテーブルは、tickを”d19”で書式化したもので、パーテーションを指定すると時系列で絞り込むことができる。この方法は、パーテーションのレンジクリーになるので、時間的なパフォーマンスがあまり良くないが、パッチなどで使うならば結果のデータ量を絞り込めるという利点がある。時間的なコストが重要なシナリオでは、並列化を検討すると良い。</p>
+</div>
+<div class="section" id="id5">
+<h2>動かしてみる</h2>
+<p>Storageの接続文字列は、環境変数 AZURE_STORAGE_CONNECTION_STRING から拾うようにした。VSから実行するときは、プロジェクトのプロパティでデバックを選択し環境変数を設定する。デバック時に環境変数を設定出来るのは非常に便利、Visual Studio では今ままで無かったのが不思議なぐらい。ランタイムも選択できるが、dnvm install などで予め入れておく必要がある。</p>
+<img alt="../../../_images/vsscreen05.png" src="http://kyrt.in/_images/vsscreen05.png"/>
+<p>コマンドラインの場合は、下記のようにビルドして実行する。シェルの違いなどで若干違うが、ほとんど同じような感じで実行できる。便利である。</p>
+<ul class="simple">
+<li>Windows 10 TH2</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+<span class="nv">$ </span>dnu restore
+<span class="nv">$ </span>dnu build
+<span class="nv">$ </span><span class="nb">cd </span>bin<span class="se">\o</span>utput<span class="se">\a</span>pproot
+<span class="nv">$ </span>.<span class="se">\s</span>clxplatclr.cmd ListTable
+</pre></div>
+</div>
+<ul class="simple">
+<li>Mac OSX 10.11.1</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">export </span><span class="nv">AZURE_STORAGE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+<span class="nv">$ </span>dnu restore
+<span class="nv">$ </span>dnu build
+<span class="nv">$ </span><span class="nb">cd </span>bin/output/approot
+<span class="nv">$ </span>./sclxplatclr.cmd ListTable
+</pre></div>
+</div>
+<p>実行しているのはテーブルのリストを取ってるだけの簡単なコードなので、結果は省略</p>
+</div>
+<div class="section" id="id6">
+<h2>最後に</h2>
+<p>結局、ubuntu 15.04 でやったのは下記のようになって動かなかった。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnu restore
+failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared object file: No such file or directory
+</pre></div>
+</div>
+<p>言語は同じC#でも、ライブラリ回りで細かい違いがあってなかなかコーディングの手間がかかる。今回だと、MEFを使おうかと思ったら dnxcore50 に対応してなくて、<a class="reference external" href="https://www.nuget.org/packages/Microsoft.Framework.DependencyInjection/1.0.0-beta8">Microsoft.Framework.DependencyInjection</a>を使ってみたり、<cite>Environment.CurrentDirectory()</cite>が、dnxcore50 に無かったり、カレントのAppDomain取ろうとしたら出来なかったり<a class="footnote-reference" href="#ref4" id="id8">[4]</a>などなど。</p>
+<p>でもまあ、単独のバイナリに変換されるようになると、クロスプラットフォームなコンソールツールを作成する手段として重宝するんじゃないかなとは思った。</p>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>DNX環境のセットアップ、<a class="reference external" href="https://docs.asp.net/en/latest/getting-started/installing-on-mac.html">Installing ASP.NET 5 On Mac OS X</a>、<a class="reference external" href="https://docs.asp.net/en/latest/getting-started/installing-on-linux.html">Installing ASP.NET 5 On Linux</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>Fluent Mode と IQueryable Mode については、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/09/07/announcing-storage-client-library-2-1-rtm.aspx">Announcing Storage Client Library 2.1 RTM &amp; CTP for Windows Phone</a>の Conceptual model の部分が詳しい。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="http://dotnet.readthedocs.org/en/latest/getting-started/installing-core-linux.html">Installing .NET Core on Linux</a>では、Ubuntu 14.04 TLS を使っている。RTMではなるべく14.04以降など広いバージョンのUbuntuをサポートして欲しいところ。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[4]</a></td><td><a class="reference external" href="https://github.com/dotnet/corefx/issues/1784">Assembly.GetExecutingAssembly, AppDomain.CurrentDomain and similar</a></td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+            <category><![CDATA[ Azure Table ]]></category>
+             <pubDate>Wed, 02 Dec 2015 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html</link>
             <guid>http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html</guid>
