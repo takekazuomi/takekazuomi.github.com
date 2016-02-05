@@ -5,8 +5,51 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Wed, 02 Dec 2015 00:00:00 +0900</pubDate>
+        <pubDate>Fri, 05 Feb 2016 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html</link>
+            <guid>http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html</guid>
+            <title><![CDATA[現在 のGuest OS Version の確認方法]]></title>
+            <description><![CDATA[<h1>現在 のGuest OS Version の確認方法</h1>
+<p>.NET Framework 4.5, 4.5.1 のサポート終了に少し遅れましたが、Azure の Cloud　Service でも、Gest OS 4.28 から .NET 4.5.2 がサポートされるようになりました。<a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/cloud-services-guestos-update-matrix">Azure Guest OS releases and SDK compatibility matrix</a></p>
+<p>現在絶賛展開中ですが、手元のCloud Serviceには、すでに来ていました。</p>
+<div class="section" id="visual-studio">
+<h2>Visual Studio での確認</h2>
+<p>現在の Guest OSのバージョンは、下記のように、Visual Studio で、Roleのプロパティを開くと確認することができます。</p>
+<img alt="vsimage" class="align-center" src="http://kyrt.in/_images/vs001.PNG"/>
+</div>
+<div class="section" id="azure-powershell">
+<h2>Azure PowerShell での確認</h2>
+<p>Azure PowerShell は、1.1.0 では確認できなかったのですが、今回のように、GUEST OSのバージョンが重要な場合に確認出来ないのは不便なので、OSVersionが帰ってくるようなパッチを作って PR を出してみたら、さくっと翌日にはマージされ次のリリースで無事に現在のバージョンがわかるようになりました。（もともと、REST APIには存在するし簡単な修正だったので、なにかの拍子に漏れてしまっただけだと思います）</p>
+<p><a class="reference external" href="https://github.com/Azure/azure-powershell/pull/1638">Fix to missing OS Version in Get-AzureRole #1638</a></p>
+<img alt="../../../_images/git001.png" class="align-center" src="http://kyrt.in/_images/git001.png"/>
+<p>Azure PowerShell Team オープンですね！<strong>素晴らしい</strong></p>
+<p>こんな感じで確認することができます。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-AzureRole -ServiceName kinmugics10 -Slot Staging
+
+RoleName             : WorkerRole1
+InstanceCount        : 1
+DeploymentID         : c49d5437f1a84345b9739a79ff333056
+OSVersion            : WA-GUEST-OS-4.28_201601-01
+ServiceName          : kinmugics10
+OperationDescription : Get-AzureRole
+OperationId          : 0ffbd548-3b37-6c15-afa4-e091056e0849
+OperationStatus      : Succeeded
+</pre></div>
+</div>
+<p>現状だと、「新ポータル、旧ポータル」では、適応されているcscfgの内容だけで、自動更新に設定されている場合にどのGuest OS が使われているかは確認できません。</p>
+<div class="section" id="get-azuredeploymant">
+<h3>おまけ、Get-AzureDeploymant</h3>
+<p>似たような情報を返してくるコマンドに、Get-AzureDeployment というのがあり、OSVersionが帰ってきます。「*」 が帰ってきて、すぐに実行中のGest OSがかえってくるわけではないことがわかりますが、ソースを確認してみます。コード的には、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/v1.1.0-January2016/src/ServiceManagement/Compute/Commands.ServiceManagement/Model/DeploymentInfoContext.cs#L253">このあたりで</a>OSVersion のプロパティを設定しています。つまり、csdefで設定されている<strong>osVersion</strong>が入り、自動更新を設定した場合、「*」となって現在のOS バージョンは分かりません。</p>
+<p>最初これで行けるかと思ったんですがね。</p>
+</div>
+</div>
+]]></description>
+            <category><![CDATA[ Azure PowerShell ]]></category>
+             <pubDate>Fri, 05 Feb 2016 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2015/12/02/using_dnx_was.html</link>
             <guid>http://kyrt.in/2015/12/02/using_dnx_was.html</guid>

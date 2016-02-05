@@ -73,6 +73,141 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>November 28, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><span>2013/12/13 追記</span></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span>WebRoleのStartup taskの作成</span></a> の問題は解決されました。</div>
+</div>
+</div></blockquote>
+<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、<a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a>と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
+<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
+<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
+<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id1">
+<h2>手順の確認</h2>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="webrolehelios">
+<h3>WebRoleの作成からHeliosのインストールまで</h3>
+<ol class="arabic simple">
+<li>Cloud Service を作ってWebRoleを追加します普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
+<ol class="arabic simple" start="2">
+<li>projectを、.NET 4.5.1 を使うようにします</li>
+</ol>
+<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
+<ol class="arabic" start="3">
+<li><p class="first">コンパイルして問題無いのを確認します。</p>
+</li>
+<li><p class="first">System.Webの参照を全て削除します</p>
+</li>
+<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
+<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+</pre></div>
+</div>
+</li>
+</ol>
+<p>下記のような参照になります</p>
+<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
+</div>
+<div class="section" id="startup-class">
+<h3>Startup Classの設定</h3>
+<p>下記のようなStartup classのコードを追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>using System;
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(WebRole1.Startup))]
+
+namespace WebRole1
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+
+            app.Run(async context =&gt;  // IOWinContext
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "text/html";
+
+                await context.Response.WriteAsync("Hello Herios. Time is: " + DateTime.Now.ToString());
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
+</div>
+<div class="section" id="webrolestartup-task">
+<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
+<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
+<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
+  &lt;WebRole name="WebRole1" vmsize="Small"&gt;
+    &lt;Startup&gt;
+      &lt;Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" /&gt;
+    &lt;/Startup&gt;
+
+    &lt;Sites&gt;
+    以下省略・・・・
+</pre></div>
+</div>
+<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
+<dl class="docutils">
+<dt>startup.cmd::</dt>
+<dd>vcredist_x64.exe /install /quiet</dd>
+</dl>
+<p>vcredist_x64.exe は、<a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a>からダウンロードできます。VS 2013をインストールしている場合は、<cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite>等のディレクトリにファイルがあります。</p>
+<p>startup taskについて：<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
+</div>
+<div class="section" id="osfamily">
+<h3>osFamilyの変更</h3>
+<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
+<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
+  &lt;Role name="WebRole1"&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>まとめ</h2>
+<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。この問題は、厳密に言うと<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a>が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a>に起因する。このままだとちょっと使いづらいですね。</p>
+</div>
+<div class="section" id="helios-fix-runtime">
+<span id="id4"/><h2>2013/12/13 追記</h2>
+<p>2013/12/02<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>では、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a>に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span>WebRoleのStartup taskの作成</span></a>のようなことをしないでも動作します。これで普通に使えるようになりますね。</p>
+<img alt="../../../_images/2013_11_helios011.png" src="_images/2013_11_helios011.png"/>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a>, <a href="categories/owin.html">OWIN</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a>, <a href="tags/owin.html">OWIN</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>November 24, 2013</span>
         </div>
         <div class="section">
@@ -522,110 +657,6 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 26, 2012</span>
-        </div>
-        <div class="section">
-            <h1><a href="2012/12/26/asc2_dot_0asyncbug.html">Azure Storage Client 2.0 CompletedSynchronously FIX</a></h1>
-<p>以前の記事<a class="reference internal" href="2012/12/08/waac2012day2.html"><em>Azure Storage Gen 2は速かった</em></a>の補足です。その中の<a class="reference internal" href="2012/12/08/waac2012day2.html#waac2012day2-pending"><span>非同期で同時接続数が上がらない？</span></a>で、</p>
-<blockquote>
-<div>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。<strong>これは、Azure Storage Client 2.0のBUG</strong>だったようです。2.0.2で修正されています。</div></blockquote>
-<p>と書きました、結局執筆時点でのAzure Storage Client 2.0.1にはBUGがあり、後日2.0.2で修正されたことが分かりました。少々混乱したのでここに顛末をまとめます。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8307052288/"><img alt="candle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8082/8307052288_2a8cdf5678_c.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="bug">
-<h2>BUGの内容</h2>
-<p>BUGの内容としては、非同期メソッドが返すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティが一貫性の無い値になっていて、その結果、TaskFactory.FromAsyncが正しく動作しないというものでした。</p>
-<div class="section" id="id1">
-<h3>参照</h3>
-<ol class="arabic simple">
-<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt">WindowsAzure/azure-sdk-for-net changelog.txt</a></li>
-<li><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141:</a></li>
-</ol>
-</div>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id2">
-<h2>再現試験</h2>
-<p>まずは、2.0.1での問題の再現性の確認し、2.0.3で解決されているのかを検証します。コードは[前の記事] (Azure Storage Gen 2は速かった) とほとんど同じですが、なるべく簡略化したものにしています。</p>
-<p>まずは、APM (Asynchronous Programming Model)パターンの非同期メソッドをTask.FromAsync()でラップしてExecuteAsyncメソッドを作ります。今回問題となっているのは、CloudTable.BeginExecute から、AsyncCallback を呼び出すときに渡すIAsyncResultオブジェクトのCompletedSynchronouslyプロパティです。ちょと問題があるような気がしますが、今回はこれで行きます。</p>
-<script src="https://gist.github.com/takekazuomi/4369349.js">&amp;amp;nbsp;</script><p>このExecuteAsyncを使って指定回ループしてテーブルにエンティティをInsertします。</p>
-<script src="https://gist.github.com/takekazuomi/4369329.js">&amp;amp;nbsp;</script><p>このコードは、Insertの数だけ、Taskが生成されて全部まとめてWaitしています。これを、.NET 4.0でやるとTask毎にWait Handleを確保するので非常に効率が悪いですが、.NET 4.5では、Waitの数しかリソースを使わないので、そんなに悪くありません。それでも件数に応じて使用メモリーが増えるので本番で使うのはあまりお勧めできないコーディングパターンです。</p>
-<p>.NET 4.5のTask回りの変更については、このBlogの記事「<a class="reference external" href="http://csharptan.wordpress.com/2011/12/11/%E6%96%B0%E6%A9%9F%E8%83%BD%E3%81%8C%E5%85%A5%E3%82%8B%E3%81%BE%E3%81%A7/">C#たんっ！ 新機能が入るまで</a>」から読み始めるのがお勧めです、必要な部分へのリンクが張られています。</p>
-</div>
-<div class="section" id="id3">
-<h2>2.0.1 で動かす</h2>
-<p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
-&gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
-</pre></div>
-</div>
-<p>これで動かします。非同期メソッドが本当に非同期で動いているかどうかの確認はUIならUI Threadがブロックされていているかどうかなどで分かり易いのですが、サーバーサイドのプログラム（今回コンソールですが）ではちょっと見には分かりません。このコードはAzure Storageとの間でSocketを張っているのでTCP/IP接続の数を見ることで並列度が分かります。また、ネットワーク転送速度（Send）も参考になります。</p>
-<div class="section" id="azure-storage-client-2-0-1-resource-moniter">
-<h3>Azure Storage Client 2.0.1 時のResource Moniter画面</h3>
-<img alt="2.0.1時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.1.png"/>
-<p>見事に接続数が伸びません。</p>
-</div>
-</div>
-<div class="section" id="id4">
-<h2>2.0.3では？</h2>
-<p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
-&gt; Install-Package  WindowsAzure.Storage
-</pre></div>
-</div>
-<div class="section" id="azure-storage-client-2-0-3-resource-moniter">
-<h3>Azure Storage Client 2.0.3 時のResource Moniter画面</h3>
-<img alt="2.0.3時のResource Moniter画面" src="_images/2012_12_connections-asc2.0.3.png"/>
-</div>
-</div>
-<div class="section" id="id5">
-<h2>結論</h2>
-<p>劇的にコネクション数が変わります。画面だとコネクションの数ははっきりとわかりませんが、 2.0.1 の時の画面と全く違っているのがわかると思います。数を数えると開始直後に1000接続以上が作成されます。これで、2.0.1の実装には問題があり、非同期メソッドを使ってもほとんど非同期に実行されてなかったこと、それが、2.0.3では修正されていることが確認できました。</p>
-<p>ちなみに、今回確認はしていませんが、以前に1.4のAzure Storage Clientを試した時には非同期メソッドで同時接続数が少なくて困るという問題は無ありませんでした、2.0で発生したBUGで2.0.2でFIXということのようです。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id6">
-<h2>次の問題</h2>
-<p>万事解決、良かった良かったと言いたいところですが別の問題が起きます。並列度があがったのは良いのですが、コネクションを張りすぎてExceptionが大量に発生します。</p>
-<div class="section" id="azure-storage-client-2-0-3-exception">
-<h3>Azure Storage Client 2.0.3 時でのException</h3>
-<img alt="Azure Storage Client 2.0.3 時でのException" src="_images/2012_12_connections-asc2.0.3-cmd.png"/>
-<p>何らかの方法で、並列度を制限しないと実用的ではありません。特にバッチの中で非同期呼び出しを使う場合などはこれは致命的です。</p>
-<p>ここでは、Blob でのUpload処理が参考になります。Windows Azure Storage 2.0 の Blob Uploadで参照している処理を見ると、Semaphoreを使って非同期処理には入れる数を制御していますので、これを参考にします。</p>
-</div>
-</div>
-<div class="section" id="semaphore">
-<h2>Semaphoreを使う</h2>
-<p>上記の処理方法に習って、Semaphoreを使って同時実行数を制御します。SemaphoreSlim という便利がものがあるのでそれを使います。こうすることで、同時実行数を制御することがでます。とりあえず100で制限します。これで普通に動きます。</p>
-<script src="https://gist.github.com/takekazuomi/4369880.js">&amp;amp;nbsp;</script></div>
-<hr class="docutils"/>
-<div class="section" id="id7">
-<h2>まとめ</h2>
-<ol class="arabic simple">
-<li>Azure Storage Client 2.0 は、2.0.2で非同期周りのBUGが直っている。</li>
-<li>非同期呼び出しをループ内で使うと過剰にリソースを消費することがある。</li>
-<li>同時実行数を制御するにはSemaphoreを使うと制限できる。</li>
-</ol>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a>, <a href="tags/async.html">Async</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -634,6 +665,8 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
+        </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
         </li><li>
             <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
@@ -651,13 +684,11 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
         </li><li>
             <a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
-        </li><li>
-            <a href="2014/08/01/cdp_azure.html">クラウドデザインパターン の監訳に参加しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
