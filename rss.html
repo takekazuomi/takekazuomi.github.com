@@ -39,11 +39,11 @@ OperationStatus      : Succeeded
 </pre></div>
 </div>
 <p>現状だと、「新ポータル、旧ポータル」では、適応されているcscfgの内容だけで、自動更新に設定されている場合にどのGuest OS が使われているかは確認できません。</p>
+</div>
 <div class="section" id="get-azuredeploymant">
-<h3>おまけ、Get-AzureDeploymant</h3>
+<h2>おまけ、Get-AzureDeploymant</h2>
 <p>似たような情報を返してくるコマンドに、Get-AzureDeployment というのがあり、OSVersionが帰ってきます。「*」 が帰ってきて、すぐに実行中のGest OSがかえってくるわけではないことがわかりますが、ソースを確認してみます。コード的には、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/v1.1.0-January2016/src/ServiceManagement/Compute/Commands.ServiceManagement/Model/DeploymentInfoContext.cs#L253">このあたりで</a>OSVersion のプロパティを設定しています。つまり、csdefで設定されている<strong>osVersion</strong>が入り、自動更新を設定した場合、「*」となって現在のOS バージョンは分かりません。</p>
 <p>最初これで行けるかと思ったんですがね。</p>
-</div>
 </div>
 ]]></description>
             <category><![CDATA[ Azure PowerShell ]]></category>

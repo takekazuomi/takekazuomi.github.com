@@ -6,7 +6,7 @@
 現在絶賛展開中ですが、手元のCloud Serviceには、すでに来ていました。
 
 Visual Studio での確認
-----------------------
+======================
 現在の Guest OSのバージョンは、下記のように、Visual Studio で、Roleのプロパティを開くと確認することができます。
 
 .. image:: vs001.PNG
@@ -15,7 +15,7 @@ Visual Studio での確認
 
 
 Azure PowerShell での確認
--------------------------
+=========================
 Azure PowerShell は、1.1.0 では確認できなかったのですが、今回のように、GUEST OSのバージョンが重要な場合に確認出来ないのは不便なので、OSVersionが帰ってくるようなパッチを作って PR を出してみたら、さくっと翌日にはマージされ次のリリースで無事に現在のバージョンがわかるようになりました。（もともと、REST APIには存在するし簡単な修正だったので、なにかの拍子に漏れてしまっただけだと思います）
 
 `Fix to missing OS Version in Get-AzureRole #1638 <https://github.com/Azure/azure-powershell/pull/1638>`_
