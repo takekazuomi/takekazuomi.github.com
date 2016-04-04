@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2016/04/04/build_2016_azure_cool_storage
    2016/02/05/how_to_get_current_running_guest_os_version
    2015/12/02/using_dnx_was.rst
    2015/10/16/niigata_net_2015_10_dml

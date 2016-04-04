@@ -73,6 +73,164 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>September 01, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a></h1>
+<p>今週末、9/5の<a class="reference external" href="http://r.jazug.jp/index.html">JAZUG</a>5周年記念イベント<a class="reference external" href="https://jazug.doorkeeper.jp/events/29529">「ごーごー じゃずゆーじー」 Go(5) JAZUG</a>で、Azure Service Fabric<a class="footnote-reference" href="#r1" id="id1">[1]</a>をネタに<a class="reference external" href="http://tatsuakisakai.net/">酒井さん</a>と話をします。宣伝とメモを兼ねてちょっと予告編です。興味を持たれた方は是非ご来場下さい ↓click↓</p>
+<a class="reference external image-reference" href="https://jazug.doorkeeper.jp/events/29529"><img alt="gogo jazug" class="align-center" src="_images/29529_normal_1438663713_logo.png" style="width: 600px;"/></a>
+<div class="section" id="azure-service-fabric">
+<h2>Azure Service Fabric とは</h2>
+<p>Azure Service Fabric は、BUILD 2015 に先駆けて発表された、「スケーラブルで信頼性が高く管理しやすいクラウド向けアプリケーションの構築向けの分散型システム プラットフォーム」<a class="footnote-reference" href="#r2" id="id3">[2]</a>です。</p>
+<p>2015/4/20 に、Mark Russinovich が書いたBlog<a class="footnote-reference" href="#r3" id="id4">[3]</a>、翻訳<a class="footnote-reference" href="#r4" id="id5">[4]</a>から引用します。</p>
+<ul class="simple">
+<li>Service Fabric は、高度な制御プラットフォーム</li>
+<li>開発者や ISV は、拡張性とカスタマイズ性の高いクラウド サービスを構築可</li>
+<li>ミッションクリティカルなクラウド サービスを提供してきたマイクロソフトの経験を基礎として開発</li>
+<li>5 年以上にわたって実際に運用</li>
+<li>基盤となるテクノロジは、Azure のコア インフラストラクチャに使用（実証済）</li>
+<li>Skype for Business、Intune、Event Hubs、DocumentDB、Azure SQL Database 、Bing Cortana などの基盤で利用</li>
+<li>毎秒 5 億回を超える評価に対応可能な拡張性を持つ</li>
+</ul>
+<p>ざっくりまとめると、「マイクロソフトでAzureのインフラとして5年以上使っている技術がベースにとなっていて実績もいろいろあるよ」ってことのようです。これまでのAzureだとCloud Native アプリケーションの Computing は、<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/cloud-services/">Cloud Service</a>あるいは<a class="reference external" href="https://azure.microsoft.com/ja-jp/services/app-service/">App Service</a>でということでしたが、新しい選択肢として<strong>Service Fabric</strong>というのが出てきたってことです。（まだ、preview でローカルの開発環境でしか動きませんが）</p>
+<p>※ここでは、便宜上WebRole/WorkerRole を使う<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/cloud-services-choose-me/#tellmecs/">Cloud Services</a>を<strong>PaaSv1</strong>と呼び、それに対して、Service Fabric を<strong>SF</strong>or<strong>PaaSv2</strong>と呼びます。</p>
+<p>BUILD 2015のセッション<a class="footnote-reference" href="#r5" id="id6">[5]</a>,<a class="footnote-reference" href="#r6" id="id7">[6]</a>や、ドキュメントを見ると機能が結構盛りだくさんなのですが、「<strong>SF</strong>が取り組んで問題は何なのか、何故必要なのか？」というのが分かりずらい、面白そうだけど、<strong>ﾍ(ﾟдﾟ)ﾉ ﾅﾆｺﾚ?</strong>って感じもします。</p>
+<p>9/5 のセッションでは、Service Fabricが出てから既に、4カ月以上経っているし、「Azure Service Fabric とは」的な内容はさくっと流して、私が感じていた<strong>SF</strong>に対する疑問に焦点を当てて話をしてみようと思います。</p>
+</div>
+<div class="section" id="service-fabric">
+<h2>Service Fabricが取り組んでいる課題</h2>
+<p>課題ですね、英語だと<strong>Challenge</strong>です。無理筋なのをやるとダメなやつですが、ここでは関係ありません。クラウド時代に突入してモダンなサービスは可用性とスケーラビリティを求められるようになりました。<a class="footnote-reference" href="#r7" id="id8">[7]</a></p>
+<p>その結果、Cluster アプリケーションでは複数のマシンに配置されることになります（つまり分散、分割）。複数台で構成されているので障害時に全停止せず、台数を増やせば処理能力が増えてスケールすると言うのが基本的なストーリーです。</p>
+<p>この考えに沿ったアーキテクチャの典型が、<strong>PaaSv1</strong>です。WebRole/WorkerRole を複数の障害ドメインのマシンに配置することで耐障害性を担保し、アプリケーションをステートレスにすることで、台数増加を性能向上に直結させ (<a class="reference external" href="http://www.publickey1.jp/blog/14/immutable_infrastructure_1.html">Immutable Infrastructure</a>ってやつです) 、高可用でスケーラブルなサービスを構築するというのが物語の粗筋です。</p>
+<p>これはこれで良いのですが、<strong>PaaSv1</strong>では、全てのRoleは仮想マシンを専有するような配置を行います。そのため、OSの設定やランタイムのインストールなど細かいことを自由にできるという大きなメリットがありますが「問題もあるよね」というのが今回の話しです。<strong>SF</strong>が、取り組んでいる課題はいろいろあるのですが、今回はこの配置に関する課題の話をします。</p>
+</div>
+<div class="section" id="static-partitioning">
+<h2>Static Partitioning 問題</h2>
+<p><strong>PaaSv1</strong>では、Role毎に台数を増減できますが、複数のWebRoleを同一の仮想マシンで動かすことはできません。また、WebRoleとWorkerRoleを同一仮想マシンでホストすることもできません。<a class="footnote-reference" href="#r8" id="id9">[8]</a>このようにRoleの分割が静的に行われているのを、Static Partitioning （静的分割？）と言います。Static Partitioning は、Role を増やせば、増すほど扱いづらくなりますし、ワークロードによっては事前に予測することが難しい場合もあり、リソースの利用効率という観点からは<strong>ムダ</strong>が生じやすい仕組みで、これは大きな課題ですね。</p>
+<img alt="../../../_images/pat01.png" class="align-center" src="_images/pat01.png"/>
+<p>Static Partitioning はシンプルなせいか、Cluster アプリケーションで広く使われてきました。最初のHadoop とか、昔の twitter とかですね。その結果あちこちから問題が聞こえてくるようになりました。その課題の解法の1つとして注目されているのが、Apache Mesos などで導入された手法です。 Mesosだと、このドキュメントが面白いです<a class="reference external" href="http://www.slideshare.net/charmalloc/buildingdeployingapplicationsmesos">Building and Deploying Application to Apache Mesos</a>、ちょっと引用します。</p>
+<p>Mesos 以前は、Static Partition（静的分割）だった。<strong>Static Partition（静的分割）IS BAD</strong>、とても扱いづらい。</p>
+<ul class="simple">
+<li>マシンの効率的な利用ができない</li>
+<li>効果的なスケールが出来ない</li>
+<li>障害の取り扱いが難しく、ダウンタイムの発生を招く</li>
+</ul>
+<p>リンク先には、「動的リソース割り当てが必要だ。 Operating System === Datacenter で、Mesos =&gt; data center の<em>kernel</em>だ」というようなことが書いてあります。Hadoopも、台数増えてくると十分Nodeが働かないという問題がありました。<a class="footnote-reference" href="#r9" id="id10">[9]</a></p>
+<p>確かにサービスを構成するアプリケーションを複数のコンポーネントに分けた場合、（例えばWeb Frontと、管理サイト、日時バッチ、月次バッチとか）。それぞれ、ワークロードも違えば、開発サイクルも違う。これを、クラスターに最適配置しようとするといろいろ<strong>メンドクサイ</strong>。<strong>PaaSv1</strong>で、現実的な解はRoleを分けることですが、月次バッチはWebFrontのオフピークの夜間にして効率的な運用をなどを考えると面倒なことになってくる・・・</p>
+</div>
+<div class="section" id="dynamic-partitioning">
+<h2>Dynamic Partitioning</h2>
+<p>Mesosから離れて、Service Fabric でどうしているのかを見てみます。 Service Fabric では、複数のNodeでクラスターを構成して、アプリケーションは同一Node内に複数配置することができます。どのように配置するかは、アプリケーションが要求を出して、配置条件にあたところにService Fabric が配置するという流れです。配置条件は、サービス マニフェストまたはアプリケーション マニフェストを使用するか、コード内で直接定義します。<a class="footnote-reference" href="#r10" id="id11">[10]</a></p>
+<img alt="../../../_images/pat04.png" class="align-center" src="_images/pat04.png"/>
+<p>Node内に複数のアプリケーションを配置することができ、リソースの有効利用を実現します。YARNとかMesosとかも同じようなことができます。このあたりの考え方は最近のトレンドのようです。</p>
+</div>
+<div class="section" id="cluster-manager">
+<h2>Cluster Manager <a class="footnote-reference" href="#r11" id="id12">[11]</a></h2>
+<p>このように、Datacenetrから仮想マシンをまとめて借りだして Cluserとしてプールし、アプリケーションの要求に応じてリソースを割り当てるのコンポーネントを、<strong>Cluster Manager</strong>と呼びます。（最近のクラウド界隈は、混沌としているので名称はちょっと曖昧さがあるけど）代表的な<strong>Cluster Manager</strong>を、Service Fabric も含め上げておきます。Hadoop MRv1 では JobTrancker がボトルネックとなって働かない Node 問題が発生しており、YARNが対策として作成されました。いずれの、Cluster Manager (YARN では、Resource Managerと呼ぶ）も、万単位のサーバーを扱うの前提で作成されているので完全に１つのリソースプールに全部入れてしまって、そこからリースするような使い方でも行けそうです。</p>
+<ul class="simple">
+<li><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/service-fabric/">Service Fabric</a></li>
+<li><a class="reference external" href="http://mesos.apache.org/">Apache Mesos</a></li>
+<li><a class="reference external" href="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html">YARN, Apache Hadoop</a></li>
+<li><a class="reference external" href="http://www.infoq.com/jp/news/2015/04/google-borg">Google Borg/Omega</a></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h2>最後に</h2>
+<p>こんな感じで、Service Fabricがアプリケーションをクラスターに配置してくれるので、リソースとアプリケーションの分割の関係を柔軟に構成することができます。ワークロードと配置の関係をコード外でコントロールできるのは、なかなか嬉しい感じです。今回は時間の都合上入れられないと思いますが、開発支援、運用支援の機能もService Fabricには盛り込まれていて、かなり拾い範囲をサポートした分散型システム プラットフォームと言えそうです。</p>
+<p>ソフトウェアの基本は、「分割して統治せよ」だと思いますが、残念ながら分割にはもろもろのメリットとデメリットがあり、過剰な分割はデスマーチの元という面もありました。Service Fabricは、今風に多くの問題を解決し次世代クラウドアプリケーションの作成に役立ってくれそうで</p>
+<p>※Spark は、複数のCluster Managerに対応していて、これはこれで面白いと思います。</p>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-overview/">Service Fabric の概要</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="ServiceFabricドキュメント">Service Fabric ドキュメント</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td><a class="reference external" href="http://azure.microsoft.com/ja-jp/blog/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world/">Announcing Azure Service Fabric: Reducing Complexity in a Hyper-scale World</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2015/04/23/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world.aspx">翻訳：Azure Service Fabric を発表: 高度なスケーラビリティをより簡単に実現</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/3-618">BUILD 2015, Mark Russinovich, The Next Generation of Azure Compute Platform with Mark Russinovich</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/2-640">BUILD 2015, Gopal Kakivaya, Microsoft Azure Service Fabric Architecture</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[7]</a></td><td>クラウドだから可用性とスケーラビリティを求められるのか、両者が求めらるからクラウドなのかは ニワトリと卵の関係のような気もします。クラウドによって、いくつかの面でコストが抑えられるようになったので、現実的なビジネスでの適応局面が増えたという言い方もできるます。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r8" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td>WebRole で複数Siteを定義すれば複数Endpoint Hostできます、また、WebRoleのRoleEntryPointのRunをoverride するとWorkerRole的なことが出来たりします。これらの方法の課題はアプリケーション間が無用に密接にくっついてしまっていることです。できるけど、イマイチやなという感じです。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r9" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[9]</a></td><td><a class="reference external" href="http://www.ibm.com/developerworks/jp/analytics/library/bd-yarn-intro/">YARN の紹介</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r10" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[10]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-service-description/">サービス記述の概要</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r11" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[11]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Cluster_manager">Cluster manager</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r12" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[12]</td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-cluster-description/">クラスターの説明</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/servcie_fabric.html">Servcie Fabric</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/jazug.html">JAZUG</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/09/01/go_5_jazug_service_fabric_session.html#disqus_thread" data-disqus-identifier="2015/09/01/go_5_jazug_service_fabric_session">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>August 23, 2015</span>
         </div>
         <div class="section">
@@ -359,219 +517,6 @@
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/01/18/goazure_2015.html#disqus_thread" data-disqus-identifier="2015/01/18/goazure_2015">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 02, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a></h1>
-<p>※本記事は、<a class="reference external" href="http://qiita.com/advent-calendar/2014/azure">Azure Advent Calendar 2014</a>への寄稿記事です。</p>
-<p>最近あまりに Azure の新機能が続々と出てくるので、なかなかフォローが難しですが、そんな時は、<a class="reference external" href="https://buchizo.wordpress.com/">No.1のBlog</a>と、 twitterで<a class="reference external" href="https://twitter.com/hashtag/azurejp?src=hash">#azurejp</a>を見ておけば良いですね。</p>
-<p>そんな数ある今年のAzure新機能の中で、<a class="reference external" href="http://azure.microsoft.com/en-us/services/documentdb/">DocumentDB</a>と、<a class="reference external" href="http://azure.microsoft.com/en-us/services/batch/">Batch</a>の２つがお気に入りです。<span class="docutils literal"><span class="pre">DocumentDB</span></span>については、過日仙台で話をしたので、その時の<a class="reference external" href="http://www.slideshare.net/takekazuomi/introduction-to-documentdb">資料</a>を観てもらうことににして、今回は<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">Batch</span></span>を紹介します。 公式名称は、<span class="docutils literal"><span class="pre">Batch</span></span>ということなのですが、一般名称を製品名に使うのは紛らわしいので止めて欲しいですが、ここでは、それを曲げて、<span class="docutils literal"><span class="pre">Batch</span></span>と書きます。</p>
-<p><span class="docutils literal"><span class="pre">Batch</span></span>は、2014/10/28 に行われた TechEd Europe の Keynote でお披露目されました。その時の動画が公開されています。 開始から 1:11 ぐらいから<span class="docutils literal"><span class="pre">Batch</span></span>の紹介が始まって、1:15 から Mark Russinovich が<a class="reference external" href="http://www.blender.org/">blender</a>を使った3Dレンダリングを見せてくれます。そこだけなら、そんなに長くないしお勧めです。</p>
-<a class="reference external image-reference" href="http://channel9.msdn.com/Events/TechEd/Europe/2014/KEY01"><img alt="TechEd Europe 2014 Keynote" class="align-center" src="_images/batch000.png"/></a>
-<p>.</p>
-<div class="section" id="id2">
-<h2>Batch とは</h2>
-<p>簡単に言うと、バッチ処理向けのPaaSです。WorkerRoleを使ってバッチ処理を組むのに比べると、ジョブ·キュー、スケジューラ、VMのプロビジョニングなどをアプリケーション側で用意する必要がありません。また既存のexeファイルをクラウド上で大量に実行することなどが容易に出来るようになっています。Microsoft内部では、Media Serviceが動画のエンコードの処理の部分で使っているそうです。<span class="docutils literal"><span class="pre">Batch</span></span>のコンセプトと用語について説明します。</p>
-<div class="section" id="azure-batch-account">
-<h3>Azure Batch Account</h3>
-<p><span class="docutils literal"><span class="pre">Batch</span></span>サービスを使うには、Bach アカウントが必要で、そのアカウントはポータルで作成します。アカウントを作成すると、サブスクリプション、リージョン、アカウント名とキーが確定します。アカウント名とキーはコードで利用します。</p>
-<img alt="Azure Batch Account" class="align-center" src="_images/batch001.png"/>
-</div>
-<div class="section" id="sdk">
-<h3>SDK</h3>
-<p><span class="docutils literal"><span class="pre">Bach</span></span>では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/">Batch Apps Cloud SDK</a>、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/">Batch Apps Client SDK</a>と、<a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a>が用意されていて、<a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>もあります。</p>
-</div>
-<div class="section" id="azure-batch-rest-api">
-<h3>Azure Batch REST API</h3>
-<p>低レベルのHTTP REST API では、VM pool の管理、work item の実行を柔軟にコントロールすることができます。この方法では、あなたのリソースを完全に制御できますが、タスク実行パイプラインを管理するためにクライアントが必要です。</p>
-</div>
-<div class="section" id="azure-batch-apps">
-<h3>Azure Batch Apps</h3>
-<p>もう一つの高レベルの仕組みとして、<span class="docutils literal"><span class="pre">Batch</span> <span class="pre">Apps</span></span>と呼ばれる機能が用意されています。この仕組みでは、バッチワークロードを登録し、クライアントあるいは、Batch Apps portal から実行することが出来るなどよりユーザーよりの管理機能を用意しています。</p>
-<img alt="Azure Batch Apps portal" class="align-center" src="_images/batch004.png"/>
-</div>
-<div class="section" id="pools">
-<h3>Pools</h3>
-<p>バッチを実行する、ノードのグループです。Poolは、複数のVMで構成され、VMは、auto scaling rules で増減します。PoolへのVMの追加が必要な場合は、自動的に新規ノードが作成・追加されます。</p>
-</div>
-<div class="section" id="task-virtual-machines-tvms">
-<h3>Task Virtual Machines (TVMs)</h3>
-<p>TVMs は、Poolを構成する、compute nodeの１つです。<span class="docutils literal"><span class="pre">Batch</span></span>用に構成された Web/Worker Role と思ってください。scalable で stateless な仮想マシンとして利用できます。Poolに TVMs が追加される場合は、新規にクリーンな仮想マシンが用意されます。そのため、Poolの作成には少々時間がかかります。初期ノード数を指定して試してみたところ、1ノードで8分、100ノードぐらいの時間がかかりました。（Japan West、A1）</p>
-<img alt="Pool and TVMs" class="align-center" src="_images/batch006.png"/>
-</div>
-<div class="section" id="work-items">
-<h3>Work Items</h3>
-<p><span class="docutils literal"><span class="pre">Work</span> <span class="pre">Items</span></span>は、アプリケーションがプールでTVMs上で実行される方法を指定するテンプレートです。スケジューリングの設定（execute once とか 実行時間制限など）や、どの Pool でjobを実行するかなどを指定します。</p>
-</div>
-<div class="section" id="jobs">
-<h3>Jobs</h3>
-<p>jobは、work item のスケジュールされたインスタンスで、一度だけ実行されたり、何度か実行されたりします。複数の task の集まりです。個々の task は、pool のどこかのTVM で実行されます。</p>
-</div>
-<div class="section" id="tasks">
-<h3>Tasks</h3>
-<p>task は、job の中の一つの実行ステップです。 work item, job, task の関係は、下記の図のようになります。</p>
-<img alt="work item, job, task" class="align-center" src="_images/batch005.png"/>
-</div>
-</div>
-<div class="section" id="batch-api">
-<h2>Batch APIのサンプルコード</h2>
-<p>現時点では、<span class="docutils literal"><span class="pre">Batch</span></span>のサンプルコードが6個<a class="reference external" href="https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=Topic&amp;f%5B0%5D.Value=Azure%20Batch&amp;f%5B0%5D.Text=Azure%20Batch">コードレシピ</a>に上がっています。そのうち、<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Azure Batch Sample - Hello World &lt;Batch AppsがBatch APIのサンプルで、 `Microsoft Azure Batch Apps Samples</a>がBatch Apps のサンプルでした。</p>
-<p>Batch APIのサンプルの<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Hello World</a>の方をざっと眺めます。</p>
-<div class="section" id="packages-config">
-<h3>packages.config</h3>
-<p>まず、<cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite>を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
-<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch/">Azure.Batch</a>を使っています。APIリファレンスは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a>にあります。</p>
-</div>
-<div class="section" id="id5">
-<h3>設定</h3>
-<p>試しに動かして見ようとするならば、 BatchとStorageのアカウントが必要です。 これらを作成したら、Program.csに書き込みます。変更するのは、赤線部分、blobのendpoint、batchのアカウント、キー、ストレージのアカウント、キーの5箇所です。</p>
-<img alt="hello world setting" class="align-center" src="_images/batch007.png"/>
-</div>
-<div class="section" id="id6">
-<h3>実行</h3>
-<p>VSでビルドして実行すると下記のような感じで動きます。このサンプルを動かすだけならば、VS extension は必要ありません。</p>
-<img alt="hello world exec" class="align-center" src="_images/batch008.png"/>
-</div>
-<div class="section" id="batchclient">
-<h3>1. BatchClient</h3>
-<p>Batch アカウント、キーから、BatchCredentialsを作成して、BatchClient.Connect で BatchClientを取得します。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="c1">// Get an instance of the BatchClient for a given Azure Batch account.</span>
-<span class="n">BatchCredentials</span> <span class="n">cred</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BatchCredentials</span><span class="p">(</span><span class="n">Account</span><span class="p">,</span> <span class="n">Key</span><span class="p">);</span>
-<span class="k">using</span> <span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span> <span class="p">=</span> <span class="n">BatchClient</span><span class="p">.</span><span class="n">Connect</span><span class="p">(</span><span class="n">Url</span><span class="p">,</span> <span class="n">cred</span><span class="p">))</span>
-<span class="p">{</span>
-<span class="p">...</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="pool">
-<h3>2. Pool</h3>
-<p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。Pool作成時に、VMのサイズやOSを指定します。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// All Pool and VM operation starts from PoolManager</span>
-    <span class="k">using</span> <span class="p">(</span><span class="n">IPoolManager</span> <span class="n">pm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenPoolManager</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="c1">// go through all the pools and see if it already exists</span>
-        <span class="kt">bool</span> <span class="n">found</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
-        <span class="k">foreach</span> <span class="p">(</span><span class="n">ICloudPool</span> <span class="n">p</span> <span class="k">in</span> <span class="n">pm</span><span class="p">.</span><span class="n">ListPools</span><span class="p">())</span>
-        <span class="p">{</span>
-            <span class="c1">// pools are uniquely identified by their name</span>
-            <span class="k">if</span> <span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">poolName</span><span class="p">))</span>
-                <span class="p">{</span>
-                    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Found pool {0} already exists"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
-                    <span class="n">found</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
-                    <span class="k">break</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(!</span><span class="n">found</span><span class="p">)</span>
-            <span class="p">{</span>
-                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating pool: {0}"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
-                <span class="c1">// if pool not found, call CreatePool</span>
-                <span class="c1">//You can learn more about os families and versions at:</span>
-                <span class="c1">//http://msdn.microsoft.com/en-us/library/azure/ee924680.aspx</span>
-                <span class="n">ICloudPool</span> <span class="n">pool</span> <span class="p">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">CreatePool</span><span class="p">(</span><span class="n">poolName</span><span class="p">,</span> <span class="n">targetDedicated</span><span class="p">:</span> <span class="m">3</span><span class="p">,</span> <span class="n">vmSize</span><span class="p">:</span> <span class="s">"small"</span><span class="p">,</span> <span class="n">osFamily</span><span class="p">:</span> <span class="s">"3"</span><span class="p">);</span>
-                <span class="n">pool</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="work-item">
-<h3>3. work item</h3>
-<p>ここはちょっと分かり辛い。CloudTask がTaskで、次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。WorkItemManager.GetJobでJobは取得できます。Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">using</span> <span class="p">(</span><span class="n">IWorkItemManager</span> <span class="n">wm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenWorkItemManager</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="c1">//The toolbox contains some helper mechanisms to ease submission and monitoring of tasks.</span>
-        <span class="n">IToolbox</span> <span class="n">toolbox</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenToolbox</span><span class="p">();</span>
-
-        <span class="c1">// to submit a batch of tasks, the TaskSubmissionHelper is useful.</span>
-        <span class="n">ITaskSubmissionHelper</span> <span class="n">taskSubmissionHelper</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskSubmissionHelper</span><span class="p">(</span><span class="n">wm</span><span class="p">,</span> <span class="n">Program</span><span class="p">.</span><span class="n">PoolName</span><span class="p">);</span>
-
-        <span class="c1">// workitem is uniquely identified by its name so we will use a timestamp as suffix</span>
-        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s">"USERNAME"</span><span class="p">)</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"yyyyMMdd-HHmmss"</span><span class="p">);</span>
-
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating work item: {0}"</span><span class="p">,</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
-
-        <span class="c1">// add 2 quick tasks. Tasks within a job must have unique names</span>
-        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task1"</span><span class="p">,</span> <span class="s">"hostname"</span><span class="p">));</span>
-        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task2"</span><span class="p">,</span> <span class="s">"cmd /c dir /s"</span><span class="p">));</span>
-
-        <span class="c1">//Commit the tasks to the Batch Service</span>
-        <span class="n">IJobCommitUnboundArtifacts</span> <span class="n">artifacts</span> <span class="p">=</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">Commit</span><span class="p">()</span> <span class="k">as</span> <span class="n">IJobCommitUnboundArtifacts</span><span class="p">;</span>
-
-        <span class="c1">// TaskSubmissionHelper commit artifacts returns the workitem and job name</span>
-        <span class="n">ICloudJob</span> <span class="n">job</span> <span class="p">=</span> <span class="n">wm</span><span class="p">.</span><span class="n">GetJob</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
-
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Waiting for all tasks to complete on work item: {0}, Job: {1} ..."</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
-
-        <span class="c1">//We use the task state monitor to monitor the state of our tasks -- in this case we will wait for them all to complete.</span>
-        <span class="n">ITaskStateMonitor</span> <span class="n">taskStateMonitor</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskStateMonitor</span><span class="p">();</span>
-
-        <span class="c1">// blocking wait on the list of tasks until all tasks reach completed state</span>
-        <span class="kt">bool</span> <span class="n">timedOut</span> <span class="p">=</span> <span class="n">taskStateMonitor</span><span class="p">.</span><span class="n">WaitAll</span><span class="p">(</span><span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">(),</span> <span class="n">TaskState</span><span class="p">.</span><span class="n">Completed</span><span class="p">,</span> <span class="k">new</span> <span class="n">TimeSpan</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">0</span><span class="p">));</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="n">timedOut</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nf">TimeoutException</span><span class="p">(</span><span class="s">"Timed out waiting for tasks"</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="c1">// dump task output</span>
-        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">t</span> <span class="k">in</span> <span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">())</span>
-        <span class="p">{</span>
-            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Task "</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">" says:\n"</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">GetTaskFile</span><span class="p">(</span><span class="n">Constants</span><span class="p">.</span><span class="n">StandardOutFileName</span><span class="p">).</span><span class="n">ReadAsString</span><span class="p">());</span>
-        <span class="p">}</span>
-
-        <span class="c1">// remember to delete the workitem before exiting</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Deleting work item: {0}"</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
-        <span class="n">wm</span><span class="p">.</span><span class="n">DeleteWorkItem</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id7">
-<h3>4. 結果の取得</h3>
-<p>完了後のJobを、CloudJob.ListTasks()して、個々のTaskの実行結果を拾うことができます。このコードでは、 GetTaskFile(Constants.StandardOutFileName) して標準出力を拾っています。</p>
-</div>
-<div class="section" id="id8">
-<h3>終わり</h3>
-<p>最後に、work item を消したり、BatchClientをdisposeしたりなどの後処理をします。基本的な流れは割りとシンプルだと思います。Batch Appsを使うと、予めクラウド側にアプリを登録して置いて、ポータルから実行したり、モニターもポータル経由で出来たりなど諸々便利機能が使えます。その分ちょっと面倒になる部分もありますが、VS extension がその辺りのデバッグなどを支援してくれるようです。</p>
-</div>
-</div>
-<div class="section" id="id9">
-<h2>最後に</h2>
-<p><span class="docutils literal"><span class="pre">Batch</span></span>は、非常に定型的なコードで、ラージスケールなバッチ処理を実行できる面白い仕組みになっています。Azureの諸々の仕組みと上手く組み合わって、簡単なことならHadoop よりシンプルに同じようなことが実現できると言えそうです。ただ、ちょっとWork Item周りの処理が分かり辛く残念です。わりと簡単に使えるし、日本のデータセンターにも来ているので、興味があれば使ってみれば、良いのではないでしょうか。</p>
-<p>この前Blogを書いてからだいぶ時間が空いてしました。今年はJAZUG でやっている<a class="reference external" href="http://jazug.doorkeeper.jp/events/17739">CDP勉強会</a>が次回第五回で延べ400人ほどの参加になりそうな勢い、<a class="reference external" href="http://www.slideshare.net/takekazuomi/presentations">slideshareの資料</a>は累積で7万PVを超える勢いで、Microsoft Azure の熱を肌に感じる１年でした。（slideshare のPVは2014/1/1 時点で5千ほどだったので急激に増えました）</p>
-</div>
-<div class="section" id="goazure-2015">
-<h2>GoAzure 2015</h2>
-<img alt="GoAzure" class="align-center" src="_images/batch009.png"/>
-<p>あの Scott Hanselman が来る！ ～ GoAzure が 1/16 に開催～ の<a class="reference external" href="http://r.jazug.jp/#event">GoAzure</a>で、Storage周りの話しをします（予定）<a class="reference external" href="http://r.jazug.jp/goazure-sessions.html">Persistence on Azure - Microsoft Azure における永続化</a>お待ちしてます。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/batch.html">Batch</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/batch.html">Batch</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/intro.html">Intro</a>, <a href="tags/goazure.html">GoAzure</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/12/02/introduction_to_azure_batch.html#disqus_thread" data-disqus-identifier="2014/12/02/introduction_to_azure_batch">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -580,6 +525,8 @@
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
+        </li><li>
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
@@ -597,15 +544,13 @@
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
         </li><li>
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
-        </li><li>
-            <a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

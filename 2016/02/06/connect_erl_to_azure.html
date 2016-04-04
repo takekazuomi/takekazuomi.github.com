@@ -1,0 +1,222 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Connect ERL to Azure &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Connect ERL to Azure &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/2016/02/06/connect_erl_to_azure.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+        </li>
+        </ul>
+      <ul>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li>
+        <li class="mvp-nav">
+	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>February 06, 2016</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="connect-erl-to-azure">
+<h1>Connect ERL to Azure</h1>
+<p><a class="reference external" href="https://www.ubnt.com/edgemax/edgerouter-lite/">EdgeRouter LITE</a>というのが安くて<a class="reference external" href="http://www.amazon.co.jp/dp/B00T0GAV86/">Amazon</a>にも出ていて入手性が良く、中身は VyOS の親戚らしく、Azure への Site to Site VPN (以下 S2S VPN)も普通に繋がり便利だったのでご紹介。</p>
+<p>Azure への S2S VPN では、接続のゲートウェイ ルーティング には、<strong>Policy-based</strong>と<strong>Route-based</strong>の2種類があります。以前は、static gateway と dynamic dateway なんて名前が付いていていましたが、普通（？）の名前になったようです。<a href="#id7"><span class="problematic" id="id8"><span id="id1"></span>[#ref1]_</span></a><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpngateways/#_ゲートウェイの要件">ゲートウェイの要件</a>を見ると<strong>Policy-based</strong>は制限がやたらと多く、基本的には<strong>Route-based</strong>の ゲートウェイを使いたいが、検証済みの VPN デバイスに手頃な安いのが無かったのですが、EdgeRouter LITE 使えました。</p>
+<p>では、繋いでみます。</p>
+<div class="section" id="id3">
+<h2>事前準備</h2>
+<ol class="arabic simple">
+<li>ネットワーク構成を決めます。今回は、Azure 側は、10.3.0.0/16, ローカルは、192.168.13.0/24 にしました。</li>
+<li>ルーターに振られる Global IPを確認。以下、<strong>&lt;erl3 global IP&gt;</strong>とします。実用上は固定IPが良いかと。今回は、プロバイダーが動的に振ってきたのを使っています。これが変わるとAzure 側のGatewayの設定を変えないといけません。</li>
+<li>ipsec の 事前共有キー を生成。以下<strong>&lt;pre shared secret&gt;</strong>とします。<a href="#id9"><span class="problematic" id="id10"><span id="id4"></span>[#ref2]_</span></a></li>
+</ol>
+</div>
+<div class="section" id="azure-arm-vnet">
+<h2>Azure 側、ARM でVNet作成</h2>
+<p>ARM の quickstart template に確認に使うにはちょうど良い感じのテンプレートがあったのでそれを使います。<a class="reference external" href="https://github.com/Azure/azure-quickstart-templates/tree/master/101-site-to-site-vpn-create">Site to Site VPN Connection</a>を開いて、さくっと「Deploy to Azure」 ボタンを押します。</p>
+<p>新ポータルで下記のような画面出るので、パラメータを設定します。ポイントは、<strong>VPNTYPE</strong>を、<strong>RouteBased</strong>に、<strong>LOCALGATEWAYIPADDRESS</strong>には、手元のルーターの IP<strong>&lt;elr3 global IP&gt;</strong>を、<strong>LOCALADDRESSPREFIX</strong>は、192.168.13.0/24 に、<strong>GATEWAYSKU</strong>は、<strong>Basic</strong>、<strong>SHAREDKEY</strong>は、事前に決めた<strong>&lt;pre shared secret&gt;</strong>にするぐらいです。これで作成すると、Azure内に仮想ネットワークとゲートウェイが出来ます。</p>
+</div>
+<div class="section" id="azure">
+<h2>Azure 側を確認</h2>
+<p>ちゃんとできているかAzure PowerShell で確認。</p>
+<p>ログイン$ Login-AzureRMAccont</p>
+<p>ゲイトウェイを確認</p>
+<p>$ Get-AzureRmVirtualNetworkGateway -ResourceGroupName &lt;リソースグループ名&gt;</p>
+<p>IpConfigurations           : {vnetGatewayConfig}GatewayType                : VpnVpnType                    : RouteBasedEnableBgp                  : FalseGatewayDefaultSite         :ProvisioningState          : SucceededSku                        : Microsoft.Azure.Commands.Network.Models.PSVirtualNetworkGatewaySkuVpnClientConfiguration     : Microsoft.Azure.Commands.Network.Models.PSVpnClientConfigurationIpConfigurationsText       : [</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="docutils">
+<dt>{</dt>
+<dd><p class="first">&#8220;PrivateIpAllocationMethod&#8221;: &#8220;Dynamic&#8221;,&#8221;Subnet&#8221;: {</p>
+<blockquote class="last">
+<div>&#8220;Id&#8221;: &#8220;/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworks/azureVnet/subnets/</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>GatewaySubnet&#8221;</dt>
+<dd><p class="first">},&#8221;PublicIpAddress&#8221;: {</p>
+<blockquote>
+<div>&#8220;Id&#8221;: &#8220;/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/publicIPAddresses/azureGatewayIP&#8221;</div></blockquote>
+<p class="last">},&#8221;Name&#8221;: &#8220;vnetGatewayConfig&#8221;,&#8221;Etag&#8221;: &#8220;W/&#8221;157bc26b-fe39-4e39-acf7-c6020d3e8055&#8221;&#8221;,&#8221;Id&#8221;: &#8220;/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworkGateways/azureGateway/</p>
+</dd>
+<dt>ipConfigurations/vnetGatewayConfig&#8221;</dt>
+<dd>}</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+<p>GatewayDefaultSiteText     : nullSkuText                    : {</p>
+<blockquote>
+<div><blockquote>
+<div>&#8220;Capacity&#8221;: 0,&#8221;Name&#8221;: &#8220;Basic&#8221;,&#8221;Tier&#8221;: &#8220;Basic&#8221;</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>VpnClientConfigurationText <span class="classifier-delimiter">:</span> <span class="classifier">{</span></dt>
+<dd><blockquote class="first">
+<div>&#8220;VpnClientRevokedCertificates&#8221;: [],&#8221;VpnClientRootCertificates&#8221;: []</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>ResourceGroupName          : kinmugivpn02Location                   : japanwestResourceGuid               : 40a5da3b-4326-47d7-9b12-18ad40b3e2a9Tag                        : {}TagsTable                  :Name                       : azureGatewayEtag                       : W/&#8221;157bc26b-fe39-4e39-acf7-c6020d3e8055&#8221;Id                         : /subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworkGateways/azureGateway</p>
+<p>事前共有キーをダウンロード$ Get-AzureRmVirtualNetworkGatewayConnectionSharedKey -ResourceGroupName &lt;リソースグループ名&gt; -Name Azure2Other&lt;pre-shared-secret&gt;</p>
+</div>
+<div class="section" id="router">
+<h2>Routerに設定追加</h2>
+<p>edit vpnset ipsec auto-firewall-nat-exclude enableset ipsec esp-group azure compression disableset ipsec esp-group azure lifetime 3600set ipsec esp-group azure mode tunnelset ipsec esp-group azure pfs disableset ipsec esp-group azure proposal 1 encryption aes256set ipsec esp-group azure proposal 1 hash sha1</p>
+<p>set ipsec ike-group azure key-exchange ikev2set ipsec ike-group azure lifetime 28800set ipsec ike-group azure proposal 1 dh-group 2set ipsec ike-group azure proposal 1 encryption aes256set ipsec ike-group azure proposal 1 hash sha1</p>
+<p>set ipsec ipsec-interfaces interface eth2set ipsec nat-networks allowed-network 0.0.0.0/0set ipsec nat-traversal enable</p>
+<p>set ipsec site-to-site peer 104.214.150.157 authentication mode pre-shared-secretset ipsec site-to-site peer 104.214.150.157 authentication pre-shared-secret kUj21X8Skrl2efmggG1kQ9qb22t2poCc</p>
+<p>set ipsec site-to-site peer 104.214.150.157 connection-type initiateset ipsec site-to-site peer 104.214.150.157 ike-group azureset ipsec site-to-site peer 104.214.150.157 local-address 219.214.192.29</p>
+<p>set ipsec site-to-site peer 104.214.150.157 tunnel 1 allow-nat-networks disableset ipsec site-to-site peer 104.214.150.157 tunnel 1 allow-public-networks disableset ipsec site-to-site peer 104.214.150.157 tunnel 1 esp-group azureset ipsec site-to-site peer 104.214.150.157 tunnel 1 local prefix 192.168.13.0/24set ipsec site-to-site peer 104.214.150.157 tunnel 1 remote prefix 10.3.0.0/16</p>
+<p>top</p>
+<p>ubnt&#64;ubnt# commicommit          commit-confirm[edit]ubnt&#64;ubnt# commit[ vpn ]Warning: Local address 219.214.192.29 specified for peer &#8220;40.74.143.221&#8221;is not configured on any of the ipsec-interfaces and is not theclustering address.  IPsec must be re-started after addresshas been configured.</p>
+<p>conntrack v0.9.14 (conntrack-tools): connection tracking table has been emptied.</p>
+<p>したrestart vpn</p>
+<p>104.214.150.157.. [#ref1]<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpngateways/#_ゲートウェイルーティングの種類">ゲートウェイ ルーティングの種類</a>.. [#ref2]<a class="reference external" href="https://tools.ietf.org/html/rfc2409#page-16">RFC 2409 - The Internet Key Exchange (IKE) 5.4 Phase 1 Authenticated With a Pre-Shared Key</a></p>
+<p><a class="reference external" href="https://community.ubnt.com/t5/EdgeMAX/changing-to-ikev2-breaks-IPSEC-tunnel/td-p/1115767/page/2">実装は、strongSwan らしく。VPNデバイスリストに無いものでもかなりのものが動くのではないかと思います。4.5.2 にはIKEv2の実装に問題があるということなので要注意です。</a></p>
+<p><a class="reference external" href="https://lists.strongswan.org/pipermail/users/2013-September/005278.html">Azure dynamic routing VPN and Strongswan</a></p>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2016/02/06/connect_erl_to_azure";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2016/02/06/connect_erl_to_azure";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="../../04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
+        </li><li>
+            <a href="../05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
+        </li><li>
+            <a href="../../../2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
+        </li><li>
+            <a href="../../../2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
+        </li><li>
+            <a href="../../../2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a>
+        </li><li>
+            <a href="../../../2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
+        </li><li>
+            <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
+        </li><li>
+            <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
+        </li><li>
+            <a href="../../../2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
+        </li><li>
+            <a href="../../../2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (31)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (9)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (1)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

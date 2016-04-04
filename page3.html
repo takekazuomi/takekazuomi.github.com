@@ -73,6 +73,219 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 02, 2014</span>
+        </div>
+        <div class="section">
+            <h1><a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a></h1>
+<p>※本記事は、<a class="reference external" href="http://qiita.com/advent-calendar/2014/azure">Azure Advent Calendar 2014</a>への寄稿記事です。</p>
+<p>最近あまりに Azure の新機能が続々と出てくるので、なかなかフォローが難しですが、そんな時は、<a class="reference external" href="https://buchizo.wordpress.com/">No.1のBlog</a>と、 twitterで<a class="reference external" href="https://twitter.com/hashtag/azurejp?src=hash">#azurejp</a>を見ておけば良いですね。</p>
+<p>そんな数ある今年のAzure新機能の中で、<a class="reference external" href="http://azure.microsoft.com/en-us/services/documentdb/">DocumentDB</a>と、<a class="reference external" href="http://azure.microsoft.com/en-us/services/batch/">Batch</a>の２つがお気に入りです。<span class="docutils literal"><span class="pre">DocumentDB</span></span>については、過日仙台で話をしたので、その時の<a class="reference external" href="http://www.slideshare.net/takekazuomi/introduction-to-documentdb">資料</a>を観てもらうことににして、今回は<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">Batch</span></span>を紹介します。 公式名称は、<span class="docutils literal"><span class="pre">Batch</span></span>ということなのですが、一般名称を製品名に使うのは紛らわしいので止めて欲しいですが、ここでは、それを曲げて、<span class="docutils literal"><span class="pre">Batch</span></span>と書きます。</p>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>は、2014/10/28 に行われた TechEd Europe の Keynote でお披露目されました。その時の動画が公開されています。 開始から 1:11 ぐらいから<span class="docutils literal"><span class="pre">Batch</span></span>の紹介が始まって、1:15 から Mark Russinovich が<a class="reference external" href="http://www.blender.org/">blender</a>を使った3Dレンダリングを見せてくれます。そこだけなら、そんなに長くないしお勧めです。</p>
+<a class="reference external image-reference" href="http://channel9.msdn.com/Events/TechEd/Europe/2014/KEY01"><img alt="TechEd Europe 2014 Keynote" class="align-center" src="_images/batch000.png"/></a>
+<p>.</p>
+<div class="section" id="id2">
+<h2>Batch とは</h2>
+<p>簡単に言うと、バッチ処理向けのPaaSです。WorkerRoleを使ってバッチ処理を組むのに比べると、ジョブ·キュー、スケジューラ、VMのプロビジョニングなどをアプリケーション側で用意する必要がありません。また既存のexeファイルをクラウド上で大量に実行することなどが容易に出来るようになっています。Microsoft内部では、Media Serviceが動画のエンコードの処理の部分で使っているそうです。<span class="docutils literal"><span class="pre">Batch</span></span>のコンセプトと用語について説明します。</p>
+<div class="section" id="azure-batch-account">
+<h3>Azure Batch Account</h3>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>サービスを使うには、Bach アカウントが必要で、そのアカウントはポータルで作成します。アカウントを作成すると、サブスクリプション、リージョン、アカウント名とキーが確定します。アカウント名とキーはコードで利用します。</p>
+<img alt="Azure Batch Account" class="align-center" src="_images/batch001.png"/>
+</div>
+<div class="section" id="sdk">
+<h3>SDK</h3>
+<p><span class="docutils literal"><span class="pre">Bach</span></span>では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/">Batch Apps Cloud SDK</a>、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/">Batch Apps Client SDK</a>と、<a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a>が用意されていて、<a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>もあります。</p>
+</div>
+<div class="section" id="azure-batch-rest-api">
+<h3>Azure Batch REST API</h3>
+<p>低レベルのHTTP REST API では、VM pool の管理、work item の実行を柔軟にコントロールすることができます。この方法では、あなたのリソースを完全に制御できますが、タスク実行パイプラインを管理するためにクライアントが必要です。</p>
+</div>
+<div class="section" id="azure-batch-apps">
+<h3>Azure Batch Apps</h3>
+<p>もう一つの高レベルの仕組みとして、<span class="docutils literal"><span class="pre">Batch</span> <span class="pre">Apps</span></span>と呼ばれる機能が用意されています。この仕組みでは、バッチワークロードを登録し、クライアントあるいは、Batch Apps portal から実行することが出来るなどよりユーザーよりの管理機能を用意しています。</p>
+<img alt="Azure Batch Apps portal" class="align-center" src="_images/batch004.png"/>
+</div>
+<div class="section" id="pools">
+<h3>Pools</h3>
+<p>バッチを実行する、ノードのグループです。Poolは、複数のVMで構成され、VMは、auto scaling rules で増減します。PoolへのVMの追加が必要な場合は、自動的に新規ノードが作成・追加されます。</p>
+</div>
+<div class="section" id="task-virtual-machines-tvms">
+<h3>Task Virtual Machines (TVMs)</h3>
+<p>TVMs は、Poolを構成する、compute nodeの１つです。<span class="docutils literal"><span class="pre">Batch</span></span>用に構成された Web/Worker Role と思ってください。scalable で stateless な仮想マシンとして利用できます。Poolに TVMs が追加される場合は、新規にクリーンな仮想マシンが用意されます。そのため、Poolの作成には少々時間がかかります。初期ノード数を指定して試してみたところ、1ノードで8分、100ノードぐらいの時間がかかりました。（Japan West、A1）</p>
+<img alt="Pool and TVMs" class="align-center" src="_images/batch006.png"/>
+</div>
+<div class="section" id="work-items">
+<h3>Work Items</h3>
+<p><span class="docutils literal"><span class="pre">Work</span> <span class="pre">Items</span></span>は、アプリケーションがプールでTVMs上で実行される方法を指定するテンプレートです。スケジューリングの設定（execute once とか 実行時間制限など）や、どの Pool でjobを実行するかなどを指定します。</p>
+</div>
+<div class="section" id="jobs">
+<h3>Jobs</h3>
+<p>jobは、work item のスケジュールされたインスタンスで、一度だけ実行されたり、何度か実行されたりします。複数の task の集まりです。個々の task は、pool のどこかのTVM で実行されます。</p>
+</div>
+<div class="section" id="tasks">
+<h3>Tasks</h3>
+<p>task は、job の中の一つの実行ステップです。 work item, job, task の関係は、下記の図のようになります。</p>
+<img alt="work item, job, task" class="align-center" src="_images/batch005.png"/>
+</div>
+</div>
+<div class="section" id="batch-api">
+<h2>Batch APIのサンプルコード</h2>
+<p>現時点では、<span class="docutils literal"><span class="pre">Batch</span></span>のサンプルコードが6個<a class="reference external" href="https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=Topic&amp;f%5B0%5D.Value=Azure%20Batch&amp;f%5B0%5D.Text=Azure%20Batch">コードレシピ</a>に上がっています。そのうち、<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Azure Batch Sample - Hello World &lt;Batch AppsがBatch APIのサンプルで、 `Microsoft Azure Batch Apps Samples</a>がBatch Apps のサンプルでした。</p>
+<p>Batch APIのサンプルの<a class="reference external" href="https://code.msdn.microsoft.com/Azure-Batch-Apps-Samples-dd781172">Hello World</a>の方をざっと眺めます。</p>
+<div class="section" id="packages-config">
+<h3>packages.config</h3>
+<p>まず、<cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite>を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
+<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch/">Azure.Batch</a>を使っています。APIリファレンスは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a>にあります。</p>
+</div>
+<div class="section" id="id5">
+<h3>設定</h3>
+<p>試しに動かして見ようとするならば、 BatchとStorageのアカウントが必要です。 これらを作成したら、Program.csに書き込みます。変更するのは、赤線部分、blobのendpoint、batchのアカウント、キー、ストレージのアカウント、キーの5箇所です。</p>
+<img alt="hello world setting" class="align-center" src="_images/batch007.png"/>
+</div>
+<div class="section" id="id6">
+<h3>実行</h3>
+<p>VSでビルドして実行すると下記のような感じで動きます。このサンプルを動かすだけならば、VS extension は必要ありません。</p>
+<img alt="hello world exec" class="align-center" src="_images/batch008.png"/>
+</div>
+<div class="section" id="batchclient">
+<h3>1. BatchClient</h3>
+<p>Batch アカウント、キーから、BatchCredentialsを作成して、BatchClient.Connect で BatchClientを取得します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="c1">// Get an instance of the BatchClient for a given Azure Batch account.</span>
+<span class="n">BatchCredentials</span> <span class="n">cred</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BatchCredentials</span><span class="p">(</span><span class="n">Account</span><span class="p">,</span> <span class="n">Key</span><span class="p">);</span>
+<span class="k">using</span> <span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span> <span class="p">=</span> <span class="n">BatchClient</span><span class="p">.</span><span class="n">Connect</span><span class="p">(</span><span class="n">Url</span><span class="p">,</span> <span class="n">cred</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pool">
+<h3>2. Pool</h3>
+<p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。Pool作成時に、VMのサイズやOSを指定します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// All Pool and VM operation starts from PoolManager</span>
+    <span class="k">using</span> <span class="p">(</span><span class="n">IPoolManager</span> <span class="n">pm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenPoolManager</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="c1">// go through all the pools and see if it already exists</span>
+        <span class="kt">bool</span> <span class="n">found</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="n">ICloudPool</span> <span class="n">p</span> <span class="k">in</span> <span class="n">pm</span><span class="p">.</span><span class="n">ListPools</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="c1">// pools are uniquely identified by their name</span>
+            <span class="k">if</span> <span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">poolName</span><span class="p">))</span>
+                <span class="p">{</span>
+                    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Found pool {0} already exists"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
+                    <span class="n">found</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(!</span><span class="n">found</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating pool: {0}"</span><span class="p">,</span> <span class="n">poolName</span><span class="p">);</span>
+                <span class="c1">// if pool not found, call CreatePool</span>
+                <span class="c1">//You can learn more about os families and versions at:</span>
+                <span class="c1">//http://msdn.microsoft.com/en-us/library/azure/ee924680.aspx</span>
+                <span class="n">ICloudPool</span> <span class="n">pool</span> <span class="p">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">CreatePool</span><span class="p">(</span><span class="n">poolName</span><span class="p">,</span> <span class="n">targetDedicated</span><span class="p">:</span> <span class="m">3</span><span class="p">,</span> <span class="n">vmSize</span><span class="p">:</span> <span class="s">"small"</span><span class="p">,</span> <span class="n">osFamily</span><span class="p">:</span> <span class="s">"3"</span><span class="p">);</span>
+                <span class="n">pool</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-item">
+<h3>3. work item</h3>
+<p>ここはちょっと分かり辛い。CloudTask がTaskで、次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。WorkItemManager.GetJobでJobは取得できます。Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="p">(</span><span class="n">IWorkItemManager</span> <span class="n">wm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenWorkItemManager</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="c1">//The toolbox contains some helper mechanisms to ease submission and monitoring of tasks.</span>
+        <span class="n">IToolbox</span> <span class="n">toolbox</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenToolbox</span><span class="p">();</span>
+
+        <span class="c1">// to submit a batch of tasks, the TaskSubmissionHelper is useful.</span>
+        <span class="n">ITaskSubmissionHelper</span> <span class="n">taskSubmissionHelper</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskSubmissionHelper</span><span class="p">(</span><span class="n">wm</span><span class="p">,</span> <span class="n">Program</span><span class="p">.</span><span class="n">PoolName</span><span class="p">);</span>
+
+        <span class="c1">// workitem is uniquely identified by its name so we will use a timestamp as suffix</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s">"USERNAME"</span><span class="p">)</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"yyyyMMdd-HHmmss"</span><span class="p">);</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating work item: {0}"</span><span class="p">,</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+
+        <span class="c1">// add 2 quick tasks. Tasks within a job must have unique names</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task1"</span><span class="p">,</span> <span class="s">"hostname"</span><span class="p">));</span>
+        <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">AddTask</span><span class="p">(</span><span class="k">new</span> <span class="n">CloudTask</span><span class="p">(</span><span class="s">"task2"</span><span class="p">,</span> <span class="s">"cmd /c dir /s"</span><span class="p">));</span>
+
+        <span class="c1">//Commit the tasks to the Batch Service</span>
+        <span class="n">IJobCommitUnboundArtifacts</span> <span class="n">artifacts</span> <span class="p">=</span> <span class="n">taskSubmissionHelper</span><span class="p">.</span><span class="n">Commit</span><span class="p">()</span> <span class="k">as</span> <span class="n">IJobCommitUnboundArtifacts</span><span class="p">;</span>
+
+        <span class="c1">// TaskSubmissionHelper commit artifacts returns the workitem and job name</span>
+        <span class="n">ICloudJob</span> <span class="n">job</span> <span class="p">=</span> <span class="n">wm</span><span class="p">.</span><span class="n">GetJob</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Waiting for all tasks to complete on work item: {0}, Job: {1} ..."</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">JobName</span><span class="p">);</span>
+
+        <span class="c1">//We use the task state monitor to monitor the state of our tasks -- in this case we will wait for them all to complete.</span>
+        <span class="n">ITaskStateMonitor</span> <span class="n">taskStateMonitor</span> <span class="p">=</span> <span class="n">toolbox</span><span class="p">.</span><span class="n">CreateTaskStateMonitor</span><span class="p">();</span>
+
+        <span class="c1">// blocking wait on the list of tasks until all tasks reach completed state</span>
+        <span class="kt">bool</span> <span class="n">timedOut</span> <span class="p">=</span> <span class="n">taskStateMonitor</span><span class="p">.</span><span class="n">WaitAll</span><span class="p">(</span><span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">(),</span> <span class="n">TaskState</span><span class="p">.</span><span class="n">Completed</span><span class="p">,</span> <span class="k">new</span> <span class="n">TimeSpan</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">0</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">timedOut</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">TimeoutException</span><span class="p">(</span><span class="s">"Timed out waiting for tasks"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// dump task output</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">t</span> <span class="k">in</span> <span class="n">job</span><span class="p">.</span><span class="n">ListTasks</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Task "</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">Name</span> <span class="p">+</span> <span class="s">" says:\n"</span> <span class="p">+</span> <span class="n">t</span><span class="p">.</span><span class="n">GetTaskFile</span><span class="p">(</span><span class="n">Constants</span><span class="p">.</span><span class="n">StandardOutFileName</span><span class="p">).</span><span class="n">ReadAsString</span><span class="p">());</span>
+        <span class="p">}</span>
+
+        <span class="c1">// remember to delete the workitem before exiting</span>
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Deleting work item: {0}"</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+        <span class="n">wm</span><span class="p">.</span><span class="n">DeleteWorkItem</span><span class="p">(</span><span class="n">artifacts</span><span class="p">.</span><span class="n">WorkItemName</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>4. 結果の取得</h3>
+<p>完了後のJobを、CloudJob.ListTasks()して、個々のTaskの実行結果を拾うことができます。このコードでは、 GetTaskFile(Constants.StandardOutFileName) して標準出力を拾っています。</p>
+</div>
+<div class="section" id="id8">
+<h3>終わり</h3>
+<p>最後に、work item を消したり、BatchClientをdisposeしたりなどの後処理をします。基本的な流れは割りとシンプルだと思います。Batch Appsを使うと、予めクラウド側にアプリを登録して置いて、ポータルから実行したり、モニターもポータル経由で出来たりなど諸々便利機能が使えます。その分ちょっと面倒になる部分もありますが、VS extension がその辺りのデバッグなどを支援してくれるようです。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>最後に</h2>
+<p><span class="docutils literal"><span class="pre">Batch</span></span>は、非常に定型的なコードで、ラージスケールなバッチ処理を実行できる面白い仕組みになっています。Azureの諸々の仕組みと上手く組み合わって、簡単なことならHadoop よりシンプルに同じようなことが実現できると言えそうです。ただ、ちょっとWork Item周りの処理が分かり辛く残念です。わりと簡単に使えるし、日本のデータセンターにも来ているので、興味があれば使ってみれば、良いのではないでしょうか。</p>
+<p>この前Blogを書いてからだいぶ時間が空いてしました。今年はJAZUG でやっている<a class="reference external" href="http://jazug.doorkeeper.jp/events/17739">CDP勉強会</a>が次回第五回で延べ400人ほどの参加になりそうな勢い、<a class="reference external" href="http://www.slideshare.net/takekazuomi/presentations">slideshareの資料</a>は累積で7万PVを超える勢いで、Microsoft Azure の熱を肌に感じる１年でした。（slideshare のPVは2014/1/1 時点で5千ほどだったので急激に増えました）</p>
+</div>
+<div class="section" id="goazure-2015">
+<h2>GoAzure 2015</h2>
+<img alt="GoAzure" class="align-center" src="_images/batch009.png"/>
+<p>あの Scott Hanselman が来る！ ～ GoAzure が 1/16 に開催～ の<a class="reference external" href="http://r.jazug.jp/#event">GoAzure</a>で、Storage周りの話しをします（予定）<a class="reference external" href="http://r.jazug.jp/goazure-sessions.html">Persistence on Azure - Microsoft Azure における永続化</a>お待ちしてます。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/batch.html">Batch</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/batch.html">Batch</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/intro.html">Intro</a>, <a href="tags/goazure.html">GoAzure</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2014/12/02/introduction_to_azure_batch.html#disqus_thread" data-disqus-identifier="2014/12/02/introduction_to_azure_batch">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>August 01, 2014</span>
         </div>
         <div class="section">
@@ -598,159 +811,6 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/06/08/snowflake_c.html#disqus_thread" data-disqus-identifier="2014/06/08/snowflake_c">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>March 02, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/03/02/read_access_geo_redundant_storage.html">FiddlerCoreでRead-Access Geo Redundant Storage を検証する</a></h1>
-<p><a class="reference external" href="http://www.windowsazure.com/ja-jp/community/calender/">Windows Azure – 技術者でつなぐ日めくりカレンダー</a>の 3/2 の記事です。先日、<a class="reference external" href="http://atnd.org/event/2014azurejpdc">Windows Azure 4周年記念 ＆ Japan DCオープンマジデシタ！JAZUG大会</a>のLTで、Azure Storageには3つの可用性設定があるという話をしました。例によって、時間内には収まらず。「続きはWebで・・・」ということで続きです orz</p>
-<p>まずはLTの内容の復習から、簡単にまとめると下記のような内容です。</p>
-<div class="section" id="id1">
-<h2>振り返り</h2>
-<blockquote>
-<div><div class="line-block">
-<div class="line">Azure Storageの可用性設定（冗長構成）には3種類ある。</div>
-</div>
-</div></blockquote>
-<ol class="arabic simple">
-<li>ローカル冗長ストレージ (LRS=Locally Redundant Storage)データセンター内3箇所、同期</li>
-<li>地理冗長ストレージ (GRS=Geo Redundant Storage)地理的に離れた場所への複製（Local 3箇所＋リモート3箇所）、リモートは非同期、フェイルオーバー</li>
-<li>読み取りアクセス地理冗長ストレージ (RA-GRS=Read Access - Geo Redundant Storage)　PREVIEW地理的に離れた場所にあるデータを読む機能</li>
-</ol>
-<p>読み取りアクセス地理冗長ストレージ (以下、RA-GRS）は、現状Previewなので、まずは<a class="reference external" href="https://account.windowsazure.com/PreviewFeatures">Windows Azure Preview</a>のページで申し込みをする必要がある。</p>
-</div>
-<div class="section" id="sdk">
-<h2>SDKの対応状況</h2>
-<p>RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDKが必要。ただし、RESTでEndpointが違うだけだから自前でもアクセスするだけならそんなに難しくない。</p>
-<ol class="arabic simple">
-<li>.NETだと、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">Storage Client Library 3.0</a>以降</li>
-<li>Javaだと、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">Windows Azure Storage SDK for Java 0.5.0</a>以降</li>
-<li>その他、各自対応</li>
-</ol>
-<p>上記2つのSDKには、Blobs, Tables and Queues の最終同期時刻（Last Sync Time）をクエリーする機能と primary にアクセしできなかった時に secondary に自動的に retry する機能、並びにLocationMode で参照先の設定がる。リトライは、IRetryPolicyを拡張した IExtendedRetryPolicy が追加されている。これではリトライ時に参照先を切り替えするようになっている。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">LTの資料</div>
-</div>
-</div></blockquote>
-<iframe src="http://www.slideshare.net/slideshow/embed_code/31655208?startSlide=2" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;"> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140226-ragrs-windows-azure-storage-lt">RA-GRS Windows Azure Storage LT</a></p>
-<p>ここからが本題です。</p>
-</div>
-<div class="section" id="id2">
-<h2>確認する</h2>
-<p>RA-GRSで障害が起きた時の<span class="docutils literal"><span class="pre">IExtendedRetryPolicy</span></span>の動作確認をしたいのですが、そうは都合良くデータセンターの障害が起きるわけはありません。デバッガーでBreakしてネットワークを切断するとか、変数を書き換えるとかの方法もありますが、なんども繰り返すのは手間が掛かるしパターン増やすと面倒です。そんな時に、丁度いいタイミングで<a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>で過酷な争奪戦に勝利し「実践Fiddler」をゲットしました。</p>
-<a class="reference external image-reference" href="http://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5-Fiddler-Eric-Lawrence/dp/4873116163"><img alt="実践 Fiddler Eric Lawrence　著、日本マイクロソフト株式会社 エバンジェリスト 物江 修 監訳、長尾 高弘 訳" class="align-center" src="http://www.oreilly.co.jp/books/images/picture_large978-4-87311-616-7.jpeg" style="width: 300px;"/></a>
-<p>FidderCoreを使うとHTTP通信の途中に割り込んで内容を変更することが簡単に出来ます。フルスクラッチでProxy書いて「ゴニョゴニョ」すると結構手間がかかるので、今回は、FeddlerCoreを使って サクッとLocationMode.PrimaryThenSecondary を指定した時のリトライ動作を確認します。本にはいろいろ詳しく書いてあるので、興味が出た方は是非！</p>
-</div>
-<div class="section" id="id3">
-<h2>準備</h2>
-<p>下記の場所から、インストーラーを落としてきて入れます。exeが落ちてくるのでインストールすると、<cite>FiddlerCoreAPI</cite>というディレクトリーに入ります。</p>
-<p><a class="reference external" href="http://www.telerik.com/fiddler/fiddlercore">http://www.telerik.com/fiddler/fiddlercore</a></p>
-<img alt="../../../_images/2014-03-02-ragrs001.png" src="_images/2014-03-02-ragrs001.png"/>
-<p>インストール先の<cite>FiddlerCoreAPI\DotNet4\FiddlerCore4.dll</cite>を参照に追加します。</p>
-<img alt="../../../_images/2014-03-02-ragrs002.png" src="_images/2014-03-02-ragrs002.png"/>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<p>今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。</p>
-<p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="kt">var</span> <span class="n">connectionString</span> <span class="p">=</span> <span class="n">CloudConfigurationManager</span><span class="p">.</span><span class="n">GetSetting</span><span class="p">(</span><span class="s">"ConnectionString"</span><span class="p">)</span> <span class="p">??</span> <span class="s">"UseDevelopmentStorage=true"</span><span class="p">;</span>
-  <span class="kt">var</span> <span class="n">account</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
-  <span class="kt">var</span> <span class="n">client</span> <span class="p">=</span> <span class="n">account</span><span class="p">.</span><span class="n">CreateCloudBlobClient</span><span class="p">();</span>
-
-  <span class="k">try</span>
-  <span class="p">{</span>
-    <span class="n">FiddlerCoreSetup</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">StorageUri</span><span class="p">.</span><span class="n">PrimaryUri</span><span class="p">.</span><span class="n">Host</span><span class="p">);</span>
-
-    <span class="c1">// プライマリ→セカンダリで切り替え</span>
-    <span class="n">client</span><span class="p">.</span><span class="n">LocationMode</span> <span class="p">=</span> <span class="n">LocationMode</span><span class="p">.</span><span class="n">PrimaryThenSecondary</span><span class="p">;</span>
-
-    <span class="kt">var</span> <span class="n">container</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">GetContainerReference</span><span class="p">(</span><span class="s">"jejeje"</span><span class="p">);</span>
-    <span class="kt">var</span> <span class="n">blob</span> <span class="p">=</span> <span class="n">container</span><span class="p">.</span><span class="n">GetBlockBlobReference</span><span class="p">(</span><span class="s">"cray.png"</span><span class="p">);</span>
-    <span class="n">blob</span><span class="p">.</span><span class="n">DownloadToFile</span><span class="p">(</span><span class="s">"cray.png"</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">.</span><span class="n">OpenOrCreate</span><span class="p">);</span>
-    
-  <span class="p">}</span>
-  <span class="k">finally</span>
-  <span class="p">{</span>
-    <span class="n">FiddlerCoreShutdown</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>FiddlerCoreSetup() の中を見てみましょう。基本的には必要な処理をFiddlerのイベントハンドラに追加して、FidderCore プロキシを起動するだけです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">AfterSessionComplete</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
-      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"AfterSessionComplete Session {0}({4}):{1} {2} {3}"</span><span class="p">,</span>
-      <span class="n">os</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">responseCode</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">RequestMethod</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">fullUrl</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">oResponse</span><span class="p">.</span><span class="n">MIMEType</span><span class="p">);</span>
-
-  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">BeforeRequest</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
-  <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">HostnameIs</span><span class="p">(</span><span class="n">blockedHostName</span><span class="p">))</span>
-    <span class="p">{</span>
-      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"BeforeRequest Session {0} {1} {2}"</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">host</span><span class="p">);</span>
-      <span class="n">os</span><span class="p">.</span><span class="n">host</span> <span class="p">=</span> <span class="n">blockedHostName</span> <span class="p">+</span> <span class="s">".jejeje"</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">};</span>
-
-  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">Startup</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">FiddlerCoreStartupFlags</span><span class="p">.</span><span class="n">ChainToUpstreamGateway</span><span class="p">);</span>
-
-  <span class="kt">var</span> <span class="n">endpoint</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"127.0.0.1:{0}"</span><span class="p">,</span> <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">oProxy</span><span class="p">.</span><span class="n">ListenPort</span><span class="p">);</span>
-
-  <span class="kt">var</span> <span class="n">feddlerProxy</span> <span class="p">=</span> <span class="k">new</span> <span class="n">WebProxy</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
-  <span class="n">WebRequest</span><span class="p">.</span><span class="n">DefaultWebProxy</span> <span class="p">=</span> <span class="n">feddlerProxy</span><span class="p">;</span>
-  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
-
-<span class="p">}</span>
-
-<span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreShutdown</span><span class="p">()</span>
-<span class="p">{</span>
-  <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">Shutdown</span><span class="p">();</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>ちょっと細かく追いかけてみます。</p>
-<p><span class="docutils literal"><span class="pre">AfterSessionComplete</span></span>はHTTP セッションが完了した後に生成されるイベントです。 このイベントハンドラにロギング代わりにコンソールへの書き出しを追加します。。今回は、ここのログを見て何処にアクセスに行っているのかを確認します。</p>
-<p><span class="docutils literal"><span class="pre">BeforeRequest</span></span>はHttp リクエストのデータが揃いサーバーに接続する前に生成されるイベントです。このイベントハンドラに、Primary のホストが接続先だったときに、存在しないhostに繋ぎに行くようなハンドラを追加します。</p>
-<p><span class="docutils literal"><span class="pre">FiddlerApplication.Startup()</span></span>を呼び出して、FeddlerCoreプロキシインスタンスを起動します。ポートに0を指定すると、FeddlerCore が自動的に空いているポートを探してリスニングに入ってくれます。ポートが使用中の問題が発生しないので便利なので、ポート番号を固定したいとき以外は0で良いと思います。自動で割り当てられたポート番号は FiddlerApplication.oProxy.ListenPort で確認できます。</p>
-<p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、<span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span>に<span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span>を指定します。その他に、システム全体のProxyに入りたい場合は、<cite>RegisterAsSystemProxy</cite>を使います。</p>
-<p>そして、<cite>WebRequest</cite>の<cite>DefaultWebProxy</cite>を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
-<p>これで、実行すると下記のようになります。</p>
-<div class="highlight-text"><div class="highlight"><pre>127.0.0.1:19282
-BeforeRequest Session 1 ragrsomi001jp.blob.core.windows.net ragrsomi001jp.blob.core.windows.net
-AfterSessionComplete Session 1(text/html):502 GET http://ragrsomi001jp.blob.core.windows.net.jejeje/jejeje/cray.png?timeout=90
-AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary.blob.core.windows.net/jejeje/cray.png?timeout=90
-</pre></div>
-</div>
-<p>最初に、Primary にアクセスし、その後 Secondary にアクセスし直しているのがわかります。</p>
-<p>Primary へのアクセスが<span class="docutils literal"><span class="pre">502</span> <span class="pre">Bad</span> <span class="pre">Gateway</span></span>なのはちょっとイマイチですが、FeddlerCoreがProxyで入るので仕方がないのかもしれません。</p>
-</div>
-<div class="section" id="id4">
-<h2>まとめ</h2>
-<p>実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs">GitHub azure-storage-net HttpMangler.cs</a>今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。</p>
-<p><a class="reference external" href="http://clr-h.jp/">CLR/H in Tokyo 第1回</a>はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。</p>
-<p>最後に１つだけ、FiddlerCore をnugetで配布してくれると嬉しいなぁ・・・</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/blob.html">Blob</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/how_to.html">How-to</a>, <a href="tags/fiddler.html">Fiddler</a>, <a href="tags/debug.html">Debug</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/03/02/read_access_geo_redundant_storage.html#disqus_thread" data-disqus-identifier="2014/03/02/read_access_geo_redundant_storage">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -759,6 +819,8 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
+        </li><li>
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
@@ -776,15 +838,13 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
         </li><li>
             <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
-        </li><li>
-            <a href="2014/12/02/introduction_to_azure_batch.html">Introduction to Azure Batch</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

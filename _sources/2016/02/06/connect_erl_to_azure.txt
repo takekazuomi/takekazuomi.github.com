@@ -1,0 +1,159 @@
+======================
+ Connect ERL to Azure
+======================
+`EdgeRouter LITE <https://www.ubnt.com/edgemax/edgerouter-lite/>`_ というのが安くて `Amazon <http://www.amazon.co.jp/dp/B00T0GAV86/>`_ にも出ていて入手性が良く、中身は VyOS の親戚らしく、Azure への Site to Site VPN (以下 S2S VPN)も普通に繋がり便利だったのでご紹介。
+
+Azure への S2S VPN では、接続のゲートウェイ ルーティング には、 **Policy-based** と **Route-based** の2種類があります。以前は、static gateway と dynamic dateway なんて名前が付いていていましたが、普通（？）の名前になったようです。 [#ref1]_  `ゲートウェイの要件 <https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpngateways/#_ゲートウェイの要件>`_ を見ると **Policy-based**  は制限がやたらと多く、基本的には **Route-based** の ゲートウェイを使いたいが、検証済みの VPN デバイスに手頃な安いのが無かったのですが、EdgeRouter LITE 使えました。
+
+では、繋いでみます。
+
+事前準備
+========
+1. ネットワーク構成を決めます。今回は、Azure 側は、10.3.0.0/16, ローカルは、192.168.13.0/24 にしました。
+2. ルーターに振られる Global IPを確認。以下、 **<erl3 global IP>**  とします。実用上は固定IPが良いかと。今回は、プロバイダーが動的に振ってきたのを使っています。これが変わるとAzure 側のGatewayの設定を変えないといけません。
+3. ipsec の 事前共有キー を生成。以下 **<pre shared secret>** とします。 [#ref2]_
+
+Azure 側、ARM でVNet作成
+========================
+ARM の quickstart template に確認に使うにはちょうど良い感じのテンプレートがあったのでそれを使います。 `Site to Site VPN Connection <https://github.com/Azure/azure-quickstart-templates/tree/master/101-site-to-site-vpn-create>`_ を開いて、さくっと「Deploy to Azure」 ボタンを押します。
+
+.. image:: armt001.png
+           :center:
+
+新ポータルで下記のような画面出るので、パラメータを設定します。ポイントは、 **VPNTYPE** を、 **RouteBased** に、 **LOCALGATEWAYIPADDRESS** には、手元のルーターの IP **<elr3 global IP>** を、 **LOCALADDRESSPREFIX** は、192.168.13.0/24 に、 **GATEWAYSKU** は、 **Basic** 、 **SHAREDKEY** は、事前に決めた **<pre shared secret>** にするぐらいです。
+これで作成すると、Azure内に仮想ネットワークとゲートウェイが出来ます。
+
+.. image:: portal001.png
+           :center:
+
+Azure 側を確認
+==============
+ちゃんとできているかAzure PowerShell で確認。
+
+ログイン
+$ Login-AzureRMAccont
+
+ゲイトウェイを確認
+
+$ Get-AzureRmVirtualNetworkGateway -ResourceGroupName <リソースグループ名>
+
+
+IpConfigurations           : {vnetGatewayConfig}
+GatewayType                : Vpn
+VpnType                    : RouteBased
+EnableBgp                  : False
+GatewayDefaultSite         :
+ProvisioningState          : Succeeded
+Sku                        : Microsoft.Azure.Commands.Network.Models.PSVirtualNetworkGatewaySku
+VpnClientConfiguration     : Microsoft.Azure.Commands.Network.Models.PSVpnClientConfiguration
+IpConfigurationsText       : [
+                               {
+                                 "PrivateIpAllocationMethod": "Dynamic",
+                                 "Subnet": {
+                                   "Id": "/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworks/azureVnet/subnets/
+                             GatewaySubnet"
+                                 },
+                                 "PublicIpAddress": {
+                                   "Id": "/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/publicIPAddresses/azureGatewayIP"
+                                 },
+                                 "Name": "vnetGatewayConfig",
+                                 "Etag": "W/\"157bc26b-fe39-4e39-acf7-c6020d3e8055\"",
+                                 "Id": "/subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworkGateways/azureGateway/
+                             ipConfigurations/vnetGatewayConfig"
+                               }
+                             ]
+GatewayDefaultSiteText     : null
+SkuText                    : {
+                               "Capacity": 0,
+                               "Name": "Basic",
+                               "Tier": "Basic"
+                             }
+VpnClientConfigurationText : {
+                               "VpnClientRevokedCertificates": [],
+                               "VpnClientRootCertificates": []
+                             }
+ResourceGroupName          : kinmugivpn02
+Location                   : japanwest
+ResourceGuid               : 40a5da3b-4326-47d7-9b12-18ad40b3e2a9
+Tag                        : {}
+TagsTable                  :
+Name                       : azureGateway
+Etag                       : W/"157bc26b-fe39-4e39-acf7-c6020d3e8055"
+Id                         : /subscriptions/9ae4f755-b919-488a-xxxx-xxxxxxxxxx/resourceGroups/kinmugivpn02/providers/Microsoft.Network/virtualNetworkGateways/azureGateway
+
+
+事前共有キーをダウンロード
+$ Get-AzureRmVirtualNetworkGatewayConnectionSharedKey -ResourceGroupName <リソースグループ名> -Name Azure2Other
+<pre-shared-secret>
+
+
+Routerに設定追加
+================
+
+edit vpn
+set ipsec auto-firewall-nat-exclude enable
+set ipsec esp-group azure compression disable
+set ipsec esp-group azure lifetime 3600
+set ipsec esp-group azure mode tunnel
+set ipsec esp-group azure pfs disable
+set ipsec esp-group azure proposal 1 encryption aes256
+set ipsec esp-group azure proposal 1 hash sha1
+
+set ipsec ike-group azure key-exchange ikev2
+set ipsec ike-group azure lifetime 28800
+set ipsec ike-group azure proposal 1 dh-group 2
+set ipsec ike-group azure proposal 1 encryption aes256
+set ipsec ike-group azure proposal 1 hash sha1
+
+set ipsec ipsec-interfaces interface eth2
+set ipsec nat-networks allowed-network 0.0.0.0/0
+set ipsec nat-traversal enable
+
+set ipsec site-to-site peer 104.214.150.157 authentication mode pre-shared-secret
+set ipsec site-to-site peer 104.214.150.157 authentication pre-shared-secret kUj21X8Skrl2efmggG1kQ9qb22t2poCc
+
+set ipsec site-to-site peer 104.214.150.157 connection-type initiate
+set ipsec site-to-site peer 104.214.150.157 ike-group azure
+set ipsec site-to-site peer 104.214.150.157 local-address 219.214.192.29
+
+set ipsec site-to-site peer 104.214.150.157 tunnel 1 allow-nat-networks disable
+set ipsec site-to-site peer 104.214.150.157 tunnel 1 allow-public-networks disable
+set ipsec site-to-site peer 104.214.150.157 tunnel 1 esp-group azure
+set ipsec site-to-site peer 104.214.150.157 tunnel 1 local prefix 192.168.13.0/24
+set ipsec site-to-site peer 104.214.150.157 tunnel 1 remote prefix 10.3.0.0/16
+
+top
+
+
+ubnt@ubnt# commi
+commit          commit-confirm
+[edit]
+ubnt@ubnt# commit
+[ vpn ]
+Warning: Local address 219.214.192.29 specified for peer "40.74.143.221"
+is not configured on any of the ipsec-interfaces and is not the
+clustering address.  IPsec must be re-started after address
+has been configured.
+
+conntrack v0.9.14 (conntrack-tools): connection tracking table has been emptied.
+
+した
+restart vpn
+
+
+
+
+104.214.150.157
+.. [#ref1] `ゲートウェイ ルーティングの種類 <https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpngateways/#_ゲートウェイ ルーティングの種類>`_
+.. [#ref2] `RFC 2409 - The Internet Key Exchange (IKE) 5.4 Phase 1 Authenticated With a Pre-Shared Key <https://tools.ietf.org/html/rfc2409#page-16>`_
+
+`実装は、strongSwan らしく。VPNデバイスリストに無いものでもかなりのものが動くのではないかと思います。4.5.2 にはIKEv2の実装に問題があるということなので要注意です。 <https://community.ubnt.com/t5/EdgeMAX/changing-to-ikev2-breaks-IPSEC-tunnel/td-p/1115767/page/2>`_
+
+`Azure dynamic routing VPN and Strongswan <https://lists.strongswan.org/pipermail/users/2013-September/005278.html>`_
+
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

@@ -5,8 +5,61 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 05 Feb 2016 00:00:00 +0900</pubDate>
+        <pubDate>Mon, 04 Apr 2016 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html</link>
+            <guid>http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html</guid>
+            <title><![CDATA[BUILD/2016 Azure Cool Storage]]></title>
+            <description><![CDATA[<h1>BUILD/2016 Azure Cool Storage</h1>
+<p>BUILD 2016<a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a>で<strong>Cool Storage</strong>という、とても興味深い新機能が発表されていました。<a class="reference external" href="https://blogs.msdn.microsoft.com/windowsazurestorage/2016/03/31/cross-post-build-2016-azure-storage-announcements/">Build 2016: Azure Storage announcements</a>に入ってなくて、見落としそうになります…</p>
+<a class="reference internal image-reference" href="http://kyrt.in/_images/m001.PNG"><img alt="Cool Storage" class="align-center" src="http://kyrt.in/_images/m001.PNG" style="width: 800px;"/></a>
+<p><strong>Cool Storage</strong>は、アクセス頻度の低いデータを安価に保存するための新機能で、Block Blob でサポートされます。</p>
+<p>これで、Block Blob は、２の tier に別れます。</p>
+<ol class="arabic simple">
+<li>Hot - 通常利用のデータ向け (従来のBlob）</li>
+<li>Cool - あまりアクセスしないデータ向け （あたらしいやつ）</li>
+</ol>
+<div class="section" id="id1">
+<h2>概要</h2>
+<ul class="simple">
+<li>APIは、100% 互換で、同様のスループットとレイテンシーを実現（Coolでも性能が同じなのは設計しやすくなるので有り難いことです）</li>
+<li>LRS, GRS, RA-GRSの信頼性オプションを提供（ 同じですね）</li>
+<li>可用性は、Coolが 99% で、Hot が 99.9%（ちょっと、Coolが低くなります）</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>お値段関係</h2>
+<p>Hotは、頻繁に使った場合に費用が抑えられ、Coolは、容量が大きい場合に安くなるという価格体系で構成されるようです。話の中ではちょっとはっきりしませんでしたが、トランザクションコストやデータ転送コストで差を付けるという感じなのかもしれません。</p>
+<p>HotからCoolへの切替もできるようなので、履歴系のデータを保存するにはとても便利な気がします。next few weeks で、public preview に入るそうです。楽しみですね。</p>
+<p>この話は、動画では、33分、パワポの資料では、30p 当たりで話が出来てますので、興味のある方はぜひ、chanel 9 をご覧ください。<a class="footnote-reference" href="#r1" id="id3">[1]</a></p>
+</div>
+<div class="section" id="id4">
+<h2>最後に</h2>
+<p>どうも、AWS の S3 Standard-IA とか、Google Nearline あたりと同じような領域をカバーするサービスのようです。S3 Standard-IA は、Google Nearline とは違って、レスポンスタイムが通常のBlob並ってところは良い感じです。価格の詳しい条件がわからないので、現時点でS3との比較は難しいですが、Cool Storageは、Hot/Coolの切替がアカウント単離っぽいので、実データのコピーは必要無さそうで、そのあたりで差がでてくるのでは無いかと言う気がします。</p>
+<p>今回の、BUILDでは、 Server Siide Encription<a class="footnote-reference" href="#r2" id="id5">[2]</a>も発表されて、Storage Team に活気を感じました。これからが、楽しみです。</p>
+</div>
+<div class="section" id="id6">
+<h2>参考</h2>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">BUILD  2016/B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/storage-service-encryption/">Azure Storage Service Encryption for Data at Rest (Preview)</a></td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+            <category><![CDATA[ Storage ]]></category>
+            <category><![CDATA[ Azure Blob ]]></category>
+             <pubDate>Mon, 04 Apr 2016 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html</link>
             <guid>http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html</guid>
