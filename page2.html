@@ -73,6 +73,189 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>September 25, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a></h1>
+<p>先日（2015/9/23）、Microsoft Azure Storage Data Movement Library (Preview 以下 DML) というAzure Storage用のファイル転送ライブラリが公開されました。<a class="footnote-reference" href="#r1" id="id1">[1]</a></p>
+<p>DML は、従来 Storage Client Library だけでは難しかったような、高速なファイル転送を簡単にアプリで実装できるようなライブライです。（ベースは AzCopyと同じらしい） Azure File、Blob、Local の ３つの間のデータ移動ができます。</p>
+<a class="reference external image-reference" href="https://flic.kr/p/w6vCML"><img alt="brick" class="align-center" src="https://farm4.staticflickr.com/3810/19753067526_5e3efd7613_k.jpg"/></a>
+<p>下記のような、関数が揃っていて、sourceとdestをセットして呼ぶとその間でデータが転送されるって感じです。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="k">public</span> <span class="k">static</span> <span class="n">Task</span> <span class="nf">CopyAsync</span><span class="p">(</span>
+     <span class="n">Uri</span> <span class="n">sourceUri</span><span class="p">,</span>
+     <span class="n">CloudBlob</span> <span class="n">destBlob</span><span class="p">,</span>
+     <span class="kt">bool</span> <span class="n">isServiceCopy</span><span class="p">,</span>
+     <span class="n">CopyOptions</span> <span class="n">options</span><span class="p">,</span>
+     <span class="n">TransferContext</span> <span class="n">context</span><span class="p">,</span>
+     <span class="n">CancellationToken</span> <span class="n">cancellationToken</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>どんな組み合わせがサポートされているかとを表にまとめるとこんな感じ。このうちUrl-&gt;Blob, Url-&gt;FileのCopyだけ isServerCopy (サーバー側で実行される非同期コピー) のオプションがあります。Local to Local はサポートされていません。現在のバージョンでは、すべての処理はファイル（オブジェクト）１つの単位です。例えば、ディレクトリを指定して、その下をまとめてUploadなどのようなことはできません。表は横が転送元で縦が転送先です。</p>
+<table border="1" class="docutils" id="id13">
+<caption><span class="caption-text">DML Matrix</span></caption>
+<colgroup>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+<col width="20%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">元/先</th>
+<th class="head">Local</th>
+<th class="head">Blob</th>
+<th class="head">File</th>
+<th class="head">Url</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Local</td>
+<td>なし</td>
+<td>DownloadAsync</td>
+<td>DownloadAsync</td>
+<td>なし</td>
+</tr>
+<tr class="row-odd"><td>Blob</td>
+<td>UploadAsync</td>
+<td>CopyAsync</td>
+<td>CopyAsync</td>
+<td>CopyAsync※</td>
+</tr>
+<tr class="row-even"><td>File</td>
+<td>UploadAsync</td>
+<td>CopyAsync</td>
+<td>CopyAsync</td>
+<td>CopyAsync※</td>
+</tr>
+</tbody>
+</table>
+<p>isServerCopy(※付きのやつ) は、URLとして指定できるようなものならコピー元（ソース）にすることができます。public に公開されているURLなら、そのまま。private のものでも、S3のように、pre-signed URLが使えるならば、そのURLからAzure Storageにコピーすることが可能です。<a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/03609d0c-9ce9-c005-aaf5-ccc4cb017806.htm">TransferManager.CopyAsync Method (Uri, CloudBlob, Boolean, CopyOptions, TransferContext, CancellationToken)</a></p>
+<p>これは、DMLの機能というよりAzure Storage Blobの機能で、2012/6 に追加された<strong>Asynchronous Cross-Account Copy Blob</strong>の副産物（？）です。<a class="footnote-reference" href="#r2" id="id2">[2]</a>（気が付いて無かったですが orz)</p>
+<dl class="docutils">
+<dt>Introducing Asynchronous Cross-Account Copy Blob から引用</dt>
+<dd>Note: The source blob could even be a blob outside of Windows Azure, as long as it is publicly accessible or accessible via some form of a Signed URL. For source blobs outside of Windows Azure, they will be copied to block blobs.</dd>
+</dl>
+<p>「Note: 公開された url あるいは、なんらかのSigned URLのようなものなら Azure の外側でもかまいません。それは、block blob として copy されます」という感じでしょうか。DMLのAPIを見ると、Azure Fileにもコピーできますね、これは、2015/8/3 に公開された新機能です、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2015/08/04/azure-files-preview-update.aspx">Azure Files Preview Update</a>version 2015-02-21 から利用できます。<a class="footnote-reference" href="#r7" id="id3">[7]</a></p>
+<p>DML のGitHub レポジトリを見ると、S3から Azure Blobにコピーするサンプルコードが公開されています。<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/tree/master/samples/S3ToAzureSample">S3ToAzureSample</a></p>
+<p>余談ですが、このサンプルを読んでいて気になったことがあったので PR を出してみたらさくっとマージされました。<a class="footnote-reference" href="#r3" id="id4">[3]</a>（軽微な修正ですが）</p>
+<div class="section" id="wad-custom-log-downloader">
+<h2>WAD Custom Log Downloader</h2>
+<p>とりあえず、なにか作ってみようと思い Azure Diagonestics の Custom Log をローカルにDownloadするアプリ<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader">WADCustomLogDownloader</a>を書きました。AzCopyだけだと、ダウンロード対象のファイルのリストがどこか外部にあって参照しながらダウンロードするというのは効率悪くWADのCustom Logなどは不得意パターンでした。それをライブラリになったので、ちょっとやってみようという感じです。</p>
+<p>環境変数<strong>AZURE_STORAGE_CONNECTION_STRING</strong>に、StorageのConnection文字列を入れて、下記のように実行します。-f から、-t の間のFileTimeのログを、WADDirectoriesTable から探し対応するファイルをblobから、-d で指定したローカルディレクトリにダウンロードします。ちょっと動かしてみた感じだとAzCopyと同じような速度を期待できそうです。（ちゃんと計っていないのですが）</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"YOUR_STORAGE_KEY"</span>
+<span class="nv">$ </span>./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="se">\t</span>emp<span class="se">\l</span>ogs -f 2015-09-10 -t 2015-09-23 -v
+</pre></div>
+</div>
+<p>ここから、コードの解説をしながらコーディングしていて気が付いた点をいくつか並べていきます。</p>
+</div>
+<div class="section" id="id5">
+<h2>基本的な作り</h2>
+<p>ダウンロード対象のBlobのリストを、Azure Table の WADDirectoriesTable から読んで、<a class="reference external" href="https://msdn.microsoft.com/en-us/library/dd997371(v=vs.110).aspx">BlockingCollection</a>に突っ込み、別TaskでBlockingCollection を読んで対象のBlobをダウンロードするという流れになっています。Producer が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L30">ListWadCustomLogs()</a>で、Consumer が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L64">DownloadFromBlob()</a>、その間を繋ぐ queue が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L25">BlockingCollection _jobQueue</a>です。</p>
+<p>今回は、Producer が軽いので割と序盤で全部 queue に入ってしまって、順次 Consumer が処理するということになります。大量に対象のファイルがある場合、BlockingCollection の本領発揮なのでしょうが、今回は Producer–consumer problem<a class="footnote-reference" href="#r4" id="id6">[4]</a>には引っかからない気がするので枠組みだけ使ってさくっと進みます。この基本構造は、DMLのS3のサンプルからいただきました、王道ですね。</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement#best-practice">Best Practice</a></h2>
+<p>パフォーマンスを出すには、DefaultConnectionLimit を増やすのと、 100-continue をOffにする必要があります。Azure Storage を使っている人にはお馴染みかと思いますが。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">ProcessorCount</span> <span class="p">*</span> <span class="m">8</span><span class="p">;</span>
+<span class="n">ServicePointManager</span><span class="p">.</span><span class="n">Expect100Continue</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>ちなみに、ASP.NET環境下では、HttpRuntimeの初期化が走ると、HttpRuntime.InitializeHostingFeatures() から、いろいろ呼ばれて、<a class="reference external" href="http://referencesource.microsoft.com/#System.Web/HttpRuntime.cs,1202">HttpRuntime.SetAutoConfigLimits()</a>で、下記のコードが実行されるので、DefaultConnectionLimit の変更は不要です。Consoleアプリや、WorkerRoleでは必須なので要注意です。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Int32</span><span class="p">.</span><span class="n">MaxValue</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="producer-listwadcustomlogs">
+<h2>Producer <a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L30">ListWadCustomLogs</a></h2>
+<p>WADDirectoriesTable から、該当日付近のデータを取り出します。WAD(Windows Azure Diagonestics)では、PartitionKey にTickを使っているので日付をUTCにしてTickを19桁の文字列に展開します。ここは、Partition Queryなので、速度が必要なら分割してパラレルで実行した方が良いですが、実測で DC内で 100 ms/1000件 程度、西から東を見た場合でも、140ms/1000件、の時間でした。そのためあまり気にせず単純なクエリーで書きます。件数が多くなるのが想定できる場合は、適時分割した方が良いと思います。</p>
+<p>ソース：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L38">WADDirectoriesTable から該当期間のログのエンティティを取得</a></p>
+<p>そのあと、ExecuteSegmentedAsync() を使って、1000件毎にエンティティを取得し、jobQueueに入れます。全部入れ終わたら、<strong>_jobQueue.CompleteAdding()</strong>します。Consumer 側では、<strong>_jobQueue.IsCompleted</strong>がtrueなら処理終了と判断します。true になるのは、complete とマークされてて queue が空の時です。<a class="footnote-reference" href="#r5" id="id9">[5]</a>これだけでも<strong>BlockingCollection</strong>ちょっと便利ですね。</p>
+<p>今回は、<strong>BlockingCollection</strong>の maximum capacity を設定していないので<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L56">_jobQueue.Add(result.Results)</a>はブロックしません。Producer と Consumer のバランスをとる必要がある場合は適時設定するといいでしょう。</p>
+</div>
+<div class="section" id="consumer-downloadfromblob">
+<h2>Consumer <a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L64">DownloadFromBlob</a></h2>
+<p>_jobQueue に乗っている WADDirectoriesTable を<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L97">TransferManager.DownloadAsync</a>に渡してダウンロードするタスクを作成します。ここは、Task の作成しすぎとかは、気にせずにグルグル回してしまって良く、実際のTaskのスケジューリングは適時 DML内でやってくれます。基本的には、4MB chunk で、DownloadRangeToStreamAsync を使って分割ダウンロード、chunk は、buffer pool を利用、core 数*8 を並列実行という感じです。</p>
+<p>DMLソース：<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferControllers/TransferReaders/BlockBasedBlobReader.cs#L301">BlokBlob ダウンロードの実装部分</a></p>
+<p>並列度は、<a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/00d502f9-54dc-f902-6571-367fd8851081.htm">TransferConfigurations</a>で設定できます。デフォルトは、<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferConfigurations.cs#L45">core数*8</a>、その下の行を見ると、chunk size は、4MB（固定？）です。使うメモリーは、<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/GlobalMemoryStatusNativeMethods.cs#L19">Native Method の GlobalMemoryStatusEx()</a>を呼んで物理メモリーサイズを拾っています。<strong>(なんと！)</strong></p>
+<p>そして、DMLの一番の肝は、 buffer pool と並列実行度をリンクさせたスケジューラー<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferScheduler.cs#L21">TransferSchedulerTransferScheduler</a>ですね。Blobでパフォーマンスを上げるなら並列度を上げるのが重要で、大きなファイルを扱うためにはGCを避けるのが王道なので、こんな感じになるのかという気がします。</p>
+<p>DMLの中に脱線していました、まだあまり読めてないのですが、いろいろ参考になるコードだと思います。</p>
+<p>Consumerの細かいところを説明すると、大体４点</p>
+<ol class="arabic simple">
+<li>ダウンロード済みのファイルがあればSkipする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L71">TransferContext.OverwriteCallback</a>で、ダウンロード先にファイルがあるかどうかを見ています。WADDirectoriesTable の中のFileTime、FileSize と比較して同じだったらスキップとしています。WADDirectoriesTable のデータを参照するために、_sourceFileDictionary を参照しているのがイマイチな気がします。OverwriteCallback に、オプションのobject とか渡せれば解決なのですが…</li>
+<li>MD5 Validation をOffにする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L83">DownloadOptions.DisableContentMD5Validation</a>WADのCustom log 転送を使って転送したBlobにはMD5Sumが付いていないので仕方ない。ここはOffです。WADDirectoriesTable の FileSize と同じかどうかを確認できるので大丈夫かな？と思いますが、選択できても良い気がします。MD5Sumの計算はコストが高いのでなるべく避けたい気持ちもわかりますが。</li>
+<li>TransferException をハンドルする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L100">TransferException</a>ここでは、TransferErrorCode の TransferAlreadyExists、NotOverwriteExistingDestination を特別扱いしています。 TransferContext.OverwriteCallback で、false を返すと、NotOverwriteExistingDestination が帰ります。今回はすでにダウンロード済みの場合は、スキップしているのでエラーではありません。 TransferManager.DownloadAsync に、同じ source, dest のセットが追加されると TransferAlreadyExists が発生します。今回は、WADDirectoriesTable に残っている転送履歴からBlobを探しているので、複数回転送されると TransferAlreadyExists になります。これは、WAD の Custom Log転送をどう使うのかという話にも絡みますが、今回はスキップで扱います。<a class="footnote-reference" href="#r6" id="id11">[6]</a></li>
+<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ....</li>
+</ol>
+<p>あとは、 CountdownEvent を使って、全部のTaskの終了を待ちます。ProgressHandler をフックすると、転送量とか転送ファイル数のステータスをもらえるのは便利です。</p>
+</div>
+<div class="section" id="id12">
+<h2>まとめ</h2>
+<p>ちょっと長いコードになりましたが、割と簡単に効率的な転送プログラムが実装できました。DMLの内部構造を見てわかる通り、CPUとメモリーがある程度あるマシンでないと本来の性能が発揮できない傾向があります。合計1.6GB の50本ほどのlog を D1とD3の両方でダウンロードしてみたところ、D1で 12 Mbps ぐらい、D3では 800 Mbps ぐらいのスループットになりました。（速度を見るにはもう少し本格的にやってみないといけないので参考程度ですが）</p>
+<p>exe 単体で動作するように、 Release Build では、ILMergeで、wadcldl.exe を作っています。</p>
+<p>環境変数 AZURE_STORAGE_CONNECTION_STRING にStorage Account Keyをセットするスクリプト<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/setenv.ps1">setenv.ps1</a>を入れてあるので参考にしてください。実行前に、Add-AzureAccount をします。</p>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/introducing-azure-storage-data-movement-library-preview-2/">2015/9/23 Introducing Azure Storage Data Movement Library Preview</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/06/12/introducing-asynchronous-cross-account-copy-blob.aspx">Introducing Asynchronous Cross-Account Copy Blob</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/pull/8">Dispose GetObjectResponse object. Here are many run.</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Producer%E2%80%93consumer_problem">Producer–consumer problem</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[5]</a></td><td><a class="reference external" href="http://referencesource.microsoft.com/#System/sys/system/collections/concurrent/BlockingCollection.cs,97">Reference Source  BlockingCollection.IsCompleted</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[6]</a></td><td><a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/c0cc97ae-9bd8-37b2-a727-c4d714b5cc8f.htm">TransferErrorCode Enumeration</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[7]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/mt427372.aspx">MSDN Copy File</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/blob.html">Blob</a>, <a href="tags/dml.html">DML</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/09/25/intro_azure_storage_data_movement_library.html#disqus_thread" data-disqus-identifier="2015/09/25/intro_azure_storage_data_movement_library">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>September 01, 2015</span>
         </div>
         <div class="section">
@@ -237,7 +420,7 @@
             <h1><a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a></h1>
 <p>先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので、ローカルストレージの定義を、NLogの設定ファイルに書けるようにした layout renderer ${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を作ってみました。</p>
 <a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/19430236414/in/dateposted-public/"><img alt="face" class="align-center" src="https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg"/></a>
-<p>「<a class="reference internal" href="2015/04/08/azure_diagonestics_1_3_bugs.html"><em>Azure Diagnostics 1.3 PaaS BUGS</em></a>」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。</p>
+<p>「<a class="reference internal" href="2015/04/08/azure_diagonestics_1_3_bugs.html"><span class="doc">Azure Diagnostics 1.3 PaaS BUGS</span></a>」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。</p>
 <ol class="arabic simple">
 <li>ローカルストレージからのカスタムログ転送はVSからの設定ができない</li>
 <li>ローカルストレージのパスはデプロイ毎に変わる</li>
@@ -477,46 +660,6 @@
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html#disqus_thread" data-disqus-identifier="2015/04/08/azure_diagonestics_1_3_bugs">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>January 18, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
-<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a>の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「<a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a>」でみっちり53分ほど、もうひとつは、「しばやん」のセッション(<a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a>) にちょっとお邪魔。</p>
-<p>しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。</p>
-<div class="section" id="id1">
-<h2>Persistence on Azure - Microsoft Azure の永続化</h2>
-<p>スライドは、SlideShareに公開しています。</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
-<p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
-<p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
-<p>榎本さんのセッション 「<a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a>」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
-<p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
-</div>
-<div class="section" id="id3">
-<h2>謝辞</h2>
-<p>榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。</p>
-<p>JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。</p>
-<p>参加者の皆様、ありがとうございました。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/session.html">Session</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/iaas.html">IaaS</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/goazure.html">GoAzure</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/01/18/goazure_2015.html#disqus_thread" data-disqus-identifier="2015/01/18/goazure_2015">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -525,6 +668,8 @@
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
+        </li><li>
             <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
         </li><li>
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
@@ -542,13 +687,11 @@
             <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li><li>
             <a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a>
-        </li><li>
-            <a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (1)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>

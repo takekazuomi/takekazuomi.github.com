@@ -1,0 +1,55 @@
+====================================
+ Reliable Collection の Lock の挙動
+====================================
+先日、5/18 に、 `第1回Jazug Tokyo Night <https://jazug.doorkeeper.jp/events/44447>`_ で、Azure Fabric Service の Reliable Collection 話をしました。 `Global Azure Boot Camp 2016 in Japan <https://jazug.doorkeeper.jp/events/40440>`_ でも話をしたのですが、1時間ぐらいだと概要も話し切れない感じでなかなか厳しい。4回ぐらいに分けても少し深いところ（そんなにDeepじゃないですが）をしたいなぁと思っていたところ、ちょうど良い機会が出来たので、早速時間を貰うことにしました。
+
+今回は、その時の補足です。まずは、その時の資料です。  **Lock compatibility matrixの部分を更新しました**
+
+.. raw:: html
+
+   <iframe src="//www.slideshare.net/slideshow/embed_code/key/ruN7VgUvtARNlv" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+`Azure Fabric Service Reliable Collection <www.slideshare.net/takekazuomi/azure-fabric-service-reliable-collection>`_
+
+勉強会の時に、下記の Lock compatibility matrix の赤枠の部分だけ、SQL Serverと違うという話をしました。「もしかしたら、ドキュメントが間違っているのかも」というようなことをその場では言いましたが、どきょメントが間違っているわけではなく、そこはSQL Serverと動きが違うとのことでした。そのあたりの話を説明します。（公式ドキュメントでは無いので、参考程度で）
+
+.. image:: lock002.png
+   :alt: Lock compatibility matrix
+   :align: center
+
+
+
+Lock compatibility matrix
+==========================
+Reliable Collectionは、書込に最適化されていおり、matxi の赤枠の部分が、G(U)/R(S)時の動きが SQL Server とは異なっています。また、Reliable Collection では、update lockの期間は短くほとんどの場合、exclusive に昇格して終わることを前提としています。設計思想が違うという話のようです。
+
+下図のような場合で動作を説明します。
+
+.. image:: lock001.png
+   :alt: tnx and lock
+   :align: center
+
+
+* 上が、Reliable Collection,下がSQL Server
+* 横軸が時間で、それぞれ、２つのtransactionがある
+* 黄色線が、tnxid 2 が、shard lock を要求したタイミング
+
+TxnId1が、update lockを掛けている時、TxnId2がShard Lockを要求した場合(垂直黄線)、Reliable CollectionではUpdate Lock が、Exclusive Lock になって更新が終わりlockが開放されるまでshard lockは待機します。それに対して、SQL Serverでは、即時にshard lockは成功します。全てのshard lockが開放されてから、exclusive lock ->更新という処理に流れになります。この違いはなかなか面白いですね。
+
+
+参考
+====
+SQL Server の `ロックの互換性 (データベース エンジン) <https://technet.microsoft.com/ja-jp/library/ms186396(v=sql.105).aspx>`_
+
+最後に
+========
+Reliable Collection は結構手堅くしっかり作っている感じを受けます。この手のものがあると、 **Data Locality** を健全に保てるのでレイテンシー上は非常に有利になります、いいですね。
+
+「上記２つに更に .NET の ReaderWriterLockSlim と、Jeffrey Richter の OneManyLock を入れて、永続化の有無がどう影響するのか考察したら面白いのかな？」と一瞬思ったのですが、今回はこの辺で。勉強会の前に明確にしておけば良かったのですが、ちょっと見逃してました。
+でも、SQL Serverと違って、lock やwait の状態が見えないのがちょっと不便ですね。これだと、ラッシュテストしないとデッドロックとかわからないです。
+
+
+.. author:: default
+.. categories:: ServiceFabric
+.. tags:: none
+.. comments::
