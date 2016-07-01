@@ -45,3 +45,13 @@ About kyrt inc.
 * `2014, de:code 2014 登壇 <http://channel9.msdn.com/events/de-code/2014/SV-005>`_
 
 * `2011, Windows Azure Table の利用 ～ 特性とパフォーマンスの検証 <http://bit.ly/nENGjD>`_
+
+
+動画
+====
+
+* `[GoAzure] Persistence on Azure - Microsoft Azure における永続化 <https://channel9.msdn.com/Series/Microsoft-Virtual-Academy-Japan/Session1-5>`_
+
+.. raw:: html
+
+   <iframe src="https://channel9.msdn.com/Series/Microsoft-Virtual-Academy-Japan/Session1-5/player" width="960" height="540" allowFullScreen frameBorder="0"></iframe>

@@ -1,0 +1,13 @@
+2016 Microsoft MVP Award を受賞しました
+=======================================
+
+2016年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。
+
+今後も、最近 Service Fabric に偏り気味ですが、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。
+
+これからも、よろしくお願いいたします。
+
+.. author:: default
+.. categories:: MVP
+.. tags:: none
+.. comments::
