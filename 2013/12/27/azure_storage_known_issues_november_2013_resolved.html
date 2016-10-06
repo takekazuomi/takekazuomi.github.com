@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="Windows Azure Powershell 0.7.2.1 リリース" href="../22/azure_posh_2012_12_19_version_0_7_2_1.html" /><link rel="prev" title="Windows Azure Storage 3.0.2 Hotfix" href="../../../2014/01/06/windows_azure_storage_3_0_2_hotfix.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Powershell 0.7.2.1 リリース" href="../22/azure_posh_2012_12_19_version_0_7_2_1.html" /><link rel="prev" title="Windows Azure Storage 3.0.2 Hotfix" href="../../../2014/01/06/windows_azure_storage_3_0_2_hotfix.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -117,7 +117,7 @@
 <div class="section" id="sas">
 <h2><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の &#8220;//&#8221; 問題</span></a></h2>
 <p>下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が<span class="docutils literal"><span class="pre">&quot;//&quot;</span></span>になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、<span class="docutils literal"><span class="pre">&quot;//&quot;</span></span>と書いたら<span class="docutils literal"><span class="pre">&quot;/&quot;</span></span>と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">blobClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudBlobClient</span><span class="p">();</span>
 
@@ -143,7 +143,7 @@
 <div class="section" id="id7">
 <h3>2.1.0.4での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span> <span class="pre">-Version</span> <span class="pre">2.1.0.4</span></span>で2.1.0.4を入れます。何度も、違うバージョンのライブラリを入れ替えて使っていて、混乱したので念のためpackage.configの内容を併記します。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;packages&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Microsoft.Data.Edm&quot;</span> <span class="na">version=</span><span class="s">&quot;5.2.0&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net451&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Microsoft.Data.OData&quot;</span> <span class="na">version=</span><span class="s">&quot;5.2.0&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net451&quot;</span> <span class="nt">/&gt;</span>
@@ -170,7 +170,7 @@
 <div class="section" id="id8">
 <h3>3.0.1での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>で最新版、3.0.1で確認</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;packages&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Microsoft.Data.Edm&quot;</span> <span class="na">version=</span><span class="s">&quot;5.6.0&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net451&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Microsoft.Data.OData&quot;</span> <span class="na">version=</span><span class="s">&quot;5.6.0&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net451&quot;</span> <span class="nt">/&gt;</span>
@@ -195,7 +195,7 @@
 </div>
 </div></blockquote>
 <p>レスポンスを見ると下記のようになっていました。（XMLは整形してあります）</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 The requested URI does not represent any resource on the server.
+<div class="highlight-none"><div class="highlight"><pre><span></span>HTTP/1.1 400 The requested URI does not represent any resource on the server.
 Content-Length: 434
 Content-Type: application/xml
 Server: Microsoft-HTTPAPI/2.0
@@ -221,7 +221,7 @@ Date: Fri, 27 Dec 2013 12:34:46 GMT
 <div class="section" id="tabledataservicecontext-resolvename">
 <h2><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span class="std std-ref">TableのDataServiceContext.ResolveName 指定 問題</span></a></h2>
 <p>同様に、下記のようなコードを使って、2.1.0.4と、3.0.1で確認しました。 2.1.0.4 では、動作しましたが 3.0.1 では動きませんでした。結果はSASと似ているのですが、service側では処理が成功しているのでちょっと違った感じを受けます。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">cloudTableClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudTableClient</span><span class="p">();</span>
 
@@ -245,7 +245,7 @@ Date: Fri, 27 Dec 2013 12:34:46 GMT
 <p>普通に動いて成功しました。リクエストを見ると、categoryの属性に、<span class="docutils literal"><span class="pre">term=&quot;StorageIssue201311.SimpleEntity&quot;</span></span>と有りますが、正常に処理されてレスポンスが帰ってきているのがわかります。</p>
 <p>参考までに、リクエストとレスポンスを貼っておきます</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span></span>POST http://test.table.core.windows.net/sometable HTTP/1.1
 User-Agent: Microsoft ADO.NET Data Services
 DataServiceVersion: 1.0;NetFx
 MaxDataServiceVersion: 2.0;NetFx
@@ -278,7 +278,7 @@ Content-Length: 735
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
+<div class="highlight-none"><div class="highlight"><pre><span></span>HTTP/1.1 201 Created
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/atom+xml;type=entry;charset=utf-8
@@ -304,7 +304,7 @@ Date: Fri, 27 Dec 2013 13:30:08 GMT
 <div class="section" id="id10">
 <h3>3.0.1での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>として最新版、3.0.1で確認したところ、下記のようにエラーになりました。データ自体は、Tableに入っており正常終了していますが、レスポンスを読み込んでエンティティを更新するのに失敗しているようです。</p>
-<div class="highlight-none"><div class="highlight"><pre>ハンドルされていない例外: System.Data.Services.Client.DataServiceRequestException: この要求の処理中にエラーが発生しました。 ---&gt; System.InvalidOperationException: メタデータ URI &#39;http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element&#39; は &#39;fooomiimg001.sometable&#39; という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は &#39;StorageIssue201311.SimpleEntity&#39; で、&#39;fooomiimg001.sometable&#39; という名前のエンティティ型と互換性がありません。 ---&gt; Microsoft.Data.OData.ODataException: メタデータ URI &#39;http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element&#39; は &#39;fooomiimg001.sometable&#39; という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は &#39;StorageIssue201311.SimpleEntity&#39; で、&#39;fooomiimg001.sometable&#39; という名前のエンティティ型と互換性がありません。
+<div class="highlight-none"><div class="highlight"><pre><span></span>ハンドルされていない例外: System.Data.Services.Client.DataServiceRequestException: この要求の処理中にエラーが発生しました。 ---&gt; System.InvalidOperationException: メタデータ URI &#39;http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element&#39; は &#39;fooomiimg001.sometable&#39; という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は &#39;StorageIssue201311.SimpleEntity&#39; で、&#39;fooomiimg001.sometable&#39; という名前のエンティティ型と互換性がありません。 ---&gt; Microsoft.Data.OData.ODataException: メタデータ URI &#39;http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element&#39; は &#39;fooomiimg001.sometable&#39; という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は &#39;StorageIssue201311.SimpleEntity&#39; で、&#39;fooomiimg001.sometable&#39; という名前のエンティティ型と互換性がありません。
    場所 Microsoft.Data.OData.ReaderValidationUtils.ValidateFeedOrEntryMetadataUri(ODataJsonLightMetadataUriParseResult metadataUriParseResult, Scope scope)
    場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementationSynchronously(DuplicatePropertyNamesChecker duplicatePropertyNamesChecker)
    場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementation()
@@ -339,7 +339,7 @@ Date: Fri, 27 Dec 2013 13:30:08 GMT
 </div>
 <p>参考までに、リクエストとレスポンスを貼っておきます。これを見ると、x-ms-version: 2013-08-15 で、payloadは、<span class="docutils literal"><span class="pre">Content-Type:</span> <span class="pre">application/json;odata=minimalmetadata</span></span>になっていますが、<span class="docutils literal"><span class="pre">Prefer:</span> <span class="pre">return-no-content</span></span>が指定されておらず、レスポンスのBodyにechoが帰ってきているのがわかります。</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span></span>POST http://test.table.core.windows.net/sometable HTTP/1.1
 DataServiceVersion: 3.0;NetFx
 MaxDataServiceVersion: 3.0;NetFx
 Accept: application/json;odata=minimalmetadata
@@ -356,7 +356,7 @@ Content-Length: 125
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
+<div class="highlight-none"><div class="highlight"><pre><span></span>HTTP/1.1 201 Created
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -428,6 +428,8 @@ B2
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/27/azure_storage_known_issues_november_2013_resolved";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
             <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="../../../2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
@@ -445,15 +447,13 @@ B2
             <a href="../../../2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
         </li><li>
             <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
-        </li><li>
-            <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (31)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (9)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (2)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (31)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (9)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (2)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="_static/plugins.js"></script>
         <script src="_static/main.js"></script>
-        <link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page5.html" /><link rel="prev" title="Newer" href="page3.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '1.5',
@@ -73,6 +73,29 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>July 02, 2014</span>
+        </div>
+        <div class="section">
+            <h1><a href="2014/07/02/mvp_2014_7.html">2014 Microsoft MVP Award を受賞しました</a></h1>
+<p>2014年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。</p>
+<p>これも一重に皆様から多くの御支援をいただいた結果です。</p>
+<p>今後も、Azure Storage を中心に、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。</p>
+<p>これからも、よろしくお願いいたします。</p>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/mvp.html">MVP</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2014/07/02/mvp_2014_7.html#disqus_thread" data-disqus-identifier="2014/07/02/mvp_2014_7">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>June 09, 2014</span>
         </div>
         <div class="section">
@@ -89,10 +112,10 @@
 <h2>Web Sitesを作成</h2>
 <p>まず、azure cli を使うので、インストールしてください。</p>
 <p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir kinmugi006
-<span class="nv">$ </span><span class="nb">cd </span>kinmugi006
-<span class="nv">$ </span>azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
-info:    Executing <span class="nb">command </span>site create
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir kinmugi006
+$ <span class="nb">cd</span> kinmugi006
+$ azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
+info:    Executing <span class="nb">command</span> site create
 + Getting sites
 + Getting locations
 info:    Creating a new web site at kinmugi006.azurewebsites.net
@@ -104,20 +127,20 @@ info:    Initializing remote Azure repository
 info:    Remote azure repository initialized
 + Getting site information
 info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
-info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local </span>git repository
+info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local</span> git repository
 info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">'git push azure master'</span> to deploy to Azure
-info:    site create <span class="nb">command </span>OK
+info:    site create <span class="nb">command</span> OK
 </pre></div>
 </div>
 <p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git remote -v
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git remote -v
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
 origin
 </pre></div>
 </div>
 <p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site browse kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site browse kinmugi006
 </pre></div>
 </div>
 <p>もし、<span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span>のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
@@ -129,7 +152,7 @@ origin
 <p>まず、ポータルサイトから git のパスワードを設定します。<span class="docutils literal"><span class="pre">DASHBOARD</span></span>-&gt;<span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span>で設定できます。</p>
 <img alt="local git のパスワード設定" class="align-center" src="_images/20140609_azure001.PNG"/>
 <p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
 Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
 Counting objects: 3, <span class="k">done</span>.
 Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
@@ -163,7 +186,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
 <p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a>にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
 <p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
       <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">"org.apache.catalina.valves.AccessLogValve"</span> <span class="na">directory=</span><span class="s">"${site.logdir}"</span>
@@ -174,7 +197,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。<a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property “user.home” does not correspond to “USERPROFILE” (win)</a>Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
 </pre></div>
 </div>
 <p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
@@ -185,7 +208,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>まずは、Javaのアプリの準備をします。</p>
 <p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
 <p>ディレクトリ構成</p>
-<div class="highlight-bash"><div class="highlight"><pre>├─gradle
+<div class="highlight-bash"><div class="highlight"><pre><span/>├─gradle
 │  ├─bin
 │  ├─init.d
 │  ├─lib
@@ -202,12 +225,12 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">.deployemnt</span></span>という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、<span class="docutils literal"><span class="pre">.deployemnt</span></span>ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>config<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span/><span class="o">[</span>config<span class="o">]</span>
 <span class="nb">command</span> <span class="o">=</span> deploy.cmd
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">deploy.cmd</span></span>では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
-<div class="highlight-bash"><div class="highlight"><pre>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
+<div class="highlight-bash"><div class="highlight"><pre><span/>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
 
 SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
 SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
@@ -242,17 +265,17 @@ IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 
 goto end
 
-:: Execute <span class="nb">command </span>routine that will <span class="nb">echo </span>out when error
+:: Execute <span class="nb">command</span> routine that will <span class="nb">echo</span> out when error
 :ExecuteCmd
 setlocal
-<span class="nb">set </span><span class="nv">_CMD_</span><span class="o">=</span>%*
+<span class="nb">set</span> <span class="nv">_CMD_</span><span class="o">=</span>%*
 call %_CMD_%
-<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo </span>Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nb">command</span><span class="o">=</span>%_CMD_%
+<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo</span> Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nv">command</span><span class="o">=</span>%_CMD_%
 <span class="nb">exit</span> /b %ERRORLEVEL%
 
 :error
 endlocal
-<span class="nb">echo </span>An error has occurred during web site deployment.
+<span class="nb">echo</span> An error has occurred during web site deployment.
 call :exitSetErrorLevel
 call :exitFromFunction 2&gt;nul
 
@@ -264,11 +287,11 @@ call :exitFromFunction 2&gt;nul
 
 :end
 endlocal
-<span class="nb">echo </span>Finished successfully.
+<span class="nb">echo</span> Finished successfully.
 </pre></div>
 </div>
 <p>ここまでできたら、git add, commit して、pushしてください。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
 Counting objects: 189, <span class="k">done</span>.
 Delta compression using up to <span class="m">4</span> threads.
 Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
@@ -408,7 +431,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>分散システムの問題の多くは、時刻の同期問題でもあり根が深いので、ここはスルーで先に行きます。</p>
 <p>これらの問題を回避するために、IDの一部にランダムな要素を付与する方法が一般的に使われています。</p>
 <p>例えば、下記のような感じ</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
@@ -421,7 +444,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <p>ここで発番しているのは擬似的なUNIQ性を持ったIDでです。最終的なUNIQ性の保証は別のレイヤーに預ける前提です。ランダム桁数は、衝突の頻度と衝突時の再試行のコストを鑑みて決定します。この例だと、4桁取っていますが、昨今のCPUだとシングルCoreで同一Tick内で2-3程度は発番できるようなので、100coreぐらいあれば、2*100/10000 = 1/50 となって、結構な頻度で衝突します。（この数字は結構いい加減なので参考程度で）</p>
 <p>順番を逆にしたい場合は、下記のようにします。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
@@ -585,7 +608,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <p>今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。</p>
 <p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">connectionString</span> <span class="p">=</span> <span class="n">CloudConfigurationManager</span><span class="p">.</span><span class="n">GetSetting</span><span class="p">(</span><span class="s">"ConnectionString"</span><span class="p">)</span> <span class="p">??</span> <span class="s">"UseDevelopmentStorage=true"</span><span class="p">;</span>
   <span class="kt">var</span> <span class="n">account</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
@@ -611,7 +634,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p>FiddlerCoreSetup() の中を見てみましょう。基本的には必要な処理をFiddlerのイベントハンドラに追加して、FidderCore プロキシを起動するだけです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">AfterSessionComplete</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
       <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"AfterSessionComplete Session {0}({4}):{1} {2} {3}"</span><span class="p">,</span>
@@ -649,7 +672,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、<span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span>に<span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span>を指定します。その他に、システム全体のProxyに入りたい場合は、<cite>RegisterAsSystemProxy</cite>を使います。</p>
 <p>そして、<cite>WebRequest</cite>の<cite>DefaultWebProxy</cite>を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
 <p>これで、実行すると下記のようになります。</p>
-<div class="highlight-text"><div class="highlight"><pre>127.0.0.1:19282
+<div class="highlight-text"><div class="highlight"><pre><span/>127.0.0.1:19282
 BeforeRequest Session 1 ragrsomi001jp.blob.core.windows.net ragrsomi001jp.blob.core.windows.net
 AfterSessionComplete Session 1(text/html):502 GET http://ragrsomi001jp.blob.core.windows.net.jejeje/jejeje/cray.png?timeout=90
 AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary.blob.core.windows.net/jejeje/cray.png?timeout=90
@@ -727,7 +750,7 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
 <h2>確認</h2>
 <p>まずはStorage Emulatorを実行して起動を確認します</p>
 <p>普通に　Windows Azure Storage Emulator - v2.2 のショートカットをクリックする方法以外に、下記のようにコマンドラインから起動をすることも出来ます。</p>
-<div class="highlight-none"><div class="highlight"><pre>$ .\csrun.exe /devstore
+<div class="highlight-none"><div class="highlight"><pre><span/>$ .\csrun.exe /devstore
 Windows(R) Azure(TM) Desktop Execution Tool version 2.2.0.0
 for Microsoft(R) .NET Framework 4.0
 Copyright c Microsoft Corporation. All rights reserved.
@@ -740,7 +763,7 @@ $
 <p>起動してきたので、念のためバージョン番号を確認します。残念ながら変わっていません…</p>
 <img alt="../../../_images/2014-01-29-WASE221-004.png" src="_images/2014-01-29-WASE221-004.png"/>
 <p>次にJSONでアクセスしてみます。<span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>後、下記のようなコードを書いて実行します。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Linq</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage.Table</span><span class="p">;</span>
@@ -775,7 +798,7 @@ $
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-<div class="highlight-c#"><div class="highlight"><pre><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="p">=</span><span class="s">"utf-8"</span><span class="p">?&gt;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="p">=</span><span class="s">"utf-8"</span><span class="p">?&gt;</span>
 <span class="p">&lt;</span><span class="n">packages</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="n">version</span><span class="p">=</span><span class="s">"5.6.0"</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">"net451"</span> <span class="p">/&gt;</span>
   <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">"Microsoft.Data.OData"</span> <span class="n">version</span><span class="p">=</span><span class="s">"5.6.0"</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">"net451"</span> <span class="p">/&gt;</span>
@@ -788,7 +811,7 @@ $
 </pre></div>
 </div>
 <p>実行結果</p>
-<div class="highlight-none"><div class="highlight"><pre>$ WASE221pre.exe
+<div class="highlight-none"><div class="highlight"><pre><span/>$ WASE221pre.exe
 pk, rk635265773262439816
 pk, rk635265773303542415
 pk, rk635265773965590960
@@ -800,13 +823,13 @@ pk, rk635265824937388844
 <p>上手く行きました。（何度か実行したので複数のエンティティがあります）</p>
 <p>本当にJSONで流れているのかどうか念のために確認します。</p>
 <p>接続文字列を、<span class="docutils literal"><span class="pre">"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler"</span></span>に変更します。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// var acct = CloudStorageAccount.DevelopmentStorageAccount;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="c1">// var acct = CloudStorageAccount.DevelopmentStorageAccount;</span>
 <span class="kt">var</span> <span class="n">acct</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>実行してCaptureを確認します。</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>GET http://127.0.0.1:10002/devstoreaccount1/TestTable?timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>GET http://127.0.0.1:10002/devstoreaccount1/TestTable?timeout=90 HTTP/1.1
 User-Agent: WA-Storage/3.0.2 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2013-08-15
 Accept-Charset: UTF-8
@@ -821,7 +844,7 @@ Host: 127.0.0.1:10002
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -860,76 +883,6 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release.html#disqus_thread" data-disqus-identifier="2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>January 06, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/01/06/windows_azure_storage_3_0_2_hotfix.html">Windows Azure Storage 3.0.2 Hotfix</a></h1>
-<p>2014/1/4<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2">Windows Azure Storage 3.0.2</a>がリリースされました。2013/11/27 3.0のリリース 「<a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><span class="doc">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</span></a>」、2013/12/11 の 3.0.1 hotfix 「<a class="reference internal" href="2013/12/11/windows_azure_storage_client_3_0_1.html"><span class="doc">Windows Azure Storage Client 3.0.1</span></a>」 に続く３回めのリリースです。</p>
-<a class="reference external image-reference" href="http://flic.kr/p/iSAtsB"><img alt="zenko-ji by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>修正点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L184">Issues fixed in 3.0.2.0 :</a>:</p>
-<ol class="arabic simple">
-<li>All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</li>
-<li>Queues: 存在するqueueの再度作成で、NullReferenceException になる問題を修正</li>
-<li>Tables: レスポンスがparseできなかったときに、TableServiceContext が NullReferenceException になる問題を修正</li>
-<li>Tables (RT): JSON形式がまだRT library でサポートされていないため、ユーザーは、RTで RequestOptions に JsonFullMetadata formart を設定することはできません</li>
-</ol>
-<p>コードを確認したところ、最初のやつが興味深いものでした。</p>
-</div>
-<div class="section" id="all-wp-api-argumentoutofrangeexception">
-<h2>1. All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正</h2>
-<p>対象は、Windows Phone プラットフォームだけで特定のAPIでなく全般的に発生します。関連する Issue として 、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/issues/16">System.ArgumentOutOfRangeException in Microsoft.WindowsAzure.Storage.Table.CloudTable.EndExecute</a>が出ています。</p>
-<p>共通で使っている、API内のパラメータのバウンダリー検査関数（<span class="docutils literal"><span class="pre">AssertInBounds</span></span>）が動いていなくてあちこちで問題が発生するということになっていたようです。（そうは言っても、テストはしているので、そうそう起きるわけでは無いとは思います）</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17">Storage Client Library 3.0.2 のPR</a>でdiffを見みると、WINDOWS_PHONEだけで下記のように修正されていました。</p>
-<img alt="../../../_images/2014-01-06-github001.png" src="_images/2014-01-06-github001.png"/>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160">https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160</a></p>
-<p>#if WINDOWS_PHONE で AssertInBounds に、<span class="docutils literal"><span class="pre">[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]</span></span>を指定しています。この指定は、JITやNGENでのコード最適化を抑制するもので、<a class="footnote-reference" href="#r1" id="id2">[1]</a>Windows Phone の場合だけ native code 生成に問題があったので抑制するオプションを付けたということです。</p>
-<p>Windows Phone というだけで、どのような場合に発生する問題かなどわかりませんが、WP アプリのコードが挙動不審の場合は試してみると良いかもしれません。Storage Clinet Library内では、この方法で修正されているようなので問題は無いのですが、普通に書いたコードでも起きるとすると、ちょっと困りますね。もう少し詳しい情報が欲しいところです。<a class="footnote-reference" href="#r2" id="id3">[2]</a></p>
-<p>これ以外は、あまり気になる点はありませんでした。互換性の問題も無さそうなので、3系のStorage Clinetは 3.0.2 を使うのがお勧めです。</p>
-</div>
-<div class="section" id="windows-phone">
-<span id="scl302-more-info"/><h2>2014/1/11 追記 Windows Phoneの問題</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331">PR の質問</a>に返事を貰いました。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる</div>
-</div>
-</div></blockquote>
-<p><span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min,</span> <span class="pre">T</span> <span class="pre">max)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span>と、<span class="docutils literal"><span class="pre">internal</span> <span class="pre">static</span> <span class="pre">void</span> <span class="pre">AssertInBounds&lt;T&gt;(string</span> <span class="pre">paramName,</span> <span class="pre">T</span> <span class="pre">val,</span> <span class="pre">T</span> <span class="pre">min)</span> <span class="pre">where</span> <span class="pre">T</span> <span class="pre">:</span> <span class="pre">IComparable</span></span>の両方が同一 assembly にあるのが問題のようです。 必ず起きるというわけでも無さそうなので、Windows Phone で嵌ったら思い出してみるという程度で良さそうです。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/system.runtime.compilerservices.methodimploptions(v=vs.110).aspx">About System.Runtime.CompilerServices.MethodImplOptions</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932">We escalated this internally ...</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/hotfix.html">Hotfix</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/01/06/windows_azure_storage_3_0_2_hotfix.html#disqus_thread" data-disqus-identifier="2014/01/06/windows_azure_storage_3_0_2_hotfix">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -938,6 +891,8 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
             <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
@@ -955,15 +910,13 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
             <a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
         </li><li>
             <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
-        </li><li>
-            <a href="2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

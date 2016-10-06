@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="../../../_static/plugins.js"></script>
         <script src="../../../_static/main.js"></script>
-        <link rel="next" title="スケーラブルな採番とsnowflake" href="../08/snowflake_c.html" /><link rel="prev" title="2014 Microsoft MVP Award を受賞しました" href="../../07/02/mvp_2014_7.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="スケーラブルな採番とsnowflake" href="../08/snowflake_c.html" /><link rel="prev" title="2014 Microsoft MVP Award を受賞しました" href="../../07/02/mvp_2014_7.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.5',
@@ -101,10 +101,10 @@
 <h2>Web Sitesを作成</h2>
 <p>まず、azure cli を使うので、インストールしてください。</p>
 <p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir kinmugi006
-<span class="nv">$ </span><span class="nb">cd </span>kinmugi006
-<span class="nv">$ </span>azure site create --location <span class="s2">&quot;Japan West&quot;</span> --git --gitusername kinmugi-king  kinmugi006
-info:    Executing <span class="nb">command </span>site create
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ mkdir kinmugi006
+$ <span class="nb">cd</span> kinmugi006
+$ azure site create --location <span class="s2">&quot;Japan West&quot;</span> --git --gitusername kinmugi-king  kinmugi006
+info:    Executing <span class="nb">command</span> site create
 + Getting sites
 + Getting locations
 info:    Creating a new web site at kinmugi006.azurewebsites.net
@@ -116,20 +116,20 @@ info:    Initializing remote Azure repository
 info:    Remote azure repository initialized
 + Getting site information
 info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
-info:    A new remote, <span class="s1">&#39;azure&#39;</span>, has been added to your <span class="nb">local </span>git repository
+info:    A new remote, <span class="s1">&#39;azure&#39;</span>, has been added to your <span class="nb">local</span> git repository
 info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">&#39;git push azure master&#39;</span> to deploy to Azure
-info:    site create <span class="nb">command </span>OK
+info:    site create <span class="nb">command</span> OK
 </pre></div>
 </div>
 <p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git remote -v
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git remote -v
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
 origin
 </pre></div>
 </div>
 <p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site browse kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ azure site browse kinmugi006
 </pre></div>
 </div>
 <p>もし、<span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span>のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
@@ -141,7 +141,7 @@ origin
 <p>まず、ポータルサイトから git のパスワードを設定します。<span class="docutils literal"><span class="pre">DASHBOARD</span></span>-&gt;<span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span>で設定できます。</p>
 <img alt="local git のパスワード設定" class="align-center" src="../../../_images/20140609_azure001.PNG" />
 <p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git push azure master
 Password <span class="k">for</span> <span class="s1">&#39;https://kinmugi-king@kinmugi006.scm.azurewebsites.net&#39;</span>:
 Counting objects: 3, <span class="k">done</span>.
 Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
@@ -175,7 +175,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
 <p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a>にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
 <p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=&#8221;true&#8221; になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">&quot;localhost&quot;</span>  <span class="na">appBase=</span><span class="s">&quot;d:\home\site\wwwroot\webapps&quot;</span> <span class="na">xmlBase=</span><span class="s">&quot;d:\home\site\wwwroot\&quot;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">&quot;localhost&quot;</span>  <span class="na">appBase=</span><span class="s">&quot;d:\home\site\wwwroot\webapps&quot;</span> <span class="na">xmlBase=</span><span class="s">&quot;d:\home\site\wwwroot\&quot;</span>
       <span class="na">unpackWARs=</span><span class="s">&quot;true&quot;</span> <span class="na">autoDeploy=</span><span class="s">&quot;true&quot;</span> <span class="na">workDir=</span><span class="s">&quot;${site.tempdir}&quot;</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">&quot;org.apache.catalina.valves.AccessLogValve&quot;</span> <span class="na">directory=</span><span class="s">&quot;${site.logdir}&quot;</span>
@@ -186,7 +186,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。<a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property &#8220;user.home&#8221; does not correspond to &#8220;USERPROFILE&#8221; (win)</a>Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;-Duser.home=d:\home -Djava.net.preferIPv4Stack=true&quot;</span> kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;-Duser.home=d:\home -Djava.net.preferIPv4Stack=true&quot;</span> kinmugi006
 </pre></div>
 </div>
 <p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
@@ -197,7 +197,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>まずは、Javaのアプリの準備をします。</p>
 <p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
 <p>ディレクトリ構成</p>
-<div class="highlight-bash"><div class="highlight"><pre>├─gradle
+<div class="highlight-bash"><div class="highlight"><pre><span></span>├─gradle
 │  ├─bin
 │  ├─init.d
 │  ├─lib
@@ -214,12 +214,12 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">.deployemnt</span></span>という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、<span class="docutils literal"><span class="pre">.deployemnt</span></span>ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>config<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>config<span class="o">]</span>
 <span class="nb">command</span> <span class="o">=</span> deploy.cmd
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">deploy.cmd</span></span>では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
-<div class="highlight-bash"><div class="highlight"><pre>@if <span class="s2">&quot;%SCM_TRACE_LEVEL%&quot;</span> NEQ <span class="s2">&quot;4&quot;</span> @echo off
+<div class="highlight-bash"><div class="highlight"><pre><span></span>@if <span class="s2">&quot;%SCM_TRACE_LEVEL%&quot;</span> NEQ <span class="s2">&quot;4&quot;</span> @echo off
 
 SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
 SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
@@ -254,17 +254,17 @@ IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 
 goto end
 
-:: Execute <span class="nb">command </span>routine that will <span class="nb">echo </span>out when error
+:: Execute <span class="nb">command</span> routine that will <span class="nb">echo</span> out when error
 :ExecuteCmd
 setlocal
-<span class="nb">set </span><span class="nv">_CMD_</span><span class="o">=</span>%*
+<span class="nb">set</span> <span class="nv">_CMD_</span><span class="o">=</span>%*
 call %_CMD_%
-<span class="k">if</span> <span class="s2">&quot;%ERRORLEVEL%&quot;</span> NEQ <span class="s2">&quot;0&quot;</span> <span class="nb">echo </span>Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nb">command</span><span class="o">=</span>%_CMD_%
+<span class="k">if</span> <span class="s2">&quot;%ERRORLEVEL%&quot;</span> NEQ <span class="s2">&quot;0&quot;</span> <span class="nb">echo</span> Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nv">command</span><span class="o">=</span>%_CMD_%
 <span class="nb">exit</span> /b %ERRORLEVEL%
 
 :error
 endlocal
-<span class="nb">echo </span>An error has occurred during web site deployment.
+<span class="nb">echo</span> An error has occurred during web site deployment.
 call :exitSetErrorLevel
 call :exitFromFunction 2&gt;nul
 
@@ -276,11 +276,11 @@ call :exitFromFunction 2&gt;nul
 
 :end
 endlocal
-<span class="nb">echo </span>Finished successfully.
+<span class="nb">echo</span> Finished successfully.
 </pre></div>
 </div>
 <p>ここまでできたら、git add, commit して、pushしてください。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git push azure master
 Counting objects: 189, <span class="k">done</span>.
 Delta compression using up to <span class="m">4</span> threads.
 Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
@@ -378,6 +378,8 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2014/06/09/websites_gradle_git";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
             <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="../../../2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
@@ -395,15 +397,13 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
             <a href="../../../2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
         </li><li>
             <a href="../../../2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
-        </li><li>
-            <a href="../../../2015/05/05/update_tinker_1_5_sphinx_1_3.html">tinker 1.5 + sphinx 1.3.1 に updateしました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="../../../categories/azure.html">Azure</a> (31)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (14)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (9)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (2)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (31)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (9)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (2)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (11), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

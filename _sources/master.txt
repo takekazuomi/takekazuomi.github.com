@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2016/10/04/net_fringe_japan_2016
    2016/07/01/2016_mvp
    2016/05/20/reliable_collection_lock
    2016/04/04/build_2016_azure_cool_storage

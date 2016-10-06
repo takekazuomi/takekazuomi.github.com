@@ -5,8 +5,25 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 01 Jul 2016 00:00:00 +0900</pubDate>
+        <pubDate>Tue, 04 Oct 2016 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2016/10/04/net_fringe_japan_2016.html</link>
+            <guid>http://kyrt.in/2016/10/04/net_fringe_japan_2016.html</guid>
+            <title><![CDATA[.NET Fringe Japan 2016]]></title>
+            <description><![CDATA[<h1>.NET Fringe Japan 2016</h1>
+<p>「<a class="reference external" href="http://yfakariya.blogspot.jp/2016/10/talkedondotnetfringejapan2016.html">まさかの .NET じゃない話</a>」を、<a class="reference external" href="http://dotnetfringe-japan.connpass.com/event/35659/">.NET Fringe Japan 2016</a>で話してきました。 「<a class="reference external" href="http://pocketberserker.hatenablog.com/entry/2016/10/06/203735">Partitionの話とか、なかなか聞けないので面白かったです</a>」 と言っていただけるのは有難いです。</p>
+<p>.NET Fringe なのに、.NET 成分、OSS成分ゼロで良いのかとは迷ったのですが、快く背中を押してもらい、Azure Storageの話をすることにしました。</p>
+<p>Azure Storageは内部構造が公開されているのにも関わらず、日本ではその構造もあまり議論されることも無く、自分でも中に溜めているだけでなかなか外で話す機会も無いという状況で、。少々もったいない気がしていたので話が出来たのは良い機会でした。</p>
+<p>最初は、Storageを構成する３層を全部話そうとしたのですが、細部に立ち入らないと面白い話にならず、細部に入ると話が長くなり全然時間に入らず。結局、一番面白そうなパーテーション周りにフォーカスして話しました。背景的な話や、他のレイヤーの話を飛ばして話したので少々わかり辛らかったかもしれません。</p>
+<p>シャーディングをサポートしているシステムは世の中に諸々ありますが、負荷に応じてパーテーションマップを変更しロードバランシングするシステムで上手く動いている例は多くはなく、実装例として面白いのでは無いかと思います。今回は、話の焦点をパーテーションマップを動的に負荷に応じてどう構成するか、そのときに実データの移動を伴わない実装になっているかという当たりが一番盛り上がるところだったのですが、うまく説明するのはなかなか難しく資料の作成に苦心しました。</p>
+<p>分割（パーテーショニング）が避けられなった時、一実装例として参考になればと思います。</p>
+<p>.NET Fringe Japan 2016 資料です。「Azure Storage Partition Internals」</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/901iFCR13dImEd" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe>]]></description>
+            <category><![CDATA[ Azure Storage ]]></category>
+             <pubDate>Tue, 04 Oct 2016 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2016/07/01/2016_mvp.html</link>
             <guid>http://kyrt.in/2016/07/01/2016_mvp.html</guid>
@@ -128,7 +145,7 @@
 <img alt="../../../_images/git001.png" class="align-center" src="http://kyrt.in/_images/git001.png"/>
 <p>Azure PowerShell Team オープンですね！<strong>素晴らしい</strong></p>
 <p>こんな感じで確認することができます。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-AzureRole -ServiceName kinmugics10 -Slot Staging
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRole -ServiceName kinmugics10 -Slot Staging
 
 RoleName             : WorkerRole1
 InstanceCount        : 1
@@ -169,11 +186,11 @@ OperationStatus      : Succeeded
 <img alt="../../../_images/scl001.png" class="align-center" src="http://kyrt.in/_images/scl001.png"/>
 <p>これで、見慣れぬ構造でプロジェクトが出来る。ソリューションのフォルダーには、sln のファイルと一緒に global.json が出来、プロジェクト本体は、src/[プロジェクト名] の下に作成される。プロジェクトファイルは、project.json とJSONのファイルになっている。（コメント書けないのでJSONは止めて欲しい）</p>
 <p>dnxは、最新の実行環境を使うことにした。今のところ、stable とか release に拘ってもあまり意味ないほどころころとよく変わっている。dnvm コマンドのインストール方法はプラットフォーム毎に違うが、その後はかなり同じような感じで使える。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnvm upgrade -a x86 -r coreclr -u
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm upgrade -a x86 -r coreclr -u
 </pre></div>
 </div>
 <p>dnvm upgrade で入れると、alias default が定義され PATHも切られる。<cite>dnvm install</cite>と、<cite>dnvm use</cite>を使って方が良いかもしれない。入っているかを、dnvm list で確認する。最後の行が active になっている。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnvm list
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm list
 
 Active Version           Runtime Architecture OperatingSystem Alias
 ------ -------           ------- ------------ --------------- -----
@@ -205,7 +222,7 @@ Active Version           Runtime Architecture OperatingSystem Alias
 <h2>コードの概要</h2>
 <p>基本的に、Azure Storage Client コード部分はほとんど従来の物と変わらない。</p>
 <p>テーブルのリストを取る部分は、こんな感じ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre>TableContinuationToken token = null;
+<div class="highlight-csharp"><div class="highlight"><pre><span/>TableContinuationToken token = null;
 do
 {
     var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
@@ -217,7 +234,7 @@ do
 </pre></div>
 </div>
 <p>ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。<a class="footnote-reference" href="#ref2" id="id4">[2]</a>試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
     <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
@@ -259,21 +276,21 @@ do
 <ul class="simple">
 <li>Windows 10 TH2</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"Azure Storage Key"</span>
-<span class="nv">$ </span>dnu restore
-<span class="nv">$ </span>dnu build
-<span class="nv">$ </span><span class="nb">cd </span>bin<span class="se">\o</span>utput<span class="se">\a</span>pproot
-<span class="nv">$ </span>.<span class="se">\s</span>clxplatclr.cmd ListTable
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nv">$env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+$ dnu restore
+$ dnu build
+$ <span class="nb">cd</span> bin<span class="se">\o</span>utput<span class="se">\a</span>pproot
+$ .<span class="se">\s</span>clxplatclr.cmd ListTable
 </pre></div>
 </div>
 <ul class="simple">
 <li>Mac OSX 10.11.1</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">export </span><span class="nv">AZURE_STORAGE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"Azure Storage Key"</span>
-<span class="nv">$ </span>dnu restore
-<span class="nv">$ </span>dnu build
-<span class="nv">$ </span><span class="nb">cd </span>bin/output/approot
-<span class="nv">$ </span>./sclxplatclr.cmd ListTable
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nb">export</span> <span class="nv">AZURE_STORAGE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+$ dnu restore
+$ dnu build
+$ <span class="nb">cd</span> bin/output/approot
+$ ./sclxplatclr.cmd ListTable
 </pre></div>
 </div>
 <p>実行しているのはテーブルのリストを取ってるだけの簡単なコードなので、結果は省略</p>
@@ -281,7 +298,7 @@ do
 <div class="section" id="id6">
 <h2>最後に</h2>
 <p>結局、ubuntu 15.04 でやったのは下記のようになって動かなかった。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dnu restore
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnu restore
 failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared object file: No such file or directory
 </pre></div>
 </div>
@@ -348,7 +365,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="dml">
 <h2>DMLでの実装</h2>
 <p>DMでは、PageBlobReader.DoGetRangesAsync() でGetPageRangesAsyncを実行してRangeを取得<a class="footnote-reference" href="#ref9" id="id10">[9]</a>しています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">protected</span> <span class="k">override</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;&gt;</span> <span class="n">DoGetRangesAsync</span><span class="p">(</span><span class="n">RangesSpan</span> <span class="n">rangesSpan</span><span class="p">)</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">protected</span> <span class="k">override</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;&gt;</span> <span class="n">DoGetRangesAsync</span><span class="p">(</span><span class="n">RangesSpan</span> <span class="n">rangesSpan</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">AccessCondition</span> <span class="n">accessCondition</span> <span class="p">=</span> <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateIfMatchConditionWithCustomerCondition</span><span class="p">(</span>
         <span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">Blob</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">ETag</span><span class="p">,</span>
@@ -474,7 +491,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <p>DML は、従来 Storage Client Library だけでは難しかったような、高速なファイル転送を簡単にアプリで実装できるようなライブライです。（ベースは AzCopyと同じらしい） Azure File、Blob、Local の ３つの間のデータ移動ができます。</p>
 <a class="reference external image-reference" href="https://flic.kr/p/w6vCML"><img alt="brick" class="align-center" src="https://farm4.staticflickr.com/3810/19753067526_5e3efd7613_k.jpg"/></a>
 <p>下記のような、関数が揃っていて、sourceとdestをセットして呼ぶとその間でデータが転送されるって感じです。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">public</span> <span class="k">static</span> <span class="n">Task</span> <span class="nf">CopyAsync</span><span class="p">(</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">static</span> <span class="n">Task</span> <span class="nf">CopyAsync</span><span class="p">(</span>
      <span class="n">Uri</span> <span class="n">sourceUri</span><span class="p">,</span>
      <span class="n">CloudBlob</span> <span class="n">destBlob</span><span class="p">,</span>
      <span class="kt">bool</span> <span class="n">isServiceCopy</span><span class="p">,</span>
@@ -536,8 +553,8 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <h2>WAD Custom Log Downloader</h2>
 <p>とりあえず、なにか作ってみようと思い Azure Diagonestics の Custom Log をローカルにDownloadするアプリ<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader">WADCustomLogDownloader</a>を書きました。AzCopyだけだと、ダウンロード対象のファイルのリストがどこか外部にあって参照しながらダウンロードするというのは効率悪くWADのCustom Logなどは不得意パターンでした。それをライブラリになったので、ちょっとやってみようという感じです。</p>
 <p>環境変数<strong>AZURE_STORAGE_CONNECTION_STRING</strong>に、StorageのConnection文字列を入れて、下記のように実行します。-f から、-t の間のFileTimeのログを、WADDirectoriesTable から探し対応するファイルをblobから、-d で指定したローカルディレクトリにダウンロードします。ちょっと動かしてみた感じだとAzCopyと同じような速度を期待できそうです。（ちゃんと計っていないのですが）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"YOUR_STORAGE_KEY"</span>
-<span class="nv">$ </span>./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="se">\t</span>emp<span class="se">\l</span>ogs -f 2015-09-10 -t 2015-09-23 -v
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nv">$env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"YOUR_STORAGE_KEY"</span>
+$ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="se">\t</span>emp<span class="se">\l</span>ogs -f 2015-09-10 -t 2015-09-23 -v
 </pre></div>
 </div>
 <p>ここから、コードの解説をしながらコーディングしていて気が付いた点をいくつか並べていきます。</p>
@@ -550,12 +567,12 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="id7">
 <h2><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement#best-practice">Best Practice</a></h2>
 <p>パフォーマンスを出すには、DefaultConnectionLimit を増やすのと、 100-continue をOffにする必要があります。Azure Storage を使っている人にはお馴染みかと思いますが。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">ProcessorCount</span> <span class="p">*</span> <span class="m">8</span><span class="p">;</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">ProcessorCount</span> <span class="p">*</span> <span class="m">8</span><span class="p">;</span>
 <span class="n">ServicePointManager</span><span class="p">.</span><span class="n">Expect100Continue</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>ちなみに、ASP.NET環境下では、HttpRuntimeの初期化が走ると、HttpRuntime.InitializeHostingFeatures() から、いろいろ呼ばれて、<a class="reference external" href="http://referencesource.microsoft.com/#System.Web/HttpRuntime.cs,1202">HttpRuntime.SetAutoConfigLimits()</a>で、下記のコードが実行されるので、DefaultConnectionLimit の変更は不要です。Consoleアプリや、WorkerRoleでは必須なので要注意です。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Int32</span><span class="p">.</span><span class="n">MaxValue</span><span class="p">;</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Int32</span><span class="p">.</span><span class="n">MaxValue</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
@@ -798,7 +815,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="id2">
 <h2>1. ローカルストレージからのカスタムログ転送設定</h2>
 <p>ここは前段です。残念ながら現在のVisual Studioでは、GUIでローカルストレージからのカスタムログ転送設定ができません。ここはdiagnostics.wadcfgxに手で書きます。たいして面倒でもなくDataSources のタグの中が今回追加した記述です。これだけで、ローカルストレージ LogStorage からBlobコンテナdiagnostics-custom-logs への転送を定義になります。</p>
-<div class="highlight-xml"><div class="highlight"><pre> <span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/> <span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
  <span class="nt">&lt;DiagnosticsConfiguration</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
    <span class="nt">&lt;PublicConfig</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
      <span class="nt">&lt;WadCfg&gt;</span>
@@ -824,11 +841,11 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <h2>2. ローカルストレージのパスはデプロイ毎に変わる</h2>
 <p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer “${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
 <p>バイナリがNuGetに上げてあるので、インストールはここからします。微妙な気もするので、まだpreviewにしてあります。</p>
-<div class="highlight-none"><div class="highlight"><pre>$ Install-Package NLog.Azure -Pre
+<div class="highlight-none"><div class="highlight"><pre><span/>$ Install-Package NLog.Azure -Pre
 </pre></div>
 </div>
 <p>これでインストールしたら、NLog.configに下記のように書くと実行時にローカルストレージのパスに展開されます。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;variable</span> <span class="na">name=</span><span class="s">"logDirectory"</span> <span class="na">value=</span><span class="s">"${azure-local-resource:name=LogStorage:default=c\:/Logs/}"</span><span class="nt">/&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;variable</span> <span class="na">name=</span><span class="s">"logDirectory"</span> <span class="na">value=</span><span class="s">"${azure-local-resource:name=LogStorage:default=c\:/Logs/}"</span><span class="nt">/&gt;</span>
 </pre></div>
 </div>
 <p><a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure.Example/WebRole1/NLog.config">NLog.configのサンプル</a></p>
@@ -898,7 +915,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="id2">
 <h3>対策</h3>
 <p>WADの構成がIISConfiguratorの実行の後に起こればいいので、一度Roleを再起動します。それには、Startup Taskあるいは、Role の OnStartで下記のように処理します。最初の起動の時に、IISConfigurator が行った変更に基いて、2回めの起動でWADが構成を設定します。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="p">{</span>
     <span class="c1">// Write a RebootFlag.txt file to the %RoleRoot%\Approot\bin folder to track if this VM has rebooted to fix WAD 1.3 IIS logs issue</span>
     <span class="kt">string</span> <span class="n">path</span> <span class="p">=</span> <span class="s">"RebootFlag.txt"</span><span class="p">;</span>
     <span class="c1">// If RebootFlag.txt already exists then skip rebooting the VM</span>
@@ -931,7 +948,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <p>VSで診断構成のアプリケーションログ転送を開きます。</p>
 <img alt="application log settings" class="align-center" src="http://kyrt.in/_images/screen001.png"/>
 <p>この設定をしたら、IISのログ転送対策と同じように、RoleのOnStartで、下記の処理を入れます。ここでは、ディレクトリの有無を確認していますが、WADが先に起動した場合は、ディレクトリは作成されています。アクセス権が足りないので追加します。必要なIISのアクセス権については、<a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">しばやん雑記：IIS 7 以降でのアプリケーションプールと権限について調べた</a>を参考にしています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
     <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
 <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant \"BUILTIN\\IIS_IUSRS:\":(OI)(CI)W"</span><span class="p">);</span>
 </pre></div>
@@ -941,7 +958,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="id5">
 <h2>最後に</h2>
 <p>最後に上記の問題を合わせたコード例を上げておきます。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="kt">var</span> <span class="n">path</span> <span class="p">=</span> <span class="s">@"c:\AppLogs\RebootFlag.txt"</span><span class="p">;</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="kt">var</span> <span class="n">path</span> <span class="p">=</span> <span class="s">@"c:\AppLogs\RebootFlag.txt"</span><span class="p">;</span>
 <span class="k">if</span> <span class="p">(!</span><span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
@@ -956,7 +973,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 </pre></div>
 </div>
 <p>csdefに、下記のように、 &lt;Runtime executionContext=”elevated” /&gt; を追加します。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;ServiceDefinition</span> <span class="na">name=</span><span class="s">"AzureCloudService1"</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition"</span> <span class="na">schemaVersion=</span><span class="s">"2014-06.2.4"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;WebRole</span> <span class="na">name=</span><span class="s">"WebRole1"</span> <span class="na">vmsize=</span><span class="s">"Small"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;Runtime</span> <span class="na">executionContext=</span><span class="s">"elevated"</span> <span class="nt">/&gt;</span>
@@ -1098,7 +1115,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="batchclient">
 <h3>1. BatchClient</h3>
 <p>Batch アカウント、キーから、BatchCredentialsを作成して、BatchClient.Connect で BatchClientを取得します。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="c1">// Get an instance of the BatchClient for a given Azure Batch account.</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="c1">// Get an instance of the BatchClient for a given Azure Batch account.</span>
 <span class="n">BatchCredentials</span> <span class="n">cred</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BatchCredentials</span><span class="p">(</span><span class="n">Account</span><span class="p">,</span> <span class="n">Key</span><span class="p">);</span>
 <span class="k">using</span> <span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span> <span class="p">=</span> <span class="n">BatchClient</span><span class="p">.</span><span class="n">Connect</span><span class="p">(</span><span class="n">Url</span><span class="p">,</span> <span class="n">cred</span><span class="p">))</span>
 <span class="p">{</span>
@@ -1109,7 +1126,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="pool">
 <h3>2. Pool</h3>
 <p>Poolを用意しますが、もしあれば使います。Poolは、PoolManager経由で操作します。Pool 名はBatch アカウント内でユニークな名前で無ければいけません。Pool作成時に、VMのサイズやOSを指定します。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">CreatePoolIfNotExist</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">,</span> <span class="kt">string</span> <span class="n">poolName</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// All Pool and VM operation starts from PoolManager</span>
     <span class="k">using</span> <span class="p">(</span><span class="n">IPoolManager</span> <span class="n">pm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenPoolManager</span><span class="p">())</span>
@@ -1145,7 +1162,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <div class="section" id="work-item">
 <h3>3. work item</h3>
 <p>ここはちょっと分かり辛い。CloudTask がTaskで、次に、Work Itemを定義します。 client.OpenWorkItemManager で、WorkItemManager を取得して。TaskSubmissionHelper を使って、複数のタスクを追加していきます。最後に、 TaskSubmissionHelper.Commitで、Work Itemが発行されJobとしてインスタンス化されます。WorkItemManager.GetJobでJobは取得できます。Jobの実行状況は、TaskStateMonitor で確認することができます。このコードでは、TaskStateMonitor.WaitAll() で全てのjobの完了を待っています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">AddWork</span><span class="p">(</span><span class="n">IBatchClient</span> <span class="n">client</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">using</span> <span class="p">(</span><span class="n">IWorkItemManager</span> <span class="n">wm</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">OpenWorkItemManager</span><span class="p">())</span>
     <span class="p">{</span>
@@ -1288,10 +1305,10 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <h2>Web Sitesを作成</h2>
 <p>まず、azure cli を使うので、インストールしてください。</p>
 <p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir kinmugi006
-<span class="nv">$ </span><span class="nb">cd </span>kinmugi006
-<span class="nv">$ </span>azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
-info:    Executing <span class="nb">command </span>site create
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir kinmugi006
+$ <span class="nb">cd</span> kinmugi006
+$ azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
+info:    Executing <span class="nb">command</span> site create
 + Getting sites
 + Getting locations
 info:    Creating a new web site at kinmugi006.azurewebsites.net
@@ -1303,20 +1320,20 @@ info:    Initializing remote Azure repository
 info:    Remote azure repository initialized
 + Getting site information
 info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
-info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local </span>git repository
+info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local</span> git repository
 info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">'git push azure master'</span> to deploy to Azure
-info:    site create <span class="nb">command </span>OK
+info:    site create <span class="nb">command</span> OK
 </pre></div>
 </div>
 <p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git remote -v
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git remote -v
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
 azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
 origin
 </pre></div>
 </div>
 <p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site browse kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site browse kinmugi006
 </pre></div>
 </div>
 <p>もし、<span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span>のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
@@ -1328,7 +1345,7 @@ origin
 <p>まず、ポータルサイトから git のパスワードを設定します。<span class="docutils literal"><span class="pre">DASHBOARD</span></span>-&gt;<span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span>で設定できます。</p>
 <img alt="local git のパスワード設定" class="align-center" src="http://kyrt.in/_images/20140609_azure001.PNG"/>
 <p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
 Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
 Counting objects: 3, <span class="k">done</span>.
 Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
@@ -1362,7 +1379,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
 <p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a>にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
 <p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
       <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">"org.apache.catalina.valves.AccessLogValve"</span> <span class="na">directory=</span><span class="s">"${site.logdir}"</span>
@@ -1373,7 +1390,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。<a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property “user.home” does not correspond to “USERPROFILE” (win)</a>Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
 </pre></div>
 </div>
 <p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
@@ -1384,7 +1401,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>まずは、Javaのアプリの準備をします。</p>
 <p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
 <p>ディレクトリ構成</p>
-<div class="highlight-bash"><div class="highlight"><pre>├─gradle
+<div class="highlight-bash"><div class="highlight"><pre><span/>├─gradle
 │  ├─bin
 │  ├─init.d
 │  ├─lib
@@ -1401,12 +1418,12 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">.deployemnt</span></span>という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、<span class="docutils literal"><span class="pre">.deployemnt</span></span>ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>config<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span/><span class="o">[</span>config<span class="o">]</span>
 <span class="nb">command</span> <span class="o">=</span> deploy.cmd
 </pre></div>
 </div>
 <p><span class="docutils literal"><span class="pre">deploy.cmd</span></span>では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
-<div class="highlight-bash"><div class="highlight"><pre>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
+<div class="highlight-bash"><div class="highlight"><pre><span/>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
 
 SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
 SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
@@ -1441,17 +1458,17 @@ IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
 
 goto end
 
-:: Execute <span class="nb">command </span>routine that will <span class="nb">echo </span>out when error
+:: Execute <span class="nb">command</span> routine that will <span class="nb">echo</span> out when error
 :ExecuteCmd
 setlocal
-<span class="nb">set </span><span class="nv">_CMD_</span><span class="o">=</span>%*
+<span class="nb">set</span> <span class="nv">_CMD_</span><span class="o">=</span>%*
 call %_CMD_%
-<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo </span>Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nb">command</span><span class="o">=</span>%_CMD_%
+<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo</span> Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nv">command</span><span class="o">=</span>%_CMD_%
 <span class="nb">exit</span> /b %ERRORLEVEL%
 
 :error
 endlocal
-<span class="nb">echo </span>An error has occurred during web site deployment.
+<span class="nb">echo</span> An error has occurred during web site deployment.
 call :exitSetErrorLevel
 call :exitFromFunction 2&gt;nul
 
@@ -1463,11 +1480,11 @@ call :exitFromFunction 2&gt;nul
 
 :end
 endlocal
-<span class="nb">echo </span>Finished successfully.
+<span class="nb">echo</span> Finished successfully.
 </pre></div>
 </div>
 <p>ここまでできたら、git add, commit して、pushしてください。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git push azure master
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
 Counting objects: 189, <span class="k">done</span>.
 Delta compression using up to <span class="m">4</span> threads.
 Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
@@ -1596,7 +1613,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>分散システムの問題の多くは、時刻の同期問題でもあり根が深いので、ここはスルーで先に行きます。</p>
 <p>これらの問題を回避するために、IDの一部にランダムな要素を付与する方法が一般的に使われています。</p>
 <p>例えば、下記のような感じ</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
@@ -1609,7 +1626,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <p>ここで発番しているのは擬似的なUNIQ性を持ったIDでです。最終的なUNIQ性の保証は別のレイヤーに預ける前提です。ランダム桁数は、衝突の頻度と衝突時の再試行のコストを鑑みて決定します。この例だと、4桁取っていますが、昨今のCPUだとシングルCoreで同一Tick内で2-3程度は発番できるようなので、100coreぐらいあれば、2*100/10000 = 1/50 となって、結構な頻度で衝突します。（この数字は結構いい加減なので参考程度で）</p>
 <p>順番を逆にしたい場合は、下記のようにします。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
@@ -1760,7 +1777,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <p>今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。</p>
 <p>Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。try の次の行ので読んでいる、FiddlerCoreSetup()でFiddlerCoreの設定を行っています。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="kt">var</span> <span class="n">connectionString</span> <span class="p">=</span> <span class="n">CloudConfigurationManager</span><span class="p">.</span><span class="n">GetSetting</span><span class="p">(</span><span class="s">"ConnectionString"</span><span class="p">)</span> <span class="p">??</span> <span class="s">"UseDevelopmentStorage=true"</span><span class="p">;</span>
   <span class="kt">var</span> <span class="n">account</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
@@ -1786,7 +1803,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </pre></div>
 </div>
 <p>FiddlerCoreSetup() の中を見てみましょう。基本的には必要な処理をFiddlerのイベントハンドラに追加して、FidderCore プロキシを起動するだけです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">FiddlerCoreSetup</span><span class="p">(</span><span class="kt">string</span> <span class="n">blockedHostName</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="n">FiddlerApplication</span><span class="p">.</span><span class="n">AfterSessionComplete</span> <span class="p">+=</span> <span class="n">os</span> <span class="p">=&gt;</span>
       <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"AfterSessionComplete Session {0}({4}):{1} {2} {3}"</span><span class="p">,</span>
@@ -1824,7 +1841,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 <p>今回は、このアプリケーションから出るリクエストだけ操作できればいいので、<span class="docutils literal"><span class="pre">FiddlerCoreStartupFlags</span></span>に<span class="docutils literal"><span class="pre">ChainToUpstreamGateway</span></span>を指定します。その他に、システム全体のProxyに入りたい場合は、<cite>RegisterAsSystemProxy</cite>を使います。</p>
 <p>そして、<cite>WebRequest</cite>の<cite>DefaultWebProxy</cite>を、FeddlerCoreプロキシ で書き換えます。これで、Azure　Storage Client のリクエストが、Primary に向いているときは失敗するようになりました。</p>
 <p>これで、実行すると下記のようになります。</p>
-<div class="highlight-text"><div class="highlight"><pre>127.0.0.1:19282
+<div class="highlight-text"><div class="highlight"><pre><span/>127.0.0.1:19282
 BeforeRequest Session 1 ragrsomi001jp.blob.core.windows.net ragrsomi001jp.blob.core.windows.net
 AfterSessionComplete Session 1(text/html):502 GET http://ragrsomi001jp.blob.core.windows.net.jejeje/jejeje/cray.png?timeout=90
 AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary.blob.core.windows.net/jejeje/cray.png?timeout=90
@@ -1890,7 +1907,7 @@ AfterSessionComplete Session 2(image/png):200 GET http://ragrsomi001jp-secondary
 <h2>確認</h2>
 <p>まずはStorage Emulatorを実行して起動を確認します</p>
 <p>普通に　Windows Azure Storage Emulator - v2.2 のショートカットをクリックする方法以外に、下記のようにコマンドラインから起動をすることも出来ます。</p>
-<div class="highlight-none"><div class="highlight"><pre>$ .\csrun.exe /devstore
+<div class="highlight-none"><div class="highlight"><pre><span/>$ .\csrun.exe /devstore
 Windows(R) Azure(TM) Desktop Execution Tool version 2.2.0.0
 for Microsoft(R) .NET Framework 4.0
 Copyright c Microsoft Corporation. All rights reserved.
@@ -1903,7 +1920,7 @@ $
 <p>起動してきたので、念のためバージョン番号を確認します。残念ながら変わっていません…</p>
 <img alt="../../../_images/2014-01-29-WASE221-004.png" src="http://kyrt.in/_images/2014-01-29-WASE221-004.png"/>
 <p>次にJSONでアクセスしてみます。<span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>後、下記のようなコードを書いて実行します。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Linq</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.WindowsAzure.Storage.Table</span><span class="p">;</span>
@@ -1938,7 +1955,7 @@ $
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-<div class="highlight-c#"><div class="highlight"><pre><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="p">=</span><span class="s">"utf-8"</span><span class="p">?&gt;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="p">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="p">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="p">=</span><span class="s">"utf-8"</span><span class="p">?&gt;</span>
 <span class="p">&lt;</span><span class="n">packages</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="n">version</span><span class="p">=</span><span class="s">"5.6.0"</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">"net451"</span> <span class="p">/&gt;</span>
   <span class="p">&lt;</span><span class="n">package</span> <span class="n">id</span><span class="p">=</span><span class="s">"Microsoft.Data.OData"</span> <span class="n">version</span><span class="p">=</span><span class="s">"5.6.0"</span> <span class="n">targetFramework</span><span class="p">=</span><span class="s">"net451"</span> <span class="p">/&gt;</span>
@@ -1951,7 +1968,7 @@ $
 </pre></div>
 </div>
 <p>実行結果</p>
-<div class="highlight-none"><div class="highlight"><pre>$ WASE221pre.exe
+<div class="highlight-none"><div class="highlight"><pre><span/>$ WASE221pre.exe
 pk, rk635265773262439816
 pk, rk635265773303542415
 pk, rk635265773965590960
@@ -1963,13 +1980,13 @@ pk, rk635265824937388844
 <p>上手く行きました。（何度か実行したので複数のエンティティがあります）</p>
 <p>本当にJSONで流れているのかどうか念のために確認します。</p>
 <p>接続文字列を、<span class="docutils literal"><span class="pre">"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler"</span></span>に変更します。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="c1">// var acct = CloudStorageAccount.DevelopmentStorageAccount;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="c1">// var acct = CloudStorageAccount.DevelopmentStorageAccount;</span>
 <span class="kt">var</span> <span class="n">acct</span> <span class="p">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://ipv4.fiddler"</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>実行してCaptureを確認します。</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>GET http://127.0.0.1:10002/devstoreaccount1/TestTable?timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>GET http://127.0.0.1:10002/devstoreaccount1/TestTable?timeout=90 HTTP/1.1
 User-Agent: WA-Storage/3.0.2 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2013-08-15
 Accept-Charset: UTF-8
@@ -1984,7 +2001,7 @@ Host: 127.0.0.1:10002
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -2106,7 +2123,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <div class="section" id="sas">
 <h2><a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の “//” 問題</span></a></h2>
 <p>下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が<span class="docutils literal"><span class="pre">"//"</span></span>になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、<span class="docutils literal"><span class="pre">"//"</span></span>と書いたら<span class="docutils literal"><span class="pre">"/"</span></span>と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">blobClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudBlobClient</span><span class="p">();</span>
 
@@ -2132,7 +2149,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <div class="section" id="id7">
 <h3>2.1.0.4での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span> <span class="pre">-Version</span> <span class="pre">2.1.0.4</span></span>で2.1.0.4を入れます。何度も、違うバージョンのライブラリを入れ替えて使っていて、混乱したので念のためpackage.configの内容を併記します。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;packages&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="na">version=</span><span class="s">"5.2.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.OData"</span> <span class="na">version=</span><span class="s">"5.2.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
@@ -2159,7 +2176,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <div class="section" id="id8">
 <h3>3.0.1での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>で最新版、3.0.1で確認</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;packages&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.Edm"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Microsoft.Data.OData"</span> <span class="na">version=</span><span class="s">"5.6.0"</span> <span class="na">targetFramework=</span><span class="s">"net451"</span> <span class="nt">/&gt;</span>
@@ -2184,7 +2201,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 </div>
 </div></blockquote>
 <p>レスポンスを見ると下記のようになっていました。（XMLは整形してあります）</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 The requested URI does not represent any resource on the server.
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 400 The requested URI does not represent any resource on the server.
 Content-Length: 434
 Content-Type: application/xml
 Server: Microsoft-HTTPAPI/2.0
@@ -2210,7 +2227,7 @@ Date: Fri, 27 Dec 2013 12:34:46 GMT
 <div class="section" id="tabledataservicecontext-resolvename">
 <h2><a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span class="std std-ref">TableのDataServiceContext.ResolveName 指定 問題</span></a></h2>
 <p>同様に、下記のようなコードを使って、2.1.0.4と、3.0.1で確認しました。 2.1.0.4 では、動作しましたが 3.0.1 では動きませんでした。結果はSASと似ているのですが、service側では処理が成功しているのでちょっと違った感じを受けます。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">ResolveName</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">var</span> <span class="n">cloudTableClient</span> <span class="p">=</span> <span class="n">storageAccount</span><span class="p">.</span><span class="n">CreateCloudTableClient</span><span class="p">();</span>
 
@@ -2234,7 +2251,7 @@ Date: Fri, 27 Dec 2013 12:34:46 GMT
 <p>普通に動いて成功しました。リクエストを見ると、categoryの属性に、<span class="docutils literal"><span class="pre">term="StorageIssue201311.SimpleEntity"</span></span>と有りますが、正常に処理されてレスポンスが帰ってきているのがわかります。</p>
 <p>参考までに、リクエストとレスポンスを貼っておきます</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>POST http://test.table.core.windows.net/sometable HTTP/1.1
 User-Agent: Microsoft ADO.NET Data Services
 DataServiceVersion: 1.0;NetFx
 MaxDataServiceVersion: 2.0;NetFx
@@ -2267,7 +2284,7 @@ Content-Length: 735
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 201 Created
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/atom+xml;type=entry;charset=utf-8
@@ -2293,7 +2310,7 @@ Date: Fri, 27 Dec 2013 13:30:08 GMT
 <div class="section" id="id10">
 <h3>3.0.1での確認結果</h3>
 <p><span class="docutils literal"><span class="pre">Install-Package</span> <span class="pre">WindowsAzure.Storage</span></span>として最新版、3.0.1で確認したところ、下記のようにエラーになりました。データ自体は、Tableに入っており正常終了していますが、レスポンスを読み込んでエンティティを更新するのに失敗しているようです。</p>
-<div class="highlight-none"><div class="highlight"><pre>ハンドルされていない例外: System.Data.Services.Client.DataServiceRequestException: この要求の処理中にエラーが発生しました。 ---&gt; System.InvalidOperationException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。 ---&gt; Microsoft.Data.OData.ODataException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。
+<div class="highlight-none"><div class="highlight"><pre><span/>ハンドルされていない例外: System.Data.Services.Client.DataServiceRequestException: この要求の処理中にエラーが発生しました。 ---&gt; System.InvalidOperationException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。 ---&gt; Microsoft.Data.OData.ODataException: メタデータ URI 'http://fooomiimg001.table.core.windows.net/$metadata#sometable/@Element' は 'fooomiimg001.sometable' という名前のエンティティ型を参照していますが、予期されたエンティティ型の名前は 'StorageIssue201311.SimpleEntity' で、'fooomiimg001.sometable' という名前のエンティティ型と互換性がありません。
    場所 Microsoft.Data.OData.ReaderValidationUtils.ValidateFeedOrEntryMetadataUri(ODataJsonLightMetadataUriParseResult metadataUriParseResult, Scope scope)
    場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementationSynchronously(DuplicatePropertyNamesChecker duplicatePropertyNamesChecker)
    場所 Microsoft.Data.OData.JsonLight.ODataJsonLightReader.ReadAtStartImplementation()
@@ -2328,7 +2345,7 @@ Date: Fri, 27 Dec 2013 13:30:08 GMT
 </div>
 <p>参考までに、リクエストとレスポンスを貼っておきます。これを見ると、x-ms-version: 2013-08-15 で、payloadは、<span class="docutils literal"><span class="pre">Content-Type:</span> <span class="pre">application/json;odata=minimalmetadata</span></span>になっていますが、<span class="docutils literal"><span class="pre">Prefer:</span> <span class="pre">return-no-content</span></span>が指定されておらず、レスポンスのBodyにechoが帰ってきているのがわかります。</p>
 <p>リクエスト</p>
-<div class="highlight-none"><div class="highlight"><pre>POST http://test.table.core.windows.net/sometable HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>POST http://test.table.core.windows.net/sometable HTTP/1.1
 DataServiceVersion: 3.0;NetFx
 MaxDataServiceVersion: 3.0;NetFx
 Accept: application/json;odata=minimalmetadata
@@ -2345,7 +2362,7 @@ Content-Length: 125
 </pre></div>
 </div>
 <p>レスポンス</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 201 Created
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 201 Created
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -2422,7 +2439,7 @@ B2
 <p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
 <img alt="../../../_images/2013_12_22_webpi001.png" src="http://kyrt.in/_images/2013_12_22_webpi001.png"/>
 <p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module <span class="p">|</span> ft name,version
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
 
 Name                                                        Version
 ----                                                        -------
@@ -2537,22 +2554,22 @@ PSReadline                                                  1.0.0.1
 <li>retry_policies.h: 全ての操作で使われる、幾つかの retry policies の宣言</li>
 </ul>
 <p>下記のように使います</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include "was/storage_account.h"</span>
-<span class="cp">#include "was/queue.h"</span>
-<span class="cp">#include "was/table.h"</span>
-<span class="cp">#include "was/blob.h"</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="cp">#include</span> <span class="cpf">"was/storage_account.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/queue.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/table.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/blob.h"</span><span class="cp"/>
 </pre></div>
 </div>
 <p>その後、我々は作成されますcloud_storage_accountコードの後半でサービス·クライアント·オブジェクトを作成するために私達を可能にするオブジェクトを、。私たちは安全な接続のために以下のHTTPSを使用しているが、アプリケーションをデバッグするときに、HTTPは非常に便利であることに注意してください。</p>
 <p>その後、下記のコードでcloud_storage_account オブジェクトを作成します。 ここでは、セキュアな接続のため https を使っていますが、デバックする場合は http が非常に便利です。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span> <span class="n">storage_account</span> <span class="o">=</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span><span class="o">::</span><span class="n">parse</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"AccountName=&lt;account_name&gt;;AccountKey=&lt;account_key&gt;;DefaultEndpointsProtocol=https"</span><span class="p">));</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span> <span class="n">storage_account</span> <span class="o">=</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span><span class="o">::</span><span class="n">parse</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"AccountName=&lt;account_name&gt;;AccountKey=&lt;account_key&gt;;DefaultEndpointsProtocol=https"</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="blobs">
 <h3>Blobs</h3>
 <p>ここでは、blob container を作成し、<cite>“some text</cite>” と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Create a blob container</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Create a blob container</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_client</span> <span class="n">blob_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_blob_client</span><span class="p">();</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_container</span> <span class="n">container</span> <span class="o">=</span> <span class="n">blob_client</span><span class="p">.</span><span class="n">get_container_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mycontainer"</span><span class="p">));</span>
 <span class="n">container</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
@@ -2563,7 +2580,7 @@ PSReadline                                                  1.0.0.1
 
 <span class="c1">// Download a blob</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_block_blob</span> <span class="n">blob2</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">get_block_blob_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"myblob"</span><span class="p">));</span>
-<span class="n">utility</span><span class="o">::</span><span class="kt">string_t</span> <span class="n">text</span> <span class="o">=</span> <span class="n">blob2</span><span class="p">.</span><span class="n">download_text</span><span class="p">();</span>
+<span class="n">utility</span><span class="o">::</span><span class="n">string_t</span> <span class="n">text</span> <span class="o">=</span> <span class="n">blob2</span><span class="p">.</span><span class="n">download_text</span><span class="p">();</span>
 
 <span class="c1">// List blobs</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_result_segment</span> <span class="n">blobs</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">list_blobs_segmented</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_continuation_token</span><span class="p">());</span>
@@ -2574,7 +2591,7 @@ PSReadline                                                  1.0.0.1
 <h3>Tables</h3>
 <p>以下のサンプルでは、 Tableを作成し、様々な型のプロパティの組をエンティティに挿入し、最終的にはその指定したエンティティを取得します。最初の検索操作では、ポイント·クエリを実行し、特定のエンティティを取得します。一方クエリ操作では、PartitionKeyが<cite>“partition”</cite>に等しく、かつ、RowKey が、<cite>“m”</cite>より大きいすべてのエンティティを照会します。これは、結果的にinsertした全てのエンティティになります。</p>
 <p>Windows Azure Tables に関する詳しい情報は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx">Understanding the Table Service Data Model</a>の記事と、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2010/11/06/how-to-get-most-out-of-windows-azure-tables.aspx">How to get most out of Windows Azure Tables</a>の blog post を見て下さい。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Create a table</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Create a table</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_table_client</span> <span class="n">table_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_table_client</span><span class="p">();</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_table</span> <span class="n">table</span> <span class="o">=</span> <span class="n">table_client</span><span class="p">.</span><span class="n">get_table_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mytable"</span><span class="p">));</span>
 <span class="n">table</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
@@ -2604,7 +2621,7 @@ PSReadline                                                  1.0.0.1
 <div class="section" id="queues">
 <h3>Queues</h3>
 <p>最後の例では、Queueを作成します、それにmessageを追加、同じmessageを取得し、最終的にそれを更新します。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Create a queue</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Create a queue</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue_client</span> <span class="n">queue_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_queue_client</span><span class="p">();</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">queue_client</span><span class="p">.</span><span class="n">get_queue_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"myqueue"</span><span class="p">));</span>
 <span class="n">queue</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
@@ -2625,7 +2642,7 @@ PSReadline                                                  1.0.0.1
 <div class="section" id="id10">
 <h3>デバック方法</h3>
 <p>なにか上手く行っていない場合、exception で帰ってきます。この exception は、wa::storage::storage_exception の型で、なにか問題なのかの詳細な情報を含んでいます。次のコードを見て下さい。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">try</span>
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="k">try</span>
 <span class="p">{</span>
     <span class="n">blob1</span><span class="p">.</span><span class="n">download_attributes</span><span class="p">();</span>
 <span class="p">}</span>
@@ -2637,13 +2654,13 @@ PSReadline                                                  1.0.0.1
 </pre></div>
 </div>
 <p>blobが存在しない場合, このコードは下記のような結果になります。</p>
-<div class="highlight-none"><div class="highlight"><pre>Exception: The specified blob does not exist.
+<div class="highlight-none"><div class="highlight"><pre><span/>Exception: The specified blob does not exist.
 
 The request that started at Fri, 13 Dec 2013 18:31:11 GMT and ended at Fri, 13 Dec 2013 18:31:11 GMT resulted in HTTP status code 404 and the request ID reported by the server was 5de65ae4-9a71-4b1d-9c99-cc4225e714c6
 </pre></div>
 </div>
 <p>ライブラリでは、type wa::storage::operation_context を提供しています。これは、全てのAPIでサポートされ、操作中に行われていることについてより多くの情報を取得するために使います。次のコードを見て下さい。</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span> <span class="n">context</span><span class="p">;</span> 
+<div class="highlight-c++"><div class="highlight"><pre><span/><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span> <span class="n">context</span><span class="p">;</span> 
 
 <span class="n">context</span><span class="p">.</span><span class="n">set_sending_request</span><span class="p">([]</span> <span class="p">(</span><span class="n">web</span><span class="o">::</span><span class="n">http</span><span class="o">::</span><span class="n">http_request</span><span class="o">&amp;</span> <span class="n">request</span><span class="p">,</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span><span class="p">)</span> 
 <span class="p">{</span> 
@@ -2655,7 +2672,7 @@ The request that started at Fri, 13 Dec 2013 18:31:11 GMT and ended at Fri, 13 D
   <span class="n">ucout</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">"The reason phrase is "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">response</span><span class="p">.</span><span class="n">reason_phrase</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> 
 <span class="p">});</span>
 
-<span class="n">try</span> 
+<span class="k">try</span> 
 <span class="p">{</span> 
   <span class="n">blob1</span><span class="p">.</span><span class="n">download_attributes</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">access_condition</span><span class="p">(),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_request_options</span><span class="p">(),</span> <span class="n">context</span><span class="p">);</span> 
 <span class="p">}</span> 
@@ -2668,7 +2685,7 @@ The request that started at Fri, 13 Dec 2013 18:31:11 GMT and ended at Fri, 13 D
 </pre></div>
 </div>
 <p>もう一度、blobが存在しない状況で動かします。すると下記のような結果になります。</p>
-<div class="highlight-none"><div class="highlight"><pre>wa::storage::operation_context context; 
+<div class="highlight-none"><div class="highlight"><pre><span/>wa::storage::operation_context context; 
 
 context.set_sending_request([] (web::http::http_request&amp; request, wa::storage::operation_context) 
 { 
@@ -2776,7 +2793,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="windows-azure-storage-team-blog-windows-azure-storage-client-library-for-java-v-0-5-0">
 <h2>抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0</h2>
 <p>このリリースでは、logging support, 新しい API overloads、そして 2013-08-15 REST<a class="footnote-reference" href="#r1" id="id2">[1]</a>が完全にサポートされています。今までのようにソースコードは、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github Windows Azure Storage libraries for Java</a>で公開されています。<a class="footnote-reference" href="#r2" id="id3">[2]</a>従来のようにmaven のレポジトリに登録されています。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>  
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;dependency&gt;</span>  
      <span class="nt">&lt;groupId&gt;</span>com.microsoft.windowsazure.storage<span class="nt">&lt;/groupId&gt;</span>
      <span class="nt">&lt;artifactId&gt;</span>microsoft-windowsazure-storage-sdk<span class="nt">&lt;/artifactId&gt;</span>
      <span class="nt">&lt;version&gt;</span>0.5.0<span class="nt">&lt;/version&gt;</span>
@@ -2790,11 +2807,11 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="samples">
 <h3>Samples</h3>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github</a>のソースのなかに、幾つかの重要なシナリを説明する<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">サンプル</a>があります。指定されたサンプルを実行するには、サンプルプロジェクトをロードし、ストレージの資格情報を提供するために、Utility.javaの次の行を更新します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">"DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]"</span><span class="o">;</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">"DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]"</span><span class="o">;</span>
 </pre></div>
 </div>
 <p>fiddler を使ってサンプル実行中の traffic を見たい場合は、Utility.java の下記の2行をコメントアウトを外してください。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="c1">// System.setProperty("http.proxyHost", "localhost");</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="c1">// System.setProperty("http.proxyHost", "localhost");</span>
 <span class="c1">// System.setProperty("http.proxyPort", "8888");</span>
 </pre></div>
 </div>
@@ -2819,7 +2836,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <h3>Support for Read Access Geo Redundant Storage</h3>
 <p>このリリースでは、secondary region の storage account data の読み取りアクセス (RA-GRS)<a class="footnote-reference" href="#r3" id="id7">[3]</a>を完全にサポートしています。クライアントオブジェクト上の位置モードを設定し、getServiceStatsを起動すると、以下の例に示されている。LocationModeもRequestOptionsオブジェクト上に設定することで、リクエストごとに設定することができます。</p>
 <p>下記の例では、client objectの location mode を設定して getServiceStats を呼び出すことで、 replication の状態を取得しています。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
 <span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
 
 <span class="c1">// Set the LocationMode to SECONDARY_ONLY since getServiceStats is supported only on the secondary endpoints.</span>
@@ -2835,7 +2852,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <h3>Expanded Table Protocol Support (JSON)</h3>
 <blockquote>
 <div>table traffic で、JSONがサポートされました。TableClient の setTablePayloadFormat() で、TablePayloadFormatを指定することでJSONformatを使うことができます。</div></blockquote>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
 <span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
 
 <span class="c1">// Set the payload format to JsonNoMetadata.</span>
@@ -2843,7 +2860,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 </pre></div>
 </div>
 <p>JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="o">{</span>    
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="o">{</span>    
     <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="o">;</span>
 
@@ -2878,7 +2895,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 </pre></div>
 </div>
 <p>この、propertyResolver は、TableRequestOptions にセットします。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="o">();</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="o">();</span>
 <span class="n">ref</span><span class="o">.</span><span class="na">setA</span><span class="o">(</span><span class="s">"myPropVal"</span><span class="o">);</span>
 <span class="n">ref</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span> <span class="o">});</span>
 <span class="n">ref</span><span class="o">.</span><span class="na">setPartitionKey</span><span class="o">(</span><span class="s">"testKey"</span><span class="o">);</span>
@@ -3018,11 +3035,11 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin">
 <h2>OWINの基本</h2>
 <p>The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
 </pre></div>
 </div>
 <p>２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
 </pre></div>
 </div>
 <p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成<a class="footnote-reference" href="#r2" id="id3">[2]</a>でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、<a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a>なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
@@ -3030,14 +3047,14 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png"><img height="372.115384615" src="http://kyrt.in/_images/seqdiag-2fb590d3680dabd4a5d69e84230ab1010f4aedce.png" width="600.0"/></a></div></div>
+</div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
 <div class="section" id="console-project">
 <h3>Console Projectを作成して必要なパッケージを入れる</h3>
 <p>nugetから必要なパッケージを入れる</p>
-<div class="highlight-bash"><div class="highlight"><pre>install-package Microsoft.Owin.Hosting
+<div class="highlight-bash"><div class="highlight"><pre><span/>install-package Microsoft.Owin.Hosting
 install-package Microsoft.Owin.Host.HttpListener
 install-package Microsoft.Owin.Diagnostics
 install-Package Owin.Extensions
@@ -3047,7 +3064,7 @@ install-Package Owin.Extensions
 <div class="section" id="program-csmain">
 <h3>Program.csのmainを下記のようにする</h3>
 <p><cite>WebApp.Start&lt;Startup&gt;(url)</cite>とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="nn">SelfHostSample</span>
@@ -3073,7 +3090,7 @@ install-Package Owin.Extensions
 <div class="section" id="startup">
 <h3>Startup用のクラスを追加する</h3>
 <p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite>でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
 <span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
@@ -3102,14 +3119,14 @@ install-Package Owin.Extensions
 <p>ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。</p>
 <div class="section" id="windows-azure-cache-client">
 <h3>Windows Azure Cache Client を入れる</h3>
-<div class="highlight-bash"><div class="highlight"><pre>Install-Package Microsoft.WindowsAzure.Caching
+<div class="highlight-bash"><div class="highlight"><pre><span/>Install-Package Microsoft.WindowsAzure.Caching
 </pre></div>
 </div>
 </div>
 <div class="section" id="app-configazure-cache">
 <h3>App.config内のAzure Cacheの設定をする</h3>
 <p>App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;configuration&gt;</span>
   <span class="nt">&lt;configSections&gt;</span>
     <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">"dataCacheClients"</span> <span class="na">type=</span><span class="s">"Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core"</span> <span class="na">allowLocation=</span><span class="s">"true"</span> <span class="na">allowDefinition=</span><span class="s">"Everywhere"</span> <span class="nt">/&gt;</span>
@@ -3138,7 +3155,7 @@ install-Package Owin.Extensions
 <div class="section" id="owin-middleware">
 <h3>OWIN Middleware用のプロジェクトを追加する</h3>
 <p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
-<div class="highlight-bash"><div class="highlight"><pre>install-Package Microsoft.Owin
+<div class="highlight-bash"><div class="highlight"><pre><span/>install-Package Microsoft.Owin
 install-Package Microsoft.WindowsAzure.Caching
 install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </pre></div>
@@ -3147,7 +3164,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="azrue-cache-middleware">
 <h3>Azrue Cache Middleware</h3>
 <p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。<a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
@@ -3194,7 +3211,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <p>Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。</p>
 <p>オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheOptions</span>
     <span class="p">{</span>
@@ -3210,7 +3227,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
@@ -3246,7 +3263,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line"><br/></div>
 </div>
 <p>Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 
@@ -3296,7 +3313,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="id6">
 <h2>アプリケーションの変更</h2>
 <p>最後に、アプリケーションをCacheとSessionを使うように変更する。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
@@ -3412,7 +3429,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
 <img alt="../../../_images/2013_12_11_webpi001.png" src="http://kyrt.in/_images/2013_12_11_webpi001.png"/>
 <p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>Get-Module <span class="p">|</span> ft name,version
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
 
 Name                                                        Version
 ----                                                        -------
@@ -3577,7 +3594,7 @@ PSReadline                                                  1.0.0.1
 </table>
 <div class="section" id="fullatompub">
 <span id="id2"/><h3>AtomPub [引用]</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;feed</span> <span class="na">xml:base=</span><span class="s">"http://someaccount.table.core.windows.net/"</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices"</span> <span class="na">xmlns:m=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</span> <span class="na">xmlns:georss=</span><span class="s">"http://www.georss.org/georss"</span> <span class="na">xmlns:gml=</span><span class="s">"http://www.opengis.net/gml"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers<span class="nt">&lt;/id&gt;</span>
   <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Customers<span class="nt">&lt;/title&gt;</span>
@@ -3655,7 +3672,7 @@ PSReadline                                                  1.0.0.1
 </div>
 <div class="section" id="json-minimalmetadata">
 <span id="id3"/><h3>JSON minimalmetadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
     <span class="nt">"odata.metadata"</span><span class="p">:</span><span class="s2">"http://someaccount.table.core.windows.net/$metadata#Customers"</span><span class="p">,</span>
     <span class="nt">"value"</span><span class="p">:[</span>
         <span class="p">{</span>
@@ -3698,7 +3715,7 @@ PSReadline                                                  1.0.0.1
 </div>
 <div class="section" id="json-nometadata">
 <span id="id4"/><h3>JSON nometadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
     <span class="nt">"value"</span><span class="p">:[</span>
 	<span class="p">{</span>
             <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Jonathan"</span><span class="p">,</span>
@@ -3737,7 +3754,7 @@ PSReadline                                                  1.0.0.1
 </div>
 <div class="section" id="xml-nometadata">
 <span id="id5"/><h3>XML nometadata （参考までに作ってみました）</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" ?&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" ?&gt;</span>
 <span class="nt">&lt;Feed&gt;</span>
   <span class="nt">&lt;Properties&gt;</span>
     <span class="nt">&lt;PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/PartitionKey&gt;</span>
@@ -3893,7 +3910,7 @@ PSReadline                                                  1.0.0.1
 <p>Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。</p>
 <p>名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。</p>
 <p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。<a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -3909,7 +3926,7 @@ Date: Thu, 05 Dec 2013 12:00:39 GMT
 </pre></div>
 </div>
 <p>ちなみに、$で始まる適当な名前でリクエストを流すと400 Bad Requestで、リソースに不正な文字が含まれているというエラーになります。</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 400 Bad Request
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
 Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
@@ -3924,14 +3941,14 @@ DE
 </pre></div>
 </div>
 <p>メトリックス系のテーブルは下記のようにListTableでも帰ってこないので存在するかどうかは難しいところですが、エラーにならないところを見ると特別扱いされているようで期待してしまいます。</p>
-<div class="highlight-none"><div class="highlight"><pre>var tables = tableClient.ListTables("$Metrics");
+<div class="highlight-none"><div class="highlight"><pre><span/>var tables = tableClient.ListTables("$Metrics");
 </pre></div>
 </div>
 </div>
 <div class="section" id="id4">
 <h2>Minute Metrics （分単位メトリックス）を有効にする</h2>
 <p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>を使います。今のところ<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。<a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
-<div class="highlight-none"><div class="highlight"><pre>private static void SetStorageAnalytics(CloudStorageAccount account)
+<div class="highlight-none"><div class="highlight"><pre><span/>private static void SetStorageAnalytics(CloudStorageAccount account)
 {
     var serviceProperty = new ServiceProperties
     {
@@ -3968,7 +3985,7 @@ DE
 <p>実行してリクエスト、レスポンスを覗いてみます。</p>
 <div class="section" id="http-request">
 <h3>http request</h3>
-<div class="highlight-none"><div class="highlight"><pre>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2013-08-15
 x-ms-client-request-id: 56bffee5-4626-4835-b254-af38a1520242
@@ -3984,7 +4001,7 @@ Connection: Keep-Alive
 </div>
 <div class="section" id="http-response">
 <h3>http response</h3>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 202 Accepted
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 202 Accepted
 Transfer-Encoding: chunked
 Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
 x-ms-request-id: 650e2253-9e51-43e5-90bd-6077ef43ef31
@@ -4151,7 +4168,7 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
             <title><![CDATA[Windows Azure SDK for Ruby Release 0.6.0]]></title>
             <description><![CDATA[<h1>Windows Azure SDK for Ruby Release 0.6.0</h1>
 <p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来7ヶ月ぶりのリリースです。RubyGemsから入ります</p>
-<div class="highlight-ruby"><div class="highlight"><pre><span class="no">INISTALL</span> <span class="o">&gt;</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">azure</span>
+<div class="highlight-ruby"><div class="highlight"><pre><span/><span class="no">INISTALL</span> <span class="o">&gt;</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">azure</span>
 </pre></div>
 </div>
 <div class="section" id="id1">
@@ -4203,7 +4220,7 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 <div class="section" id="issue">
 <h2>issueの再現</h2>
 <p>まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは<a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span class="std std-ref">Table Query での Cast 問題</span></a>で提示されているものを使います。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
 <span class="o">{</span>
     <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"1"</span><span class="o">);</span>
     <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
@@ -4211,14 +4228,14 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
 </pre></div>
 </div>
 <p>nugetで、問題のあるバージョンのライブラリをインストールします:</p>
-<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.3
+<div class="highlight-none"><div class="highlight"><pre><span/>Install-Package WindowsAzure.Storage -Version 2.1.0.3
 </pre></div>
 </div>
 <div class="section" id="id1">
 <h3>実行結果</h3>
 <p><a class="reference internal" href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span class="std std-ref">Table Query での Cast 問題</span></a>で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。x-ms-versionは、 2012-02-12 です。</p>
 <p>http requestのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2012-02-12
 Accept: application/atom+xml,application/xml
@@ -4231,7 +4248,7 @@ Host: asdpojasldfj001.table.core.windows.net
 </pre></div>
 </div>
 <p>http responseのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 400 Bad Request
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 400 Bad Request
 Transfer-Encoding: chunked
 Content-Type: application/xml;charset=utf-8
 Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
@@ -4252,14 +4269,14 @@ Time:2013-11-29T23:25:02.0389849Z&lt;/message&gt;&lt;/error&gt;
 <div class="section" id="id2">
 <h2>2.1.0.4 での修正確認</h2>
 <p>nugetの履歴によると<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage">nuget.org: Windows Azure Storage</a>2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。同じコードをライブラリのバージョンだけ変更して実行します:</p>
-<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+<div class="highlight-none"><div class="highlight"><pre><span/>Install-Package WindowsAzure.Storage -Version 2.1.0.4
 </pre></div>
 </div>
 <div class="section" id="id3">
 <h3>実行結果</h3>
 <p>GET URLがスッキリして、結果は 200 OK が帰ってきています。FIXされているようです。</p>
 <p>http requestのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/2.1.0.4 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2012-02-12
 Accept: application/atom+xml,application/xml
@@ -4272,7 +4289,7 @@ Host: asdpojasldfj001.table.core.windows.net
 </pre></div>
 </div>
 <p>http responseのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/atom+xml;type=feed;charset=utf-8
@@ -4292,11 +4309,11 @@ Date: Fri, 29 Nov 2013 23:33:17 GMT
 <div class="section" id="id4">
 <h2>おまけの 3.0.0 での修正確認</h2>
 <p>同じことを最新の 3.0.0 でやりました。バッチリ動きます。x-ms-versionが 2013-08-15になって結果がjsonになっています:</p>
-<div class="highlight-none"><div class="highlight"><pre>Install-Package WindowsAzure.Storage -Version 2.1.0.4
+<div class="highlight-none"><div class="highlight"><pre><span/>Install-Package WindowsAzure.Storage -Version 2.1.0.4
 </pre></div>
 </div>
 <p>http requestのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
+<div class="highlight-none"><div class="highlight"><pre><span/>GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2013-08-15
 Accept-Charset: UTF-8
@@ -4309,7 +4326,7 @@ Host: asdpojasldfj001.table.core.windows.net
 </pre></div>
 </div>
 <p>http responseのtrace:</p>
-<div class="highlight-none"><div class="highlight"><pre>HTTP/1.1 200 OK
+<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -4329,7 +4346,7 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
 <h2>ソースコード上の修正点</h2>
 <p>2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162">ChangeLog</a>では:</p>
-<div class="highlight-none"><div class="highlight"><pre>Issues fixed in 2.1.0.4 :
+<div class="highlight-none"><div class="highlight"><pre><span/>Issues fixed in 2.1.0.4 :
   - Tables: Do not send the cast operator in the table query filter string.
 </pre></div>
 </div>
@@ -4454,7 +4471,7 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
 <li><p class="first">System.Webの参照を全て削除します</p>
 </li>
 <li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
-<div class="highlight-none"><div class="highlight"><pre>Install-Package Microsoft.Owin.Host.IIS -Pre
+<div class="highlight-none"><div class="highlight"><pre><span/>Install-Package Microsoft.Owin.Host.IIS -Pre
 </pre></div>
 </div>
 </li>
@@ -4465,7 +4482,7 @@ Date: Fri, 29 Nov 2013 23:17:22 GMT
 <div class="section" id="startup-class">
 <h3>Startup Classの設定</h3>
 <p>下記のようなStartup classのコードを追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre>using System;
+<div class="highlight-none"><div class="highlight"><pre><span/>using System;
 using Microsoft.Owin;
 using Owin;
 
@@ -4497,7 +4514,7 @@ namespace WebRole1
 <p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
 <img alt="../../../_images/2013_11_helios007.png" class="align-center" src="http://kyrt.in/_images/2013_11_helios007.png"/>
 <p>ServiceDefinition.csdefに下記の定義を追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+<div class="highlight-none"><div class="highlight"><pre><span/>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
   &lt;WebRole name="WebRole1" vmsize="Small"&gt;
     &lt;Startup&gt;
@@ -4520,7 +4537,7 @@ namespace WebRole1
 <h3>osFamilyの変更</h3>
 <p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
 <p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+<div class="highlight-none"><div class="highlight"><pre><span/>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
   &lt;Role name="WebRole1"&gt;
 </pre></div>
@@ -4571,7 +4588,7 @@ namespace WebRole1
 <li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
 </ol>
 <p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
 <span class="n">TableServiceContext</span> <span class="n">tableServiceContext</span> <span class="o">=</span> <span class="n">cloudTableClient</span><span class="o">.</span><span class="na">GetDataServiceContext</span><span class="o">();</span>
 <span class="n">tableServiceContext</span><span class="o">.</span><span class="na">ResolveName</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">(</span><span class="n">Type</span> <span class="n">entityType</span><span class="o">)</span>
 <span class="o">{</span>
@@ -4589,7 +4606,7 @@ namespace WebRole1
 <li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
 </ol>
 <p>下記は問題があるコードです</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
 <span class="o">{</span>
     <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
     <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
@@ -4599,7 +4616,7 @@ namespace WebRole1
 <p>このように書くと 2.1 storage client library の IQueryable interface は、下記のUriに展開されて新しい service updateでは、400 (Bad Request) で拒否されます</p>
 <p><cite>http://myaccount.table.core.windows.net/invalidfiltertable?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
 <p>コードを下記のように変更してquery の castを取り除いてください。そうすれば、cast operator は送信されません</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
+<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
 <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
 </pre></div>
 </div>
@@ -4765,7 +4782,7 @@ namespace WebRole1
 <h2>Play Frameworkのプロジェクト作成からEclipseへの取り込へ</h2>
 <p>動作確認のためにPlay Frameworkのプロジェクトを作成して、Eclipseへ取り込みます。</p>
 <p>MyFirstAppという名前で、play frameworkのアプリを作ります。今回は全くコードは書かないので関係ありませんが言語はJavaを選択します:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ play new MyFirstApp
+<div class="highlight-none"><div class="highlight"><pre><span/>$ play new MyFirstApp
        _            _
  _ __ | | __ _ _  _| |
 | '_ \| |/ _' | || |_|
@@ -4791,7 +4808,7 @@ Have fun!
 </pre></div>
 </div>
 <p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、<span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span>の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ cd .\MyFirstApp
+<div class="highlight-none"><div class="highlight"><pre><span/>$ cd .\MyFirstApp
 $ play
 [info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
 [info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
@@ -4817,7 +4834,7 @@ play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
 </pre></div>
 </div>
 <p>AzureのDeploy用のパッケージ(cspkg)に入れるためアプリの配布用zipを作成します:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ play dist
+<div class="highlight-none"><div class="highlight"><pre><span/>$ play dist
 [info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
 [info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
 [info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-sources.jar ...
@@ -4874,12 +4891,12 @@ $
 <h3>scriptの変更</h3>
 <p>MyAzureProject/WorkerRole1/approotにあるstartup.cmdとrun.cmdを下記のように変更します。</p>
 <p>startup.cmd:</p>
-<div class="highlight-none"><div class="highlight"><pre>del /q run_body.cmd
+<div class="highlight-none"><div class="highlight"><pre><span/>del /q run_body.cmd
 powershell -ExecutionPolicy RemoteSigned -f replace.ps1 run_body.cmd.template &gt; run_body.cmd
 </pre></div>
 </div>
 <p>run.cmd:</p>
-<div class="highlight-none"><div class="highlight"><pre>rem @ECHO OFF
+<div class="highlight-none"><div class="highlight"><pre><span/>rem @ECHO OFF
 
 set _SLEEPLENGTH=15000
 set _FILENAME=run_body.cmd
@@ -4901,11 +4918,11 @@ call %_FILENAME%
 </div>
 <p>replace.ps1と、run_body.cmd.templateの2つファイルを追加します。</p>
 <p>replace.ps1:</p>
-<div class="highlight-none"><div class="highlight"><pre>cat $args[0] | % {$l = $_ -creplace '__JAVA_HOME__',"$Env:JAVA_HOME"; "$l" } | % {$l = $_ -creplace '__ZIP_NAME__',"$Env:ZIP_NAME"; "$l" }
+<div class="highlight-none"><div class="highlight"><pre><span/>cat $args[0] | % {$l = $_ -creplace '__JAVA_HOME__',"$Env:JAVA_HOME"; "$l" } | % {$l = $_ -creplace '__ZIP_NAME__',"$Env:ZIP_NAME"; "$l" }
 </pre></div>
 </div>
 <p>run_body.cmd.template:</p>
-<div class="highlight-none"><div class="highlight"><pre>set JAVA_HOME=__JAVA_HOME__
+<div class="highlight-none"><div class="highlight"><pre><span/>set JAVA_HOME=__JAVA_HOME__
 set ZIP_NAME=__ZIP_NAME__
 
 set PATH=%JAVA_HOME%\bin;%PATH%
@@ -4978,7 +4995,7 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 <div class="section" id="id3">
 <h2>2.0.1 で動かす</h2>
 <p>このコードを、Azure Storage Client 2.0.1 で動かしてみます。ライブラリのバージョンを指定するには、nugetを使うと便利です。もし、すでにAzure Storage Client が入っていたら下記のように削除してからバージョンを指定して入れ直します。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+<div class="highlight-none"><div class="highlight"><pre><span/>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
 &gt; Install-Package  WindowsAzure.Storage -Version 2.0.1
 </pre></div>
 </div>
@@ -4992,7 +5009,7 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 <div class="section" id="id4">
 <h2>2.0.3では？</h2>
 <p>これを、2.0.3 でビルドし直します。2012/12/24現在の最新が2.0.3でバージョン指定しないと最新版が落ちてきます。</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
+<div class="highlight-none"><div class="highlight"><pre><span/>&gt; Uninstall-Package WindowsAzure.Storage –RemoveDependencies
 &gt; Install-Package  WindowsAzure.Storage
 </pre></div>
 </div>
@@ -5117,40 +5134,40 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 <ol class="arabic simple">
 <li>ポータルで256Gでdata diskを作成して接続を確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>dmesg <span class="p">|</span> grep -e <span class="s2">"\[sd[a-z]\]"</span>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ dmesg <span class="p">|</span> grep -e <span class="s2">"\[sd[a-z]\]"</span>
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
 sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> 512-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
 sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
 sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
 sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read </span>cache: enabled, supports DPO and FUA
+sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
 sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li>parted で全セクタを使ってパーテーションを作成</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo parted /dev/sdc --script mklabel gpt
-<span class="nv">$ </span>sudo parted /dev/sdc --script <span class="s1">'mkpart disk1 ext4 1M -1'</span>
-<span class="nv">$ </span>sudo parted /dev/sdc --script <span class="s1">'print'</span>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ sudo parted /dev/sdc --script mklabel gpt
+$ sudo parted /dev/sdc --script <span class="s1">'mkpart disk1 ext4 1M -1'</span>
+$ sudo parted /dev/sdc --script <span class="s1">'print'</span>
 
 Model: Msft Virtual Disk <span class="o">(</span>scsi<span class="o">)</span>
 Disk /dev/sdc: 275GB
@@ -5160,33 +5177,33 @@ Partition Table: gpt
 Number  Start   End    Size   File system  Name   Flags
 <span class="m">1</span>      1049kB  275GB  275GB  ext4         disk1
 
-<span class="nv">$ </span>sudo parted /dev/sdd --script mklabel gpt
-<span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">'mkpart disk2 ext4 1M -1'</span>
-<span class="nv">$ </span>sudo parted /dev/sdd --script <span class="s1">'print'</span>
+$ sudo parted /dev/sdd --script mklabel gpt
+$ sudo parted /dev/sdd --script <span class="s1">'mkpart disk2 ext4 1M -1'</span>
+$ sudo parted /dev/sdd --script <span class="s1">'print'</span>
 
 ___ snip ___
 
-<span class="nv">$ </span>sudo parted /dev/sde --script mklabel gpt
-<span class="nv">$ </span>sudo parted /dev/sde --script <span class="s1">'mkpart disk3 ext4 1M -1'</span>
-<span class="nv">$ </span>sudo parted /dev/sde --script <span class="s1">'print'</span>
+$ sudo parted /dev/sde --script mklabel gpt
+$ sudo parted /dev/sde --script <span class="s1">'mkpart disk3 ext4 1M -1'</span>
+$ sudo parted /dev/sde --script <span class="s1">'print'</span>
 
 ___ snip ___
 
-<span class="nv">$ </span>sudo mkfs.ext4 /dev/sdc1
+$ sudo mkfs.ext4 /dev/sdc1
 ___ snip ___
-<span class="nv">$ </span>sudo mkfs.ext4 /dev/sdd1
+$ sudo mkfs.ext4 /dev/sdd1
 ___ snip ___
-<span class="nv">$ </span>sudo mkfs.ext4 /dev/sde1
+$ sudo mkfs.ext4 /dev/sde1
 ___ snip ___
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li>mount point 作って、/mnt/resouceとともにパーミッションを変更</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir /mnt/data1 /mnt/data2 /mnt/data3
-<span class="nv">$ </span>chmod a+wrx /mnt/data*
-<span class="nv">$ </span>chmod a+wrx /mnt/resource
-<span class="nv">$ </span>ls -l /mnt/
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir /mnt/data1 /mnt/data2 /mnt/data3
+$ chmod a+wrx /mnt/data*
+$ chmod a+wrx /mnt/resource
+$ ls -l /mnt/
 total 20
 drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 15:56 cdrom
 drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data1
@@ -5198,11 +5215,11 @@ drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <s
 <ol class="arabic simple" start="4">
 <li>とりあえず、マウントして確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo mount -t ext4 /dev/sdc1 /mnt/data1
-<span class="nv">$ </span>sudo mount -t ext4 /dev/sdd1 /mnt/data2
-<span class="nv">$ </span>sudo mount -t ext4 /dev/sde1 /mnt/data3
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ sudo mount -t ext4 /dev/sdc1 /mnt/data1
+$ sudo mount -t ext4 /dev/sdd1 /mnt/data2
+$ sudo mount -t ext4 /dev/sde1 /mnt/data3
 
-<span class="nv">$ </span>df -T
+$ df -T
 Filesystem     Type     1K-blocks    Used Available Use% Mounted on
 /dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   4% /
 udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   1% /dev
@@ -5219,18 +5236,18 @@ none           tmpfs       <span class="m">102400</span>       <span class="m">0
 <ol class="arabic simple" start="5">
 <li>再起動してもマウントされるように、UUIDを確認して /etc/fstab に追加。</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>blkid
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ blkid
 /dev/sda1: <span class="nv">LABEL</span><span class="o">=</span><span class="s2">"cloudimg-rootfs"</span> <span class="nv">UUID</span><span class="o">=</span><span class="s2">"56d8a977-c1fe-461e-a328-b19fc47c743f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
 /dev/sdb1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"d063d8a2-32fc-486c-a9b4-e6bcf7e5deae"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
 /dev/sdd1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"88f28b19-fdc6-46dc-a2d7-2daa1754754f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
 /dev/sdc1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"a1cb5045-178a-476e-9821-084f8f6d92a6"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
 /dev/sde1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"15b8b45e-fbd0-4efc-9534-5e38b1877828"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
 
-<span class="nv">$ </span>vi /etc/fstab
+$ vi /etc/fstab
 
 ___ snip ___
 
-<span class="nv">$ </span>cat /etc/fstab
+$ cat /etc/fstab
 <span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> 0
 <span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> 0
 <span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> 0
@@ -5240,24 +5257,24 @@ ___ snip ___
 <ol class="arabic simple" start="6">
 <li>最新にして再起動する</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>apt-get update
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ apt-get update
 ___ snip ___
-<span class="nv">$ </span>apt-get upgrade
+$ apt-get upgrade
 ___ snip ___
 
-<span class="nv">$ </span>shutdown -r now
+$ shutdown -r now
 </pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li>iozone3 を入れる</li>
 </ol>
 <p>/etc/apt/sources.list を変更して、multiverse を追加（コメントを外しただけ）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>vi /etc/apt/sources.list
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ vi /etc/apt/sources.list
 
 ___ snip ___
 
-<span class="nv">$ </span>apt-get update
-<span class="nv">$ </span>apt-get install iozone3
+$ apt-get update
+$ apt-get install iozone3
 </pre></div>
 </div>
 </div>
@@ -5265,10 +5282,10 @@ ___ snip ___
 <div class="section" id="id4">
 <h2>測定</h2>
 <p>これで環境が出来たので測定します。基本的には、iozone 一発で細かいオプションの指定はしません。なんとなく、Excelファイルにしたのですが、面倒になるだけであまりメリットは無かったかもしれません。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
-<span class="nv">$ </span>iozone -Ra -f /mnt/data1/tmp/test -b sdc1-001hcnone.xls -s 1g
-<span class="nv">$ </span>iozone -Ra -f /mnt/data2/tmp/test -b sdd1-001hcro.xls -s 1g
-<span class="nv">$ </span>iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
+$ iozone -Ra -f /mnt/data1/tmp/test -b sdc1-001hcnone.xls -s 1g
+$ iozone -Ra -f /mnt/data2/tmp/test -b sdd1-001hcro.xls -s 1g
+$ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
 </pre></div>
 </div>
 <p><a class="reference download internal" href="http://kyrt.in/_downloads/20121222-iozone-azurevm.zip" download=""><span class="xref download docutils literal"><span class="pre">結果のファイル(zip)</span></span></a></p>
