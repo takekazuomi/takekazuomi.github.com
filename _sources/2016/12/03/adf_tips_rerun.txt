@@ -1,0 +1,90 @@
+Azure DataFactory Tips タイムスライスの再実行
+=============================================
+`Microsoft Azure Advent Calendar 2016 3日目 <http://qiita.com/advent-calendar/2016/azure>`_ として書きました。
+
+`Azure DataFactory <https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-introduction>`_  (以下ADF)は、データの移動や変換を自動化するクラウドベースのデータインテグレーションサービスです。 ADFには、コピーアクティビティとデータ変換アクティビティの２種類があります。コピーアクティビティは、優れたパフォーマンスとリーズナブルな価格で魅力的なサービスです。データ変換アクティビティの方は、処理用のクラスタを上げないといけない場合があり、ちょっと複雑になります。SQL Server ストアド プロシージャ アクティビティなら、別途クラスタを上げなくてもデータ変換が可能です。個人的にはコピーアクティビティはシンプルでなかなかよく出来ており、お気にいりました。
+
+今回は、スクリプトからのエラーリカバリ、タイムスライスの再実行について記述します。ADFでは実行はタイムスライス単位で行われるのでデータソースの問題で複数のタイムスライスが失敗した時、数が多くなり勝ちで、そうなるとポータルの画面から再実行をするのはポチポチが多くなってとても面倒になります。そんな時にはということで、Azure PowerShell Cmdlet から、失敗したタイムスライスを再実行してみます。
+
+参照： この記事の基本は概ね、 `Azure Data Factory のパイプラインの監視と管理 <https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines>`_ に書いてありますので、そちらもどうぞ。
+
+
+原因究明
+========
+まずは、エラーの原因を確認します。エラーが大量に出ていると面倒なので、下記のようなスクリプトでエラーメッセージでサマります。やっていることは、 ログの ``sort |　uniq -c`` です。
+
+.. gist:: https://gist.github.com/takekazuomi/84aceb5aa49139dc115c8eace5f634df
+
+エラーの確認を実行
+==================
+下記の様に実行すると、DatasetName, ErrorMessage でサマった数が表示されます。下記の例だとエラーメッセージが長過ぎて最後まで見れませんが、コマンド行に、 ``| Out-String -Width 4096``  [#ref1]_ を追加すると最後まで表示されます。（幅は随時変更してください）
+
+.. code-block:: posh
+
+   $ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+   Count DatasetName                ErrorMessage
+   ----- -----------                ------------
+       7 DatasetAzureSqlDestination Copy activity encountered a user error at Sink:tcp:kinmugisql01.database.windows.net,1433 s...
+
+
+簡単にスクリプトの説明をします。Get-AzureRmDataFactorySlice でエラーになっているタイムスライスを取得して Get-AzureRmDataFactoryRun で、そのタイムスライスの詳細な情報を取得し、最後にエラーメッセージでグルーピングしてカウントしています。
+
+再実行
+======
+これでエラーが分かるので問題を修正して、再実行します。
+
+Azure DataFactoryのタイムスライスの再実行には、スライスの状態遷移を理解しなければなりません。そんなに複雑なことは無く、タイムスライスの状態遷移図は下記のようになっており、再実行は、Failed 状態から Waiting に変更することで行います。
+
+.. image:: https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png
+   :target: https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines#パイプラインとアクティビティの状態の理解
+
+問題の修正が完了したら、下記のスクリプトで、失敗したタイムスライスを再実行します、スクリプトでは失敗したタイムスライスを古いものから順にWaitingにするだけです。タイムスライス毎に設定をしているので、pipelineで指定したバックフィルの順序が反映されません。タイムスライス間に依存関係がある場合は問題が出るかもしれませんので注意してください。
+
+.. gist:: https://gist.github.com/takekazuomi/64c969362ec122781f006ddad571f009
+
+実行には、上記で確認したエラーになったデータセットを指定します。再実行になったタイムスライスを表示します。
+
+.. code-block:: posh
+
+   $ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+   DatasetName                Start
+   -----------                -----
+   DatasetAzureSqlDestination 2016/08/09 9:00:00
+   DatasetAzureSqlDestination 2016/08/09 10:00:00
+   DatasetAzureSqlDestination 2016/08/09 11:00:00
+   DatasetAzureSqlDestination 2016/08/09 22:00:00
+   DatasetAzureSqlDestination 2016/08/09 23:00:00
+
+
+下記のようなコマンドで、タイムスライスの状態を確認することができます。ここでは、Ready以外を表示しています。
+
+.. code-block:: bash
+
+   $ Get-AzureRmDataFactorySlice -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00 | ? {$_.State -ne 'Ready'}
+
+
+
+最後に
+======
+Azure PowerShellを使っていると、PowerShellのオブジェクトパイプランが強力さを肌で感じます。パイプで繋いで、 ``%, ?`` とやるのが気に入ってしまいました。今回の範囲で、ちょっと分かりづらかったのは、 タイムスライスを返す ``Get-AzureRmDataFactorySlice``   と タイムスライス の実行結果を返す ``Get-AzureRmDataFactoryRun``  の関係でした。最初 ``Get-AzureRmDataFactoryRun`` がデータセットの実行結果を取得するのかと勘違いしていたので、どのようなパラメータを渡せば良いのかがわからず。このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに気が付かずに大分時間を無駄にしました。分かった後で、マニュアル [#ref2]_ 見たらちゃんと書いてあったんですが、、、、
+
+`Set-AzureRmDataFactorySliceStatus <>`_ は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。
+
+締めは、 ``Azure DataFactory はいいぞ！`` ということで。次は、
+
+
+
+脚注
+====
+
+.. [#ref1] poshのデフォルトではコンソール出力はコンソールバッファーの幅で省略されます。この仕様は余計なお世話な気がします。そのまま出してくれれば良いのに。
+.. [#ref2] `Get-AzureRmDataFactoryRun <https://docs.microsoft.com/en-us/powershell/resourcemanager/azurerm.datafactories/v2.3.0/get-azurermdatafactoryrun>`_
+
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

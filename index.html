@@ -73,6 +73,87 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 03, 2016</span>
+        </div>
+        <div class="section">
+            <div class="section" id="azure-datafactory-tips">
+<h1><a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a></h1>
+<p><a class="reference external" href="http://qiita.com/advent-calendar/2016/azure">Microsoft Azure Advent Calendar 2016 3日目</a>として書きました。</p>
+<p><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-introduction">Azure DataFactory</a>(以下ADF)は、データの移動や変換を自動化するクラウドベースのデータインテグレーションサービスです。 ADFには、コピーアクティビティとデータ変換アクティビティの２種類があります。コピーアクティビティは、優れたパフォーマンスとリーズナブルな価格で魅力的なサービスです。データ変換アクティビティの方は、処理用のクラスタを上げないといけない場合があり、ちょっと複雑になります。SQL Server ストアド プロシージャ アクティビティなら、別途クラスタを上げなくてもデータ変換が可能です。個人的にはコピーアクティビティはシンプルでなかなかよく出来ており、お気にいりました。</p>
+<p>今回は、スクリプトからのエラーリカバリ、タイムスライスの再実行について記述します。ADFでは実行はタイムスライス単位で行われるのでデータソースの問題で複数のタイムスライスが失敗した時、数が多くなり勝ちで、そうなるとポータルの画面から再実行をするのはポチポチが多くなってとても面倒になります。そんな時にはということで、Azure PowerShell Cmdlet から、失敗したタイムスライスを再実行してみます。</p>
+<p>参照： この記事の基本は概ね、<a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines">Azure Data Factory のパイプラインの監視と管理</a>に書いてありますので、そちらもどうぞ。</p>
+</div>
+<div class="section" id="id1">
+<h1>原因究明</h1>
+<p>まずは、エラーの原因を確認します。エラーが大量に出ていると面倒なので、下記のようなスクリプトでエラーメッセージでサマります。やっていることは、 ログの<span class="docutils literal"><span class="pre">sort</span> <span class="pre">|　uniq</span> <span class="pre">-c</span></span>です。</p>
+<script src="https://gist.github.com/takekazuomi/84aceb5aa49139dc115c8eace5f634df.js">&amp;amp;nbsp;</script></div>
+<div class="section" id="id2">
+<h1>エラーの確認を実行</h1>
+<p>下記の様に実行すると、DatasetName, ErrorMessage でサマった数が表示されます。下記の例だとエラーメッセージが長過ぎて最後まで見れませんが、コマンド行に、<span class="docutils literal"><span class="pre">|</span> <span class="pre">Out-String</span> <span class="pre">-Width</span> <span class="pre">4096</span></span><a class="footnote-reference" href="#ref1" id="id3">[1]</a>を追加すると最後まで表示されます。（幅は随時変更してください）</p>
+<div class="highlight-posh"><div class="highlight"><pre><span/>$ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+Count DatasetName                ErrorMessage
+----- -----------                ------------
+    7 DatasetAzureSqlDestination Copy activity encountered a user error at Sink:tcp:kinmugisql01.database.windows.net,1433 s...
+</pre></div>
+</div>
+<p>簡単にスクリプトの説明をします。Get-AzureRmDataFactorySlice でエラーになっているタイムスライスを取得して Get-AzureRmDataFactoryRun で、そのタイムスライスの詳細な情報を取得し、最後にエラーメッセージでグルーピングしてカウントしています。</p>
+</div>
+<div class="section" id="id4">
+<h1>再実行</h1>
+<p>これでエラーが分かるので問題を修正して、再実行します。</p>
+<p>Azure DataFactoryのタイムスライスの再実行には、スライスの状態遷移を理解しなければなりません。そんなに複雑なことは無く、タイムスライスの状態遷移図は下記のようになっており、再実行は、Failed 状態から Waiting に変更することで行います。</p>
+<a class="reference external image-reference" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines#パイプラインとアクティビティの状態の理解"><img alt="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png" src="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png"/></a>
+<p>問題の修正が完了したら、下記のスクリプトで、失敗したタイムスライスを再実行します、スクリプトでは失敗したタイムスライスを古いものから順にWaitingにするだけです。タイムスライス毎に設定をしているので、pipelineで指定したバックフィルの順序が反映されません。タイムスライス間に依存関係がある場合は問題が出るかもしれませんので注意してください。</p>
+<script src="https://gist.github.com/takekazuomi/64c969362ec122781f006ddad571f009.js">&amp;amp;nbsp;</script><p>実行には、上記で確認したエラーになったデータセットを指定します。再実行になったタイムスライスを表示します。</p>
+<div class="highlight-posh"><div class="highlight"><pre><span/>$ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+DatasetName                Start
+-----------                -----
+DatasetAzureSqlDestination 2016/08/09 9:00:00
+DatasetAzureSqlDestination 2016/08/09 10:00:00
+DatasetAzureSqlDestination 2016/08/09 11:00:00
+DatasetAzureSqlDestination 2016/08/09 22:00:00
+DatasetAzureSqlDestination 2016/08/09 23:00:00
+</pre></div>
+</div>
+<p>下記のようなコマンドで、タイムスライスの状態を確認することができます。ここでは、Ready以外を表示しています。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRmDataFactorySlice -ResourceGroupName <span class="s2">"TestADF01"</span> -DataFactoryName <span class="s2">"APITutorial"</span> -DatasetName <span class="s2">"DatasetAzureSqlDestination"</span> -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00 <span class="p">|</span> ? <span class="o">{</span><span class="nv">$_</span>.State -ne <span class="s1">'Ready'</span><span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h1>最後に</h1>
+<p>Azure PowerShellを使っていると、PowerShellのオブジェクトパイプランが強力さを肌で感じます。パイプで繋いで、<span class="docutils literal"><span class="pre">%,</span> <span class="pre">?</span></span>とやるのが気に入ってしまいました。今回の範囲で、ちょっと分かりづらかったのは、 タイムスライスを返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactorySlice</span></span>と タイムスライス の実行結果を返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>の関係でした。最初<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>がデータセットの実行結果を取得するのかと勘違いしていたので、どのようなパラメータを渡せば良いのかがわからず。このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに気が付かずに大分時間を無駄にしました。分かった後で、マニュアル<a class="footnote-reference" href="#ref2" id="id6">[2]</a>見たらちゃんと書いてあったんですが、、、、</p>
+<p><a href="#id8"><span class="problematic" id="id9">`Set-AzureRmDataFactorySliceStatus &lt;&gt;`_</span></a>は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。</p>
+<p>締めは、<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">DataFactory</span> <span class="pre">はいいぞ！</span></span>ということで。次は、</p>
+</div>
+<div class="section" id="id7">
+<h1>脚注</h1>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>poshのデフォルトではコンソール出力はコンソールバッファーの幅で省略されます。この仕様は余計なお世話な気がします。そのまま出してくれれば良いのに。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[2]</a></td><td><a class="reference external" href="https://docs.microsoft.com/en-us/powershell/resourcemanager/azurerm.datafactories/v2.3.0/get-azurermdatafactoryrun">Get-AzureRmDataFactoryRun</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2016/12/03/adf_tips_rerun.html#disqus_thread" data-disqus-identifier="2016/12/03/adf_tips_rerun">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 04, 2016</span>
         </div>
         <div class="section">
@@ -234,58 +315,6 @@
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html#disqus_thread" data-disqus-identifier="2016/04/04/build_2016_azure_cool_storage">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>February 05, 2016</span>
-        </div>
-        <div class="section">
-            <h1><a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a></h1>
-<p>.NET Framework 4.5, 4.5.1 のサポート終了に少し遅れましたが、Azure の Cloud　Service でも、Gest OS 4.28 から .NET 4.5.2 がサポートされるようになりました。<a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/cloud-services-guestos-update-matrix">Azure Guest OS releases and SDK compatibility matrix</a></p>
-<p>現在絶賛展開中ですが、手元のCloud Serviceには、すでに来ていました。</p>
-<div class="section" id="visual-studio">
-<h2>Visual Studio での確認</h2>
-<p>現在の Guest OSのバージョンは、下記のように、Visual Studio で、Roleのプロパティを開くと確認することができます。</p>
-<img alt="vsimage" class="align-center" src="_images/vs001.PNG"/>
-</div>
-<div class="section" id="azure-powershell">
-<h2>Azure PowerShell での確認</h2>
-<p>Azure PowerShell は、1.1.0 では確認できなかったのですが、今回のように、GUEST OSのバージョンが重要な場合に確認出来ないのは不便なので、OSVersionが帰ってくるようなパッチを作って PR を出してみたら、さくっと翌日にはマージされ次のリリースで無事に現在のバージョンがわかるようになりました。（もともと、REST APIには存在するし簡単な修正だったので、なにかの拍子に漏れてしまっただけだと思います）</p>
-<p><a class="reference external" href="https://github.com/Azure/azure-powershell/pull/1638">Fix to missing OS Version in Get-AzureRole #1638</a></p>
-<img alt="../../../_images/git001.png" class="align-center" src="_images/git001.png"/>
-<p>Azure PowerShell Team オープンですね！<strong>素晴らしい</strong></p>
-<p>こんな感じで確認することができます。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRole -ServiceName kinmugics10 -Slot Staging
-
-RoleName             : WorkerRole1
-InstanceCount        : 1
-DeploymentID         : c49d5437f1a84345b9739a79ff333056
-OSVersion            : WA-GUEST-OS-4.28_201601-01
-ServiceName          : kinmugics10
-OperationDescription : Get-AzureRole
-OperationId          : 0ffbd548-3b37-6c15-afa4-e091056e0849
-OperationStatus      : Succeeded
-</pre></div>
-</div>
-<p>現状だと、「新ポータル、旧ポータル」では、適応されているcscfgの内容だけで、自動更新に設定されている場合にどのGuest OS が使われているかは確認できません。</p>
-</div>
-<div class="section" id="get-azuredeploymant">
-<h2>おまけ、Get-AzureDeploymant</h2>
-<p>似たような情報を返してくるコマンドに、Get-AzureDeployment というのがあり、OSVersionが帰ってきます。「*」 が帰ってきて、すぐに実行中のGest OSがかえってくるわけではないことがわかりますが、ソースを確認してみます。コード的には、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/v1.1.0-January2016/src/ServiceManagement/Compute/Commands.ServiceManagement/Model/DeploymentInfoContext.cs#L253">このあたりで</a>OSVersion のプロパティを設定しています。つまり、csdefで設定されている<strong>osVersion</strong>が入り、自動更新を設定した場合、「*」となって現在のOS バージョンは分かりません。</p>
-<p>最初これで行けるかと思ったんですがね。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_powershell.html">Azure PowerShell</a></span>
-        </div>
-        
-        <div class="comments">
-            <a href="http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html#disqus_thread" data-disqus-identifier="2016/02/05/how_to_get_current_running_guest_os_version">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -294,6 +323,8 @@ OperationStatus      : Succeeded
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
+        </li><li>
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li><li>
             <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
@@ -311,8 +342,6 @@ OperationStatus      : Succeeded
             <a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a>
         </li><li>
             <a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a>
-        </li><li>
-            <a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
