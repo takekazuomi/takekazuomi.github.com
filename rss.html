@@ -14,8 +14,8 @@
             <description><![CDATA[<div class="section" id="azure-datafactory-tips">
 <h1>Azure DataFactory Tips タイムスライスの再実行</h1>
 <p><a class="reference external" href="http://qiita.com/advent-calendar/2016/azure">Microsoft Azure Advent Calendar 2016 3日目</a>として書きました。</p>
-<p><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-introduction">Azure DataFactory</a>(以下ADF)は、データの移動や変換を自動化するクラウドベースのデータインテグレーションサービスです。 ADFには、コピーアクティビティとデータ変換アクティビティの２種類があります。コピーアクティビティは、優れたパフォーマンスとリーズナブルな価格で魅力的なサービスです。データ変換アクティビティの方は、処理用のクラスタを上げないといけない場合があり、ちょっと複雑になります。SQL Server ストアド プロシージャ アクティビティなら、別途クラスタを上げなくてもデータ変換が可能です。個人的にはコピーアクティビティはシンプルでなかなかよく出来ており、お気にいりました。</p>
-<p>今回は、スクリプトからのエラーリカバリ、タイムスライスの再実行について記述します。ADFでは実行はタイムスライス単位で行われるのでデータソースの問題で複数のタイムスライスが失敗した時、数が多くなり勝ちで、そうなるとポータルの画面から再実行をするのはポチポチが多くなってとても面倒になります。そんな時にはということで、Azure PowerShell Cmdlet から、失敗したタイムスライスを再実行してみます。</p>
+<p><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-introduction">Azure DataFactory</a>(以下ADF)は、データの移動や変換を自動化するクラウドベースのデータインテグレーションサービスです。 ADFには、コピーアクティビティとデータ変換アクティビティの２種類があります。このうちコピーアクティビティは、単純なETLツールで優れたパフォーマンスとリーズナブルな価格で魅力的なサービスです。個人的にはコピーアクティビティはシンプルでなかなかよく出来ており、お気にいりました。データ変換アクティビティはクラスタを上げて変換処理をするのが利点でもあり難点でもあるって感じですね。</p>
+<p>今回は、スクリプトからのエラーリカバリ、タイムスライスの再実行について記述します。ADFでは実行はタイムスライス単位で行われデータソースの問題で複数のタイムスライスが失敗した時などエラーの数が多くなり勝ちです。エラーが多くなるとポータルの画面から再実行をするのはポチポチが多くなってとても面倒になります。そんな時にはということで、Azure PowerShell から、失敗したタイムスライスを再実行してみます。</p>
 <p>参照： この記事の基本は概ね、<a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines">Azure Data Factory のパイプラインの監視と管理</a>に書いてありますので、そちらもどうぞ。</p>
 </div>
 <div class="section" id="id1">
@@ -59,9 +59,10 @@ DatasetAzureSqlDestination 2016/08/09 23:00:00
 </div>
 <div class="section" id="id5">
 <h1>最後に</h1>
-<p>Azure PowerShellを使っていると、PowerShellのオブジェクトパイプランが強力さを肌で感じます。パイプで繋いで、<span class="docutils literal"><span class="pre">%,</span> <span class="pre">?</span></span>とやるのが気に入ってしまいました。今回の範囲で、ちょっと分かりづらかったのは、 タイムスライスを返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactorySlice</span></span>と タイムスライス の実行結果を返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>の関係でした。最初<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>がデータセットの実行結果を取得するのかと勘違いしていたので、どのようなパラメータを渡せば良いのかがわからず。このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに気が付かずに大分時間を無駄にしました。分かった後で、マニュアル<a class="footnote-reference" href="#ref2" id="id6">[2]</a>見たらちゃんと書いてあったんですが、、、、</p>
+<p>Azure PowerShellを使っていると、PowerShellのオブジェクトパイプランが強力さを肌で感じます。パイプで繋いで、<span class="docutils literal"><span class="pre">%,</span> <span class="pre">?</span></span>とやるのが気に入ってしまいました。</p>
+<p>今回ちょっと分かり辛らかったのは、 タイムスライスを返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactorySlice</span></span>と タイムスライス の実行結果を返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>の関係でした。最初<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>がデータセットの実行結果を取得するのかと勘違いしていたこともあり、どのようなパラメータを渡せば良いのかが分からず…　このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに大分時間を無駄にしました。後で、マニュアル<a class="footnote-reference" href="#ref2" id="id6">[2]</a>見たらちゃんと書いてあったんですが、、、、</p>
 <p><a href="#id8"><span class="problematic" id="id9">`Set-AzureRmDataFactorySliceStatus &lt;&gt;`_</span></a>は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。</p>
-<p>締めは、<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">DataFactory</span> <span class="pre">はいいぞ！</span></span>ということで。次は、</p>
+<p>締めは、<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">DataFactory</span> <span class="pre">はいいぞ！</span></span>ということで。</p>
 </div>
 <div class="section" id="id7">
 <h1>脚注</h1>
