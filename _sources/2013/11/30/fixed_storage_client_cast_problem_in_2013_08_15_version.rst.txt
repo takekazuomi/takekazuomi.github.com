@@ -1,0 +1,165 @@
+================================================
+ Storage Client 2.1.0.4 以降での Cast問題の修正
+================================================
+Storage Client 2.0.3以前と、最新のWindows Azure Storage の組み合わせで発生していた :ref:`Table Query での Cast 問題 <known-issue-201311>` が最新(2.1.0.4, 3.0.0 2013/11/29 現在)では解決されているようです。正式なアナウンスはまだ有りませんが、必要な方は以下の検証結果を参考にしてください。
+
+.. image:: http://farm9.staticflickr.com/8062/8216154715_53106b0941_z.jpg
+	   :target: http://www.flickr.com/photos/takekazuomi/8216154715
+	   :alt: red takekazu, on Flickr
+
+.. highlight:: none
+
+issueの再現
+===========
+まずは、問題が報告されているStorage Clinet 2.1.0.3で再現することを確認します。再現コードは :ref:`Table Query での Cast 問題 <known-issue-201311>` で提示されているものを使います。
+
+.. code-block:: java
+
+  static IEnumerable<T> GetEntities<T>(CloudTable table)  where T : ITableEntity, new()
+  {
+      IQueryable<T> query = table.CreateQuery<T>().Where(x => x.PartitionKey == "1");
+      return query.ToList();
+  }
+
+nugetで、問題のあるバージョンのライブラリをインストールします::
+
+  Install-Package WindowsAzure.Storage -Version 2.1.0.3
+
+実行結果
+~~~~~~~~
+:ref:`Table Query での Cast 問題 <known-issue-201311>` で報告されている通り、http requestのtraceのGET URLに$filter=castの文字列が入ってしまっており、http responseのtraceでは、400 Bad Requestになっているのが確認できました。
+x-ms-versionは、 2012-02-12 です。
+
+http requestのtrace::
+
+  GET http://asdpojasldfj001.table.core.windows.net/people?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%271%27&timeout=90 HTTP/1.1
+  User-Agent: WA-Storage/2.1.0.3 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+  x-ms-version: 2012-02-12
+  Accept: application/atom+xml,application/xml
+  Accept-Charset: UTF-8
+  MaxDataServiceVersion: 2.0;NetFx
+  x-ms-client-request-id: af7cf5c3-c287-4c1f-a9fe-ee0b6c374317
+  x-ms-date: Fri, 29 Nov 2013 23:25:01 GMT
+  Authorization: SharedKey asdpojasldfj001:*********************************************
+  Host: asdpojasldfj001.table.core.windows.net
+
+http responseのtrace::
+
+  HTTP/1.1 400 Bad Request
+  Transfer-Encoding: chunked
+  Content-Type: application/xml;charset=utf-8
+  Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+  x-ms-request-id: abf14b12-7a80-4b75-a652-604c56bdb817
+  x-ms-version: 2012-02-12
+  X-Content-Type-Options: nosniff
+  Date: Fri, 29 Nov 2013 23:25:01 GMT
+  
+  131
+  <?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">One of the request inputs is not valid.
+  RequestId:abf14b12-7a80-4b75-a652-604c56bdb817
+  Time:2013-11-29T23:25:02.0389849Z</message></error>
+  0
+
+
+2.1.0.4 での修正確認
+====================
+nugetの履歴によると `nuget.org: Windows Azure Storage <http://www.nuget.org/packages/WindowsAzure.Storage>`_ 2013/11/27 に、2.1.0.4と、3.0.0が同時にリリースされています。
+同じコードをライブラリのバージョンだけ変更して実行します::
+
+  Install-Package WindowsAzure.Storage -Version 2.1.0.4
+
+実行結果
+~~~~~~~~
+GET URLがスッキリして、結果は 200 OK が帰ってきています。FIXされているようです。
+
+http requestのtrace::
+
+  GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&timeout=90 HTTP/1.1
+  User-Agent: WA-Storage/2.1.0.4 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+  x-ms-version: 2012-02-12
+  Accept: application/atom+xml,application/xml
+  Accept-Charset: UTF-8
+  MaxDataServiceVersion: 2.0;NetFx
+  x-ms-client-request-id: e9319d53-b9eb-41c6-9a93-63566842984e
+  x-ms-date: Fri, 29 Nov 2013 23:33:17 GMT
+  Authorization: SharedKey asdpojasldfj001:*********************************************
+  Host: asdpojasldfj001.table.core.windows.net
+
+http responseのtrace::
+
+  HTTP/1.1 200 OK
+  Cache-Control: no-cache
+  Transfer-Encoding: chunked
+  Content-Type: application/atom+xml;type=feed;charset=utf-8
+  Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+  x-ms-request-id: d1056e7a-f0ff-4ab4-b5a4-4b546eb48515
+  x-ms-version: 2012-02-12
+  X-Content-Type-Options: nosniff
+  Date: Fri, 29 Nov 2013 23:33:17 GMT
+
+  96A
+  <?xml version="1.0" encoding="utf-8"?><feed xml:base="http://asdpojasldfj001.table.core.windows.net/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://asdpojasldfj001.table.core.windows.net/people</id><title type="text">people</title><updated>2013-11-29T23:33:18Z</updated><link rel="self" title="people" href="people" /><entry m:etag="W/&quot;datetime'2013-11-28T10%3A24%3A23.5715047Z'&quot;"><id>http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='1')</id><category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="people" href="people(PartitionKey='1',RowKey='1')" /><title /><updated>2013-11-29T23:33:18Z</updated><author><name /></author><content type="application/xml"><m:properties><d:PartitionKey>1</d:PartitionKey><d:RowKey>1</d:RowKey><d:Timestamp m:type="Edm.DateTime">2013-11-28T10:24:23.5715047Z</d:Timestamp><d:Data>foo</d:Data></m:properties></content></entry><entry m:etag="W/&quot;datetime'2013-11-28T10%3A21%3A02.0298712Z'&quot;"><id>http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='2')</id><category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="people" href="people(PartitionKey='1',RowKey='2')" /><title /><updated>2013-11-29T23:33:18Z</updated><author><name /></author><content type="application/xml"><m:properties><d:PartitionKey>1</d:PartitionKey><d:RowKey>2</d:RowKey><d:Timestamp m:type="Edm.DateTime">2013-11-28T10:21:02.0298712Z</d:Timestamp><d:Data>foo</d:Data></m:properties></content></entry><entry m:etag="W/&quot;datetime'2013-11-29T23%3A16%3A04.1332012Z'&quot;"><id>http://asdpojasldfj001.table.core.windows.net/people(PartitionKey='1',RowKey='3')</id><category term="asdpojasldfj001.people" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="people" href="people(PartitionKey='1',RowKey='3')" /><title /><updated>2013-11-29T23:33:18Z</updated><author><name /></author><content type="application/xml"><m:properties><d:PartitionKey>1</d:PartitionKey><d:RowKey>3</d:RowKey><d:Timestamp m:type="Edm.DateTime">2013-11-29T23:16:04.1332012Z</d:Timestamp><d:Data>foo</d:Data></m:properties></content></entry></feed>
+  0
+
+
+おまけの 3.0.0 での修正確認
+===========================
+同じことを最新の 3.0.0 でやりました。バッチリ動きます。x-ms-versionが 2013-08-15になって結果がjsonになっています::
+
+  Install-Package WindowsAzure.Storage -Version 2.1.0.4
+
+http requestのtrace::
+
+  GET http://asdpojasldfj001.table.core.windows.net/people?$filter=PartitionKey%20eq%20%271%27&timeout=90 HTTP/1.1
+  User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+  x-ms-version: 2013-08-15
+  Accept-Charset: UTF-8
+  MaxDataServiceVersion: 3.0;NetFx
+  Accept: application/json;odata=minimalmetadata
+  x-ms-client-request-id: 5b6e366f-dde8-4ec0-b433-10fac62c117d
+  x-ms-date: Fri, 29 Nov 2013 23:17:23 GMT
+  Authorization: SharedKey asdpojasldfj001:*********************************************
+  Host: asdpojasldfj001.table.core.windows.net
+
+http responseのtrace::
+
+  HTTP/1.1 200 OK
+  Cache-Control: no-cache
+  Transfer-Encoding: chunked
+  Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+  Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+  x-ms-request-id: fa6db02e-b080-4bc4-8761-1016920fb1b0
+  x-ms-version: 2013-08-15
+  X-Content-Type-Options: nosniff
+  Date: Fri, 29 Nov 2013 23:17:22 GMT
+
+  168
+  {"odata.metadata":"http://asdpojasldfj001.table.core.windows.net/$metadata#people","value":[{"PartitionKey":"1","RowKey":"1","Timestamp":"2013-11-28T10:24:23.5715047Z","Data":"foo"},{"PartitionKey":"1","RowKey":"2","Timestamp":"2013-11-28T10:21:02.0298712Z","Data":"foo"},{"PartitionKey":"1","RowKey":"3","Timestamp":"2013-11-29T23:16:04.1332012Z","Data":"foo"}]}
+  0
+
+ソースコード上の修正点
+======================
+2.1.0.4はgithub上でコードが公開されているので、レポジトリ上の修正点を確認しましょう。
+
+`ChangeLog <https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/changelog.txt#L162>`_ では::
+
+  Issues fixed in 2.1.0.4 :
+    - Tables: Do not send the cast operator in the table query filter string.
+
+microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs で、2.1でExpressionをURLに展開するときのUnaryの処理にcastを使ってしまっていたのを削除したようです。
+
+修正のCommitは、 `XSCL 2.1.0.4 - Hotfix <https://github.com/WindowsAzure/azure-sdk-for-net/commit/d34d1e881c7f744f5343cc6fab031b6c4a716caf>`_ で、ソースは、 `ExpressionWriter.cs <https://github.com/WindowsAzure/azure-sdk-for-net/blob/30ef61170e1d745d75fec09f1fb9c0a1dd94fa1f/microsoft-azure-api/Services/Storage/Lib/Common/Table/Queryable/ExpressionWriter.cs>`_  です。
+
+残念ながら、3.0.0は、まだコードが公開されていないので確認することができません。
+
+まとめ
+======
+2.1.0.4/3.0.0では、:ref:`Table Query での Cast 問題 <known-issue-201311>` の問題はFIXされています。そのうちアナウンスは出ると思いますが、必要な場合は試してみてください。:doc:`../24/windows_azure_storage_known_issues_2013_11` で報告されていた幾つかの問題の中で、Cast問題はスマートに回避するのが難しいものだったので、これで解決されて助かります。これ以外のものはどちらということ利用者側のコードに問題がある場合に起きる問題な気がします。
+
+本題とは外れますが、今回の場合では、363 byte(json) と、2,436 byte (xml)とhttp responseのbodyのサイズが大きく違い期待以上に良好な結果になっています。今回はデータが非常に小さいのでmeta 情報部分が冗長なxmlのオーバーヘッドが目立つ結果になっているのでしょうが、それにしても大きな違いです。
+
+
+.. author:: default
+.. categories:: Azure Table, Azure, GitHub観察記
+.. tags:: Azure Table, Table, Storage, Issue
+.. comments::

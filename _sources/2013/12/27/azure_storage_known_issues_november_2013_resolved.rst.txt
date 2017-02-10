@@ -1,0 +1,150 @@
+=======================================================
+ [Resolved] Windows Azure Storage Known Issues 2013/11
+=======================================================
+:doc:`../../11/24/windows_azure_storage_known_issues_2013_11` の既知の問題が解決されたとアナウンスがありました。 `Windows Azure Storage Known Issues (November 2013) [Resolved] <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx>`_ どんな感じになったのかを確認しました。
+
+引用
+====
+
+ | 更新 [2013/12/10] : `このBlog に記述されている問題 <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx>`_ [#r1]_ は、service と client library の更新で解決されました。issue 2 の client table の件は、 `2.1.0.4 <https://www.nuget.org/packages/WindowsAzure.Storage/2.1.0.4>`_  [#r2]_ と  `3.x <https://www.nuget.org/packages/WindowsAzure.Storage>`_ [#r3]_ の client library の releases で解決されています。 
+
+|
+
+.. image:: http://farm8.staticflickr.com/7416/9742159560_500e7d6301.jpg
+	   :target: http://www.flickr.com/photos/takekazuomi/9742159560
+	   :alt: matuyama by Takekazu Omi, on Flickr
+           :align: center
+
+|
+
+
+問題点の確認
+============
+問題点は下記の3つが有りました。「3」は、既に、 :doc:`../../11/30/fixed_storage_client_cast_problem_in_2013_08_15_version` で、Client Library 2.1.0.4、3.xで修正確認ができているので、ここでは1と2を確認します。
+
+1. :ref:`SASとコンテナの前の// 問題 <known-issue-20131101>`
+2. :ref:`TableのDataServiceContext.ResolveName 指定 問題 <known-issue-20131102>`
+3. :ref:`Table Query での Cast 問題 <known-issue-201311>`
+
+
+:ref:`SASとコンテナの前の "//" 問題 <known-issue-20131101>`
+===========================================================
+下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。
+Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が ``"//"`` になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、 ``"//"`` と書いたら ``"/"`` と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。
+
+.. literalinclude:: SAS.cs
+   :language: c#
+
+|
+
+2.1.0.4での確認結果
+-------------------
+
+``Install-Package WindowsAzure.Storage -Version 2.1.0.4`` で2.1.0.4を入れます。何度も、違うバージョンのライブラリを入れ替えて使っていて、混乱したので念のためpackage.configの内容を併記します。
+
+.. literalinclude:: package.config.001
+   :language: xml
+
+
+生成されたURLで成功を確認
+
+ | http://test.blob.core.windows.net/images/photo.jpg?sv=2012-02-12&se=2014-11-30T15%3A00%3A00Z&sr=b&sp=r&sig=[signiture]
+
+コンテナの前に、 ``"/"`` を追加して確認、成功！
+
+ | http://test.blob.core.windows.net//images/photo.jpg?sv=2012-02-12&se=2014-11-30T15%3A00%3A00Z&sr=b&sp=r&sig=[signiture]
+
+``sv=2012-02-12`` になっていて、versionがわかります。
+
+
+3.0.1での確認結果
+-----------------
+``Install-Package WindowsAzure.Storage`` で最新版、3.0.1で確認
+
+.. literalinclude:: package.config.002
+   :language: xml
+
+生成されたURLで成功を確認
+
+ | http://test.blob.core.windows.net/images/photo.jpg?sv=2013-08-15&sr=b&sig=[signiture]&se=2014-11-30T15%3A00%3A00Z&sp=r
+
+コンテナの前に、 ``"/"`` を追加。これは失敗します。
+
+ | http://test.blob.core.windows.net//images/photo.jpg?sv=2013-08-15&sr=b&sig=[signiture]&se=2014-11-30T15%3A00%3A00Z&sp=r
+
+レスポンスを見ると下記のようになっていました。（XMLは整形してあります）
+
+.. literalinclude:: 2013-08-15sasresponce.txt
+   :language: none
+
+
+
+:ref:`TableのDataServiceContext.ResolveName 指定 問題 <known-issue-20131102>`
+=============================================================================
+同様に、下記のようなコードを使って、2.1.0.4と、3.0.1で確認しました。 2.1.0.4 では、動作しましたが 3.0.1 では動きませんでした。結果はSASと似ているのですが、service側では処理が成功しているのでちょっと違った感じを受けます。
+
+.. literalinclude:: ResolveName.cs
+   :language: c#
+
+|
+
+2.1.0.4での確認結果
+-------------------
+普通に動いて成功しました。リクエストを見ると、categoryの属性に、 ``term="StorageIssue201311.SimpleEntity"`` と有りますが、正常に処理されてレスポンスが帰ってきているのがわかります。
+
+参考までに、リクエストとレスポンスを貼っておきます
+
+リクエスト
+
+.. literalinclude:: ResolveName2104Request.txt
+   :language: none
+
+レスポンス
+
+.. literalinclude:: ResolveName2104Response.txt
+   :language: none
+
+|
+
+3.0.1での確認結果
+-----------------
+``Install-Package WindowsAzure.Storage`` として最新版、3.0.1で確認したところ、下記のようにエラーになりました。データ自体は、Tableに入っており正常終了していますが、レスポンスを読み込んでエンティティを更新するのに失敗しているようです。
+
+.. literalinclude:: ResolveNameException.txt
+   :language: none
+
+参考までに、リクエストとレスポンスを貼っておきます。これを見ると、x-ms-version: 2013-08-15 で、payloadは、 ``Content-Type: application/json;odata=minimalmetadata`` になっていますが、 ``Prefer: return-no-content`` が指定されておらず、レスポンスのBodyにechoが帰ってきているのがわかります。
+
+リクエスト
+
+.. literalinclude:: ResolveName301Request.txt
+   :language: none
+
+レスポンス
+
+.. literalinclude:: ResolveName301Response.txt
+   :language: none
+
+
+まとめ
+======
+:doc:`../../11/24/windows_azure_storage_known_issues_2013_11` で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。
+ただし、:ref:`SASとコンテナの前の "//" 問題 <known-issue-20131101>` は、2013-08-15 version では仕様となり、:ref:`TableのDataServiceContext.ResolveName 指定 問題 <known-issue-20131102>` も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。
+
+2.1系のライブラリを使う場合は上記3点の問題がFIXされた 2.1.0.4 がお勧めです。
+3.x系は、幾つかのBraking Changeが含まれるので既存のコードは移行が必要ですが、2013-08-15 versionのパフォーマンス向上策がちゃんと活用できるのが大きな利点だと言えます。
+
+
+|
+|
+
+.. [#r1] 日本語訳 `Windows Azure ストレージの既知の問題 <http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx>`_ 
+
+.. [#r2] gitbugの `WindowsAzure/azure-sdk-for-net <https://github.com/WindowsAzure/azure-sdk-for-net/>`_  レポジトリのmasterには、Storage Clientのコードは既にありません。2.1.0.4を確認するには、 `tag:v2.1.0.4 Storage <https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4/microsoft-azure-api/Services/Storage>`_ を見て下さい。
+.. [#r3] `3.x github <https://github.com/WindowsAzure/azure-storage-net>`_ 
+
+
+.. author:: default
+.. categories:: Azure Table, Azure
+.. tags:: Azure Table, Table, Storage, Issue, Fixed, Azure Blob
+.. comments::

@@ -1,0 +1,94 @@
+Azure Managed Disk が GA
+========================
+
+PowerShellが出ないので、とりあえず ARM Template を使った Managed Disk の操作方法を書く。
+
+そもそも、Managed Diskとは何かという話は、 `Azure の Managed Disk のまとめ <http://qiita.com/tsubasaxZZZ/items/7c0a15ce76d0b4d0b83f>`_
+に書いてあるので、そっちをどうぞ。
+
+ざっくりと言うと、今ままでは Storage Account を作成して、Page Blobを置いて仮想ディスクとしてマウントするというのがAzureのブロックデバイスの扱いだったが、Managed Disk では Storage Account を意識することなくブロックデバイス（仮想ディスク）をリソースとして使えるようになりましたという話。
+
+これでまた一つ普通になりましたという話で、Storage Accountとか、Page Blobとかを Azure 側で管理してくれる仕組みなので、Managed Disk（＝良さ気に管理されたディスク）と呼ばれている。従来のものは、ドキュメント上は Unmanaged Disk と呼ばれているようだ。いつものように、名前がベタすぎてかえってわかりづらい。
+
+.. image:: https://c1.staticflickr.com/6/5616/31424912752_f00605ae0f_c.jpg
+   :target: https://flic.kr/p/PSUTJy
+   :alt: Dried persimmon
+   :align: center
+
+
+改善点
+======
+
+いろいろあるのが、特に注目すべき改善点をいくつか上げる
+
+1. 仮想マシンのディスクリソースの定義の簡易化
+2. スナップショットの取得、仮想イメージの作成の容易性
+3. Storage Account の制限を意識する必要が無く。パフォーマンス設計が簡略化
+4. Storage Account KeyとPage BlobとしてのEndpointが無くなり運用設計が簡略化された
+
+今回は、仮想マシンのリソース定義がどれぐらい簡略化されたのか、スナップショット関連はどうかを見てみる
+
+概要
+====
+従来の仮想マシンのリソース定義では、下記のように書いてた。 `storageProfile` の `imageReference`  には、元になるイメージの情報が、 `osDisk` にはイメージから仮想ディスクを作成する旨とPage BlobのURLが定義される。 `storageProfile` だけを引用するとこんな感じだ。
+
+.. gist:: https://gist.github.com/takekazuomi/583f0a3fc74a90ddbddb9c4febafea3f
+   :file: storageProfile.json
+
+このテンプレートでは、Page Blob を置くストレージアカウントを定義して使っている。
+
+Managed Disk では、StorageProfile の osDisk の部分を省略でき下記のようになる。osDisk の部分がざっくりと無くなった感じだ。
+
+.. gist:: https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524
+   :file: storageProfile.json
+
+このように省略した場合、暗黙のうちに Managed Disk リソースが作成され自動的に名前が付く。インスタンスがS付きの場合はPremium_LRS、それ以外はStandard_LRS、キャッシュはRead/WriteでDiskが作成される。DataDiskの場合はキャッシュのデフォルトはReadOnlyとなる。
+
+※ `managed disk の場合のdeploy template 全文 <https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524#file-azuredeploy-json>`_
+
+省略した場合は、インスタンスのタイプでデフォルトが決まるが、ストレージの種別を指定したい場合、例えば、SでもStandard Storageを使う場合は、osDisk の managedDisk にstorageAccountTypeとして Standard_LRS を指定する。ストレージの定義も無くスッキリ書けるようになった。
+
+.. gist:: https://gist.github.com/takekazuomi/d6bcdc2108bc8fc7b43f839042e24eea
+   :file: osDisk.json
+
+Managed DiskはARMリソースになるので、Diskを定義して、仮想マシンにアタッチすることもできる。下記ではDataDiskをDiskリソースとして定義しVMへの接続している。
+
+.. gist:: https://gist.github.com/takekazuomi/abf26310b979f7a1c3c47f1b0168a6e6
+   :file: disks_vm.json
+
+スナップショットが簡単に取れるようになったので、スナップショットの取得、スナップショットからディスクの作成、仮想マシンの起動をテンプレートを使ってやってみた。
+
+
+Snapshotを取る
+==============
+このテンプレートでは、パラメータとしてDiskをもらって、 `Microsoft.Compute/snapshots` のリソースを作成している。sourceUri の部分にソースとなるDiskのリソースIDを指定してスナップショットを作成するという流れだ。今回何度か実行した感じだと30GBのOsDiskのスナップショットで30秒程度という感じだった。基本仮想マシンを停止して取ることになると思うが、起動中でもスナップショットを取ることはできる。
+
+.. gist:: https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01
+   :file: snapshot.json
+
+Snapshot からの Managed Diskの作成
+==================================
+スナップショットの名前とリソースグループ名をパラメータでもらって、Managed Diskを作成する。accountType でStandard、Premiumを指定することができる。これも、ソースとなるリソースは、sourceUri で指定する。これも30秒程度だった。
+
+.. gist:: https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01
+   :file: createmd.json
+
+Managed Diskで仮想マシンを起動
+==============================
+作成したOsDiskを使って、仮想マシンを起動する。これはちょっと長いので一部を引用する。イメージから起動するのと違って、 `osProfile` と、`storageProfile` の `imageReference` が無い。既にあるDiskリソースを `managedDisk` の `id` で指定する。
+
+.. gist:: https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01
+   :file: azuredeploy-explicit-osdisk-vm.json
+
+最後に
+======
+これで、Azure 仮想マシンのDisk関連はだいぶ変わったことになるが、普通にリソースとしてディスクが使えるようになったので、全体的にはスッキリして分かりやすくなった。
+未だに、Azure PowerShellのManaged Disk 対応版 (3.5.0)が出てないのが気になるが、ブランチには `release-3.5.0 <https://github.com/Azure/azure-powershell/blob/release-3.5.0/src/ResourceManager/Compute/ChangeLog.md#version-260>`_ 居るので、そのうち出てくるでしょう。
+
+ARM template でManaged Diskを操作するなら、https://github.com/chagarw/MDPP を見るのがお勧めだ。ほとんどのパターンが網羅されている。
+
+※ このエントリのためにPRを書いた `support gist file option <https://github.com/shomah4a/sphinx-gist-embed/pull/3>`_ よく見たら同じようなのが2つも既に出ていた orz...
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

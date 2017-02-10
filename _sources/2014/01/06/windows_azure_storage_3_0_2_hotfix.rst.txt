@@ -1,0 +1,64 @@
+====================================
+ Windows Azure Storage 3.0.2 Hotfix
+====================================
+
+2014/1/4 `Windows Azure Storage 3.0.2 <http://www.nuget.org/packages/WindowsAzure.Storage/3.0.2>`_ がリリースされました。
+2013/11/27 3.0のリリース 「 :doc:`/2013/11/28/cors_json_minute_metrics_and_more` 」、2013/12/11 の 3.0.1 hotfix 「 :doc:`/2013/12/11/windows_azure_storage_client_3_0_1` 」 に続く３回めのリリースです。
+
+.. image:: http://farm4.staticflickr.com/3665/11730616035_d5730064f3_c.jpg
+	   :target: http://flic.kr/p/iSAtsB
+	   :alt: zenko-ji by Takekazu Omi, on Flickr
+           :align: center
+
+| 
+
+修正点
+======
+
+`Issues fixed in 3.0.2.0 : <https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L184>`_ :
+
+1. All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正
+2. Queues: 存在するqueueの再度作成で、NullReferenceException になる問題を修正
+3. Tables: レスポンスがparseできなかったときに、TableServiceContext が NullReferenceException になる問題を修正
+4. Tables (RT): JSON形式がまだRT library でサポートされていないため、ユーザーは、RTで RequestOptions に JsonFullMetadata formart を設定することはできません
+
+
+コードを確認したところ、最初のやつが興味深いものでした。
+
+1. All (WP): 多くのAPIで ArgumentOutOfRangeException になる問題の修正
+=====================================================================
+対象は、Windows Phone プラットフォームだけで特定のAPIでなく全般的に発生します。
+関連する Issue として 、 `System.ArgumentOutOfRangeException in Microsoft.WindowsAzure.Storage.Table.CloudTable.EndExecute <https://github.com/WindowsAzure/azure-storage-net/issues/16>`_ が出ています。 
+
+共通で使っている、API内のパラメータのバウンダリー検査関数（ ``AssertInBounds`` ）が動いていなくてあちこちで問題が発生するということになっていたようです。（そうは言っても、テストはしているので、そうそう起きるわけでは無いとは思います）
+
+`Storage Client Library 3.0.2 のPR <https://github.com/WindowsAzure/azure-storage-net/pull/17>`_ でdiffを見みると、WINDOWS_PHONEだけで下記のように修正されていました。
+
+.. image:: 2014-01-06-github001.png
+
+https://github.com/WindowsAzure/azure-storage-net/pull/17/files#diff-546e2cf76676e7cafc795f6d4d105fefR160
+
+#if WINDOWS_PHONE で AssertInBounds に、 ``[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]``  を指定しています。この指定は、JITやNGENでのコード最適化を抑制するもので、 [#r1]_ Windows Phone の場合だけ native code 生成に問題があったので抑制するオプションを付けたということです。 
+
+Windows Phone というだけで、どのような場合に発生する問題かなどわかりませんが、WP アプリのコードが挙動不審の場合は試してみると良いかもしれません。Storage Clinet Library内では、この方法で修正されているようなので問題は無いのですが、普通に書いたコードでも起きるとすると、ちょっと困りますね。もう少し詳しい情報が欲しいところです。 [#r2]_
+
+
+これ以外は、あまり気になる点はありませんでした。互換性の問題も無さそうなので、3系のStorage Clinetは 3.0.2 を使うのがお勧めです。
+
+.. _scl302_more_info:
+
+2014/1/11 追記 Windows Phoneの問題
+==================================
+`PR の質問 <https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31639331>`_ に返事を貰いました。
+
+ | この問題は、Windows Phone でだけ起き、assemblyに、AssertInBoundsとAssertInBounds 両方が存在する場合に、最適化で実行時にAssertInBoundsの間違ったインスタンス化を選択することによって引き起こされる
+
+``internal static void AssertInBounds<T>(string paramName, T val, T min, T max) where T : IComparable`` と、 ``internal static void AssertInBounds<T>(string paramName, T val, T min) where T : IComparable`` の両方が同一 assembly にあるのが問題のようです。 必ず起きるというわけでも無さそうなので、Windows Phone で嵌ったら思い出してみるという程度で良さそうです。
+
+
+.. [#r1] `About System.Runtime.CompilerServices.MethodImplOptions <http://msdn.microsoft.com/ja-jp/library/system.runtime.compilerservices.methodimploptions(v=vs.110).aspx>`_ 
+.. [#r2] `We escalated this internally ... <https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932>`_
+
+.. categories:: Azure Storage, Azure, GitHub観察記
+.. tags:: Azure Table, Table, Storage, Hotfix
+.. comments::

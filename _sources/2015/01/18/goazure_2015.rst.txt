@@ -1,0 +1,38 @@
+GoAzure 2015 でAzureの永続化について話をしてきました
+====================================================
+`GoAzure 2015 <http://r.jazug.jp/goazure>`_ の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「 `Persistence on Azure - Microsoft Azure の永続化 <http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure>`_ 」でみっちり53分ほど、もうひとつは、「しばやん」のセッション( `GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました <http://blog.shibayan.jp/entry/20150117/1421492433>`_ ) にちょっとお邪魔。
+
+しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。
+
+
+Persistence on Azure - Microsoft Azure の永続化
+-----------------------------------------------
+スライドは、SlideShareに公開しています。
+
+.. raw:: html
+
+    <iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+`Persistence on Azure - Microsoft Azure の永続化 <http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure>`_
+
+
+セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。
+
+もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。
+
+榎本さんのセッション 「 `GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について <http://atsushieno.hatenablog.com/entry/2015/01/17/003523>`_ 」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz
+
+後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。
+
+謝辞
+----
+榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。
+
+JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。
+
+参加者の皆様、ありがとうございました。
+
+.. author:: default
+.. categories:: Session, Azure Storage,
+.. tags:: IaaS, Storage, GoAzure
+.. comments::

@@ -1,0 +1,155 @@
+=========================================
+ WebSites で、Java + gradle + git を使う
+=========================================
+5/12 - 15 に行われた、TechEd North America 2014 で、待望のWebSitesのJavaサポートが発表されました。TechEdでは、AzureのJavaサポートとして、仮想マシン、クラウドサービス、WebSites の話がされていました。Azureの各種SDKはJavaは.NETと並ぶぐらい順調に進んでいるようなので今後も注目です。
+
+その中でも、WebSitesのJavaサポートが面白かったので紹介します。
+
+TechEdのセッションの内容は、 `Java on Microsoft Azure <http://channel9.msdn.com/Events/TechEd/NorthAmerica/2014/DEV-B384>`_ を観てもらうことにして、一般的な開発で行われるプロセスを Java on WebSites でやってみます。
+
+道具立て
+========
+ソースコード管理には、git を使い。ビルドには昨今流行りの gradle 、 手元で動作を確認後、git push すると、kudu の deploy hook でbuildされて Web Sites に deploy というシナリオです。deploy の最終段には、tomcat の autoDeploy を使います。
+
+
+.. image:: http://farm3.staticflickr.com/2897/14109420833_a4fb730458_c.jpg
+	   :target: http://www.flickr.com/photos/takekazuomi/14109420833
+	   :alt: unagi by Takekazu Omi, on Flickr
+           :align: center
+
+
+Web Sitesを作成
+===============
+まず、azure cli を使うので、インストールしてください。
+
+git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）
+
+.. literalinclude:: cmdline001.txt
+   :language: bash
+
+これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。
+
+.. literalinclude:: cmdline002.txt
+   :language: bash
+
+この状態で、作成したサイトを見るには、下記のコマンドを実行します。
+
+.. literalinclude:: cmdline003.txt
+   :language: bash
+
+もし、 ``Site kinmugi006 does not exist or has no hostname`` のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。
+
+このような画面が表示されるはずです。
+
+.. image:: 20140609_azure002.PNG
+   :alt: Web Site の初期画面
+   :align: center
+
+
+試しに、なにか push してみましょう
+==================================
+まず、ポータルサイトから git のパスワードを設定します。 ``DASHBOARD`` -> ``Reset your deployment credentials`` で設定できます。
+
+.. image:: 20140609_azure001.PNG
+   :alt: local git のパスワード設定
+   :align: center
+
+index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。
+その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。
+
+
+.. literalinclude:: cmdline004.txt
+   :language: bash
+
+
+これで、サイトを確認すると、こんな感じで見えます。 ちなみに、 ``azure site browse kinmugi006`` でブラウザが開きます。
+
+.. image:: 20140609_azure003.PNG
+   :alt: Hello Java
+   :align: center
+
+
+Java ランタイムの設定
+=====================
+これで、git の設定ができたので、次のJava Runtimeの設定をします。ここでもgitのパスワード設定と同じようにポータルを使います。
+Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0_51(バージョン番号は随時変わります）にして、WEB CONTAINER をTOMCAT 7.0.50 にして、SAVEを押します。
+
+.. image:: 20140609_azure004.PNG
+   :alt: Select Java runtime
+   :align: center
+
+ここで、http://kinmugi006.azurewebsites.net/ を見ると、さきほどの ``Hello Java`` から下記のような画面になります。
+
+.. image:: 20140609_azure003.PNG
+   :alt: Hello Java
+   :align: center
+
+さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。
+
+https://kinmugi006.scm.azurewebsites.net/ にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。
+
+Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy="true" になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。
+
+.. literalinclude:: server.xml
+   :language: xml
+
+今回下記の設定をしてください。何故か、user.home が定義されていないので d:\home にします。 `JDK-4787931 : System property "user.home" does not correspond to "USERPROFILE" (win) <http://bugs.java.com/view_bug.do?bug_id=4787931>`_ Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。
+
+.. literalinclude:: cmdline005.txt
+   :language: bash
+
+※想定外に話が長くなってきたので、飛ばして行きます。
+
+git push後の自動ビルド
+======================
+標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive で、kudu.exeを起動します。
+kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。
+今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。
+
+まずは、Javaのアプリの準備をします。
+
+ビルドにgradleを使うので、 `gradle公式 <http://www.gradle.org/>`_ から、 `gradle-1.12-bin.zip <https://services.gradle.org/distributions/gradle-1.12-bin.zip>`_ をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。
+srcの下のアプリケーションは、 ``gradle-1.12-(src|all).zip`` に入っている、 `webApplication/quickstart <https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart>`_ です。
+
+ディレクトリ構成
+
+.. literalinclude:: tree001.txt
+   :language: bash
+
+``.deployemnt`` という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、 ``.deployemnt`` ファイルの設定に従います。今回は、作成したバッチを実行するだけです。
+
+.. literalinclude:: dotdeployment
+   :language: bash
+
+``deploy.cmd`` では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。
+
+.. literalinclude:: deploy.cmd
+   :language: bash
+
+ここまでできたら、git add, commit して、pushしてください。
+
+.. literalinclude:: cmdline006.txt
+   :language: bash
+
+
+ただ一つだけ問題があります。最初に、WebSitesの作成したwebappsには、ROOTのディレクトリがあるのにROOT.warが無いので autoDeploy が上手く動作しません。どこかを修正してpushし直すか、ポータルから redeploy してください。問題があるのは初回だけで２回めからは前回upしたROOT.warがあるので無事自動展開されます。
+
+最後に
+======
+kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、 `kudu project <https://github.com/projectkudu/kudu>`_ にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。
+
+下記のサイトを参考にしました
+
+.. [#r1] `Git のカスタマイズ - Git フック <http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF>`_
+.. [#r2] `kudu.exeは、Kudu.Console <https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs>`_
+.. [#r3] `SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る <https://github.com/projectkudu/kudu/wiki/Investigating-issues>`_
+.. [#r4] `Well Known Environment Variables <https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs>`_
+.. [#r5] `KuduSync のオプション <https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs>`_
+.. [#r6] `Deployment Logic Flow <https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow>`_
+.. [#r7] `Deployment hooks <https://github.com/projectkudu/kudu/wiki/Deployment-hooks>`_
+.. [#r8] `Custom Deployment Scripts For Windows Azure Website Using Git Deployment <http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/>`_
+
+.. author:: default
+.. categories:: Java, WebSites, Azure
+.. tags:: Java, Gradle, Git, WebSites, Kudu
+.. comments::

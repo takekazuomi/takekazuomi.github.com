@@ -1,0 +1,25 @@
+.NET Fringe Japan 2016
+======================
+
+「 `まさかの .NET じゃない話 <http://yfakariya.blogspot.jp/2016/10/talkedondotnetfringejapan2016.html>`_ 」を、 `.NET Fringe Japan 2016 <http://dotnetfringe-japan.connpass.com/event/35659/>`_ で話してきました。 「 `Partitionの話とか、なかなか聞けないので面白かったです <http://pocketberserker.hatenablog.com/entry/2016/10/06/203735>`_ 」 と言っていただけるのは有難いです。
+
+.NET Fringe なのに、.NET 成分、OSS成分ゼロで良いのかとは迷ったのですが、快く背中を押してもらい、Azure Storageの話をすることにしました。
+
+Azure Storageは内部構造が公開されているのにも関わらず、日本ではその構造もあまり議論されることも無く、自分でも中に溜めているだけでなかなか外で話す機会も無いという状況で、。少々もったいない気がしていたので話が出来たのは良い機会でした。
+
+最初は、Storageを構成する３層を全部話そうとしたのですが、細部に立ち入らないと面白い話にならず、細部に入ると話が長くなり全然時間に入らず。結局、一番面白そうなパーテーション周りにフォーカスして話しました。背景的な話や、他のレイヤーの話を飛ばして話したので少々わかり辛らかったかもしれません。
+
+シャーディングをサポートしているシステムは世の中に諸々ありますが、負荷に応じてパーテーションマップを変更しロードバランシングするシステムで上手く動いている例は多くはなく、実装例として面白いのでは無いかと思います。今回は、話の焦点をパーテーションマップを動的に負荷に応じてどう構成するか、そのときに実データの移動を伴わない実装になっているかという当たりが一番盛り上がるところだったのですが、うまく説明するのはなかなか難しく資料の作成に苦心しました。
+
+分割（パーテーショニング）が避けられなった時、一実装例として参考になればと思います。
+
+.NET Fringe Japan 2016 資料です。「Azure Storage Partition Internals」
+
+.. raw:: html
+
+   <iframe src="//www.slideshare.net/slideshow/embed_code/key/901iFCR13dImEd" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+.. author:: default
+.. categories:: Azure Storage
+.. tags:: Architecture
+.. comments::

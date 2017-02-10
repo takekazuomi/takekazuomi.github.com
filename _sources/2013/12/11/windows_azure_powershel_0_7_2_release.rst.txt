@@ -1,0 +1,95 @@
+=========================================
+ Windows Azure Powershell 0.7.2 リリース
+=========================================
+Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
+| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。
+
+.. image:: http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg
+	   :target: http://www.flickr.com/photos/takekazuomi/9207001266
+	   :alt: IMG_0911 by Takekazu Omi, on Flickr
+           :align: center
+
+
+インストール
+============
+最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。
+
+.. image:: 2013_12_11_webpi001.png
+
+インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。
+
+.. literalinclude:: checkversion.txt
+   :language: bash
+
+
+変更点
+======
+`2013.12.10 Version 0.7.2 <https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2>`_
+
+* HDInsight cmdlets
+
+  * Add-AzureHDInsightConfigValues
+  * Add-AzureHDInsightMetastore
+  * Add-AzureHDInsightStorage
+  * Get-AzureHDInsightCluster
+  * Get-AzureHDInsightJob
+  * Get-AzureHDInsightJobOutput
+  * Get-AzureHDInsightProperties
+  * New-AzureHDInsightCluster
+  * New-AzureHDInsightClusterConfig
+  * New-AzureHDInsightHiveJobDefinition
+  * New-AzureHDInsightMapReduceJobDefinition
+  * New-AzureHDInsightPigJobDefinition
+  * New-AzureHDInsightSqoopJobDefinition
+  * New-AzureHDInsightStreamingMapReduceJobDefinition
+  * Remove-AzureHDInsightCluster
+  * Revoke-AzureHDInsightHttpServicesAccess
+  * Set-AzureHDInsightDefaultStorage
+  * Start-AzureHDInsightJob
+  * Stop-AzureHDInsightJob
+  * Use-AzureHDInsightCluster
+  * Wait-AzureHDInsightJob
+  * Grant-AzureHDInsightHttpServicesAccess
+  * Invoke-AzureHDInsightHiveJob
+
+* Web Site の WebSocket と managed pipe mode の設定
+
+  * Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode
+
+* Web Site の remote debugging 設定
+
+  * Enable-AzureWebsiteDebug -Version
+  * Disable-AzureWebsiteDebug
+
+* VM を削除した時の VHD cleaning up オプション
+
+  * Remove-AzureVM -DeleteVHD
+  * Remove-AzureService -DeleteAll
+  * Remove-AzureDeployment -DeleteVHD
+
+* 仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)
+
+  * Get-AzureDeployment
+  * Get-AzureReservedIP
+  * New-AzureReservedIP
+  * New-AzureVM
+  * Remove-AzureReservedIP
+
+* 下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート
+
+  * Start-AzureEmulator
+  * Publish-AzureServiceProject
+  * Save-AzureServiceProjectPackage
+
+
+最後に
+======
+今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。
+
+
+.. author:: default
+.. categories:: Azure, Azure Powershell, GitHub観察記
+.. tags:: Azure, Azure Powershell, Powershell, posh,Release
+.. comments::
+
+.. highlight:: bash

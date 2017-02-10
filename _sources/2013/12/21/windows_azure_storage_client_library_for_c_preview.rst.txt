@@ -1,0 +1,197 @@
+======================================================
+ Windows Azure Storage Client Library for C++ Preview
+======================================================
+`Windows Azure Storage Client Library for C++ Preview がリリースされました <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx>`_
+
+ | 2013/12/27 Windows Azure Japan Team Blog 公式 谷訳出ました。 `C++ 用 Windows Azure ストレージ クライアント ライブラリのプレビュー版をリリース <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/27/windows-azure-storage-client-library-for-c-preview.aspx>`_
+
+待望のC++用のライブラリです。
+
+以下にざっくりと訳します。
+
+抄訳 Windows Azure Storage Client Library for C++ Preview
+=========================================================
+これは、Preview release です、まだ puroduction codeでは使用しないでください（should not be used in your production code）。 その代わり、ざっと目を通して試してみて、あなたがGAに必要だと考える拡張・変更のフィードバックを下さい。
+
+Windows Azure Storage に付いての詳しい情報は、SOSP Paper `Windows Azure Storage: A Highly Available Cloud Storage Service with Strong Consistency <http://blogs.msdn.com/b/windowsazurestorage/archive/2011/11/20/windows-azure-storage-a-highly-available-cloud-storage-service-with-strong-consistency.aspx>`_  [#r1]_ を参照してください。
+
+Emulator Guidance
+-----------------
+このライブラリが使う  `2013-08-15 REST <http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx>`_ は、現在のAzure SDK(2.2)のStorage Emulatorでサポートされていません。これらの全ての機能をサポートしたAzure Storage Emulatorのアップデートを来月には出せる見込みです。(An updated Windows Azure Storage Emulator is expected to ship with full support of these new features in the next month) 
+Storage Emulatorの現在のバージョンを使って開発しようとすると不正な要求エラーを受け取ることになります。アップデートが出るまでは、新機能を使用したいユーザーは、Windows Azure Storage Account (本番環境）を使ってテストをして下さい。 [#r2]_
+
+サポートされるプラットフォーム
+------------------------------
+
+今回のリリースでは、Visual Studio 2012 (v110) と Visual Studio 2013 (v120) platform toolsets 用ライブラリの x64およびx86バージョンを提供します。パッケージには、8 build flavors が含まれます。
+
+1. Release, x64, v120
+2. Debug, x64, v120
+3. Release, Win32, v120
+4. Debug, Win32, v120
+5. Release, x64, v110
+6. Debug, x64, v110
+7. Release, Win32, v110
+8. Debug, Win32, v110
+
+入手方法
+--------
+ライブラリは、 `NuGet <http://www.nuget.org/packages/wastorage>`_  から、完全なソースコードは  `GitHub <https://github.com/WindowsAzure/azure-storage-cpp>`_  からダウンロードできます。NuGet packageは、 `CoApp tools <http://coapp.org/>`_ を使って作成され、3つのpackage として構成されています。
+
+* wastorage.0.2.0-preview.nupkg：このパッケージには、アプリケーションの開発に必要なヘッダーとLIBファイルが含まれています。これは、再配布（redist） package に依存します。NuGet は、自動的にredist packageのインストールを行います。
+
+* wastorage.redist.0.2.0-preview.nupkg：このパッケージを実行し、アプリケーションを再配布するために必要なDLLファイルが含まれています。
+
+* wastorage.symbols.0.2.0-preview.nupkg：このパッケージには、それぞれのDLLファイルのシンボルが含まれています。オプションのパッケージです。
+
+パッケージは、 `C++ REST SDK <https://www.nuget.org/packages/cpprestsdk/>`_  に依存しており、それもNuGetで自動的にインストールされます。
+`C++ REST SDK (codename "Casablanca") <http://casablanca.codeplex.com/>`_  は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。
+これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。
+Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。
+
+できること
+----------
+ここでは、REST API に付いて話をする代わりに、Windows Azure Storage Client Library の概要を説明します。
+
+* Windows Azure Storage REST API version `2013-08-15 <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_ 全体を簡単に使えるようにする実装
+* Retry policies: リクエストが失敗した場合の再試行ロジックとして、exponential や linear back off algorithm を実装
+* Streamlined authentication model: 共有鍵と共有認証署名の両方をサポート
+* 操作コンテキストとETWのログを使用して要求の詳細と結果に潜り込む能力
+* サイズや、Blob typeに関係の無い、ユーザー設定による、parallel block/page アップロード
+* 特定のupload/download APIに対応しなくても、読み取りまたはBLOBへの書き込みを許可するBLOB Stream
+* すべてのBlob uploadおよびdownload での完全なMD5のサポート
+* Table layerでは、 `Azure Storage Table の新しいJSON サポート <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx>`_ を利用
+* Table service の、Entity Group Transaction サポート。（Entity Group Transactionでは、単一トランザクションで複数操作が可能）
+
+Read Access Geo Redundant Storage (RA-GRS) サポート
+---------------------------------------------------
+このリリースでは、storage account のsecondary region データへの読込アクセスをフルサポートしています。　この機能は、Portalで有効にしないと利用できません、詳しくは、 `RA-GRS <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx>`_  を参照 [#r3]_ して下さい。
+
+How to use it?
+--------------
+NuGet package を入れると、 `was` (Windows Azure Storageの略) のフォルダーに全てのヘッダー が入ります。  このディレクトリでは下記のheader ファイルが重要です。
+
+* blob.h: Blob service 関連の全ての宣言
+* queue.h: Queue service 関連の全ての宣言
+* table.h: Table service 関連の全ての宣言
+* storage_account.h: account の name/key 、あるいは connection string から、service client のオブジェクトを簡単に作成するための cloud_storage_account type の宣言
+* retry_policies.h: 全ての操作で使われる、幾つかの retry policies の宣言
+
+下記のように使います
+
+.. literalinclude:: include.cpp
+   :language: c++
+
+その後、我々は作成されますcloud_storage_accountコードの後半でサービス·クライアント·オブジェクトを作成するために私達を可能にするオブジェクトを、。
+私たちは安全な接続のために以下のHTTPSを使用しているが、アプリケーションをデバッグするときに、HTTPは非常に便利であることに注意してください。
+
+その後、下記のコードでcloud_storage_account オブジェクトを作成します。 ここでは、セキュアな接続のため https を使っていますが、デバックする場合は http が非常に便利です。
+
+.. literalinclude:: cloud_storage_account.cpp
+   :language: c++
+
+
+Blobs
+-----
+ここでは、blob container を作成し、`"some text`" と入ったblobを作って、それを download 、そして container 内のblobをリストします。
+
+.. literalinclude:: blob001.cpp
+   :language: c++
+
+
+Tables
+------
+以下のサンプルでは、 Tableを作成し、様々な型のプロパティの組をエンティティに挿入し、最終的にはその指定したエンティティを取得します。最初の検索操作では、ポイント·クエリを実行し、特定のエンティティを取得します。一方クエリ操作では、PartitionKeyが `"partition"` に等しく、かつ、RowKey が、 `"m"` より大きいすべてのエンティティを照会します。これは、結果的にinsertした全てのエンティティになります。
+
+Windows Azure Tables に関する詳しい情報は、 `Understanding the Table Service Data Model <http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx>`_ の記事と、 `How to get most out of Windows Azure Tables <http://blogs.msdn.com/b/windowsazurestorage/archive/2010/11/06/how-to-get-most-out-of-windows-azure-tables.aspx>`_ の blog post を見て下さい。
+
+.. literalinclude:: table001.cpp
+   :language: c++
+
+Queues
+------
+最後の例では、Queueを作成します、それにmessageを追加、同じmessageを取得し、最終的にそれを更新します。
+
+.. literalinclude:: queue001.cpp
+   :language: c++
+
+
+デバック方法
+------------
+なにか上手く行っていない場合、exception で帰ってきます。この exception は、wa::storage::storage_exception の型で、なにか問題なのかの詳細な情報を含んでいます。次のコードを見て下さい。
+
+.. literalinclude:: exception001.cpp
+   :language: c++
+
+
+blobが存在しない場合, このコードは下記のような結果になります。
+
+.. literalinclude:: exception002.cpp
+   :language: none
+
+
+ライブラリでは、type wa::storage::operation_context を提供しています。これは、全てのAPIでサポートされ、操作中に行われていることについてより多くの情報を取得するために使います。次のコードを見て下さい。
+
+.. literalinclude:: exception003.cpp
+   :language: c++
+
+
+もう一度、blobが存在しない状況で動かします。すると下記のような結果になります。
+
+.. literalinclude:: exception003.cpp
+   :language: none
+
+
+Samples
+-------
+`github 上のプロジェクトのサンプル <https://github.com/WindowsAzure/azure-storage-cpp/tree/master/Microsoft.WindowsAzure.Storage/samples>`_ フォルダの中に、幾つかの重要なシナリを説明する コードがあります。
+
+Visual Studioで「Microsoft.WindowsAzure.Storage.Samples.sln」という名前のサンプルのソリューションファイルを開きます。Microsoft.WindowsAzure.Storage.SamplesCommonプロジェクトの下samples_common.hファイルの、ストレージのアカウント情報を更新します。Solution Explorer のウィンドウに移動し、（例えば、Microsoft.WindowsAzure.Storage.BlobsGettingStarted）実行したいサンプルプロジェクトを選択してStartUp Projectにするか、コンテキストメニューから実行します。
+
+Summary
+-------
+`コメント欄 （原文） <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx>`_  、フォーラム、あるいは `GitHub <https://github.com/WindowsAzure/azure-storage-cpp>`_ でのフィードバックをお待ちしています。BUGに当たった場合、GitHubに上げてもらえると、その後の解決策などをトラックすることができるようになります。
+
+Serdar Ozler, Mike Fisher, and Joe Giardino
+
+Resources
+---------
+
+| `Source (GitHub) <https://github.com/WindowsAzure/azure-storage-cpp>`_
+| `Binaries (NuGet) <http://www.nuget.org/packages/wastorage>`_
+| `Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_
+| `Windows Azure Tables: Introducing JSON <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx>`_
+
+
+まとめ
+======
+C++用のクライアントは良いですね、やっぱり欲しい。 
+
+その他に、今回 `CoApp tools <http://coapp.org/>`_ が気になりました。native code をnugetでpackege化して配布するプロジェクトです。 Windows にapt-getみたいな位置づけに機能を盛り込むのを狙っているようで、期待できます。 [#r4]_ これで、python、ruby、node.js で Windows パッケージのバイナリコードのビルドに引っかかる問題も、このレポジトリを参照することで解決できると良いなあと思いますが、今のところプロジェクトのターゲットに入っていないようで、そこはちょっと残念です。
+
+もう一つ、 `<http://casablanca.codeplex.com/>`_  は、 `MSDN C++ REST SDK (Codename "Casablanca") <http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx>`_  に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。 `C++ REST SDK 1.4.0 <http://www.nuget.org/packages/cpprestsdk/>`_ 今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。
+
+nugetを見てみたところ、C++ REST SDK も、SDK、 Redist、Symbols の３本立てになってました。でも、SDKが1.4.0なのに他が1.3.1のままですね。
+
+* `C++ REST SDK 1.4.0 <http://www.nuget.org/packages/cpprestsdk/>`_
+* `C++ REST SDK Redist 1.3.1 <http://www.nuget.org/packages/cpprestsdk.redist/>`_
+* `C++ REST SDK Symbols 1.3.1 <http://www.nuget.org/packages/cpprestsdk.symbols/>`_
+
+パッケージマネージャー関連は、nuget を中心に、整備が進んでいるようで、いろいろ期待できますね。
+
+
+| 
+| 
+
+.. [#r1] 日本語訳 `SOSP 論文 Windows Azure ストレージ: 高可用性と強い一貫を両立する クラウド ストレージ サービス <http://download.microsoft.com/download/C/0/2/C02C4D26-0472-4688-AC13-199EA321135E/23rdACM_SOSP_WindowsAzureStorage_201110_jpn.pdf>`_
+
+.. [#r2] `Windows Azure Storage Client Library for Java v. 0.5.0 <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx>`_ では、 `An updated Windows Azure Storage Emulator is expected to ship with full support of these new features in the next couple of months.` になっていました。数ヶ月先って話だったので、来月だとすると良い知らせですね。
+
+.. [#r3] 日本語訳 `Windows Azure ストレージの冗長オプションと読み取りアクセス地理冗長ストレージ <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/19/blog-windows-azure-storage-redundancy-options-and-read-access-geo-redundant-storage.aspx>`_
+
+.. [#r4] `The State of CoApp <http://coapp.org/news/2013-10-02-State-of-CoApp.html>`_ 
+
+.. author:: default
+.. categories:: Azure, Azure SDK,Azure Storage
+.. tags:: 2013-08-15, Azure, C++, Release,Azure Storage
+.. comments::

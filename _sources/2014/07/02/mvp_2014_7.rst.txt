@@ -1,0 +1,14 @@
+2014 Microsoft MVP Award を受賞しました
+=======================================
+2014年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。
+
+これも一重に皆様から多くの御支援をいただいた結果です。
+
+今後も、Azure Storage を中心に、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。
+
+これからも、よろしくお願いいたします。
+
+.. author:: default
+.. categories:: MVP
+.. tags:: none
+.. comments::

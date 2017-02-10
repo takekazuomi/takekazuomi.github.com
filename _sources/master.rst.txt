@@ -1,0 +1,52 @@
+Sitemap
+=======
+
+.. toctree::
+   :maxdepth: 1
+
+   2017/02/10/managed_disk_1
+   2016/12/03/adf_tips_rerun
+   2016/10/04/net_fringe_japan_2016
+   2016/07/01/2016_mvp
+   2016/05/20/reliable_collection_lock
+   2016/04/04/build_2016_azure_cool_storage
+   2016/02/05/how_to_get_current_running_guest_os_version
+   2015/12/02/using_dnx_was.rst
+   2015/10/16/niigata_net_2015_10_dml
+   2015/09/25/intro_azure_storage_data_movement_library
+   2015/09/01/go_5_jazug_service_fabric_session
+   2015/08/23/how_to_use_nlog_in_cloud_service
+   2015/05/05/update_tinker_1_5_sphinx_1_3
+   2015/04/08/azure_diagonestics_1_3_bugs
+   2015/01/18/goazure_2015
+   2014/12/02/introduction_to_azure_batch
+   2014/08/01/cdp_azure
+   2014/07/02/mvp_2014_7
+   2014/06/09/websites_gradle_git
+   2014/06/08/snowflake_c
+   2014/03/02/read_access_geo_redundant_storage
+   2014/01/29/windows_azure_storage_emulator_2_2_1_preview_release
+   2014/01/06/windows_azure_storage_3_0_2_hotfix
+   2013/12/27/azure_storage_known_issues_november_2013_resolved
+   2013/12/22/azure_posh_2012_12_19_version_0_7_2_1
+   2013/12/21/windows_azure_storage_client_library_for_c_preview
+   2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0
+   2013/12/17/owin_azure_cache_session_middleware
+   2013/12/11/windows_azure_storage_client_3_0_1
+   2013/12/11/windows_azure_powershel_0_7_2_release
+   2013/12/06/azure_table_json_payload
+   2013/12/06/github_windows_azure_storage_libraries_for_net_3_0
+   2013/12/05/minute_metrics_storage_version_2013_08_15
+   2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0
+   2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version
+   2013/11/28/cors_json_minute_metrics_and_more
+   2013/11/28/using_helios_on_azure_cloud_service
+   2013/11/24/windows_azure_storage_known_issues_2013_11
+   2013/11/24/windows_azure_tables_breaking_changes_2013_11
+   2013/10/17/azure_java_sdk_long_value_filtering_bug
+   2013/10/15/windows_azure_plugin_for_eclipse_with_java
+   2012/12/26/asc2_dot_0asyncbug
+   2012/12/22/azurevmfix1221
+   2012/12/08/blobasyncinside
+   2012/12/08/waac2012day2
+   pages/about_me

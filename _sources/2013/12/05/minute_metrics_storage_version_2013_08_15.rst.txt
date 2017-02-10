@@ -1,0 +1,214 @@
+====================================================
+ Windows Azure Storage 2013-08-15 の Minute Metrics
+====================================================
+`Windows Azure Advent Calendar 2013 - Qiita [キータ] <http://qiita.com/advent-calendar/2013/azure>`_ の 5 日目の記事です。最初Javaネタを書こうと思ってたのですが、11/27にWindows Azure Storageの新しいバージョン(x-ms-version:2013-08-15)が公開され盛り上がっているのでストレージネタに切り替えました。
+
+新バージョンに付いては以前に書いているので、それを見て下さい。
+
+ | `Windows Azure Storage Team Blog <http://blogs.msdn.com/b/windowsazurestorage/>`_ で、新しいWindows Azure Storageのリリースが紹介されています。`Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More <http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_ 
+
+立派な訳が出てるので、こちらも合わせてどうぞ。
+
+ | 2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI `Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど <http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/>`_
+
+ | 2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 `Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入 <http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx>`_
+
+
+久しぶりのストレージ のリリースで機能盛り沢山なのですが [#f1]_ 、その中でもパフォーマンスジャンキー注目の Minute Metrics （分単位メトリックス）を紹介します。機能紹介だけだと面白くないので脱線しながら書きますのでお楽しみ下さい。
+
+.. image:: http://farm6.staticflickr.com/5498/9204218499_3d95538ae6_z.jpg
+	   :target: http://www.flickr.com/photos/takekazuomi/9204218499
+	   :alt: DEAD END by takekazu, on Flickr
+           :align: center
+
+
+Minute Metrics （分単位メトリックス）とは
+=========================================
+今まで、Windows Azure StorageのMetricsは時間集計でした。  `Storage Analytics Metrics の詳細 <http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx>`_  新しい 2013-08-15 version のMinute Metrics では、5分以内に 分単位の集計（Minute Metrics） が参照できるようになりました。それに伴って下記のテーブルが追加されています。
+
+  * $MetricsHourPrimaryTransactionsBlob
+  * $MetricsHourPrimaryTransactionsTable
+  * $MetricsHourPrimaryTransactionsQueue
+  * $MetricsMinutePrimaryTransactionsBlob
+  * $MetricsMinutePrimaryTransactionsTable
+  * $MetricsMinutePrimaryTransactionsQueue
+
+Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。
+
+名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。
+
+エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。 [#f2]_
+
+.. code-block:: none
+
+   HTTP/1.1 200 OK
+   Cache-Control: no-cache
+   Transfer-Encoding: chunked
+   Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+   Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+   x-ms-request-id: 9e39e71e-70ea-41b3-be3e-b7a6231315b0
+   x-ms-version: 2013-08-15
+   X-Content-Type-Options: nosniff
+   Date: Thu, 05 Dec 2013 12:00:39 GMT
+
+   83
+   {"odata.metadata":"http://waac2013omi001diag.table.core.windows.net/$metadata#$MetricsMinuteSecondaryTransactionsTable","value":[]}
+   0
+
+ちなみに、$で始まる適当な名前でリクエストを流すと400 Bad Requestで、リソースに不正な文字が含まれているというエラーになります。
+
+.. code-block:: none
+
+   HTTP/1.1 400 Bad Request
+   Transfer-Encoding: chunked
+   Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+   Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+   x-ms-request-id: 272dce2f-ac46-46b7-b59d-b0338cefa78b
+   x-ms-version: 2013-08-15
+   X-Content-Type-Options: nosniff
+   Date: Thu, 05 Dec 2013 11:57:59 GMT
+
+   DE
+   {"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The specifed resource name contains invalid characters.\nRequestId:272dce2f-ac46-46b7-b59d-b0338cefa78b\nTime:2013-12-05T11:58:00.5348125Z"}}}
+   0
+
+
+メトリックス系のテーブルは下記のようにListTableでも帰ってこないので存在するかどうかは難しいところですが、エラーにならないところを見ると特別扱いされているようで期待してしまいます。
+
+.. code-block:: none
+
+   var tables = tableClient.ListTables("$Metrics");
+
+
+
+Minute Metrics （分単位メトリックス）を有効にする
+=================================================
+Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、 `Widnows Azure Storage Client 3.0.0 <http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0>`_ を使います。今のところ `Widnows Azure Storage Client 3.0.0 <http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0>`_ のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。
+設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。
+下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。 [#f3]_
+
+.. code-block:: none
+
+   private static void SetStorageAnalytics(CloudStorageAccount account)
+   {
+       var serviceProperty = new ServiceProperties
+       {
+           Logging = new LoggingProperties
+           {
+               Version = "1.0",
+               LoggingOperations = LoggingOperations.All,
+               RetentionDays = 7,
+
+           },
+           HourMetrics = new MetricsProperties
+           {
+               Version = "1.0",
+               MetricsLevel = MetricsLevel.ServiceAndApi,
+               RetentionDays = 7
+           },
+           MinuteMetrics = new MetricsProperties
+           {
+               Version = "1.0",
+               MetricsLevel = MetricsLevel.ServiceAndApi,
+               RetentionDays = 1
+           }
+       };
+       account.CreateCloudBlobClient().SetServiceProperties(serviceProperty);
+       account.CreateCloudTableClient().SetServiceProperties(serviceProperty);
+       account.CreateCloudQueueClient().SetServiceProperties(serviceProperty);
+
+   }
+
+
+このコード書いていてServicePropertiesのプロパティで「あれ？」と思いました。以前は、ServicePropertiesは、LoggingProperties と MetricsProperties の２つのプロパティを持っていたのですが、3.0では MetricsProperties が無くなって HourMetrics になってしまっているようです、Table側は古い名前も残してあるのに、ライブラリは Braking Changesにしてしまったようですね。このあたりの判断は難しいところなのでしょうが、古い名前もあっても良い気がします。
+
+`2.1.0.4 ServiceProperties.cs <https://github.com/WindowsAzure/azure-sdk-for-net/blob/v2.1.0.4/microsoft-azure-api/Services/Storage/Lib/Common/Shared/Protocol/ServiceProperties.cs#L97>`_ 
+
+nugetから無条件で最新版として入るのに前のバージョンと互換性が無いっていうのは大胆な気がしますが、なんらかの事情でちょっとドキュメントが遅れているだけなのでしょう。
+
+実行してリクエスト、レスポンスを覗いてみます。
+
+http request
+------------
+
+.. code-block:: none
+
+   PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&restype=service&timeout=90 HTTP/1.1
+   User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
+   x-ms-version: 2013-08-15
+   x-ms-client-request-id: 56bffee5-4626-4835-b254-af38a1520242
+   x-ms-date: Thu, 05 Dec 2013 12:39:54 GMT
+   Authorization: SharedKey ********************************************************
+   Host: waac2013omi001diag.blob.core.windows.net
+   Content-Length: 626
+   Connection: Keep-Alive
+
+   <?xml version="1.0" encoding="utf-8"?><StorageServiceProperties><Logging><Version>1.0</Version><Delete>true</Delete><Read>true</Read><Write>true</Write><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy><IncludeAPIs>true</IncludeAPIs></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><RetentionPolicy><Enabled>true</Enabled><Days>1</Days></RetentionPolicy><IncludeAPIs>true</IncludeAPIs></MinuteMetrics><Cors /></StorageServiceProperties>
+
+
+http response
+-------------
+
+.. code-block:: none
+
+   HTTP/1.1 202 Accepted
+   Transfer-Encoding: chunked
+   Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+   x-ms-request-id: 650e2253-9e51-43e5-90bd-6077ef43ef31
+   x-ms-version: 2013-08-15
+   Date: Thu, 05 Dec 2013 12:39:47 GMT
+
+   0
+
+リクエストで、ServicePropertiesに設定した内容を投げていますがXMLなんですね。ここはJSONじゃないのかと思ったけど、そんなにトラフィックが多いところじゃないので問題ないですね。シンプルでいい感じです。
+
+Minute Metrics （分単位メトリックス）の結果
+===========================================
+細かい確認ができていないのですが、結果自体はテーブル名が違うだけで従来の時間集計と同じものが出てるようです。パーテションキーが単位で採番されています。
+
+.. csv-table:: Minute Metricsの例
+   :header-rows: 1
+
+   PartitionKey,RowKey,TotalIngress,TotalEgress,AverageE2ELatency,AverageServerLatency
+   20131205T0303,user;All,393,59079,352,53
+   20131205T0303,user;QueryEntities,393,59079,352,53
+   20131205T0304,system;All,8057,9452,20,19
+   20131205T0304,user;All,2188,15747,46.833333,5.166667
+   20131205T0304,user;QueryEntities,1478,14291,68.5,6.25
+   20131205T0304,user;QueryTables,710,1456,3.5,3
+   20131205T0305,system;All,24161,28398,14.333333,13.333333
+   20131205T0305,user;All,2041,13787,268.5,5.75
+   20131205T0305,user;GetTableServiceProperties,338,584,2,2
+   20131205T0305,user;QueryEntities,1703,13203,357.333333,7
+   20131205T0306,system;All,32239,37972,17.25,16
+   20131205T0307,system;All,23475,27904,15,14.5
+
+
+:download:`表だと厳しいのでcsvをどうぞ (zip) <20131205-minutemetrics-sample.zip>`
+
+まとめ
+======
+Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。
+今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。
+
+訂正 2013/12/06
+===============
+訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは `github:azure-storage-net <https://github.com/WindowsAzure/azure-storage-net>`_ で公開されています。
+
+
+
+|
+|
+
+.. [#f1] 日本リージョン、IaaSのGAなど大きな話題が続いている Azure 全体に比べると地味ですね。
+.. [#f2] レスポンスのbodyがJSONですね、このバージョンからJSONがサポートされています。
+.. [#f3] 当たり前ですね
+
+
+.. author:: default
+.. categories:: Azure, Azure Storage, Azure SDK
+.. tags:: 2013-08-15, Azure, Step By Step
+.. comments::
+
+.. highlight:: C#
+  :linenothreshold: 5
