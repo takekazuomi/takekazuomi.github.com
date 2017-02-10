@@ -57,7 +57,12 @@
 <h1>最後に</h1>
 <p>これで、Azure 仮想マシンのDisk関連はだいぶ変わったことになるが、普通にリソースとしてディスクが使えるようになったので、全体的にはスッキリして分かりやすくなった。未だに、Azure PowerShellのManaged Disk 対応版 (3.5.0)が出てないのが気になるが、ブランチには<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/release-3.5.0/src/ResourceManager/Compute/ChangeLog.md#version-260">release-3.5.0</a>居るので、そのうち出てくるでしょう。</p>
 <p>ARM template でManaged Diskを操作するなら、<a class="reference external" href="https://github.com/chagarw/MDPP">https://github.com/chagarw/MDPP</a>を見るのがお勧めだ。ほとんどのパターンが網羅されている。</p>
-<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz..... author:: default.. categories:: none.. tags:: none.. comments:</p>
+<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz...</p>
+<div class="section" id="id4">
+<h2>追記 2017/2/10</h2>
+<p>PowerShellGallery には、3.5 が出ていると教えてもらいました。流石もっともHQに近い男と言われるしばやん。<a class="reference external" href="https://www.powershellgallery.com/packages/AzureRM/3.5.0">https://www.powershellgallery.com/packages/AzureRM/3.5.0</a></p>
+<blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">Managed Disk 対応の Azure PowerShell は Web PI にないだけ</p>— しばやん (@shibayan) <a href="https://twitter.com/shibayan/status/829962830744989697">February 10, 2017</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"/></div>
 </div>
 ]]></description>
              <pubDate>Fri, 10 Feb 2017 00:00:00 +0900</pubDate>
@@ -3179,7 +3184,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-83b2c701d61694ec12482ee3415780d3420614e4.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-83b2c701d61694ec12482ee3415780d3420614e4.png" width="600.0"/></a></div></div>
+<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-85e94e0762f99534986dc1b67e3dfa4098d5c04f.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-85e94e0762f99534986dc1b67e3dfa4098d5c04f.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>

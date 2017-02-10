@@ -88,6 +88,18 @@ Managed Diskで仮想マシンを起動
 ARM template でManaged Diskを操作するなら、https://github.com/chagarw/MDPP を見るのがお勧めだ。ほとんどのパターンが網羅されている。
 
 ※ このエントリのためにPRを書いた `support gist file option <https://github.com/shomah4a/sphinx-gist-embed/pull/3>`_ よく見たら同じようなのが2つも既に出ていた orz...
+
+
+追記 2017/2/10
+--------------
+PowerShellGallery には、3.5 が出ていると教えてもらいました。流石もっともHQに近い男と言われるしばやん。 https://www.powershellgallery.com/packages/AzureRM/3.5.0
+
+.. raw:: html
+
+   <blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">Managed Disk 対応の Azure PowerShell は Web PI にないだけ</p>&mdash; しばやん (@shibayan) <a href="https://twitter.com/shibayan/status/829962830744989697">February 10, 2017</a></blockquote>
+   <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
 .. author:: default
 .. categories:: none
 .. tags:: none
