@@ -5,8 +5,64 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sat, 03 Dec 2016 00:00:00 +0900</pubDate>
+        <pubDate>Fri, 10 Feb 2017 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2017/02/10/managed_disk_1.html</link>
+            <guid>http://kyrt.in/2017/02/10/managed_disk_1.html</guid>
+            <title><![CDATA[Azure Managed Disk が GA]]></title>
+            <description><![CDATA[<div class="section" id="azure-managed-disk-ga">
+<h1>Azure Managed Disk が GA</h1>
+<p>PowerShellが出ないので、とりあえず ARM Template を使った Managed Disk の操作方法を書く。</p>
+<p>そもそも、Managed Diskとは何かという話は、<a class="reference external" href="http://qiita.com/tsubasaxZZZ/items/7c0a15ce76d0b4d0b83f">Azure の Managed Disk のまとめ</a>に書いてあるので、そっちをどうぞ。</p>
+<p>ざっくりと言うと、今ままでは Storage Account を作成して、Page Blobを置いて仮想ディスクとしてマウントするというのがAzureのブロックデバイスの扱いだったが、Managed Disk では Storage Account を意識することなくブロックデバイス（仮想ディスク）をリソースとして使えるようになりましたという話。</p>
+<p>これでまた一つ普通になりましたという話で、Storage Accountとか、Page Blobとかを Azure 側で管理してくれる仕組みなので、Managed Disk（＝良さ気に管理されたディスク）と呼ばれている。従来のものは、ドキュメント上は Unmanaged Disk と呼ばれているようだ。いつものように、名前がベタすぎてかえってわかりづらい。</p>
+<a class="reference external image-reference" href="https://flic.kr/p/PSUTJy"><img alt="Dried persimmon" class="align-center" src="https://c1.staticflickr.com/6/5616/31424912752_f00605ae0f_c.jpg"/></a>
+</div>
+<div class="section" id="id1">
+<h1>改善点</h1>
+<p>いろいろあるのが、特に注目すべき改善点をいくつか上げる</p>
+<ol class="arabic simple">
+<li>仮想マシンのディスクリソースの定義の簡易化</li>
+<li>スナップショットの取得、仮想イメージの作成の容易性</li>
+<li>Storage Account の制限を意識する必要が無く。パフォーマンス設計が簡略化</li>
+<li>Storage Account KeyとPage BlobとしてのEndpointが無くなり運用設計が簡略化された</li>
+</ol>
+<p>今回は、仮想マシンのリソース定義がどれぐらい簡略化されたのか、スナップショット関連はどうかを見てみる</p>
+</div>
+<div class="section" id="id2">
+<h1>概要</h1>
+<p>従来の仮想マシンのリソース定義では、下記のように書いてた。<cite>storageProfile</cite>の<cite>imageReference</cite>には、元になるイメージの情報が、<cite>osDisk</cite>にはイメージから仮想ディスクを作成する旨とPage BlobのURLが定義される。<cite>storageProfile</cite>だけを引用するとこんな感じだ。</p>
+<script src="https://gist.github.com/takekazuomi/583f0a3fc74a90ddbddb9c4febafea3f.js?file=storageProfile.json">&amp;amp;nbsp;</script><p>このテンプレートでは、Page Blob を置くストレージアカウントを定義して使っている。</p>
+<p>Managed Disk では、StorageProfile の osDisk の部分を省略でき下記のようになる。osDisk の部分がざっくりと無くなった感じだ。</p>
+<script src="https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524.js?file=storageProfile.json">&amp;amp;nbsp;</script><p>このように省略した場合、暗黙のうちに Managed Disk リソースが作成され自動的に名前が付く。インスタンスがS付きの場合はPremium_LRS、それ以外はStandard_LRS、キャッシュはRead/WriteでDiskが作成される。DataDiskの場合はキャッシュのデフォルトはReadOnlyとなる。</p>
+<p>※<a class="reference external" href="https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524#file-azuredeploy-json">managed disk の場合のdeploy template 全文</a></p>
+<p>省略した場合は、インスタンスのタイプでデフォルトが決まるが、ストレージの種別を指定したい場合、例えば、SでもStandard Storageを使う場合は、osDisk の managedDisk にstorageAccountTypeとして Standard_LRS を指定する。ストレージの定義も無くスッキリ書けるようになった。</p>
+<script src="https://gist.github.com/takekazuomi/d6bcdc2108bc8fc7b43f839042e24eea.js?file=osDisk.json">&amp;amp;nbsp;</script><p>Managed DiskはARMリソースになるので、Diskを定義して、仮想マシンにアタッチすることもできる。下記ではDataDiskをDiskリソースとして定義しVMへの接続している。</p>
+<script src="https://gist.github.com/takekazuomi/abf26310b979f7a1c3c47f1b0168a6e6.js?file=disks_vm.json">&amp;amp;nbsp;</script><p>スナップショットが簡単に取れるようになったので、スナップショットの取得、スナップショットからディスクの作成、仮想マシンの起動をテンプレートを使ってやってみた。</p>
+</div>
+<div class="section" id="snapshot">
+<h1>Snapshotを取る</h1>
+<p>このテンプレートでは、パラメータとしてDiskをもらって、<cite>Microsoft.Compute/snapshots</cite>のリソースを作成している。sourceUri の部分にソースとなるDiskのリソースIDを指定してスナップショットを作成するという流れだ。今回何度か実行した感じだと30GBのOsDiskのスナップショットで30秒程度という感じだった。基本仮想マシンを停止して取ることになると思うが、起動中でもスナップショットを取ることはできる。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=snapshot.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="snapshot-managed-disk">
+<h1>Snapshot からの Managed Diskの作成</h1>
+<p>スナップショットの名前とリソースグループ名をパラメータでもらって、Managed Diskを作成する。accountType でStandard、Premiumを指定することができる。これも、ソースとなるリソースは、sourceUri で指定する。これも30秒程度だった。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=createmd.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="managed-disk">
+<h1>Managed Diskで仮想マシンを起動</h1>
+<p>作成したOsDiskを使って、仮想マシンを起動する。これはちょっと長いので一部を引用する。イメージから起動するのと違って、<cite>osProfile</cite>と、<cite>storageProfile</cite>の<cite>imageReference</cite>が無い。既にあるDiskリソースを<cite>managedDisk</cite>の<cite>id</cite>で指定する。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=azuredeploy-explicit-osdisk-vm.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="id3">
+<h1>最後に</h1>
+<p>これで、Azure 仮想マシンのDisk関連はだいぶ変わったことになるが、普通にリソースとしてディスクが使えるようになったので、全体的にはスッキリして分かりやすくなった。未だに、Azure PowerShellのManaged Disk 対応版 (3.5.0)が出てないのが気になるが、ブランチには<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/release-3.5.0/src/ResourceManager/Compute/ChangeLog.md#version-260">release-3.5.0</a>居るので、そのうち出てくるでしょう。</p>
+<p>ARM template でManaged Diskを操作するなら、<a class="reference external" href="https://github.com/chagarw/MDPP">https://github.com/chagarw/MDPP</a>を見るのがお勧めだ。ほとんどのパターンが網羅されている。</p>
+<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz..... author:: default.. categories:: none.. tags:: none.. comments:</p>
+</div>
+]]></description>
+             <pubDate>Fri, 10 Feb 2017 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2016/12/03/adf_tips_rerun.html</link>
             <guid>http://kyrt.in/2016/12/03/adf_tips_rerun.html</guid>
@@ -20,7 +76,7 @@
 </div>
 <div class="section" id="id1">
 <h1>原因究明</h1>
-<p>まずは、エラーの原因を確認します。エラーが大量に出ていると面倒なので、下記のようなスクリプトでエラーメッセージでサマります。やっていることは、 ログの<span class="docutils literal"><span class="pre">sort</span> <span class="pre">|　uniq</span> <span class="pre">-c</span></span>です。</p>
+<p>まずは、エラーの原因を確認します。エラーが大量に出ていると面倒なので、下記のようなスクリプトでエラーメッセージでサマります。やっていることは、 ログの<span class="docutils literal"><span class="pre">sort</span> <span class="pre">|</span><span class="pre">uniq</span> <span class="pre">-c</span></span>です。</p>
 <script src="https://gist.github.com/takekazuomi/84aceb5aa49139dc115c8eace5f634df.js">&amp;amp;nbsp;</script></div>
 <div class="section" id="id2">
 <h1>エラーの確認を実行</h1>
@@ -578,7 +634,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 </pre></div>
 </div>
 <p>どんな組み合わせがサポートされているかとを表にまとめるとこんな感じ。このうちUrl-&gt;Blob, Url-&gt;FileのCopyだけ isServerCopy (サーバー側で実行される非同期コピー) のオプションがあります。Local to Local はサポートされていません。現在のバージョンでは、すべての処理はファイル（オブジェクト）１つの単位です。例えば、ディレクトリを指定して、その下をまとめてUploadなどのようなことはできません。表は横が転送元で縦が転送先です。</p>
-<table border="1" class="docutils" id="id13">
+<table border="1" class="colwidths-given docutils" id="id13">
 <caption><span class="caption-text">DML Matrix</span></caption>
 <colgroup>
 <col width="20%"/>
@@ -3123,7 +3179,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-</div>
+<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-83b2c701d61694ec12482ee3415780d3420614e4.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-83b2c701d61694ec12482ee3415780d3420614e4.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
@@ -5581,7 +5637,7 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
 <p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）下記の表の最初のカラムは起動するプロセス数です。</p>
 <p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
 <p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
-<table border="1" class="docutils" id="id6">
+<table border="1" class="colwidths-given docutils" id="id6">
 <caption><span class="caption-text">表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</span></caption>
 <colgroup>
 <col width="9%"/>
