@@ -1,0 +1,283 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Page 10 &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="_static/main.css" type="text/css">
+            <link rel="stylesheet" href="_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="_static/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="_static/style.css" type="text/css" /><link rel="shortcut icon" href="_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="_static/plugins.js"></script>
+        <script src="_static/main.js"></script>
+        <link rel="search" title="Search" href="search.html" /><link rel="prev" title="Newer" href="page9.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script><script type="text/javascript" src="_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Page 10 &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/page10.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="pages/about_me.html">About kyrt inc.</a>
+        </li>
+        </ul>
+      <ul>
+        <li class="logo-nav">
+	  <a href="pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li>
+        <li class="mvp-nav">
+	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
+            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 08, 2012</span>
+        </div>
+        <div class="section">
+            <h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
+<p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
+<p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
+<ul class="simple">
+<li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。<a class="reference external" href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></li>
+</ul>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370/"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
+<hr class="docutils"/>
+<div class="section" id="azure-storage">
+<h2>Azure Storageのパフォーマンスの向上</h2>
+<p>2012/6/7 以降に作成されたストレージアカウントで、下記のようにパフォーマンスターゲットが引き上げられました。Gen 2と呼ばれているようです。以前のもの（Gen1）に比べ秒間のトランザクションベースだと4倍程度になっています（Azure Table 1Kエンティティの場合）</p>
+<p>詳しくはリンク先を見てもらうとして下記の4点が注目です。</p>
+<ol class="arabic simple">
+<li>ストレージ ノード 間のネットワーク速度が1Gbpsから10Gbpsに向上</li>
+<li>ジャーナリングに使われるストレージデバイスがHDDからSSDに改善</li>
+<li>単一パーテーション  500 エンティティ/秒 -&gt;   2,000 エンティティ/秒 (15Mbps)</li>
+<li>複数パーテーション 5,000 エンティティ/秒 -&gt; 20,000 エンティティ/秒 (156Mbps)</li>
+</ol>
+<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9/">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id1">
+<h2>確認しよう</h2>
+<p>ではどれだけ速くなったのか確認しましょう。なるべく実利用環境に近いようにということでC#を使います。ライブライは、最近出たばかりですが、Azure Storage Client 2.0を使います。このライブラリのコードをざっと見た感じだと、従来のコードに比べてシンプルになって読みやすく速度も期待できそうです。</p>
+<p>比較的限界が低い単一パーテーションで確認します。前記のGen2の記事には、エンティティが1KByteで、単一パーテーションの場合、2,000 エンティティ/秒というパフォーマンスターゲットが記述されています。これを確認しようとするとAzure外部からのネットワークアクセスだと厳しいのでWorkerRoleを立てて、リモートデスクトップでログインしてプログラムを実行します。プログラムは秒間2000オブジェクトを計測時間の間は作りづけないといけないのでCPUやGCがボトルネックになるかもしれません、今回はLargeのインスタンスを使うことにしました。</p>
+<p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
+<script src="https://gist.github.com/takekazuomi/4238298.js">&amp;amp;nbsp;</script><p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
+<p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
+<script src="https://gist.github.com/takekazuomi/4238639.js">&amp;amp;nbsp;</script><p>この辺りは、下記のサイトが詳しくお勧めです。</p>
+<p>参照：<a class="reference external" href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
+<div class="section" id="waac2012day2-pending">
+<span id="id2"/><h3>非同期で同時接続数が上がらない？</h3>
+<p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
+<p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
+<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="2012/12/26/asc2_dot_0asyncbug.html"><span class="doc">Azure Storage Client 2.0 CompletedSynchronously FIX</span></a>) **</p>
+<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
+<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
+<script src="https://gist.github.com/takekazuomi/4238661.js">&amp;amp;nbsp;</script><p>—</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>結果</h2>
+<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）下記の表の最初のカラムは起動するプロセス数です。</p>
+<p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
+<p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
+<table border="1" class="colwidths-given docutils" id="id6">
+<caption><span class="caption-text">表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</span></caption>
+<colgroup>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+<col width="9%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">プロセス数</th>
+<th class="head">最少</th>
+<th class="head">中央値</th>
+<th class="head">平均</th>
+<th class="head">最大</th>
+<th class="head">90%点</th>
+<th class="head">95%点</th>
+<th class="head">99%点</th>
+<th class="head">ピークe/s</th>
+<th class="head">成功数</th>
+<th class="head">失敗数</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>2</td>
+<td>97.27</td>
+<td>166.6</td>
+<td>258</td>
+<td>14,800</td>
+<td>359.578</td>
+<td>472.373</td>
+<td>1,106.28</td>
+<td>6,684</td>
+<td>40,000</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>94.17</td>
+<td>260.5</td>
+<td>333.7</td>
+<td>5,320</td>
+<td>564.774</td>
+<td>723.272</td>
+<td>1,339.03</td>
+<td>6,932</td>
+<td>40,000</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>90.13</td>
+<td>174.8</td>
+<td>734.1</td>
+<td>21,270</td>
+<td>1,621.49</td>
+<td>1,845.90</td>
+<td>3,434.26</td>
+<td>7,218</td>
+<td>59,377</td>
+<td>623</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>90.35</td>
+<td>341.6</td>
+<td>610.1</td>
+<td>27,490</td>
+<td>1,064.59</td>
+<td>1,380.42</td>
+<td>4,431.79</td>
+<td>8,005</td>
+<td>59,740</td>
+<td>260</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id4">
+<h2>最後に</h2>
+<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。<a class="reference external" href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
+<p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
+<p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
+</div>
+<hr class="docutils"/>
+<div class="section" id="id5">
+<h2>おまけ</h2>
+<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。`</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
+        </div></div><div class="archive_link">
+        <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
+    </div><ul class="related clearfix">
+            <li class="left"> &laquo; <a href="page9.html">Newer</a></li>
+            <li class="right"></li>
+        </ul></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
+        </li><li>
+            <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
+        </li><li>
+            <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
+        </li><li>
+            <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
+            <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
+        </li><li>
+            <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
+        </li><li>
+            <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
+        </li><li>
+            <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
+        </li><li>
+            <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
+        </li><li>
+            <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">posh</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><script type="text/javascript">    var disqus_shortname = "cloudmemo";    disqus_count();</script><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

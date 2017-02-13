@@ -5,8 +5,84 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Fri, 10 Feb 2017 00:00:00 +0900</pubDate>
+        <pubDate>Mon, 13 Feb 2017 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2017/02/13/psenv_tabexpansion.html</link>
+            <guid>http://kyrt.in/2017/02/13/psenv_tabexpansion.html</guid>
+            <title><![CDATA[PsEnv への TabExpansion の実装]]></title>
+            <description><![CDATA[<div class="section" id="psenv-tabexpansion">
+<h1>PsEnv への TabExpansion の実装</h1>
+<p>git-poshのコードを見ていたら、PowerShell 3.0 から導入された TabExtentionを使ってタブ補完を実装していた。<a class="footnote-reference" href="#r1" id="id1">[1]</a>仕組みはシンプルで便利な機能だったので、いつも使っているPsEnv<a class="footnote-reference" href="#r2" id="id2">[2]</a>に実装してみた。<a href="#id12"><span class="problematic" id="id13"><span id="id3"/>[#3]_</span></a>簡単なコードだが知らないテクニックが使われていて面白かったので軽く紹介。</p>
+<a class="reference external image-reference" href="https://flic.kr/p/tgGg8d"><img alt="Piccolo" class="align-center" src="https://c1.staticflickr.com/1/257/17899235534_5062afb52c_c.jpg"/></a>
+</div>
+<div class="section" id="tabextention">
+<h1>TabExtentionの基本</h1>
+<p>「コマンドラインで、タブを押したときに Function:TabExtention が呼ばれ、コマンドラインと最後のワードが渡される、TabExtention の関数で文字列の配列を返すとコマンドラインでは補完文字列として扱われる」</p>
+<p>基本、これだけなので、非常にシンプルでわかり易い。<a href="#id14"><span class="problematic" id="id15"><span id="id4"/>[#4]_</span></a>git-poshのコードを見ながら実装してみたら、こんな感じになった。</p>
+<script src="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140.js">&amp;amp;nbsp;</script></div>
+<div class="section" id="id5">
+<h1>コード解説</h1>
+<p><a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L33">L33</a>で現在のTabExpansionの関数をリネームして保存しておく、補完処理が自分と関係無い場合は、このコードにフォールバックする。（関数名を変更できるのは知らなかった）コールバックチェーンの実装方法の一つらしい。TabExpansion は、Globalな名前空間にExportされてるが、TabExpansionBackup はExportされておらず、名前が衝突する心配は無い。タブが押されると、<a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L37">L37 TabExpansion</a>関数が呼ばれる。正規表現で引っ掛けて、補完処理対象のコマンドラインなら<cite>PsEnvTabExpansion</cite>へ、その他は<cite>TabExpansionBackup</cite>へフォールバックする。</p>
+<p><a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L19">L19 PsEnvTabExpansion</a>は、コマンドラインのラストブロックを貰って、正規表現で引っ掛けて対象の補完文字列を返す。switch と正規表現を使うとスッキリ書けて気持ちいい。</p>
+</div>
+<div class="section" id="dynamicparam">
+<h1>DynamicParamとの比較</h1>
+<p>TabExtention では、仕組みがコマンドライン文字列のパターンマッチングなので PowerShell Cmdlet 以外のWin32 EXE などの補完も実装できる。PsEnvはCmdletなので、DynamicParamでも良かったかなという気もするが、実装を比べると.NETのクラス出まくりのDynamicParamに比べTabExtentionは綺麗に書ける。しかし、TabExpansion はGlobalなキー入力をフックするので下手に作るとキー入力のレスポンスが悪くなるという欠点がある。どっちも、デバックし辛いのは欠点。</p>
+</div>
+<div class="section" id="psevn">
+<h1>PsEvnの紹介</h1>
+<p>あまり知られていない気がするので、<a class="reference external" href="https://github.com/DuFace/PsEnv">PsEnv</a>の紹介を簡単に書いておく。Windowsでは環境変数の取り合いになって、うまく共存できない環境がママある。linuxや、Macだと、rubyや、pythonの仮想的に切り替える仕組みだけで足りたりするのだが、Windowsだと駄目だったり。cygwin, msys さらにそのバージョン違いでコンパイルされていたりして混ざって動かなくなったりすることがある。そのため、標準の環境変数はなるべくクリーンにしておいて環境によって必要な環境変数を設定するようにしている。PsEnvは環境変数を設定するのに便利なCmdletだ。</p>
+<p>使い方は、<a class="reference external" href="https://github.com/DuFace/PsEnv">PsEnv</a>を見てもらうとして、使ってる設定ファイル<a class="reference external" href="https://gist.github.com/takekazuomi/b6d8fd537e1a16adc62884b2f84d5e38">psenv.json</a>を参考までに上げておく。ゴミが多くて少々長い申し訳無い。</p>
+</div>
+<div class="section" id="id7">
+<h1>最後に</h1>
+<p>これを書いている途中で、TabExtention++ が、PSReadlineと同時に WMF5の標準機能として取り込まれている<a class="footnote-reference" href="#r5" id="id8">[5]</a>のを知った。共存しても問題無いのだろうか。このあたり<a class="footnote-reference" href="#r5" id="id9">[5]</a>には、PowerTab（？）対応のコードが入ってるので余計気になる。</p>
+</div>
+<div class="section" id="id10">
+<h1>参考</h1>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://github.com/dahlbyk/posh-git/blob/master/src/GitTabExpansion.ps1">posh-git/src/GitTabExpansion.ps1</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://winscript.jp/powershell/312">PsEnv A simple PowerShell module that allows specific tools to be added to the current environment by updating environment variables from a JSON file.</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><a class="reference external" href="https://github.com/DuFace/PsEnv/pull/2">Tab completion support of Use and Use-Tool options.</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td>公式ドキュメントが見つけられないかった。参考<a class="reference external" href="https://github.com/PowerShell/PowerShell-Docs/issues/747">Document TabExpansion and ArgumentCompleter #747</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> <a class="reference external" href="http://winscript.jp/powershell/312">第6回 PowerShell 勉強会「PowerShell 5.0 新機能と関連OSSのご紹介」資料公開</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[6]</td><td><a class="reference external" href="https://github.com/dahlbyk/posh-git/blob/master/src/GitTabExpansion.ps1#L377">PowerTab対策コード</a></td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+            <category><![CDATA[ posh ]]></category>
+             <pubDate>Mon, 13 Feb 2017 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2017/02/10/managed_disk_1.html</link>
             <guid>http://kyrt.in/2017/02/10/managed_disk_1.html</guid>
@@ -3184,7 +3260,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-85e94e0762f99534986dc1b67e3dfa4098d5c04f.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-85e94e0762f99534986dc1b67e3dfa4098d5c04f.png" width="600.0"/></a></div></div>
+<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-2fc8a90663c84fb158b8445eef960d1d2c9a4988.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-2fc8a90663c84fb158b8445eef960d1d2c9a4988.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>

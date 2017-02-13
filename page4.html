@@ -73,6 +73,46 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>January 18, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
+<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a>の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「<a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a>」でみっちり53分ほど、もうひとつは、「しばやん」のセッション(<a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a>) にちょっとお邪魔。</p>
+<p>しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。</p>
+<div class="section" id="id1">
+<h2>Persistence on Azure - Microsoft Azure の永続化</h2>
+<p>スライドは、SlideShareに公開しています。</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
+<p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
+<p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
+<p>榎本さんのセッション 「<a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a>」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
+<p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
+</div>
+<div class="section" id="id3">
+<h2>謝辞</h2>
+<p>榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。</p>
+<p>JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。</p>
+<p>参加者の皆様、ありがとうございました。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/session.html">Session</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/iaas.html">IaaS</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/goazure.html">GoAzure</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/01/18/goazure_2015.html#disqus_thread" data-disqus-identifier="2015/01/18/goazure_2015">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 02, 2014</span>
         </div>
         <div class="section">
@@ -642,175 +682,6 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2014/06/09/websites_gradle_git.html#disqus_thread" data-disqus-identifier="2014/06/09/websites_gradle_git">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>June 08, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/06/08/snowflake_c.html">スケーラブルな採番とsnowflake</a></h1>
-<p>snowflake は、Twitter 社が作成した、ユニークなID生成のネットワークサービスです。いくつかの簡単な保証で高いスケーラビリティを実現しています。Twitter 社が、MySQLから Cassandra に移行するにあたって、Cassandra にシーケンシャルな id 生成の仕組みが無かったことから作成したそうです。 snowflake については<a class="reference external" href="https://dev.twitter.com/docs/twitter-ids-json-and-snowflake">Twitter IDs, JSON and Snowflake</a>に書いてあります。</p>
-<p>snowflake のコードは、Apache License, Version 2.0 で<a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a>に公開されています。</p>
-<div class="section" id="id2">
-<h2>スケーラブルな採番、背景的な話</h2>
-<p>Cloudでスケーラビリティのあるサービスを見据えてコードを書いていると採番に関する問題が必ず出てきます。従来、RDBの自動採番などに頼っていたのがコスト、スケーラビリティ、耐障害性の観点から問題となり、別の方法を考える必要が出てくるというのが一般的です。</p>
-<p>「ID＝連番」という話なら始まると話が混乱するので、基本に返って採番の要件を整理するところから初めましょう。ざっと考えたところ4つほどの条件が出てきたので、この線で話を進めます。</p>
-<ol class="arabic simple">
-<li>ユニークである：重複が無い。これはIDをキーにしたいので当然ですね</li>
-<li>時系列で増えていく（または減っていく）：IDが生成される度に増加していくのは連番での重要な性質の一つです</li>
-<li>秒間の発行数：採番を一箇所で行わずに分散してスケールするのがスケールする</li>
-<li>連続性（連続した欠落の無い番号の生成）</li>
-</ol>
-<p>最後の連続性に関しては、スケーラビリティとパフォーマンスを両立させての実現は難しいでしょう。スケールと対象外性を考えて分散環境でID生成の度にどうしてもNode間でメッセージのやりとりをせざるを得ず、パフォーマンスを犠牲にせざる得ないので、今回は外して考えます。オンプレでも限定された条件下でのみ可能な採番ですね。</p>
-<p>これとは別に何処で採番するかという観点もあります。これは２つのパターンがあります。</p>
-<ol class="arabic simple">
-<li>Cluster Service  で採番</li>
-<li>クライアントで採番</li>
-</ol>
-<p>Cluster Service で採番するパターンとしては、memcached/Redis などの カウンター (incr command) を使ったり、storage を使った分散counterを使ったパターンが知られています。Snowfrakeもこの１種です。クライアントでの採番は、通信を伴わないので一番速い（コストが小さい）ですが制約もあります。</p>
-</div>
-<div class="section" id="id3">
-<h2>採番のユニーク性</h2>
-<p>採番と考えると最低限の要求は 「一意であること UNIQUENESS」でしょう。これには、発番した時にユニーク性を担保するか、永続化したときにユニーク性を担保するかの２つの選択肢があります。採番した時に一意性を担保するパターンとしては、<a class="reference external" href="http://ja.wikipedia.org/wiki/GUID">GUID</a>を使う方法よく知られています。ここでは、Guidを使う方法については深くふれません、<a class="reference external" href="http://blogs.msdn.com/b/oldnewthing/archive/2008/06/27/8659071.aspx">GUIDs are globally unique, but substrings of GUIDs aren’t</a>で面白い話が書いてあるんのでぜひ読んでみてください。（中には Snowflakeへのヒントになることも記述されています）</p>
-<p>GUIDは非常に手軽で便利ですが、128bit(longlong)でかなり長い。時系列で並ばないなどの問題があります。</p>
-</div>
-<div class="section" id="id4">
-<h2>永続化レイヤーでの一意性の担保</h2>
-<p>一方永続化したときにユニーク性を担保するという考えもあります。一意なIDを振出すのはコストが高いので、擬似的な（一意性を十分期待できる）IDを振り出して永続化して可否を判断して、ダメならもう一度やってみるというのが「永続化レイヤーでの一意性の担保」の基本的な考え方です。</p>
-<p>これは、永続化レイヤーが用意した限定された条件の下でユニーク制約を実装を利用することでユニーク性を担保するというアーキテクチャです。この場合は、「永続化レイヤーの制約」、「重複時の再試行」の２点を考慮しなければいけません。</p>
-<p>例えば、Azure Tableでは、同一パーテーション内のRow Keyは一意であることが保証されています。他のパーテーションでは同一のRowkeyを持つことができますが、同一パーテーション内同じRawkeyは Insert できません。</p>
-<p>この場合、Partition Key + Row Key でユニークになるので、ランダムなキーを生成して、TableにInsertできればそのパーテーション内ではユニークだと保証されるわけです。RDBのUniq制約でも同様です。Shareding されたデータベースでは、Inserできれば Shard内でユニークだという事になります。いずれも、Partition 内、 Shard 内という条件が付いていることに気を付けてください。永続化レイヤーによって異なった制約となりますが、分散システムではなんからの制約を伴うことが一般的です。</p>
-</div>
-<div class="section" id="id5">
-<h2>重複時の再試行</h2>
-<p>永続化レイヤーでUNIQ性を保証をする場合、「重複時の再試行」を前提としてください。クライアントがデータを永続化するまで、IDが有効かどうかわからないので、永続化した時に重複だった場合は再度IDを生成し直して処理を再試行する必要があります。</p>
-</div>
-<div class="section" id="id6">
-<h2>時系列で増減</h2>
-<p>IDがランダムではなく、時間と共に増加あるいは減少して欲しいことがあります。このようにIDが並んでいると、永続化レイヤーがレンジクエリーをサポートしていれば、前方一致で効率的に目的のデータを取得することができます。しかし時系列で増加するIDを発番しようとしてNodeのクロックを使うと信頼性が問題になります。</p>
-<p>通常、複数Nodeで発番した場合は同一時刻で複数のコードが動くのでIDが重複します。それ以外にもNode内でも問題があります。Nodeのクロックは、外部のtime service に同期させているので、ローカルの時刻は随時進んだり戻ったりします。そのため、時刻だけを元に単純に採番するとIDが重複します。これらの時刻の不安定性に起因する問題を Clock Skew （クロックスキュー）問題と言います。</p>
-<p>分散システムの問題の多くは、時刻の同期問題でもあり根が深いので、ここはスルーで先に行きます。</p>
-<p>これらの問題を回避するために、IDの一部にランダムな要素を付与する方法が一般的に使われています。</p>
-<p>例えば、下記のような感じ</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
-<span class="p">{</span>
-  <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
-  <span class="p">{</span>
-    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"{0:D19}_{1:D4}"</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">Ticks</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">Next</span><span class="p">(</span><span class="m">10000</span><span class="p">));</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>ここで発番しているのは擬似的なUNIQ性を持ったIDでです。最終的なUNIQ性の保証は別のレイヤーに預ける前提です。ランダム桁数は、衝突の頻度と衝突時の再試行のコストを鑑みて決定します。この例だと、4桁取っていますが、昨今のCPUだとシングルCoreで同一Tick内で2-3程度は発番できるようなので、100coreぐらいあれば、2*100/10000 = 1/50 となって、結構な頻度で衝突します。（この数字は結構いい加減なので参考程度で）</p>
-<p>順番を逆にしたい場合は、下記のようにします。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Hoge</span><span class="p">()</span>
-<span class="p">{</span>
-  <span class="kt">var</span> <span class="n">r</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Random</span><span class="p">();</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kt">var</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
-  <span class="p">{</span>
-    <span class="kt">var</span> <span class="n">id</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">"{0:D19}_{1:D3}"</span><span class="p">,</span> <span class="kt">long</span><span class="p">.</span><span class="n">MaxValue</span> <span class="p">-</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">Ticks</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">Next</span><span class="p">(</span><span class="m">1000</span><span class="p">));</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>こうすると、最新のものが最初にきます。先頭から指定行を取得するようなクエリーをサポートしている永続化レイヤーで最新の情報を取得する場合にはこの並びが便利に使えます。</p>
-</div>
-<div class="section" id="id7">
-<h2>秒間の発行数</h2>
-<p>秒間どれぐらいの数のIDを生成可能なのかも重要なファクターです。一般的にオンメモリで計算のみで発番するものが一番速く、永続化付きKVS、RDBMSの順の速度になります。</p>
-<p>ID生成はクラスターで行って、分散することでスケールするというのは基本的な考え方で、その場合ID生成クラスターのNodeコストが問題となります。一般的にメモリーで計算のみで発番するものはIDのユニーク性と耐障害性の両立が難しく、なんからの永続化をすることで問題を回避するという方法が取られる場合が多いようです。RDBはID生成を目的としてクラスター化するにはコスト高いのが問題となると思います。</p>
-<p>クライアントで擬似的なUNIQ IDを生成して、永続化時に担保させるという方法はリーズナブルにスケールする方法だと言えます。</p>
-</div>
-<div class="section" id="id8">
-<h2>Snowflake</h2>
-<p>Clock Skew に上手く対応することで、オンメモリの計算と最低限のノード間通信でUNIQなIDを生成する仕組みです。永続化レイヤーの支援無しにUNIQなIDが生成できる、オンメモリなので速い（10k ids per second per process<a class="reference external" href="https://github.com/twitter/snowflake/">Snowflake</a>）というのが特徴です。</p>
-<p>ある意味GUIDと似ているのですが、64bit(long) で実現しているところ、おおよそ時系列で増えていく「(Roughly) Time Ordered」なことが異なっています。</p>
-</div>
-<div class="section" id="id10">
-<h2>データ構造</h2>
-<p>snowfake では、64bitを下記のように分割して使います。timeが時間由来の数字でミリ秒単位です。machine id は、datacenter id と、worker idで構成されていて、Cluster内のNode固有の値になります。sequence number は、同一時間（timeが同じ）間にカウントアップされていく連番です。</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="1%"/>
-<col width="16%"/>
-<col width="29%"/>
-<col width="23%"/>
-<col width="30%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="5">64 bits</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td rowspan="2">0</td>
-<td rowspan="2"><dl class="first last docutils">
-<dt>time</dt>
-<dd>41 bit</dd>
-</dl>
-</td>
-<td colspan="2">machine id 10bit</td>
-<td rowspan="2"><dl class="first last docutils">
-<dt>sequence number</dt>
-<dd>12bit</dd>
-</dl>
-</td>
-</tr>
-<tr class="row-odd"><td>datacenter id 5bit</td>
-<td>worker id 5bit</td>
-</tr>
-</tbody>
-</table>
-<p>前記の時間ベースのID生成と比較すると、IDにNode固有の番号（machine id）が含まれている、同一時間内の採番では乱数ではなくカウンターを使って重複を避けていることが異なっているのがわかります。</p>
-<p>実は、この構成は GUID V1と似ています。GUID V1 は、 timestamp 60 bits、computer identifier (MAC Address) 48 bits、uniquifier (乱数＋シーケンス）14 bits、fixed （）バージョン等） 6 bits から構成されています。全体的にGUIDの方がBitの使い方がリッチで余裕がある構成です。データは、DWORD-WORD-WORD-WORD-BYTE[8] として扱われます。Endian の問題もあってtimestamp由来なのに時系列で並びません。timestampは、100 ns 単位です。</p>
-<p>snowflake は、GUIDを64 bits (正確には最上位が0固定のなので63 bits）に押し込んでUNIQ性を確保しています。</p>
-<p>ではどうやって64bitに押し込んでいるのでしょう。</p>
-<ol class="arabic simple">
-<li>範囲の制限: 簡単に言うと、GUIDは グローバルにUNIQだけど、snowflakeは発番体系内でUNIQです。別のサービスで使っている snowflake clusterと比較するとUNIQ性は保証されません。ここは大きな違いですが、別サービスとIDが被るのは問題無いので、実用上は制限にはなりません。これで、MAC Address 48 bits の所を10 bits に押し込めています。</li>
-<li>timestampの精度と範囲: GUIDは、100 ns 、snowflakeは、1 ms です。timestamp の精度を下げ、開始時間（0の時の日時、何時からの時間なのか）をサービス開始時などに合わせることで、timerのラップアラウンドの問題を軽減しています。(2^41)*(10^-3)/60/60/24/365 で約69年持ちます。ちなみにGUIDは、(2^60)*(10^-7)/60/60/24/365 で3655年以上持ちます。開始は、1582/10/15 0:00 です（3千年以上もつの開始はあまり重要じゃないですね）69年保てば問題無い気がしますね。これで、41 bitsにしています</li>
-</ol>
-</div>
-<div class="section" id="id11">
-<h2>ソースコード上での工夫</h2>
-<p>なかなか興味深かったので、<a class="reference external" href="https://github.com/twitter/snowflake/blob/master/src/main/scala/com/twitter/service/snowflake/IdWorker.scala">IdWorker.scala</a>をC#で写経してみました。（scala が非常に分かりやすくて感動しました）</p>
-<script src="https://gist.github.com/takekazuomi/9571376.js">&amp;amp;nbsp;</script><p>基本的な流れは、非常にシンブルです。</p>
-<p>NextId()をざっと見てみましょう。</p>
-<ol class="arabic simple">
-<li>現在のtimestamp を取得<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L60">L60</a></li>
-<li>最後に発番してからtimestampが戻っていないか確認<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L63">L63</a></li>
-<li>巻き戻っていればエラーで帰る（呼び出し側が再試行する）<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L66">L66</a></li>
-<li>同一timestampなら、_sequence をインクリメントして採番<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L72">L72</a></li>
-<li>timestamp が進んでいれば、_sequence = 0で採番<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L82">L82</a></li>
-</ol>
-<p>この他は、下記のコードがポイントです。</p>
-<p>timestampの開始時間を、採番開始時間にオフセットさせる<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L87">L87</a></p>
-<p>同一 timestamp 内で、_sequence がオーバーフローした場合は、timestampが変わるまで待つ<a class="reference external" href="https://gist.github.com/takekazuomi/9571376#file-idworker-cs-L75">L75</a></p>
-<p>この他に、Worker Idの管理には、zookeeper を使っているなど興味深いところはありますが、今回はこの辺でまとめます。</p>
-</div>
-<div class="section" id="id12">
-<h2>最後に</h2>
-<p>実は、この記事を書いている途中に、<a class="reference external" href="http://global.windowsazurebootcamp.com/">Global Microsoft Azure Bootcamp 2014</a>があり、このネタで発表してしまったので長らくお蔵入りしていました。読み直してみたら、セッションでは時間の都合で話をしなかった内容もあり、それなりに役に立つかなと思ったので公開します。肝心のsnowflake の採番が速い理由が書いてありませんが、採番node間の通信が最低限で（生きているかどうか）、重複採番の防止にしか使われていないのが、一番効いている気がします。</p>
-<p>合わせて、セッション資料も御覧ください。</p>
-<iframe src="http://www.slideshare.net/slideshow/embed_code/32853065" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/20140329-jazug-gwabgeenerating-unique-id-numbers-in-cloud">Generating unique id numbers in Azure</a></p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/code.html">Code</a>, <a href="tags/snowflake.html">snowflake</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/06/08/snowflake_c.html#disqus_thread" data-disqus-identifier="2014/06/08/snowflake_c">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -819,6 +690,8 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
+        </li><li>
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
         </li><li>
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
@@ -836,13 +709,11 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
         </li><li>
             <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
-        </li><li>
-            <a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (31)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">posh</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
