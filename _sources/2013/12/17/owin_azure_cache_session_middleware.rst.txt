@@ -51,7 +51,7 @@ OWIN Middleware Azure Cache Session
 OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。
 
 .. seqdiag::
-   :maxwidth: 600
+   :width: 600
 
    diagram {
      default_fontsize = 20;
@@ -75,7 +75,7 @@ nugetから必要なパッケージを入れる
 
 .. code-block:: bash
 
-   install-package Microsoft.Owin.Hosting 
+   install-package Microsoft.Owin.Hosting
    install-package Microsoft.Owin.Host.HttpListener
    install-package Microsoft.Owin.Diagnostics
    install-Package Owin.Extensions
@@ -124,7 +124,7 @@ App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover �
 
 OWIN Middleware用のプロジェクトを追加する
 -----------------------------------------
-今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 `Owin.Middleware project <https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware>`_ 
+今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。 `Owin.Middleware project <https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware>`_
 必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。
 
 .. code-block:: bash
@@ -136,7 +136,7 @@ OWIN Middleware用のプロジェクトを追加する
 
 Azrue Cache Middleware
 -----------------------------------------
-OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 [#r3]_ 
+OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。 [#r3]_
 
 
 .. literalinclude:: AzureCacheMiddleware.cs
@@ -149,12 +149,12 @@ Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次�
 .. literalinclude:: AzureCacheOptions.cs
    :language: c#
 
-| 
+|
 
 .. literalinclude:: AzureCacheExtensions.cs
    :language: c#
 
-| 
+|
 
 Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。
 
@@ -173,10 +173,10 @@ Session Middlewareは、Invoke前処理でCacheからのSessionの復元とRespo
 
 まとめ
 ======
-OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。 
+OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してくれる。Middlewareのinvoke chain の仕組みと拡張可能なEnvironmetはシンプルだた強力だ。
 `katanaproject.codeplex.com <http://katanaproject.codeplex.com/>`_ を見ると認証系、View Engine、Compressionなどのmiddlewareが散見され、それぞれのコードは興味深い。ただ、現時点ではアプリケーションの構築プラットフォームとして使うには道具立てが足りないようだ。でも今回のようにAzure Cache Session Provider などを書いてみると、パフォーマンス的な問題や実装上の課題などが見えてきてなかなか勉強になるし、ブレイクスルーできるような点も見えてくる。少々フロンティア的な色が強いが挑戦する価値のある分野だと思う。
 
-| 
+|
 
 .. [#r1] `Server Scripts, by Rob McCool, www-talk mailing list, Sun, 14 Nov 1993 <http://en.wikipedia.org/wiki/Common_Gateway_Interface#cite_note-1>`_
 
@@ -189,6 +189,3 @@ OWINは、シンプルで柔軟なHTTP 抽象化レイヤーを提供してく�
 .. categories:: Azure, OWIN
 .. tags:: Azure, Azure Cache, Cache, OWIN, Session
 .. comments::
-
-
-

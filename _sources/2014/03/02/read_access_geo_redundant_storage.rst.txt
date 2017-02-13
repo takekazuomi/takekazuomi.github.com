@@ -10,12 +10,12 @@ FiddlerCoreでRead-Access Geo Redundant Storage を検証する
 
  | Azure Storageの可用性設定（冗長構成）には3種類ある。
 
-1. ローカル冗長ストレージ (LRS=Locally Redundant Storage) 
+1. ローカル冗長ストレージ (LRS=Locally Redundant Storage)
    データセンター内3箇所、同期
 
 2. 地理冗長ストレージ (GRS=Geo Redundant Storage)
    地理的に離れた場所への複製（Local 3箇所＋リモート3箇所）、リモートは非同期、フェイルオーバー
-  
+
 3. 読み取りアクセス地理冗長ストレージ (RA-GRS=Read Access - Geo Redundant Storage)　PREVIEW
    地理的に離れた場所にあるデータを読む機能
 
@@ -36,7 +36,7 @@ RA-GRSの新機能を使うには REST version 2013-08-15 を使うStorage SDK�
 
 .. raw:: html
 
-   <iframe src="http://www.slideshare.net/slideshow/embed_code/31655208?startSlide=2" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;"> </iframe> 
+   <iframe src="http://www.slideshare.net/slideshow/embed_code/31655208?startSlide=2" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;"> </iframe>
 
 `RA-GRS Windows Azure Storage LT <http://www.slideshare.net/takekazuomi/20140226-ragrs-windows-azure-storage-lt>`_
 
@@ -68,7 +68,8 @@ http://www.telerik.com/fiddler/fiddlercore
 
 .. image:: 2014-03-02-ragrs002.png
 
-|
+
+
 今回読み込みアクセスを試したいので、予めBlob にファイルを上げて起きます。
 
 Blobからのダウンロードのコードは下記のような感じです。CloudBlobClient の LocationModeを設定しています。Client全体の設定はここで書き、ここのリクエストでは、BlobRequestOptionsで設定します。それ以外は普通のBlobからDownloadするコードですね。
@@ -106,7 +107,7 @@ Primary へのアクセスが ``502 Bad Gateway`` なのはちょっとイマイ
 
 まとめ
 ======
-実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 `GitHub azure-storage-net HttpMangler.cs <https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs>`_ 
+実は、FeddlerCoreは、Azure Storage ClientのUnit Testでも使われています。 `GitHub azure-storage-net HttpMangler.cs <https://github.com/WindowsAzure/azure-storage-net/blob/master/Test/FaultInjection/HttpMangler/HttpMangler.cs>`_
 今回は非常に簡単な例を紹介しましたが、FeddlerCoreを使うとレスポンスを偽装したり変更したりなど柔軟にできて、通常エラーにならないような場合のテストケースを作ることができます。手軽に使えるのでカジュアルに使っても便利ですし、がっちりUnitTestを作るときにも役に立ちます。
 
 `CLR/H in Tokyo 第1回 <http://clr-h.jp/>`_ はいろいろ知らないことを聴けたので面白かったですね。特に、技術者のブランディング戦略の重要性と独自の進化を遂げたプロビジョニング、構成管理ツールの話が秀逸だった。
@@ -118,5 +119,3 @@ Primary へのアクセスが ``502 Bad Gateway`` なのはちょっとイマイ
 .. categories:: Azure Storage, Azure
 .. tags:: Azure Blob, Blob, Storage, How-to, Fiddler, Debug
 .. comments::
-
-

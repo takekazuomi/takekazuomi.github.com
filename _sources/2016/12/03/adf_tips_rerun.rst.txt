@@ -86,6 +86,6 @@ Azure PowerShellを使っていると、PowerShellのオブジェクトパイプ
 
 
 .. author:: default
-.. categories:: none
+.. categories:: DataFactory
 .. tags:: none
 .. comments::

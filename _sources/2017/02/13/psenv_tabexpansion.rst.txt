@@ -45,12 +45,12 @@ PsEvnの紹介
 .. [#r1] `posh-git/src/GitTabExpansion.ps1 <https://github.com/dahlbyk/posh-git/blob/master/src/GitTabExpansion.ps1>`_
 .. [#r2] `PsEnv A simple PowerShell module that allows specific tools to be added to the current environment by updating environment variables from a JSON file. <http://winscript.jp/powershell/312>`_
 .. [#r3] `Tab completion support of Use and Use-Tool options.  <https://github.com/DuFace/PsEnv/pull/2>`_
-.. [#r4] 公式ドキュメントが見つけられないかった。参考 `Document TabExpansion and ArgumentCompleter #747 <https://github.com/PowerShell/PowerShell-Docs/issues/747>`_
+.. [#r4] 公式ドキュメントが見つけられないかった。参考 `Document TabExpansion and ArgumentCompleter #747 <https://github.com/PowerShell/PowerShell-Docs/issues/747>`_  これかな？ `The new TabExpansion feature… <https://blogs.msdn.microsoft.com/powershell/2006/04/26/the-new-tabexpansion-feature/>`_
 .. [#r5] `第6回 PowerShell 勉強会「PowerShell 5.0 新機能と関連OSSのご紹介」資料公開 <http://winscript.jp/powershell/312>`_
 .. [#r6] `PowerTab対策コード <https://github.com/dahlbyk/posh-git/blob/master/src/GitTabExpansion.ps1#L377>`_
 
 
 .. author:: default
-.. categories:: posh
+.. categories:: powershell
 .. tags:: none
 .. comments::

@@ -101,6 +101,6 @@ PowerShellGallery には、3.5 が出ていると教えてもらいました。�
 
 
 .. author:: default
-.. categories:: none
-.. tags:: none
+.. categories:: Azure
+.. tags:: ManagedDisk
 .. comments::

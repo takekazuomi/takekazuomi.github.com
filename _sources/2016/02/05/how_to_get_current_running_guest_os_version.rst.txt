@@ -55,6 +55,6 @@ Azure PowerShell Team オープンですね！  **素晴らしい**
 
 
 .. author:: default
-.. categories:: Azure PowerShell
+.. categories:: Azure PowerShell, PowerShell
 .. tags:: none
 .. comments::

@@ -5,7 +5,7 @@ httpsを実装する話にもっていく
 
 
 .. blockdiag::
-   :maxwidth: 600
+   :width: 600
 
    blockdiag {
       node_height = 80;
@@ -14,7 +14,7 @@ httpsを実装する話にもっていく
       lb [label="Azure\nLB"];
       iis [label="IIS\nARRB"];
       jvm [label="Java\nServer"]
-   
+
       internet -> lb;
       lb -> iis;
       iis -> jvm;
