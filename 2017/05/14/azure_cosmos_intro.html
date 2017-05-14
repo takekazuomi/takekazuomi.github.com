@@ -1,0 +1,463 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>Azure Cosmos DB がやってきた &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="PsEnv への TabExpansion の実装" href="../../02/13/psenv_tabexpansion.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="Azure Cosmos DB がやってきた &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/2017/05/14/azure_cosmos_intro.html" />
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+        </li>
+        </ul>
+      <ul>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li>
+        <li class="mvp-nav">
+	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>May 14, 2017</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="azure-cosmos-db">
+<h1>Azure Cosmos DB がやってきた</h1>
+<p>DocumentDB の記事を書いていたら、//Build 2017で、Azure Cosmos DB が発表<a class="footnote-reference" href="#ref1" id="id1">[1]</a>された。 Cosmos DBは、Multi-model database and multi-APIのGlobally Distributed データベース・サービスだ！</p>
+<img alt="Azure Cosmos DB in KeyNote" class="align-center" src="../../../_images/keynote01.png" />
+<p>「DocumentDB何処行った、名前が変わったの？」と思ったら、そんなに簡単な話では無かった、Azure Cosmos DBは、DocumentDB、MongoDB, Azure Table,Gremlin などの複数のAPIをサポートしたマルチモデルの分散データベース[#ref2]_で Document DBはそのAPIの一つという位置づけになったらしい。従来の Document DBで使ってた分散データベース基盤の部分は、ある程度汎用的に出来ていてJSON以外のデータモデルも扱え、今回はKey-Value と GraphのデータモデルにAPIを付けてブランディングも新たにお披露目したよという話だった。素晴らしい。</p>
+<p>ざっくりまとめると、こんな感じになってる。Cosmos 分散データベース基盤に、データモデルが乗って、個々にAPIを提供するといった感じだ。AzureTable, Gremlin は、Previewで既に試すことができるが、Splark は、アナウンスだけ、DocumentDBとMongoDB APIはGAのままだ。この２つがGAのままなのは、Cosmos DBになっても基本的な実装は同じだからだろう。</p>
+<img alt="Azure Cosmos DB in KeyNote" class="align-center" src="../../../_images/pic01.png" />
+</div>
+<div class="section" id="breakout-session">
+<h1>Breakout Session</h1>
+<p>//Build 2017のCosmos DBの2つのBreakout Session、B8047<a class="footnote-reference" href="#ref3" id="id2">[3]</a>と、T6058<a class="footnote-reference" href="#ref4" id="id3">[4]</a>では、もう少し詳細に触れられている。その中でも興味深いのは、B8047 のTable APIの下りだ（動画だと35:50あたり<a class="footnote-reference" href="#ref5" id="id4">[5]</a>）。  超訳すると。</p>
+<blockquote>
+<div>Cosmos DB に、既存のTable Storage（以下Standard Storage)互換のTable API（以下Premium Table）を実装した。もう、Premium Table SDK<a class="footnote-reference" href="#ref6" id="id5">[6]</a>をダウンロードして試せる。アプリケーションの変更は必要ない（SDKでを切り替えるだけ）で、ローレイテンシー、5つの一貫性、グローバルディストリビューション、セカンダリーインデックス等、数々のCosmos DBの特性が得られる。</div></blockquote>
+<img alt="Table API in Azure Cosmos DB" class="align-center" src="../../../_images/B8047-02.png" />
+<p>特に重要なのは、これに続く部分だ。</p>
+<blockquote>
+<div>現在「storage optimized offer」に向けて作業中、現在の Cosmos DB は、スループットの最適化、ローレイテンシーなどのpremium experience にフォーカスしているが、hot work load 以外の場合でも選択肢にできるように取り組んでいる。</div></blockquote>
+<p>現在のCosmos DB（旧DocumentDB）の料金体系は、基本hot work load向けだ。アクセス頻度が低いデータが多くなってくるとAzure Storageとのコスト差がどんどん大きくなっていく。データ全体の中で一部だけのアクセス頻度が高く、殆どのデータはアクセス頻度が低い場合は、Cosmos DBだけでなく、なんからの外部データストアとの連繫を検討する必要がある。これは特に、Standard Table（これからは、Azure Table StorageのことはStandard Tableと呼ぼう）からの移行を考えた時に重要な検討課題だろう。それがうまく解決できるなら、かなり有り難い。</p>
+</div>
+<div class="section" id="blog">
+<h1>同時に公開されたBlogから</h1>
+<p>Cosmos DBも発表共に公開されたBlogもなかなか面白い。<strong>Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</strong><a class="footnote-reference" href="#ref7" id="id6">[7]</a>の A Brief History of Cosmosには簡単なCosmos DBの歴史が書いてあった。それによると、</p>
+<blockquote>
+<div>Azure Cosmos DBは、2010年に「Project Florence」で開始、グローバルディストリビューションの課題を解決するためにMSの社内で使っていたが、他の皆にも役に立つと思って、2015年にAzure DocumentDBの形でこのテクノロジの第1世代を利用できるようにした。</div></blockquote>
+<p>云々だそうだ。世界中で展開するサービスの下りをみて連想したのは、AzurePortal。「最近ポータルが速くなってきてるのはエンドポイントを日本に持ってきたからかな、でもUSのリソースも普通に操作できるしどうなっているのだろう」と思っていたが。こんな仕組みがあれば実装イメージが湧いてくる。実際のところはどうなっているかはわからないが。なかなか興味深い。</p>
+<p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id7">[8]</a>に、LeslieLamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id8">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id9">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
+<p>この記事には、Azure Cosmos DBのデータベースエンジンの中身についても少し書いてあった。以下超訳</p>
+<blockquote>
+<div>Azure Cosmos DBのデータベースエンジンのコアタイプシステムは、汎用的にどのようなデータにも対応するatom-record-sequence (ARS)と呼ばれる構造となっている。Atomは、文字列、論理型、数値などのprimitive型、recordは構造体、sequence はatom、record、sequenceの配列である。また、Azure Cosmos DBのデータベースエンジンは、JSONなどのAPIが利用するデータモデルとARSベースのコアデータモデルの効率的な変換と投影を実装し、動的型付き言語（dynamically typed programming languages）からコアデータモデルへのネイティブアクセスをサポートする。このデータベースエンジンを使うことで、Cosmos DBのAPIは、battle-tested でフルマネージドな、グローバル分散型データベースシステムのすべての利点を得ることができる。</div></blockquote>
+<p>ARSは、プリミティブ型を単純に並べただけの構造なのでJSONをそのまま保存するよりは効率は良いだろうし、別のデータモデルを実装し易いだろう。このような構成で、データベースとしての基本的な部分、整合性、リプリケーション、バックアップなどは共通の仕組みが使えるというわけだ。</p>
+</div>
+<div class="section" id="premium-table">
+<h1>Premium Tableの現況</h1>
+<p>大分長くなってしまったので、最後に、Premium Tableをちょっと動かしてみた感想を書いて終わりにする。</p>
+<p>GitHubに、<strong>Getting started with Azure Cosmos DB: Table API</strong><a class="footnote-reference" href="#ref11" id="id10">[11]</a>というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。</p>
+<table border="1" class="docutils" id="id22">
+<caption><span class="caption-text">Premium/Standard Table のレイテンシー</span></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Title</th>
+<th class="head">操作</th>
+<th class="head">p0</th>
+<th class="head">p50</th>
+<th class="head">p90</th>
+<th class="head">p99</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Premium</td>
+<td>作成</td>
+<td>5.2</td>
+<td>7.2</td>
+<td>9.0</td>
+<td>13.0</td>
+</tr>
+<tr class="row-odd"><td>Standard</td>
+<td>作成</td>
+<td>4.2</td>
+<td>11.9</td>
+<td>20.7</td>
+<td>26.2</td>
+</tr>
+<tr class="row-even"><td>S/P 比</td>
+<td>&#160;</td>
+<td>81%</td>
+<td>164%</td>
+<td>229%</td>
+<td>201%</td>
+</tr>
+<tr class="row-odd"><td>Premium</td>
+<td>ID検索</td>
+<td>1.3</td>
+<td>2.0</td>
+<td>3.2</td>
+<td>5.7</td>
+</tr>
+<tr class="row-even"><td>Standard</td>
+<td>ID検索</td>
+<td>2.4</td>
+<td>3.4</td>
+<td>5.2</td>
+<td>11.2</td>
+</tr>
+<tr class="row-odd"><td>S/P 比</td>
+<td>&#160;</td>
+<td>184%</td>
+<td>170%</td>
+<td>162%</td>
+<td>197%</td>
+</tr>
+<tr class="row-even"><td>Premium</td>
+<td>プロパティ検索</td>
+<td>2.9</td>
+<td>4.8</td>
+<td>6.9</td>
+<td>10.8</td>
+</tr>
+<tr class="row-odd"><td>Standard</td>
+<td>プロパティ検索</td>
+<td>49.4</td>
+<td>55.7</td>
+<td>67.0</td>
+<td>78.3</td>
+</tr>
+<tr class="row-even"><td>S/P 比</td>
+<td>&#160;</td>
+<td>1683%</td>
+<td>1166%</td>
+<td>965%</td>
+<td>726%</td>
+</tr>
+<tr class="row-odd"><td>Premium</td>
+<td>置換</td>
+<td>5.0</td>
+<td>7.6</td>
+<td>9.3</td>
+<td>13.2</td>
+</tr>
+<tr class="row-even"><td>Standard</td>
+<td>置換</td>
+<td>4.7</td>
+<td>12.2</td>
+<td>20.6</td>
+<td>25.4</td>
+</tr>
+<tr class="row-odd"><td>S/P 比</td>
+<td>&#160;</td>
+<td>94%</td>
+<td>161%</td>
+<td>221%</td>
+<td>192%</td>
+</tr>
+<tr class="row-even"><td>Premium</td>
+<td>削除</td>
+<td>4.5</td>
+<td>6.0</td>
+<td>7.2</td>
+<td>9.4</td>
+</tr>
+<tr class="row-odd"><td>Standard</td>
+<td>削除</td>
+<td>2.8</td>
+<td>3.6</td>
+<td>4.9</td>
+<td>10.0</td>
+</tr>
+<tr class="row-even"><td>S/P 比</td>
+<td>&#160;</td>
+<td>62%</td>
+<td>60%</td>
+<td>68%</td>
+<td>106%</td>
+</tr>
+</tbody>
+</table>
+<p>１万エンティティで１度だけしか測っていないので、数値の絶対値は参考程度にしかならない。注意して欲しい。それでも傾向ぐらいはわかる。</p>
+<p>ID検索の部分が、パーテーションキー、ローキーによる検索。プロパティ検索は、Standard Tableだとインデックスの効かずにフルスキャンになるが、Premium Tableでは全てのプロパティに自動的にインデックスが作成されるので、この場合もインデックスが利用される。</p>
+<p>全体的な傾向を見ると、50パーセンタイルでは、プロパティ検索以外は、Premium が1.5から1.6倍程度Premiumが速い。セカンダリーインデックスの効果は絶大で10倍以上Premiumが速くなる。データ件数が多くなればさらに差が出るだろう。</p>
+<p>99パーセンタイルでは、2つの差は広がり、2倍程度の差になる。今回は件数が少ないので、この程度の差になったが、件数を増やして調査時間を長くすれば差は大きくなると思われる。数字だけ見ると、Standard Tableが意外と奮戦している、前に調べて時より少し速くなっているようだ。Premium Tableはまだプレビューという点を差し引いても、一貫してレイテンシーが低いというのは魅力的だ。セカンダリーインデックスを更新する分、更新系は不利なはずだが、それでもStandardより速いのも今後が期待できる。</p>
+<p>総じて、Premiumが速く、特にセカンダリーインデックスが効くと劇的に速くなる。全体的にPremiumのレイテンシーはバラツキが小さく一貫してレイテンシーが低いのは好印象だ。</p>
+</div>
+<div class="section" id="premium-table-sdk">
+<h1>Premium Table SDK</h1>
+<p>サンプルコードを見ると、PremiumとStandardの切替は接続文字列<a class="footnote-reference" href="#ref12" id="id11">[12]</a>だけだ。では、Consistencyや接続モードの設定をどうやってやるのかと言うと、現状では、AppSettings に書く<a class="footnote-reference" href="#ref13" id="id12">[13]</a>。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。</p>
+<table border="1" class="docutils" id="id23">
+<caption><span class="caption-text">AppSettings での設定項目</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">設定名</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>TableConnectionMode</td>
+</tr>
+<tr class="row-odd"><td>TableConnectionProtocol</td>
+</tr>
+<tr class="row-even"><td>TableConsistencyLevel</td>
+</tr>
+<tr class="row-odd"><td>TableDisableRUPerMinuteUsage</td>
+</tr>
+<tr class="row-even"><td>TableIndexingPolicy</td>
+</tr>
+<tr class="row-odd"><td>TableIsRUPerMinuteEnabled</td>
+</tr>
+<tr class="row-even"><td>TableMaxConnectionLimit</td>
+</tr>
+<tr class="row-odd"><td>TablePreferredLocations</td>
+</tr>
+<tr class="row-even"><td>TableQueryContinuationTokenLimitInKb</td>
+</tr>
+<tr class="row-odd"><td>TableQueryEnableScan</td>
+</tr>
+<tr class="row-even"><td>TableQueryMaxDegreeOfParallelism</td>
+</tr>
+<tr class="row-odd"><td>TableQueryMaxItemCount</td>
+</tr>
+<tr class="row-even"><td>TableThroughput</td>
+</tr>
+</tbody>
+</table>
+<p>現在のSDKだと、スロットリングがかかったときのリトライのハンドリングが怪しいようだ。それにサンプルコードではスロットリングエラーになった場合の処理が考慮されていない。そのため今回の測定ではスロットリングがかからないようなRU/秒になるように2000を設定した。</p>
+<p>AppSettingの設定からも言えることは、Premium Tableに最適化したコードが必要な場合は、そのためのコードが必要になるということだ。例えば、レスポンスヘッダーのRequestChargeを見てアプリケーションで消費RUを制御するなどのコードはスロットリングの仕組みが違うので、Standard Tableとは互換性が無い。どこまで、SDKで吸収できるのかは課題だろうが、プロダクションコードでは、ある程度アプリケーション側で対応する必要があるだろう。</p>
+<p>Fidderで通信を覗いてみたところ、Premium Table SDKは、Premiumに繋ぐときは、x-ms-version: 2017-02-22 を、Standardのときは、x-ms-version: 2016-05-31 を使ってた。Premium の場合は、パーテーションマップの取得など、DocumentDBでお馴染みのやつが最初に入るなど、wired protocal としては全く互換性が無い別プロトコルだ。エンティティの作成も、今のStandardではレスポンスは空になるが、Premiumではしっかり中身が入っている。</p>
+<p>リクエストとレスポンスはこんな感じだ</p>
+<script src="https://gist.github.com/takekazuomi/f7ad2f152fb546113ba8114a9de19dcc.js">&nbsp;</script><p>ちょっと見 DocumentDBとウリ2つだ。Premium Table SDK が、DocumentDB Client SDK を参照しているし、実際の通信はDocumentDBと同じプロトコルを使っているのだろう。このままGAになるかどうかは分からないが、この仕組だと既存のStandard Table Storage向けのライブラリは作り直す必要がある。最初に聞いたときは、REST APIレベルで互換なのかと思ったので、ちょっと肩透かしだ。しかし、パフォーマンスを考えた場合、今のStandardのREST APIよりDocumentDB形式の方が将来性がある気もする。なかなか面白いアプローチではある。</p>
+</div>
+<div class="section" id="id13">
+<h1>まとめ</h1>
+<p>つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047<a class="footnote-reference" href="#ref5" id="id14">[5]</a>の話を聞いて、今はとても期待している。</p>
+<p>今の気分は、「Cosmos DBはいいぞ」と言う感じだ。</p>
+</div>
+<div class="section" id="id15">
+<h1>脚注</h1>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h22m26s">[1:22:26]</a>Azure Cosmos DB Introduction</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h27m20s">[1:27:20]</a>Rimma Nehme, Azure Cosmos DB demonstration</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[3]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047">B8047 How to build globally-distributed, fast, billion-user applications with Azure Cosmos DB</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[4]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/T6058">T6058 Azure Cosmos DB: NoSQL capabilities everyone should know about</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id14">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s">[0:35:50]</a>B8047 のTable APIの部分</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[6]</a></td><td><a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage-PremiumTable/0.1.0-preview">Premium Table SDK</a>ソースは未公開</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[7]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/azure-cosmos-db-microsofts-globally-distributed-multi-model-database-service/">Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[8]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/a-technical-overview-of-azure-cosmos-db/">A technical overview of Azure Cosmos DB</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[9]</a></td><td><a class="reference external" href="https://www.youtube.com/watch?v=L_PPKyAsR3w">Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long</a>レスリー ランポート先生のインタビュー、お勧めです。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[10]</a></td><td><a class="reference external" href="https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract">How Amazon Web Services Uses Formal Methods</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[11]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started">Getting started with Azure Cosmos DB: Table API</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref12" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[12]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24">接続文字列の切替部分</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[13]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14">AppSettingsでの設定箇所</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id21">
+<h1>その他の参考リンク</h1>
+<ul class="simple">
+<li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8118">B8118 How to run massively scaling mobile games on Microsoft Azure</a></li>
+<li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/P4011">P4011 Azure Cosmos DB: API for MongoDB</a></li>
+<li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/P4012">P4012 Azure Cosmos DB: Build planet scale mobile apps in minutes</a></li>
+<li><a class="reference external" href="http:/aka.ms/tla">TLA+</a>TLA+については、こちら。入門的な解説の動画から用意されてる。</li>
+</ul>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/cosmos_db.html">Cosmos DB</a>, <a href="../../../categories/azure.html">Azure</a>, <a href="../../../categories/azure_table.html">Azure Table</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="../../../tags/table.html">Table</a>, <a href="../../../tags/premiumtable.html">PremiumTable</a>, <a href="../../../tags/build2017.html">Build2017</a></span>
+        </div>
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2017/05/14/azure_cosmos_intro";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2017/05/14/azure_cosmos_intro";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="#">Azure Cosmos DB がやってきた</a>
+        </li><li>
+            <a href="../../02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
+        </li><li>
+            <a href="../../02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
+        </li><li>
+            <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
+        </li><li>
+            <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
+            <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
+        </li><li>
+            <a href="../../../2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
+        </li><li>
+            <a href="../../../2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
+        </li><li>
+            <a href="../../../2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
+        </li><li>
+            <a href="../../../2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (33)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (2)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/powershell.html">powershell</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (1)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="../../../categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure Powershell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/powershell.html">Powershell</a> (2), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

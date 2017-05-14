@@ -34,7 +34,7 @@ Azure Batch Account
 
 SDK
 ---
-``Bach`` では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け  `Batch Apps Cloud SDK <http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/>`_  、 `Batch Apps Client SDK <http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/>`_ と、 `python 向け SDK <https://github.com/Azure/azure-batch-apps-python>`_ が用意されていて、 `Visual Studio 向けの extension <https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a>`_  もあります。
+**Bach** では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け  `Batch Apps Cloud SDK <http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/>`_  、 `Batch Apps Client SDK <http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/>`_ と、 `python 向け SDK <https://github.com/Azure/azure-batch-apps-python>`_ が用意されていて、 `Visual Studio 向けの extension <https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a>`_  もあります。
 
 
 Azure Batch REST API
@@ -95,7 +95,7 @@ packages.config
 ---------------
 まず、 `packages.config <https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&pathId=1932330368>` を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。
 
-`Azure.Batch <http://www.nuget.org/packages/Azure.Batch/>`_ を使っています。APIリファレンスは、 `Batch <http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx>`_ にあります。
+`Azure.Batch <http://www.nuget.org/packages/Azure.Batch/>`_ を使っています。APIリファレンスは、 `Batch API <http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx>`_ にあります。
 
 設定
 ----

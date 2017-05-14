@@ -1,0 +1,180 @@
+Azure Cosmos DB がやってきた
+============================
+
+DocumentDB の記事を書いていたら、//Build 2017で、Azure Cosmos DB が発
+表 [#ref1]_ された。 Cosmos DBは、Multi-model database and multi-API
+のGlobally Distributed データベース・サービスだ！
+
+.. image:: keynote01.png
+   :alt: Azure Cosmos DB in KeyNote
+   :align: center
+
+「DocumentDB何処行った、名前が変わったの？」と思ったら、そんなに簡単な
+話では無かった、Azure Cosmos DBは、DocumentDB、MongoDB, Azure Table,
+Gremlin などの複数のAPIをサポートしたマルチモデルの分散データベース
+[#ref2]_で Document DBはそのAPIの一つという位置づけになったらしい。従
+来の Document DBで使ってた分散データベース基盤の部分は、ある程度汎用的に
+出来ていてJSON以外のデータモデルも扱え、今回はKey-Value と Graphのデー
+タモデルにAPIを付けてブランディングも新たにお披露目したよという話だっ
+た。素晴らしい。
+
+ざっくりまとめると、こんな感じになってる。Cosmos 分散データベース基盤
+に、データモデルが乗って、個々にAPIを提供するといった感じだ。Azure
+Table, Gremlin は、Previewで既に試すことができるが、Splark は、アナウ
+ンスだけ、DocumentDBとMongoDB APIはGAのままだ。この２つがGAのままなの
+は、Cosmos DBになっても基本的な実装は同じだからだろう。
+
+.. image:: pic01.png
+   :alt: Azure Cosmos DB in KeyNote
+   :align: center
+
+Breakout Session
+================
+//Build 2017のCosmos DBの2つのBreakout Session、B8047 [#ref3]_ と、T6058 [#ref4]_ では、もう少し詳細に触れられている。その中でも興味深いのは、B8047 のTable APIの下りだ（動画だと35:50あたり [#ref5]_ ）。  超訳すると。
+
+  Cosmos DB に、既存のTable Storage（以下Standard Storage)互換のTable API（以下Premium Table）を実装した。もう、Premium Table SDK [#ref6]_ をダウンロードして試せる。アプリケーションの変更は必要ない（SDKでを切り替えるだけ）で、ローレイテンシー、5つの一貫性、グローバルディストリビューション、セカンダリーインデックス等、数々のCosmos DBの特性が得られる。
+
+.. image:: B8047-02.png
+   :alt: Table API in Azure Cosmos DB
+   :align: center
+
+特に重要なのは、これに続く部分だ。
+
+  現在「storage optimized offer」に向けて作業中、現在の Cosmos DB は、スループットの最適化、ローレイテンシーなどのpremium experience にフォーカスしているが、hot work load 以外の場合でも選択肢にできるように取り組んでいる。
+
+現在のCosmos DB（旧DocumentDB）の料金体系は、基本hot work load向けだ。アクセス頻度が低いデータが多くなってくるとAzure Storageとのコスト差がどんどん大きくなっていく。データ全体の中で一部だけのアクセス頻度が高く、殆どのデータはアクセス頻度が低い場合は、Cosmos DBだけでなく、なんからの外部データストアとの連繫を検討する必要がある。これは特に、Standard Table（これからは、Azure Table StorageのことはStandard Tableと呼ぼう）からの移行を考えた時に重要な検討課題だろう。それがうまく解決できるなら、かなり有り難い。
+
+同時に公開されたBlogから
+========================
+Cosmos DBも発表共に公開されたBlogもなかなか面白い。 **Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service** [#ref7]_  の A Brief History of Cosmosには簡単なCosmos DBの歴史が書いてあった。それによると、
+
+  Azure Cosmos DBは、2010年に「Project Florence」で開始、グローバルディストリビューションの課題を解決するためにMSの社内で使っていたが、他の皆にも役に立つと思って、2015年にAzure DocumentDBの形でこのテクノロジの第1世代を利用できるようにした。
+
+云々だそうだ。世界中で展開するサービスの下りをみて連想したのは、Azure
+Portal。「最近ポータルが速くなってきてるのはエンドポイントを日本に持っ
+てきたからかな、でもUSのリソースも普通に操作できるしどうなっているのだ
+ろう」と思っていたが。こんな仕組みがあれば実装イメージが湧いてくる。実
+際のところはどうなっているかはわからないが。なかなか興味深い。
+
+あと **A technical overview of Azure Cosmos DB** [#ref8]_ に、Leslie
+Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+ [#ref9]_
+のCosmosでの活用の話をしていたのが興味深かった。正しく動く分散システム
+を作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、
+実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した（超訳過
+ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な
+分散システムのアルゴリズム設計を行っている [#ref10]_ と話題になったが、
+MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者
+サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有
+り難い。
+
+この記事には、Azure Cosmos DBのデータベースエンジンの中身についても少し書いてあった。以下超訳
+
+  Azure Cosmos DBのデータベースエンジンのコアタイプシステムは、汎用的にどのようなデータにも対応するatom-record-sequence (ARS)と呼ばれる構造となっている。Atomは、文字列、論理型、数値などのprimitive型、recordは構造体、sequence はatom、record、sequenceの配列である。また、Azure Cosmos DBのデータベースエンジンは、JSONなどのAPIが利用するデータモデルとARSベースのコアデータモデルの効率的な変換と投影を実装し、動的型付き言語（dynamically typed programming languages）からコアデータモデルへのネイティブアクセスをサポートする。このデータベースエンジンを使うことで、Cosmos DBのAPIは、battle-tested でフルマネージドな、グローバル分散型データベースシステムのすべての利点を得ることができる。
+
+ARSは、プリミティブ型を単純に並べただけの構造なのでJSONをそのまま保存するよりは効率は良いだろうし、別のデータモデルを実装し易いだろう。このような構成で、データベースとしての基本的な部分、整合性、リプリケーション、バックアップなどは共通の仕組みが使えるというわけだ。
+
+Premium Tableの現況
+===================
+大分長くなってしまったので、最後に、Premium Tableをちょっと動かしてみた感想を書いて終わりにする。
+
+GitHubに、 **Getting started with Azure Cosmos DB: Table API** [#ref11]_ というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。
+
+.. csv-table:: Premium/Standard Table のレイテンシー
+   :header-rows: 1
+
+   Title,操作, p0, p50,p90, p99
+   Premium,作成,5.2 ,7.2 ,9.0 ,13.0
+   Standard,作成,4.2 ,11.9 ,20.7 ,26.2
+   S/P 比,,81%,164%,229%,201%
+   Premium,ID検索,1.3 ,2.0 ,3.2 ,5.7
+   Standard,ID検索,2.4 ,3.4 ,5.2 ,11.2
+   S/P 比,,184%,170%,162%,197%
+   Premium,プロパティ検索,2.9 ,4.8 ,6.9 ,10.8
+   Standard,プロパティ検索,49.4 ,55.7 ,67.0 ,78.3
+   S/P 比,,1683%,1166%,965%,726%
+   Premium,置換,5.0 ,7.6 ,9.3 ,13.2
+   Standard,置換,4.7 ,12.2 ,20.6 ,25.4
+   S/P 比,,94%,161%,221%,192%
+   Premium,削除,4.5 ,6.0 ,7.2 ,9.4
+   Standard,削除,2.8 ,3.6 ,4.9 ,10.0
+   S/P 比,,62%,60%,68%,106%
+
+１万エンティティで１度だけしか測っていないので、数値の絶対値は参考程度にしかならない。注意して欲しい。それでも傾向ぐらいはわかる。
+
+ID検索の部分が、パーテーションキー、ローキーによる検索。プロパティ検索は、Standard Tableだとインデックスの効かずにフルスキャンになるが、Premium Tableでは全てのプロパティに自動的にインデックスが作成されるので、この場合もインデックスが利用される。
+
+全体的な傾向を見ると、50パーセンタイルでは、プロパティ検索以外は、Premium が1.5から1.6倍程度Premiumが速い。セカンダリーインデックスの効果は絶大で10倍以上Premiumが速くなる。データ件数が多くなればさらに差が出るだろう。
+
+99パーセンタイルでは、2つの差は広がり、2倍程度の差になる。今回は件数が少ないので、この程度の差になったが、件数を増やして調査時間を長くすれば差は大きくなると思われる。数字だけ見ると、Standard Tableが意外と奮戦している、前に調べて時より少し速くなっているようだ。Premium Tableはまだプレビューという点を差し引いても、一貫してレイテンシーが低いというのは魅力的だ。セカンダリーインデックスを更新する分、更新系は不利なはずだが、それでもStandardより速いのも今後が期待できる。
+
+総じて、Premiumが速く、特にセカンダリーインデックスが効くと劇的に速くなる。全体的にPremiumのレイテンシーはバラツキが小さく一貫してレイテンシーが低いのは好印象だ。
+
+Premium Table SDK
+=================
+サンプルコードを見ると、PremiumとStandardの切替は接続文字列 [#ref12]_ だけだ。では、Consistencyや接続モードの設定をどうやってやるのかと言うと、現状では、AppSettings に書く [#ref13]_ 。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。
+
+.. csv-table:: AppSettings での設定項目
+   :header-rows: 1
+
+   設定名
+   TableConnectionMode
+   TableConnectionProtocol
+   TableConsistencyLevel
+   TableDisableRUPerMinuteUsage
+   TableIndexingPolicy
+   TableIsRUPerMinuteEnabled
+   TableMaxConnectionLimit
+   TablePreferredLocations
+   TableQueryContinuationTokenLimitInKb
+   TableQueryEnableScan
+   TableQueryMaxDegreeOfParallelism
+   TableQueryMaxItemCount
+   TableThroughput
+
+現在のSDKだと、スロットリングがかかったときのリトライのハンドリングが怪しいようだ。それにサンプルコードではスロットリングエラーになった場合の処理が考慮されていない。そのため今回の測定ではスロットリングがかからないようなRU/秒になるように2000を設定した。
+
+AppSettingの設定からも言えることは、Premium Tableに最適化したコードが必要な場合は、そのためのコードが必要になるということだ。例えば、レスポンスヘッダーのRequestChargeを見てアプリケーションで消費RUを制御するなどのコードはスロットリングの仕組みが違うので、Standard Tableとは互換性が無い。どこまで、SDKで吸収できるのかは課題だろうが、プロダクションコードでは、ある程度アプリケーション側で対応する必要があるだろう。
+
+Fidderで通信を覗いてみたところ、Premium Table SDKは、Premiumに繋ぐときは、x-ms-version: 2017-02-22 を、Standardのときは、x-ms-version: 2016-05-31 を使ってた。Premium の場合は、パーテーションマップの取得など、DocumentDBでお馴染みのやつが最初に入るなど、wired protocal としては全く互換性が無い別プロトコルだ。エンティティの作成も、今のStandardではレスポンスは空になるが、Premiumではしっかり中身が入っている。
+
+リクエストとレスポンスはこんな感じだ
+
+.. gist:: https://gist.github.com/takekazuomi/f7ad2f152fb546113ba8114a9de19dcc
+
+ちょっと見 DocumentDBとウリ2つだ。Premium Table SDK が、DocumentDB Client SDK を参照しているし、実際の通信はDocumentDBと同じプロトコルを使っているのだろう。このままGAになるかどうかは分からないが、この仕組だと既存のStandard Table Storage向けのライブラリは作り直す必要がある。最初に聞いたときは、REST APIレベルで互換なのかと思ったので、ちょっと肩透かしだ。しかし、パフォーマンスを考えた場合、今のStandardのREST APIよりDocumentDB形式の方が将来性がある気もする。なかなか面白いアプローチではある。
+
+まとめ
+======
+つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。
+最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047 [#ref5]_ の話を聞いて、今はとても期待している。
+
+今の気分は、「Cosmos DBはいいぞ」と言う感じだ。
+
+脚注
+====
+.. [#ref1] `[1:22:26] <https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h22m26s>`_ Azure Cosmos DB Introduction
+.. [#ref2] `[1:27:20] <https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h27m20s>`_ Rimma Nehme, Azure Cosmos DB demonstration
+.. [#ref3] `B8047 How to build globally-distributed, fast, billion-user applications with Azure Cosmos DB <https://channel9.msdn.com/Events/Build/2017/B8047>`_
+.. [#ref4] `T6058 Azure Cosmos DB: NoSQL capabilities everyone should know about <https://channel9.msdn.com/Events/Build/2017/T6058>`_
+.. [#ref5] `[0:35:50] <https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s>`_ B8047 のTable APIの部分
+.. [#ref6] `Premium Table SDK <https://www.nuget.org/packages/WindowsAzure.Storage-PremiumTable/0.1.0-preview>`_ ソースは未公開
+.. [#ref7] `Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service <https://azure.microsoft.com/en-us/blog/azure-cosmos-db-microsofts-globally-distributed-multi-model-database-service/>`_
+.. [#ref8] `A technical overview of Azure Cosmos DB <https://azure.microsoft.com/en-us/blog/a-technical-overview-of-azure-cosmos-db/>`_
+.. [#ref9] `Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long <https://www.youtube.com/watch?v=L_PPKyAsR3w>`_ レスリー ランポート先生のインタビュー、お勧めです。
+.. [#ref10] `How Amazon Web Services Uses Formal Methods <https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract>`_
+.. [#ref11] `Getting started with Azure Cosmos DB: Table API <https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started>`_
+.. [#ref12] `接続文字列の切替部分 <https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24>`_
+.. [#ref13] `AppSettingsでの設定箇所 <https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14>`_
+
+
+その他の参考リンク
+==================
+* `B8118 How to run massively scaling mobile games on Microsoft Azure <https://channel9.msdn.com/Events/Build/2017/B8118>`_
+* `P4011 Azure Cosmos DB: API for MongoDB <https://channel9.msdn.com/Events/Build/2017/P4011>`_
+* `P4012 Azure Cosmos DB: Build planet scale mobile apps in minutes <https://channel9.msdn.com/Events/Build/2017/P4012>`_
+* `TLA+ <http:/aka.ms/tla>`_ TLA+については、こちら。入門的な解説の動画から用意されてる。
+
+.. author:: default
+.. categories:: Cosmos DB, Azure, Azure Table
+.. tags:: Table, PremiumTable, Build2017
+.. comments::

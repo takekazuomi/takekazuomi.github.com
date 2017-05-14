@@ -73,6 +73,28 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>July 01, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a></h1>
+<p>2016年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。</p>
+<p>今後も、最近 Service Fabric に偏り気味ですが、Cloud Scale なサービス構築をテーマに情報発信をして行きたいと思います。</p>
+<p>これからも、よろしくお願いいたします。</p>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/mvp.html">MVP</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2016/07/01/2016_mvp.html#disqus_thread" data-disqus-identifier="2016/07/01/2016_mvp">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>May 20, 2016</span>
         </div>
         <div class="section">
@@ -204,7 +226,7 @@
 <div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRole -ServiceName kinmugics10 -Slot Staging
 
 RoleName             : WorkerRole1
-InstanceCount        : 1
+InstanceCount        : <span class="m">1</span>
 DeploymentID         : c49d5437f1a84345b9739a79ff333056
 OSVersion            : WA-GUEST-OS-4.28_201601-01
 ServiceName          : kinmugics10
@@ -259,26 +281,26 @@ OperationStatus      : Succeeded
 
 Active Version           Runtime Architecture OperatingSystem Alias
 ------ -------           ------- ------------ --------------- -----
-       1.0.0-beta5       clr     x64          win
-       1.0.0-beta5       clr     x86          win
-       1.0.0-beta5       coreclr x64          win
-       1.0.0-beta5       coreclr x86          win
-       1.0.0-beta7       clr     x86          win
-       1.0.0-beta7       coreclr x86          win
-       1.0.0-beta8       clr     x64          win             clr
-       1.0.0-beta8       clr     x86          win
-       1.0.0-beta8       coreclr x64          win             coreclr
-       1.0.0-beta8       coreclr x86          win
-       1.0.0-rc1-15838   clr     x86          win
-       1.0.0-rc1-15838   coreclr x86          win
-       1.0.0-rc1-15904   clr     x86          win
-       1.0.0-rc1-15904   coreclr x86          win
-       1.0.0-rc1-update1 clr     x64          win
-       1.0.0-rc1-update1 clr     x86          win
-       1.0.0-rc1-update1 coreclr x64          win
-       1.0.0-rc1-update1 coreclr x86          win
-       1.0.0-rc2-16249   clr     x86          win
-  *    1.0.0-rc2-16249   coreclr x86          win             default
+       <span class="m">1</span>.0.0-beta5       clr     x64          win
+       <span class="m">1</span>.0.0-beta5       clr     x86          win
+       <span class="m">1</span>.0.0-beta5       coreclr x64          win
+       <span class="m">1</span>.0.0-beta5       coreclr x86          win
+       <span class="m">1</span>.0.0-beta7       clr     x86          win
+       <span class="m">1</span>.0.0-beta7       coreclr x86          win
+       <span class="m">1</span>.0.0-beta8       clr     x64          win             clr
+       <span class="m">1</span>.0.0-beta8       clr     x86          win
+       <span class="m">1</span>.0.0-beta8       coreclr x64          win             coreclr
+       <span class="m">1</span>.0.0-beta8       coreclr x86          win
+       <span class="m">1</span>.0.0-rc1-15838   clr     x86          win
+       <span class="m">1</span>.0.0-rc1-15838   coreclr x86          win
+       <span class="m">1</span>.0.0-rc1-15904   clr     x86          win
+       <span class="m">1</span>.0.0-rc1-15904   coreclr x86          win
+       <span class="m">1</span>.0.0-rc1-update1 clr     x64          win
+       <span class="m">1</span>.0.0-rc1-update1 clr     x86          win
+       <span class="m">1</span>.0.0-rc1-update1 coreclr x64          win
+       <span class="m">1</span>.0.0-rc1-update1 coreclr x86          win
+       <span class="m">1</span>.0.0-rc2-16249   clr     x86          win
+  *    <span class="m">1</span>.0.0-rc2-16249   coreclr x86          win             default
 </pre></div>
 </div>
 <p>このあたりは、ASP.NET 5 の アドベントカレンダー のネタなので軽く飛ばします。<a class="footnote-reference" href="#ref1" id="id2">[1]</a></p>
@@ -301,33 +323,33 @@ do
 <p>ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。<a class="footnote-reference" href="#ref2" id="id4">[2]</a>試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。</p>
 <div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
-    <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
-    <span class="kt">var</span> <span class="n">max</span> <span class="p">=</span> <span class="n">_toDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
+         <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
+         <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
+         <span class="kt">var</span> <span class="n">max</span> <span class="p">=</span> <span class="n">_toDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
 
-    <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">_tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"WADPerformanceCountersTable"</span><span class="p">);</span>
+         <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">_tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"WADPerformanceCountersTable"</span><span class="p">);</span>
 
-    <span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;()</span>
-        <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">TableQuery</span><span class="p">.</span><span class="n">CombineFilters</span><span class="p">(</span>
-            <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">GreaterThanOrEqual</span><span class="p">,</span> <span class="n">min</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">)),</span>
-            <span class="n">TableOperators</span><span class="p">.</span><span class="n">And</span><span class="p">,</span>
-            <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">LessThan</span><span class="p">,</span> <span class="n">max</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">))));</span>
+         <span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;()</span>
+             <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">TableQuery</span><span class="p">.</span><span class="n">CombineFilters</span><span class="p">(</span>
+                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">GreaterThanOrEqual</span><span class="p">,</span> <span class="n">min</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">)),</span>
+                 <span class="n">TableOperators</span><span class="p">.</span><span class="n">And</span><span class="p">,</span>
+                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">LessThan</span><span class="p">,</span> <span class="n">max</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">))));</span>
 
-    <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;();</span>
-    <span class="n">TableContinuationToken</span> <span class="n">token</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
-    <span class="k">do</span>
-    <span class="p">{</span>
-        <span class="kt">var</span> <span class="n">segment</span> <span class="p">=</span> <span class="k">await</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuerySegmentedAsync</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span>
-        <span class="n">token</span> <span class="p">=</span> <span class="n">segment</span><span class="p">.</span><span class="n">ContinuationToken</span><span class="p">;</span>
-        <span class="n">result</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">segment</span><span class="p">.</span><span class="n">Results</span><span class="p">);</span>
-        <span class="c1">// Console.Write($"{segment.Results.Count}.");</span>
+         <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;();</span>
+         <span class="n">TableContinuationToken</span> <span class="n">token</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+         <span class="k">do</span>
+         <span class="p">{</span>
+             <span class="kt">var</span> <span class="n">segment</span> <span class="p">=</span> <span class="k">await</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuerySegmentedAsync</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span>
+             <span class="n">token</span> <span class="p">=</span> <span class="n">segment</span><span class="p">.</span><span class="n">ContinuationToken</span><span class="p">;</span>
+             <span class="n">result</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">segment</span><span class="p">.</span><span class="n">Results</span><span class="p">);</span>
+             <span class="c1">// Console.Write($"{segment.Results.Count}.");</span>
 
-    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="p">!=</span> <span class="k">null</span><span class="p">);</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="p">!=</span> <span class="k">null</span><span class="p">);</span>
+         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
 
-    <span class="n">sw</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec"</span><span class="p">,</span>
-        <span class="n">result</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">result</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="n">result</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="p">(</span><span class="n">sw</span><span class="p">.</span><span class="n">ElapsedMilliseconds</span> <span class="p">/</span> <span class="m">1000.0</span><span class="p">));</span>
+         <span class="n">sw</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
+         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec"</span><span class="p">,</span>
+             <span class="n">result</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">result</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="n">result</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="p">(</span><span class="n">sw</span><span class="p">.</span><span class="n">ElapsedMilliseconds</span> <span class="p">/</span> <span class="m">1000.0</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -412,167 +434,6 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/12/02/using_dnx_was.html#disqus_thread" data-disqus-identifier="2015/12/02/using_dnx_was">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>October 16, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a></h1>
-<p>10/10(土) に、<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>に参加してきました。日本酒とへぎ蕎麦が美味しかったのでまた行きたいところ。LTで話した（かった）ことをここにまとめておきます。</p>
-<a class="reference external image-reference" href="https://flic.kr/p/zQKV5z"><img alt="soba" class="align-center" src="https://farm6.staticflickr.com/5766/22211533525_cc58e2a2ac_c.jpg"/></a>
-<div class="section" id="id1">
-<h2>最初に</h2>
-<p>Azure Storage 上でデータの移動が必要な場合、現時点でもっともお勧めなのは、AzCopy<a class="footnote-reference" href="#ref1" id="id2">[1]</a>です、多めのデータをアップロード、ダウンロードしたい場合には AzCopyを試してください。<a class="footnote-reference" href="#ref2" id="id3">[2]</a>ほかのツールを使うよりリソースをうまく使って効率的にデータを転送してくれます。転送に必要な時間は、ほぼネットワークインターの速度に依存します。（諸条件に依存しますが、ざっくり言うと）</p>
-</div>
-<div class="section" id="azure-storage-data-movement-library-preview">
-<h2>Azure Storage Data Movement Library (Preview)</h2>
-<p>AzCopyのライブラリー版 が、<a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">Azure Storage Data Movement Library (Preview)</a>です。（以下 DML)<a class="footnote-reference" href="#ref3" id="id5">[3]</a>ライブラリなので、スクリプト＋AzCopyではちょっと難しいような細かい制御しながらデータの転送をすることが出来ます。DMLの実装では API の呼び出し方が Azure Storage に合わせてチューニングされていて、パフォーマンスが出るというのが大きな特徴です。DMLについては、<a class="reference internal" href="2015/09/25/intro_azure_storage_data_movement_library.html"><span class="doc">Intro Azure Storage Data Movement Library</span></a>も参考にしてください。</p>
-<p>チューニングの基本戦略は２つです。これは、Azure Storage では共通の戦略となります。</p>
-<ol class="arabic simple">
-<li>並列化<a class="footnote-reference" href="#ref5" id="id6">[5]</a></li>
-<li>転送量の最小化</li>
-</ol>
-<p>今回は、Page Blob での転送量の最小化の話をします。（DMLでは、その他にもGCとかLOH周りの工夫も使われています）</p>
-</div>
-<div class="section" id="page-blob-download">
-<h2>Page Blob Download 最適化</h2>
-<p>昨今の近代的なファイシステムでは、sparse file という仕組みを持っています。<a class="footnote-reference" href="#ref6" id="id7">[6]</a>大きなファイルであっても、zero の部分はDISK上にアロケートされずにデータが書きこまれた部分(緑の部分)だけが確保されます。</p>
-<img alt="../../../_images/sparse.png" src="_images/sparse.png"/>
-<p>Azure では、仮想マシンのDisk は VHD ファイルを Azure Storage Page Blob に配置されており、そのPage Blobは sparse data の保存のための仕組みをがあります。仕組は結構簡単で、Page Blob では、データが書き込まれた部分をページ単位(512B)でレンジ管理しており、実際にBlobにデータが保存されるのはこの領域だけです。この領域の外を読むと0 fill のデータが帰ります。（これが、俗に言われるPage Blogが、Disk アクセスに最適化されているという機能の一つです）REST APIの GetPageRanges<a class="footnote-reference" href="#ref7" id="id8">[7]</a>では、有効なデータを含むすべての連続したページ範囲のリストを返します。<a class="footnote-reference" href="#ref8" id="id9">[8]</a></p>
-<p>つまり、GetPageRanges APIを使うと、Page Blob から実際にデータが入っている部分だけを取得することができます。例えば、100GBの仮想DISKであっても転送するのは実際使っている10GBだけにすることが可能になります。</p>
-</div>
-<div class="section" id="dml">
-<h2>DMLでの実装</h2>
-<p>DMでは、PageBlobReader.DoGetRangesAsync() でGetPageRangesAsyncを実行してRangeを取得<a class="footnote-reference" href="#ref9" id="id10">[9]</a>しています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">protected</span> <span class="k">override</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;&gt;</span> <span class="n">DoGetRangesAsync</span><span class="p">(</span><span class="n">RangesSpan</span> <span class="n">rangesSpan</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">AccessCondition</span> <span class="n">accessCondition</span> <span class="p">=</span> <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateIfMatchConditionWithCustomerCondition</span><span class="p">(</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">Blob</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">ETag</span><span class="p">,</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">AccessCondition</span><span class="p">);</span>
-
-    <span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;</span> <span class="n">rangeList</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;();</span>
-
-    <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">pageRange</span> <span class="k">in</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="n">pageBlob</span><span class="p">.</span><span class="n">GetPageRangesAsync</span><span class="p">(</span>
-            <span class="n">rangesSpan</span><span class="p">.</span><span class="n">StartOffset</span><span class="p">,</span>
-            <span class="n">rangesSpan</span><span class="p">.</span><span class="n">EndOffset</span> <span class="p">-</span> <span class="n">rangesSpan</span><span class="p">.</span><span class="n">StartOffset</span> <span class="p">+</span> <span class="m">1</span><span class="p">,</span>
-            <span class="n">accessCondition</span><span class="p">,</span>
-            <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateBlobRequestOptions</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">BlobRequestOptions</span><span class="p">),</span>
-            <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateOperationContext</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">Controller</span><span class="p">.</span><span class="n">TransferContext</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="n">CancellationToken</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="n">rangeList</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Range</span><span class="p">()</span>
-        <span class="p">{</span>
-            <span class="n">StartOffset</span> <span class="p">=</span> <span class="n">pageRange</span><span class="p">.</span><span class="n">StartOffset</span><span class="p">,</span>
-            <span class="n">EndOffset</span> <span class="p">=</span> <span class="n">pageRange</span><span class="p">.</span><span class="n">EndOffset</span><span class="p">,</span>
-            <span class="n">HasData</span> <span class="p">=</span> <span class="k">true</span>
-        <span class="p">});</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="n">rangeList</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>ここはわかり易いですね。range list は、RangeBasedReader.DoGetRangesAsync() でダウンロードする範囲を決めるのに使われます。</p>
-<p>ちょっと脱線しますが、Win32 APIでファイルシステムを操作する場合には、DeviceIoControl で FSCTL_QUERY_ALLOCATED_RANGES<a class="footnote-reference" href="#ref10" id="id11">[10]</a>を使うと実際にデータが保持されている range を取得することができます。</p>
-</div>
-<div class="section" id="id12">
-<h2>資料</h2>
-<p>LTで用意した資料です。</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize">Azure Storage Data Movement Library Page Blob Optimize</a></p>
-</div>
-<div class="section" id="id13">
-<h2>最後に</h2>
-<p>最後に、「<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>」を聞きながら、思ったことを少し書きます。</p>
-<p>プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。</p>
-<p>make -&gt; ant -&gt; nant -&gt; msbuild -&gt; maven ... と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。</p>
-<p>package manager は、dnxで改善されるはずなので、それに期待したいところ。install.ps1 とか必要になるとソウルジェムが濁ります。</p>
-<p>「MEF の、Core CLR 対応ってどうなっているの？」という話が出たので、帰ってきてちょっと見たら、ASP.NET 5 と Entity Framework 7 では、<a class="reference external" href="https://github.com/aspnet/DependencyInjection">Microsoft.Framework.DependencyInjection</a>ってやつが使われていました。聞いたことがあったような気もするけど、使ったこと無かったので少し試してみたら、どうも、container builder、setter injection などが無いようで、えらくシンプルな実装。でもまあ、これはこれで良いのかなという感じでした。</p>
-<p>「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、その台詞を聞いた瞬間「linq がすべてを台無しにしてしまったなぁ」と思いました。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状でしょう。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があります。</p>
-<p>これは Linq だけの罪かと言うと、そういうわけでは無く、「生産性の高いライブラリを使う場合に起こる一般的な課題」です。抽象化度の高いものは人間に理解し易く生産性の向上に貢献しますが、実際のノイマン型コンピューターの仕組みと乖離が大きくなり、実行ステップとコードの乖離も大きくなります。簡単に言うと、「こう書いたからこう動く」という世界から離れていくことになる。 じゃあ、乖離してはダメなのかという、そうでもない。全てはバランスによって決まる。ズルズルと、長くなったので、これぐらいで。</p>
-<p>プログラムを読むことに関しては、このOSS全盛時代に読むコードに困ることは無いと思うので、ぜひガンガン読んで欲しい。</p>
-<p>などなど、いろいろ思うことがあって面白かった。</p>
-</div>
-<div class="section" id="id15">
-<h2>追記</h2>
-<p>Azure Files でも同じように sparse file が、サポートされていて、DMLでは対応しています。</p>
-<table class="docutils footnote" frame="void" id="ref1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/storage-use-azcopy/">AzCopy コマンド ライン ユーティリティの概要</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2015/06/05/build-2015-azure-storage-announcements.aspx">Azure Storage に関する Build 2015 での発表</a>によれば、そろそろ日本にも Import/Export が来ます。<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/storage-import-export-service/">Microsoft Azure Import/Export サービスを使用した BLOB ストレージへのデータの転送</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2015/09/23/introducing-azure-storage-data-movement-library-preview.aspx">Introducing Azure Storage Data Movement Library Preview</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement">Microsoft Azure Storage Data Movement Library (0.1.0)</a><a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">nuget Microsoft Azure Storage Data Movement... 0.1.0</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="http://kyrt.in/2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Sparse_file">Sparse file</a><a class="reference external" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365566(v=vs.85).aspx">MSDN Sparse File Operations</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[7]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/ee691973.aspx">Get Page Ranges REST API</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref8" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/03/26/getting-the-page-ranges-of-a-large-page-blob-in-segments.aspx">Getting the Page Ranges of a Large Page Blob in Segments</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref9" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[9]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferControllers/TransferReaders/PageBlobReader.cs#L70">DoGetRangesAsync</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref10" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id11">[10]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364582(v=vs.85).aspx">FSCTL_QUERY_ALLOCATED_RANGES control code</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/blob.html">Blob</a>, <a href="tags/dml.html">DML</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html#disqus_thread" data-disqus-identifier="2015/10/16/niigata_net_2015_10_dml">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -581,6 +442,8 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
+        </li><li>
             <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
         </li><li>
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
@@ -598,15 +461,13 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
-        </li><li>
-            <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (32)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (33)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

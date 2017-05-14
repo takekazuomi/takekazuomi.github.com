@@ -33,6 +33,6 @@ JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係
 参加者の皆様、ありがとうございました。
 
 .. author:: default
-.. categories:: Session, Azure Storage,
+.. categories:: Session, Azure Storage
 .. tags:: IaaS, Storage, GoAzure
 .. comments::

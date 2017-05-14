@@ -73,6 +73,133 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>April 08, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/04/08/azure_diagonestics_1_3_bugs.html">Azure Diagnostics 1.3 PaaS BUGS</a></h1>
+<p><strong>更新: 2015/4/17 にリリースされた。Diagnostics Extention 1.4 で下記の問題は修正されました</strong></p>
+<p>Azure SDK 2.5 から、Windows Azure Diagnostics (WAD) がVM Extentionになりました。それに伴って、Cloud Service (PaaS)でIISのログ転送と、ローカルストレージのカスタムログ転送が行われないという2つの問題があります。（IaaSでは問題はありません）</p>
+<a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/15852128023"><img alt="Tohaku 2015" class="align-center" src="https://farm8.staticflickr.com/7391/15852128023_dc3fb6ea48_c.jpg"/></a>
+<p>※この情報は、2015/4/8 Azure SDK 2.5.1, VM Extention 1.3.1.6 を元にして書いています。</p>
+<div class="section" id="iis">
+<h2>IISのログ転送</h2>
+<p>デプロイ直後はIISのログ転送が行われず、再起動後に転送が開始されるという問題があります。</p>
+<div class="section" id="id1">
+<h3>原因</h3>
+<p>WADは起動したときにIIS Management Service経由でIIISログの場所探します。デフォルトでは、この場所は、%SystemDrive%inetpublogsLogFiles に設定されています。PaaSでは WebRoleのIISConfigurator がサービス定義に基いてIISの設定を C:Resourcesdirectory{deploymentid.rolename}.DiagnosticStoreLogFilesWeb へ変更します。その結果、WADの構成が、IISConfigurator の前に実行されると、WADは間違ったディレクトリを監視することになってしまいます。</p>
+</div>
+<div class="section" id="id2">
+<h3>対策</h3>
+<p>WADの構成がIISConfiguratorの実行の後に起こればいいので、一度Roleを再起動します。それには、Startup Taskあるいは、Role の OnStartで下記のように処理します。最初の起動の時に、IISConfigurator が行った変更に基いて、2回めの起動でWADが構成を設定します。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="p">{</span>
+    <span class="c1">// Write a RebootFlag.txt file to the %RoleRoot%\Approot\bin folder to track if this VM has rebooted to fix WAD 1.3 IIS logs issue</span>
+    <span class="kt">string</span> <span class="n">path</span> <span class="p">=</span> <span class="s">"RebootFlag.txt"</span><span class="p">;</span>
+    <span class="c1">// If RebootFlag.txt already exists then skip rebooting the VM</span>
+    <span class="k">if</span> <span class="p">(!</span><span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">"Writing RebootFlag at "</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"O"</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Trace</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Rebooting"</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"shutdown"</span><span class="p">,</span> <span class="s">"/r /t 0"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">base</span><span class="p">.</span><span class="n">OnStart</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>この方法だと、ファイルをアプリケーションのディレクトリに作成しているので、インプレースアップグレードの度に再起動がかかります。そのかわり、アクセス権の問題が無いため、elevated する必要がありません。システムドライブや、Cドライブにファイルを作成する、あるいはレジストリにフラグを作成する方法を使うと、再起動は最小限に抑えられますが、.csdef に &lt;Runtime executionContext=”elevated” /&gt; の設定が必要です。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>カスタムログ転送</h2>
+<p>現在のバージョンでは、従来行っていたローカルストレージからのカスタムログ転送は動作しませんので変わりに絶対ディレクトリからの転送を使います。（ちなみにローカルストレージからのカスタムログ転送はVSからの設定も出来ません）</p>
+<p>注意点は2点、</p>
+<ol class="arabic simple">
+<li>ローカルストレージと違ってquotaが利きません。書き出す量を間違えると、ディスクが溢れて他の動作に影響する可能性があります。</li>
+<li>絶対ディレクトリにはCドライブを指定しますが、指定ディレクトリには転送したいファイルだけが存在するようにします。</li>
+<li>絶対ディレクトリを指定した場合、デプロイID毎に別のディレクトリにローカルストレージの領域が取られますが、絶対パスでは同じディレクトリが使われます。</li>
+<li>アクセス権を設定する必要があります。</li>
+</ol>
+<div class="section" id="id4">
+<h3>対策</h3>
+<p>VSで診断構成のアプリケーションログ転送を開きます。</p>
+<img alt="application log settings" class="align-center" src="_images/screen001.png"/>
+<p>この設定をしたら、IISのログ転送対策と同じように、RoleのOnStartで、下記の処理を入れます。ここでは、ディレクトリの有無を確認していますが、WADが先に起動した場合は、ディレクトリは作成されています。アクセス権が足りないので追加します。必要なIISのアクセス権については、<a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">しばやん雑記：IIS 7 以降でのアプリケーションプールと権限について調べた</a>を参考にしています。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
+    <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant \"BUILTIN\\IIS_IUSRS:\":(OI)(CI)W"</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>最後に</h2>
+<p>最後に上記の問題を合わせたコード例を上げておきます。</p>
+<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="kt">var</span> <span class="n">path</span> <span class="p">=</span> <span class="s">@"c:\AppLogs\RebootFlag.txt"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(!</span><span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Directory</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">))</span>
+        <span class="n">Directory</span><span class="p">.</span><span class="n">CreateDirectory</span><span class="p">(</span><span class="s">@"c:\AppLogs"</span><span class="p">);</span>
+
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"icacls"</span><span class="p">,</span> <span class="s">"c:\\AppLogs /grant BUILTIN\\IIS_IUSRS:(OI)(CI)W"</span><span class="p">);</span>
+
+    <span class="n">System</span><span class="p">.</span><span class="n">IO</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="n">WriteAllText</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">"Writing RebootFlag at "</span> <span class="p">+</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"O"</span><span class="p">));</span>
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Trace</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Rebooting"</span><span class="p">);</span>
+    <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">.</span><span class="n">Start</span><span class="p">(</span><span class="s">"shutdown"</span><span class="p">,</span> <span class="s">"/r /t 0"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>csdefに、下記のように、 &lt;Runtime executionContext=”elevated” /&gt; を追加します。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;ServiceDefinition</span> <span class="na">name=</span><span class="s">"AzureCloudService1"</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition"</span> <span class="na">schemaVersion=</span><span class="s">"2014-06.2.4"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;WebRole</span> <span class="na">name=</span><span class="s">"WebRole1"</span> <span class="na">vmsize=</span><span class="s">"Small"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Runtime</span> <span class="na">executionContext=</span><span class="s">"elevated"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Sites&gt;</span>
+      <span class="nt">&lt;Site</span> <span class="na">name=</span><span class="s">"Web"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Bindings&gt;</span>
+          <span class="nt">&lt;Binding</span> <span class="na">name=</span><span class="s">"Endpoint1"</span> <span class="na">endpointName=</span><span class="s">"Endpoint1"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Bindings&gt;</span>
+      <span class="nt">&lt;/Site&gt;</span>
+    <span class="nt">&lt;/Sites&gt;</span>
+    <span class="nt">&lt;Endpoints&gt;</span>
+      <span class="nt">&lt;InputEndpoint</span> <span class="na">name=</span><span class="s">"Endpoint1"</span> <span class="na">protocol=</span><span class="s">"http"</span> <span class="na">port=</span><span class="s">"80"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Endpoints&gt;</span>
+    <span class="nt">&lt;Imports&gt;</span>
+      <span class="nt">&lt;Import</span> <span class="na">moduleName=</span><span class="s">"RemoteAccess"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;Import</span> <span class="na">moduleName=</span><span class="s">"RemoteForwarder"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Imports&gt;</span>
+  <span class="nt">&lt;/WebRole&gt;</span>
+<span class="nt">&lt;/ServiceDefinition&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>参考</h2>
+<ul class="simple">
+<li>MSDN Forum<a class="reference external" href="https://social.msdn.microsoft.com/Forums/en-US/77e09c6b-5a9e-4aa2-b63a-fc4e46842c7e/cannot-configure-diagnostics-for-local-resources-with-sdk-25?forum=windowsazuredevelopment">Cannot configure diagnostics for local resources with SDK 2.5</a></li>
+<li>Windows Azure - Troubleshooting &amp; Debugging<a class="reference external" href="http://blogs.msdn.com/b/kwill/archive/2015/02/23/sdk-2-5-wad-1-2-iis-logs-not-transferring-to-storage-in-paas-webroles.aspx">SDK 2.5 / WAD 1.2 — IIS Logs Not Transferring to Storage in PaaS WebRoles</a></li>
+<li>Mode 13h<a class="reference external" href="http://mode13h.azurewebsites.net/Posts/AzureSdk25Diag">Azure SDK 2.5 Diagnostics Bugs</a></li>
+<li>しばやん雑記<a class="reference external" href="http://blog.shibayan.jp/entry/20150127/1422369253">IIS 7 以降でのアプリケーションプールと権限について調べた</a></li>
+</ul>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/bug.html">BUG</a>, <a href="tags/diagonestics.html">Diagonestics</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html#disqus_thread" data-disqus-identifier="2015/04/08/azure_diagonestics_1_3_bugs">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>January 18, 2015</span>
         </div>
         <div class="section">
@@ -133,7 +260,7 @@
 </div>
 <div class="section" id="sdk">
 <h3>SDK</h3>
-<p><span class="docutils literal"><span class="pre">Bach</span></span>では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/">Batch Apps Cloud SDK</a>、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/">Batch Apps Client SDK</a>と、<a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a>が用意されていて、<a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>もあります。</p>
+<p><strong>Bach</strong>では、低レベルのHTTP REST APIと、高レベルの Batch Apps を用意しています。現在のところ、 .NET 向け<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps.Cloud/">Batch Apps Cloud SDK</a>、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Azure.Batch.Apps/">Batch Apps Client SDK</a>と、<a class="reference external" href="https://github.com/Azure/azure-batch-apps-python">python 向け SDK</a>が用意されていて、<a class="reference external" href="https://visualstudiogallery.msdn.microsoft.com/8b294850-a0a5-43b0-acde-57a07f17826a">Visual Studio 向けの extension</a>もあります。</p>
 </div>
 <div class="section" id="azure-batch-rest-api">
 <h3>Azure Batch REST API</h3>
@@ -174,7 +301,7 @@
 <div class="section" id="packages-config">
 <h3>packages.config</h3>
 <p>まず、<cite>packages.config &lt;https://code.msdn.microsoft.com/Azure-Batch-Sample-Hello-6573967c/sourcecode?fileId=127847&amp;pathId=1932330368&gt;</cite>を眺めます。最近、サンプルコードや、他人のコードを見る時は、最初にpackages.configを見るようになりました。どんなライブラリを使ってるかを把握しておくと理解が速くなる気がしています。</p>
-<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch/">Azure.Batch</a>を使っています。APIリファレンスは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch</a>にあります。</p>
+<p><a class="reference external" href="http://www.nuget.org/packages/Azure.Batch/">Azure.Batch</a>を使っています。APIリファレンスは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/azure/dn820177.aspx">Batch API</a>にあります。</p>
 </div>
 <div class="section" id="id5">
 <h3>設定</h3>
@@ -394,294 +521,6 @@
         
         <div class="comments">
             <a href="http://kyrt.in/2014/07/02/mvp_2014_7.html#disqus_thread" data-disqus-identifier="2014/07/02/mvp_2014_7">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>June 09, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
-<p>5/12 - 15 に行われた、TechEd North America 2014 で、待望のWebSitesのJavaサポートが発表されました。TechEdでは、AzureのJavaサポートとして、仮想マシン、クラウドサービス、WebSites の話がされていました。Azureの各種SDKはJavaは.NETと並ぶぐらい順調に進んでいるようなので今後も注目です。</p>
-<p>その中でも、WebSitesのJavaサポートが面白かったので紹介します。</p>
-<p>TechEdのセッションの内容は、<a class="reference external" href="http://channel9.msdn.com/Events/TechEd/NorthAmerica/2014/DEV-B384">Java on Microsoft Azure</a>を観てもらうことにして、一般的な開発で行われるプロセスを Java on WebSites でやってみます。</p>
-<div class="section" id="id1">
-<h2>道具立て</h2>
-<p>ソースコード管理には、git を使い。ビルドには昨今流行りの gradle 、 手元で動作を確認後、git push すると、kudu の deploy hook でbuildされて Web Sites に deploy というシナリオです。deploy の最終段には、tomcat の autoDeploy を使います。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/14109420833"><img alt="unagi by Takekazu Omi, on Flickr" class="align-center" src="http://farm3.staticflickr.com/2897/14109420833_a4fb730458_c.jpg"/></a>
-</div>
-<div class="section" id="web-sites">
-<h2>Web Sitesを作成</h2>
-<p>まず、azure cli を使うので、インストールしてください。</p>
-<p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir kinmugi006
-$ <span class="nb">cd</span> kinmugi006
-$ azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
-info:    Executing <span class="nb">command</span> site create
-+ Getting sites
-+ Getting locations
-info:    Creating a new web site at kinmugi006.azurewebsites.net
--info:    Created website at kinmugi006.azurewebsites.net
-+
-info:    Executing <span class="sb">`</span>git init<span class="sb">`</span>
-info:    Initializing remote Azure repository
-+ Updating site information
-info:    Remote azure repository initialized
-+ Getting site information
-info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
-info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local</span> git repository
-info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">'git push azure master'</span> to deploy to Azure
-info:    site create <span class="nb">command</span> OK
-</pre></div>
-</div>
-<p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git remote -v
-azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
-azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
-origin
-</pre></div>
-</div>
-<p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site browse kinmugi006
-</pre></div>
-</div>
-<p>もし、<span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span>のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
-<p>このような画面が表示されるはずです。</p>
-<img alt="Web Site の初期画面" class="align-center" src="_images/20140609_azure002.PNG"/>
-</div>
-<div class="section" id="push">
-<h2>試しに、なにか push してみましょう</h2>
-<p>まず、ポータルサイトから git のパスワードを設定します。<span class="docutils literal"><span class="pre">DASHBOARD</span></span>-&gt;<span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span>で設定できます。</p>
-<img alt="local git のパスワード設定" class="align-center" src="_images/20140609_azure001.PNG"/>
-<p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
-Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
-Counting objects: 3, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
-remote: Updating branch <span class="s1">'master'</span>.
-remote: Updating submodules.
-remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'f522084597'</span>.
-remote: Generating deployment script.
-remote: Generating deployment script <span class="k">for</span> Web Site
-remote: Generated deployment script files
-remote: Running deployment command...
-remote: Handling Basic Web Site deployment.
-remote: KuduSync.NET from: <span class="s1">'D:\home\site\repository'</span> to: <span class="s1">'D:\home\site\wwwroot'</span>
-remote: Deleting file: <span class="s1">'hostingstart.html'</span>
-remote: Copying file: <span class="s1">'index.html'</span>
-remote: Finished successfully.
-remote: Deployment successful.
-To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
- * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-</pre></div>
-</div>
-<p>これで、サイトを確認すると、こんな感じで見えます。 ちなみに、<span class="docutils literal"><span class="pre">azure</span> <span class="pre">site</span> <span class="pre">browse</span> <span class="pre">kinmugi006</span></span>でブラウザが開きます。</p>
-<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
-</div>
-<div class="section" id="java">
-<h2>Java ランタイムの設定</h2>
-<p>これで、git の設定ができたので、次のJava Runtimeの設定をします。ここでもgitのパスワード設定と同じようにポータルを使います。Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0_51(バージョン番号は随時変わります）にして、WEB CONTAINER をTOMCAT 7.0.50 にして、SAVEを押します。</p>
-<img alt="Select Java runtime" class="align-center" src="_images/20140609_azure004.PNG"/>
-<p>ここで、<a class="reference external" href="http://kinmugi006.azurewebsites.net/">http://kinmugi006.azurewebsites.net/</a>を見ると、さきほどの<span class="docutils literal"><span class="pre">Hello</span> <span class="pre">Java</span></span>から下記のような画面になります。</p>
-<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
-<p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
-<p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a>にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
-<p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
-      <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
-
-  <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">"org.apache.catalina.valves.AccessLogValve"</span> <span class="na">directory=</span><span class="s">"${site.logdir}"</span>
-         <span class="na">prefix=</span><span class="s">"site_access_log."</span> <span class="na">suffix=</span><span class="s">".txt"</span>
-         <span class="na">pattern=</span><span class="s">"%h %l %u %t &amp;quot;%r&amp;quot; %s %b"</span> <span class="nt">/&gt;</span>
-
-<span class="nt">&lt;/Host&gt;</span>
-</pre></div>
-</div>
-<p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。<a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property “user.home” does not correspond to “USERPROFILE” (win)</a>Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
-</pre></div>
-</div>
-<p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
-</div>
-<div class="section" id="git-push">
-<h2>git push後の自動ビルド</h2>
-<p>標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive で、kudu.exeを起動します。kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
-<p>まずは、Javaのアプリの準備をします。</p>
-<p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
-<p>ディレクトリ構成</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>├─gradle
-│  ├─bin
-│  ├─init.d
-│  ├─lib
-│  │  └─plugins
-│  └─media
-└─src
-    └─main
-        ├─java
-        │  └─org
-        │      └─gradle
-        │          └─sample
-        ├─resources
-        └─webapp
-</pre></div>
-</div>
-<p><span class="docutils literal"><span class="pre">.deployemnt</span></span>という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、<span class="docutils literal"><span class="pre">.deployemnt</span></span>ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/><span class="o">[</span>config<span class="o">]</span>
-<span class="nb">command</span> <span class="o">=</span> deploy.cmd
-</pre></div>
-</div>
-<p><span class="docutils literal"><span class="pre">deploy.cmd</span></span>では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
-
-SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
-SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
-
-:: Setup
-:: -----
-
-setlocal enabledelayedexpansion
-
-IF NOT DEFINED DEPLOYMENT_SOURCE <span class="o">(</span>
-  SET <span class="nv">DEPLOYMENT_SOURCE</span><span class="o">=</span>%~dp0%.
-<span class="o">)</span>
-
-IF NOT DEFINED DEPLOYMENT_TARGET <span class="o">(</span>
-  SET <span class="nv">DEPLOYMENT_TARGET</span><span class="o">=</span>%~dp0%<span class="se">\.</span>.<span class="se">\w</span>wwroot
-<span class="o">)</span>
-
-IF EXIST <span class="s2">"%GRADLE_HOME_CMD%"</span> <span class="o">(</span>
-  call :ExecuteCmd <span class="s2">"%GRADLE_HOME_CMD%"</span> clean war
-  IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
-<span class="o">)</span>
-
-
-:: copy war file to wwwroot
-
-IF NOT EXIST <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps <span class="o">(</span>
-   mkdir <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps &gt; NUL 2&gt;<span class="p">&amp;</span>1
-<span class="o">)</span>
-
-COPY /Y <span class="s2">"%DEPLOYMENT_SOURCE%"</span><span class="se">\b</span>uild<span class="se">\l</span>ibs<span class="se">\k</span>inmugi.war <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps<span class="se">\R</span>OOT.war
-IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
-
-goto end
-
-:: Execute <span class="nb">command</span> routine that will <span class="nb">echo</span> out when error
-:ExecuteCmd
-setlocal
-<span class="nb">set</span> <span class="nv">_CMD_</span><span class="o">=</span>%*
-call %_CMD_%
-<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo</span> Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nv">command</span><span class="o">=</span>%_CMD_%
-<span class="nb">exit</span> /b %ERRORLEVEL%
-
-:error
-endlocal
-<span class="nb">echo</span> An error has occurred during web site deployment.
-call :exitSetErrorLevel
-call :exitFromFunction 2&gt;nul
-
-:exitSetErrorLevel
-<span class="nb">exit</span> /b 1
-
-:exitFromFunction
-<span class="o">()</span>
-
-:end
-endlocal
-<span class="nb">echo</span> Finished successfully.
-</pre></div>
-</div>
-<p>ここまでできたら、git add, commit して、pushしてください。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
-Counting objects: 189, <span class="k">done</span>.
-Delta compression using up to <span class="m">4</span> threads.
-Compressing objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>188/188<span class="o">)</span>, 40.11 MiB <span class="p">|</span> 973.00 KiB/s, <span class="k">done</span>.
-Total <span class="m">188</span> <span class="o">(</span>delta 3<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
-remote: Updating branch <span class="s1">'master'</span>.
-remote: Updating submodules.
-remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'c190ab30ef'</span>.
-remote: Running custom deployment command...
-remote: Running deployment command...
-remote: ..................
-remote:         <span class="m">1</span> file<span class="o">(</span>s<span class="o">)</span> copied.
-remote: Finished successfully.
-remote: Deployment successful.
-To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
-   f522084..c190ab3  master -&gt; master
-</pre></div>
-</div>
-<p>ただ一つだけ問題があります。最初に、WebSitesの作成したwebappsには、ROOTのディレクトリがあるのにROOT.warが無いので autoDeploy が上手く動作しません。どこかを修正してpushし直すか、ポータルから redeploy してください。問題があるのは初回だけで２回めからは前回upしたROOT.warがあるので無事自動展開されます。</p>
-</div>
-<div class="section" id="id2">
-<h2>最後に</h2>
-<p>kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、<a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a>にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
-<p>下記のサイトを参考にしました</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td><a class="reference external" href="http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Git のカスタマイズ - Git フック</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs">kudu.exeは、Kudu.Console</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[3]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Investigating-issues">SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs">Well Known Environment Variables</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[5]</td><td><a class="reference external" href="https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs">KuduSync のオプション</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[6]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow">Deployment Logic Flow</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[7]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-hooks">Deployment hooks</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r8" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[8]</td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/java.html">Java</a>, <a href="categories/websites.html">WebSites</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/java.html">Java</a>, <a href="tags/gradle.html">Gradle</a>, <a href="tags/git.html">Git</a>, <a href="tags/websites.html">WebSites</a>, <a href="tags/kudu.html">Kudu</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/06/09/websites_gradle_git.html#disqus_thread" data-disqus-identifier="2014/06/09/websites_gradle_git">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -690,6 +529,8 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
+        </li><li>
             <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
         </li><li>
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
@@ -707,15 +548,13 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
-        </li><li>
-            <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (32)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (33)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

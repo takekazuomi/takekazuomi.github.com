@@ -73,6 +73,56 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx">Windows Azure テーブルにおける重大な（互換性のない）変更</a></div>
+</div>
+</div></blockquote>
+<p>Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a>から変更点を紹介します。</p>
+<div class="section" id="id1">
+<h2>変更点</h2>
+<ol class="arabic simple">
+<li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
+<li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
+<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、<cite>type=feed</cite>が追加されます変更前: Content-Type: application/atom+xml;charset=utf-8変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
+<li>MIME type のセキュリティ リスクの削減のための新しいresponse header<cite>X-Content-Type-Options: nosniff</cite>が返されます。参照：<a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>感想等</h2>
+<ul class="simple">
+<li>手元のアカウントで確認してみたら既に上記の通りに変更されていました。事前に予告が欲しいです。</li>
+<li>改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。</li>
+<li>XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。</li>
+<li>AtomPub内のXML elementの順番に関しては、<a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
+<li>HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</li>
+</ul>
+<p>json対応に向けて着々と進んでいるのは、とても嬉しいです。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 17, 2013</span>
         </div>
         <div class="section">
@@ -568,31 +618,31 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
 <li>ポータルで256Gでdata diskを作成して接続を確認</li>
 </ol>
 <div class="highlight-bash"><div class="highlight"><pre><span/>$ dmesg <span class="p">|</span> grep -e <span class="s2">"\[sd[a-z]\]"</span>
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> 512-byte logical blocks: <span class="o">(</span>32.2 GB/30.0 GiB<span class="o">)</span>
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd 2:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> 512-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd 3:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd 6:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd 6:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> 512-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> 00
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd 6:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
+sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">32</span>.2 GB/30.0 GiB<span class="o">)</span>
+sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
+sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
+sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
+sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
+sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
+sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
+sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
+sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
+sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
+sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
+sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
+sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
+sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
+sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
+sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
+sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
+sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
+sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
+sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
+sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
+sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
+sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -637,12 +687,12 @@ ___ snip ___
 $ chmod a+wrx /mnt/data*
 $ chmod a+wrx /mnt/resource
 $ ls -l /mnt/
-total 20
-drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 15:56 cdrom
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data1
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 21:04 data2
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> 22:47 data3
-drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <span class="m">21</span> 22:14 resource
+total <span class="m">20</span>
+drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> <span class="m">15</span>:56 cdrom
+drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">21</span>:04 data1
+drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">21</span>:04 data2
+drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">22</span>:47 data3
+drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <span class="m">21</span> <span class="m">22</span>:14 resource
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
@@ -654,16 +704,16 @@ $ sudo mount -t ext4 /dev/sde1 /mnt/data3
 
 $ df -T
 Filesystem     Type     1K-blocks    Used Available Use% Mounted on
-/dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   4% /
-udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   1% /dev
-tmpfs          tmpfs       <span class="m">704872</span>     <span class="m">280</span>    <span class="m">704592</span>   1% /run
-none           tmpfs         <span class="m">5120</span>       <span class="m">0</span>      <span class="m">5120</span>   0% /run/lock
-none           tmpfs      <span class="m">1762172</span>       <span class="m">0</span>   <span class="m">1762172</span>   0% /run/shm
-none           tmpfs       <span class="m">102400</span>       <span class="m">0</span>    <span class="m">102400</span>   0% /run/user
-/dev/sdb1      ext4     <span class="m">139334632</span>  <span class="m">192000</span> <span class="m">132064848</span>   1% /mnt/resource
-/dev/sdc1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data1
-/dev/sdd1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data2
-/dev/sde1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   1% /mnt/data3
+/dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   <span class="m">4</span>% /
+udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   <span class="m">1</span>% /dev
+tmpfs          tmpfs       <span class="m">704872</span>     <span class="m">280</span>    <span class="m">704592</span>   <span class="m">1</span>% /run
+none           tmpfs         <span class="m">5120</span>       <span class="m">0</span>      <span class="m">5120</span>   <span class="m">0</span>% /run/lock
+none           tmpfs      <span class="m">1762172</span>       <span class="m">0</span>   <span class="m">1762172</span>   <span class="m">0</span>% /run/shm
+none           tmpfs       <span class="m">102400</span>       <span class="m">0</span>    <span class="m">102400</span>   <span class="m">0</span>% /run/user
+/dev/sdb1      ext4     <span class="m">139334632</span>  <span class="m">192000</span> <span class="m">132064848</span>   <span class="m">1</span>% /mnt/resource
+/dev/sdc1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data1
+/dev/sdd1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data2
+/dev/sde1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data3
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
@@ -681,10 +731,10 @@ $ vi /etc/fstab
 ___ snip ___
 
 $ cat /etc/fstab
-<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> 0
-<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        <span class="m">0</span> 0
+<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
+<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
+<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
+<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="6">
@@ -807,112 +857,6 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 08, 2012</span>
-        </div>
-        <div class="section">
-            <h1><a href="2012/12/08/blobasyncinside.html">Windows Azure Storage 2.0 の Blob Upload</a></h1>
-<p>前の記事<a class="reference internal" href="2012/12/08/waac2012day2.html"><span class="doc">Azure Storage Gen 2は速かった</span></a>では非同期呼び出しを使っていますが、これには理由があります。以前（2010年ぐらい）、Windows Azureを使い始めたころにSorage Client 1.xと、.NET Framework 4.0の組み合わせでいろいろ試した時には、スレッドを上げてやったのと非同期にしてやったので比べた時には有意な違いは出ませんでした。非同期でコードを書くと面倒になることも多かったので、「手間の割にはあまりメリットは無いなあ」というのが当時の結論だったのです。</p>
-<p>ところが、2012年10月の末にAzure Storage Client 2.0が出てAPIや実装が大幅に変わったので変更点を眺めていたら面白いことに気が付きました。2.0ではBlobの書き込みは、Stream.WriteToSync()でやっていて、そのWriteToSyncの中が非同期呼び出しで実装されているとか、非同期呼び出し数をセマフォを使って制限しているところなどなかなか良さげな実装になっています。</p>
-<p>ある日、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>というのがGitHubに上がっているのに気が付いて中を見てみたら、前に読んだSDKの実装に比べても、そんなに優れているようには見えません。「あのコードより2.0の実装の方が大きなファイルでも効率的にUploadできるはず、もしかしたら2.0のコードは壊れているのからこんなことしてるのかな？」と思い2.0のコードを動かして実際に試して見ました。やってみたらなかなか調子が良く2.0の実装では十分な速度でBlobにアップロードされます。</p>
-<p>C# 5.0で await/asyc もサポートされ .NET 4.5になってTask周りも改善されて非同期を使うには良い環境が揃ってきていると感じました。それで改めて非同期呼び出しを使ってみることにしました。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8149221698/"><img alt="shibuya by takekazu, on Flickr" src="http://farm9.staticflickr.com/8328/8149221698_e44be55a36_c.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="id1">
-<h2>試行（やってみた）</h2>
-<p>Azure Datacenter内にLargeのインスタンスを用意して適当なファイルを元にして8GBのファイルを用意しました。そのファイルを同一のBlobに4回アップロードして平均の速度を測定します。結果は、 ** 平均473Mbps ** でした。これは、ほぼインスタンスのネットワーク帯域制限値と同じです。なかなか良い結果と言えます。</p>
-<p>確認に使ったコード、（メッセージがドイツ語になっているのは、AzureLargeFileUploader の名残です）</p>
-<script src="https://gist.github.com/takekazuomi/4133960.js">&amp;amp;nbsp;</script><p>このコードのポイントは下記の3点です。</p>
-<ol class="arabic simple">
-<li>18行目ので接続数の制限を1024に設定していること</li>
-<li>59行目で並列度の設定をコア数の12倍にしていること</li>
-<li>55,56行目ではPage/Block Blobのどちらを使うかを切り替えていること</li>
-</ol>
-<p>接続が作れないと並列度が上がらないのでDefaultConnectionLimitを増やし、Storage Client 2.0ではParallelOperationThreadCount のデフォルトが1になっているのでコア数の12倍に設定します。Storage Client 2.0では、55, 56行目のように切り替えるだけで、どちらでも並列アップロードができるようになっています。1.xのときは、UploadFromStreamを使った時にBlock Blobでしか並列アップロードがサポートされてなかったことに比べて改善されています。</p>
-<p>アップロード中をリソースマネージャーで観察するとコネクションが数多く作成されているのが確認できます。右側のNetworkトラフィックのグラフが波打っているのが興味深いところです。ピーク時に600-700Mbps程度行くこともありますが平均すると470 Mbpsという結果でした。CPUは5-10%程度しか使われていませんし、メモリーも開始から終了までほぼ一定です。なかなか優秀です。</p>
-<img alt="../../../_images/2012-08-screen01.png" src="_images/2012-08-screen01.png"/>
-<p>![Resource Monitor](/images/2012-08-screen01.png)</p>
-<hr class="docutils"/>
-<p>** ここからは、ソースを見ながら確認していった過程のメモです。リンクばかりで分かり辛いかもしれませんが参考までに。興味深いのは非同期と同期の処理の境界と並列度の制限をしている部分です。 **</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="paralleloperationthreadcount">
-<h2>どうしてこんなところが変わったの？ ParallelOperationThreadCount のデフォルト値</h2>
-</div>
-<div class="section" id="x">
-<h2>1.x では</h2>
-<p>CloudBlobClientに、ParallelOperationThreadCount というのがあります。１系では、下記のように定義されていました。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L261">StorageClient/CloudBlobClient.cs#L261</a></p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/CloudBlobClient.cs#L52">CloudBlobClient.cs#L52</a></p>
-<p>試しに、下記のようなコードでioThreadsを確認したところデスクトップPCでは２，Azure上のLargeのインスタンスでは４でした。どちらの環境でもデフォルトでParallelOperationThreadCountが２以上になり並列で動作します。</p>
-<script src="https://gist.github.com/takekazuomi/4239681.js">&amp;amp;nbsp;</script></div>
-<div class="section" id="id2">
-<h2>2.0 では</h2>
-<p>それに対し、２系では下記のように定義されています。parallelismFactorは、47行目付近で1で初期化されておりデフォルトは1となります。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L232">CloudBlobClientBase.cs#L232</a></p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Blob/CloudBlobClientBase.cs#L47">CloudBlobClientBase.cs#L47</a></p>
-<p>これからParallelOperationThreadCount のデフォルトが1に変わったことがわかります。これは、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/10/29/windows-azure-storage-client-library-2-0-breaking-changes-amp-migration-guide.aspx">Windows Azure Storage Client Library 2.0 Breaking Changes &amp; Migration Guide</a>にも書いてあるBreaking Changesです。</p>
-<p>2.0に移行した後、Block Blobのアップロードが遅くなった場合はParallelOperationThreadCountを確認するといいかもしれません。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id3">
-<h2>ParallelOperationThreadCountの使われ方</h2>
-<p>1.xでは、ParallelOperationThreadCount は、ParallelUpload で並列度の定義になっています。このクラスは、Streamをblock blobにUploadするもので、BlobClient.UploadFromStreamを、Block blobで使った時しか使われません。** Page Blobでは並列アップロードは実装されていません。 ** おそらく、SDK 1xではPage Blogのパラレルアップロードをサポートしていないので、<a class="reference external" href="https://github.com/chgeuer/AzureLargeFileUploader">AzureLargeFileUploader</a>を用意したのだと思います ** あのソースだけだと分からないですが</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs">ParallelUpload.cs</a></p>
-<p>ParallelExecute あたりの処理をみると、Block毎にTaskを上げているらしいことがわかります。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/sdk_1.7.1/microsoft-azure-api/StorageClient/ParallelUpload.cs#L148">ParallelUpload.cs#L148</a></p>
-<p>2.0.1では、CloudBlockBlob のUploadFromStreamは、並列処理をするときにはStreamの拡張メソッドのWriteToSyncを呼んでいます。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/CloudBlockBlob.cs#L116">CloudBlockBlob.cs#L116</a></p>
-<hr class="docutils"/>
-</div>
-<div class="section" id="blobasyncinside-borderofsyncasync">
-<span id="id5"/><h2>同期と非同期の境界</h2>
-<p>WriteToSyncの実装は下記のようになっています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/Common/Core/Util/StreamExtensions.cs#L64">StreamExtensions.cs#L64</a></p>
-<p>ちょっと見ると、WriteToSyncは、読み込み側のStreamを非同期で読み出すためのフラグをもっているだけで書き込みは同期していて、並列動作しないような感じです。これだと、ParallelOperationThreadCountに2以上をセットしてもパラレルアップロードは行われないのかな？と思いますが、その先のtoStream.Write の実装を見ると内部が非同期に処理されています。</p>
-<p>toStreamの実態は、BlobをStreamとして扱うBlobWriteStreamのインスタンスで、これは内部的に非同期で書き込みを行います。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs">BlobWriteStream.cs</a></p>
-<p>呼び出し側を見ると同期処理のように見えるが、BlobWriteStreamBase で、AsyncSemaphore　parallelOperationSemaphoerをParallelOperationThreadCountの数で初期化しており、ストーリーム内のブロック書き込みは非同期に行われています。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Blob/BlobWriteStream.cs#L286">BlobWriteStream.cs#L286</a></p>
-<p>この設計はなかなかイイ。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id6">
-<h2>非同期実行数の制限</h2>
-<p>ここで、AsyncSemaphoreは、既定の数以上に処理が実行されないように非同期実行数を制御している役割を果たしている。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/master/microsoft-azure-api/Services/Storage/Lib/DotNetCommon/Core/Util/AsyncSemaphore.cs">AsyncSemaphore.cs</a></p>
-<p>BlobWriteStreamでは、書き込みが全部終わると、最後に PutBlockList して終了する。同様な処理がPage Blobにも用意されていて並列アップロードされるような実装になっている。</p>
-<p>このあたりは、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx">What’s New in Storage Client Library for .NET (version 2.0)</a>に書いてある説明通りの実装になってるようだ。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id7">
-<h2>結論</h2>
-<p>Blobのアップロードのような I/O がボトルネックとなるような処理ではI/O の非同期を使うことでCPU、メモリの負荷を最低限にして効率的に処理をすることができる。このコードでは、Stream 書き込みの内部処理を非同期化することで全体のパフォーマンスを向上しプログラミングモデルへの影響は最低限にしている。サーバーサイドのプログラミングではこのような、同期、非同期の境界を発見して設計することが重要だと言える。非同期実行数の制限もなかなか興味深い。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id8">
-<h2>おまけ</h2>
-<p>LargeのRoleからStorageにUploadしたら450Mbps程度の速度が出た。ローカルからも、20Mbps程度だったので結構速い。転送中を見ていると、しばらくは複数のコネクションを使ってデータ転送していて最後にコネクションが一本になって終わる。、</p>
-<p>PutBlobを非同期でやって最後にPutBlobListで終了となってるようだ。PutBlobの処理中はCPUはほとんど使われずに、ネットワーク帯域がボトルネックになっるぐらいには効率がいい。最後のPutBlobListの間はStorage側の待ちになってしまう。</p>
-<p>これを考えると、複数のファイルをUploadする場合は、スレッドを分けて個々に処理した方が短時間で終わるのではないかと考えられる。ただ、あまり多くのスレッドを起動するメリットは無さそうだ。</p>
-<p>今回は、UploadFromStreamを使ったが下記の説明にはOpenWriteを使うとStreamのように処理できると書いてある。やってみたら同じように動いた。つまりBlobをStreamとして使えるってことだ素晴らしい。</p>
-<p><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/microsoft.windowsazure.storage.blob.cloudblockblob.openwrite.aspx">CloudBlockBlob.OpenWrite Method</a></p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_blob.html">Azure Blob</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_blob.html">Azure Blob</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/blob.html">Blob</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -921,6 +865,8 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
+        </li><li>
             <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
         </li><li>
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
@@ -938,15 +884,13 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li><li>
             <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
-        </li><li>
-            <a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (32)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (9)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (33)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (11), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

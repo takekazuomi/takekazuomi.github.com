@@ -72,7 +72,7 @@ Azure PowerShellを使っていると、PowerShellのオブジェクトパイプ
 
 今回ちょっと分かり辛らかったのは、 タイムスライスを返す ``Get-AzureRmDataFactorySlice``   と タイムスライス の実行結果を返す ``Get-AzureRmDataFactoryRun``  の関係でした。最初 ``Get-AzureRmDataFactoryRun`` がデータセットの実行結果を取得するのかと勘違いしていたこともあり、どのようなパラメータを渡せば良いのかが分からず…　このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに大分時間を無駄にしました。後で、マニュアル [#ref2]_ 見たらちゃんと書いてあったんですが、、、、
 
-`Set-AzureRmDataFactorySliceStatus <>`_ は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。
+`Set-AzureRmDataFactorySliceStatus <https://docs.microsoft.com/en-us/powershell/module/azurerm.datafactories/set-azurermdatafactoryslicestatus>`_ は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。
 
 締めは、 ``Azure DataFactory はいいぞ！`` ということで。
 

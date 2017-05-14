@@ -74,15 +74,15 @@ dnvm upgrade で入れると、alias default が定義され PATHも切られる
 
 .. code-block:: csharp
 
-            TableContinuationToken token = null;
-            do
-            {
-                var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
+   TableContinuationToken token = null;
+   do
+   {
+       var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
 
-                result.Results.ToList().ForEach(table => Console.WriteLine($"{table.Name}"));
+       result.Results.ToList().ForEach(table => Console.WriteLine($"{table.Name}"));
 
-                token = result.ContinuationToken;
-            } while (token != null);
+       token = result.ContinuationToken;
+   } while (token != null);
 
 
 ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。 [#ref2]_
@@ -91,8 +91,8 @@ dnvm upgrade で入れると、alias default が定義され PATHも切られる
 
 .. code-block:: csharp
 
-        public async Task RunAsync(CancellationToken cancellationToken)
-        {
+   public async Task RunAsync(CancellationToken cancellationToken)
+   {
             var sw = Stopwatch.StartNew();
             var min = _fromDate.ToUniversalTime().Ticks;
             var max = _toDate.ToUniversalTime().Ticks;
@@ -120,7 +120,7 @@ dnvm upgrade で入れると、alias default が定義され PATHも切られる
             sw.Stop();
             Console.WriteLine("Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec",
                 result.Count, result.Min(e => e.PartitionKey), result.Max(e => e.PartitionKey), (sw.ElapsedMilliseconds / 1000.0));
-        }
+   }
 
 余談だが、WAD(Windows Azure Diagonestics )のテーブルは、tickを"d19"で書式化したもので、パーテーションを指定すると時系列で絞り込むことができる。この方法は、パーテーションのレンジクリーになるので、時間的なパフォーマンスがあまり良くないが、パッチなどで使うならば結果のデータ量を絞り込めるという利点がある。時間的なコストが重要なシナリオでは、並列化を検討すると良い。
 
