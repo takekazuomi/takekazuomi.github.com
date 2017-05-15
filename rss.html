@@ -47,7 +47,7 @@
 <div>Azure Cosmos DBは、2010年に「Project Florence」で開始、グローバルディストリビューションの課題を解決するためにMSの社内で使っていたが、他の皆にも役に立つと思い、2015年にAzure DocumentDBの形でこのテクノロジの第1世代を利用できるようにした。</div></blockquote>
 <p>云々だそうだ。世界中で展開するサービスの下りをみて連想したのは、AzurePortal。「最近ポータルが速くなってきてるのはエンドポイントを日本に持ってきたからかな、でもUSのリソースも普通に見れて操作できるしどうなっているのだろう」と思っていたが。Cosmos DBのようなグローバルディストリビューションの仕組みがあれば実装イメージが湧いてくる。実際のところはどうなっているかはわからないが。なかなか興味深い。</p>
 <p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id10">[8]</a>に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id11">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen=""/><p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id12">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen=""/><p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id12">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
 <p>この記事には、Azure Cosmos DBのデータベースエンジンの中身についても少し書いてあった。以下超訳</p>
 <blockquote>
 <div>Azure Cosmos DBのデータベースエンジンのコアタイプシステムは、汎用的にどのようなデータにも対応するatom-record-sequence (ARS)と呼ばれる構造となっている。Atomは、文字列、論理型、数値などのprimitive型、recordは構造体、sequence はatom、record、sequenceの配列である。また、Azure Cosmos DBのデータベースエンジンは、JSONなどのAPIが利用するデータモデルとARSベースのコアデータモデルの効率的な変換と投影を実装し、動的型付き言語（dynamically typed programming languages）からコアデータモデルへのネイティブアクセスをサポートする。このデータベースエンジンを使うことで、Cosmos DBのAPIは、battle-tested でフルマネージドな、グローバル分散型データベースシステムのすべての利点を得ることができる。</div></blockquote>
@@ -3603,7 +3603,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-60dc14e50321bd0fa76dc5e26e73c6d7c20eeacc.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-60dc14e50321bd0fa76dc5e26e73c6d7c20eeacc.png" width="600.0"/></a></div></div>
+<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-a908e6d0d726c68a53c10ba5f2c3e774f2d84a1b.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-a908e6d0d726c68a53c10ba5f2c3e774f2d84a1b.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>
