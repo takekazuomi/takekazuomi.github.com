@@ -3,6 +3,8 @@
 ====================================
 最近のAzure PowerShellのインストール事情が少々メンドクサイことになっているのでメモ代わりに書き留める。
 
+基本は、Azure テクニカル サポート チームが `Azure PowerShell 最新版のインストール手順 (v3.8.0 現在) <https://blogs.technet.microsoft.com/jpaztech/2017/05/02/azure-powershell-3-8-0-install/>`_ に書いている状況だが、いろいろあるので書いた。
+
 **2017/5/19、Azure PowerShell 4.0.1 時点の情報です**
 
 .. image:: https://c1.staticflickr.com/5/4184/33557301834_6e7ab21ef7_c.jpg
