@@ -31,9 +31,10 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page3.html" /><link rel="prev" title="Newer" href="index.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5',
+        VERSION:     '1.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
         HAS_SOURCE:  true
       };
     </script><script type="text/javascript" src="_static/underscore.js"></script><script type="text/javascript" src="_static/doctools.js"></script><script type="text/javascript" src="_static/disqus.js"></script><script type="text/javascript" src="_static/google_analytics.js"></script><meta property="og:type" content="article" />
@@ -73,6 +74,36 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>October 04, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a></h1>
+<p>「<a class="reference external" href="http://yfakariya.blogspot.jp/2016/10/talkedondotnetfringejapan2016.html">まさかの .NET じゃない話</a>」を、<a class="reference external" href="http://dotnetfringe-japan.connpass.com/event/35659/">.NET Fringe Japan 2016</a>で話してきました。 「<a class="reference external" href="http://pocketberserker.hatenablog.com/entry/2016/10/06/203735">Partitionの話とか、なかなか聞けないので面白かったです</a>」 と言っていただけるのは有難いです。</p>
+<p>.NET Fringe なのに、.NET 成分、OSS成分ゼロで良いのかとは迷ったのですが、快く背中を押してもらい、Azure Storageの話をすることにしました。</p>
+<p>Azure Storageは内部構造が公開されているのにも関わらず、日本ではその構造もあまり議論されることも無く、自分でも中に溜めているだけでなかなか外で話す機会も無いという状況で、。少々もったいない気がしていたので話が出来たのは良い機会でした。</p>
+<p>最初は、Storageを構成する３層を全部話そうとしたのですが、細部に立ち入らないと面白い話にならず、細部に入ると話が長くなり全然時間に入らず。結局、一番面白そうなパーテーション周りにフォーカスして話しました。背景的な話や、他のレイヤーの話を飛ばして話したので少々わかり辛らかったかもしれません。</p>
+<p>シャーディングをサポートしているシステムは世の中に諸々ありますが、負荷に応じてパーテーションマップを変更しロードバランシングするシステムで上手く動いている例は多くはなく、実装例として面白いのでは無いかと思います。今回は、話の焦点をパーテーションマップを動的に負荷に応じてどう構成するか、そのときに実データの移動を伴わない実装になっているかという当たりが一番盛り上がるところだったのですが、うまく説明するのはなかなか難しく資料の作成に苦心しました。</p>
+<p>分割（パーテーショニング）が避けられなった時、一実装例として参考になればと思います。</p>
+<p>.NET Fringe Japan 2016 資料です。「Azure Storage Partition Internals」</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/901iFCR13dImEd" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe>
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/architecture.html">Architecture</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2016/10/04/net_fringe_japan_2016.html#disqus_thread" data-disqus-identifier="2016/10/04/net_fringe_japan_2016">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>July 01, 2016</span>
         </div>
         <div class="section">
@@ -134,7 +165,7 @@
         <div class="categories">
             <span>
                 Filed under:
-                <a href="categories/servicefabric.html">ServiceFabric</a></span>
+                <a href="categories/service_fabric.html">Service Fabric</a></span>
         </div>
         
         <div class="comments">
@@ -256,184 +287,6 @@ OperationStatus      : Succeeded
         
         <div class="comments">
             <a href="http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html#disqus_thread" data-disqus-identifier="2016/02/05/how_to_get_current_running_guest_os_version">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 02, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a></h1>
-<p><a class="reference external" href="http://qiita.com/advent-calendar/2015/azure">Microsoft Azure Advent Calendar 2015 2日目</a></p>
-<p>.NET 用の<a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage/6.1.1-preview">Azure Storage Client Library</a>が、 6.1.1-preview (2015/10/30リリース) から DNXCore 5.0 にも対応しているので、どれぐらい動くのか簡単なコンソールアプリケーションを作ってみた。 ソース<a class="reference external" href="https://github.com/takekazuomi/scldnx-sample">github.com/takekazuomi/scldnx-sample</a></p>
-<a class="reference external image-reference" href="https://flic.kr/p/zy9cWU"><img alt="butterfly" class="align-center" src="https://farm1.staticflickr.com/616/22023502300_b42e78e1dc_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>環境</h2>
-<p>コードは、 Visual Studio 2015 Update 1 で書いて、dnx 関連のコマンドでコンパイル実行という流れ。最近なんやら、<strong>dotnet</strong>というコマンドも有るらしいが今回は使っていない。新規プロジェクトで、C# -&gt; Web の下の、コンソールアプリケーション(パッケージ）というのを選択。（どうしてWebの下なのかさっぱり分からない）</p>
-<img alt="../../../_images/scl001.png" class="align-center" src="_images/scl001.png"/>
-<p>これで、見慣れぬ構造でプロジェクトが出来る。ソリューションのフォルダーには、sln のファイルと一緒に global.json が出来、プロジェクト本体は、src/[プロジェクト名] の下に作成される。プロジェクトファイルは、project.json とJSONのファイルになっている。（コメント書けないのでJSONは止めて欲しい）</p>
-<p>dnxは、最新の実行環境を使うことにした。今のところ、stable とか release に拘ってもあまり意味ないほどころころとよく変わっている。dnvm コマンドのインストール方法はプラットフォーム毎に違うが、その後はかなり同じような感じで使える。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm upgrade -a x86 -r coreclr -u
-</pre></div>
-</div>
-<p>dnvm upgrade で入れると、alias default が定義され PATHも切られる。<cite>dnvm install</cite>と、<cite>dnvm use</cite>を使って方が良いかもしれない。入っているかを、dnvm list で確認する。最後の行が active になっている。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm list
-
-Active Version           Runtime Architecture OperatingSystem Alias
------- -------           ------- ------------ --------------- -----
-       <span class="m">1</span>.0.0-beta5       clr     x64          win
-       <span class="m">1</span>.0.0-beta5       clr     x86          win
-       <span class="m">1</span>.0.0-beta5       coreclr x64          win
-       <span class="m">1</span>.0.0-beta5       coreclr x86          win
-       <span class="m">1</span>.0.0-beta7       clr     x86          win
-       <span class="m">1</span>.0.0-beta7       coreclr x86          win
-       <span class="m">1</span>.0.0-beta8       clr     x64          win             clr
-       <span class="m">1</span>.0.0-beta8       clr     x86          win
-       <span class="m">1</span>.0.0-beta8       coreclr x64          win             coreclr
-       <span class="m">1</span>.0.0-beta8       coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-15838   clr     x86          win
-       <span class="m">1</span>.0.0-rc1-15838   coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-15904   clr     x86          win
-       <span class="m">1</span>.0.0-rc1-15904   coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-update1 clr     x64          win
-       <span class="m">1</span>.0.0-rc1-update1 clr     x86          win
-       <span class="m">1</span>.0.0-rc1-update1 coreclr x64          win
-       <span class="m">1</span>.0.0-rc1-update1 coreclr x86          win
-       <span class="m">1</span>.0.0-rc2-16249   clr     x86          win
-  *    <span class="m">1</span>.0.0-rc2-16249   coreclr x86          win             default
-</pre></div>
-</div>
-<p>このあたりは、ASP.NET 5 の アドベントカレンダー のネタなので軽く飛ばします。<a class="footnote-reference" href="#ref1" id="id2">[1]</a></p>
-</div>
-<div class="section" id="id3">
-<h2>コードの概要</h2>
-<p>基本的に、Azure Storage Client コード部分はほとんど従来の物と変わらない。</p>
-<p>テーブルのリストを取る部分は、こんな感じ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/>TableContinuationToken token = null;
-do
-{
-    var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
-
-    result.Results.ToList().ForEach(table =&gt; Console.WriteLine($"{table.Name}"));
-
-    token = result.ContinuationToken;
-} while (token != null);
-</pre></div>
-</div>
-<p>ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。<a class="footnote-reference" href="#ref2" id="id4">[2]</a>試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
-<span class="p">{</span>
-         <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
-         <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
-         <span class="kt">var</span> <span class="n">max</span> <span class="p">=</span> <span class="n">_toDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
-
-         <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">_tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"WADPerformanceCountersTable"</span><span class="p">);</span>
-
-         <span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;()</span>
-             <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">TableQuery</span><span class="p">.</span><span class="n">CombineFilters</span><span class="p">(</span>
-                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">GreaterThanOrEqual</span><span class="p">,</span> <span class="n">min</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">)),</span>
-                 <span class="n">TableOperators</span><span class="p">.</span><span class="n">And</span><span class="p">,</span>
-                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">LessThan</span><span class="p">,</span> <span class="n">max</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">))));</span>
-
-         <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;();</span>
-         <span class="n">TableContinuationToken</span> <span class="n">token</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
-         <span class="k">do</span>
-         <span class="p">{</span>
-             <span class="kt">var</span> <span class="n">segment</span> <span class="p">=</span> <span class="k">await</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuerySegmentedAsync</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span>
-             <span class="n">token</span> <span class="p">=</span> <span class="n">segment</span><span class="p">.</span><span class="n">ContinuationToken</span><span class="p">;</span>
-             <span class="n">result</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">segment</span><span class="p">.</span><span class="n">Results</span><span class="p">);</span>
-             <span class="c1">// Console.Write($"{segment.Results.Count}.");</span>
-
-         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="p">!=</span> <span class="k">null</span><span class="p">);</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
-
-         <span class="n">sw</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec"</span><span class="p">,</span>
-             <span class="n">result</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">result</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="n">result</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="p">(</span><span class="n">sw</span><span class="p">.</span><span class="n">ElapsedMilliseconds</span> <span class="p">/</span> <span class="m">1000.0</span><span class="p">));</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>余談だが、WAD(Windows Azure Diagonestics )のテーブルは、tickを”d19”で書式化したもので、パーテーションを指定すると時系列で絞り込むことができる。この方法は、パーテーションのレンジクリーになるので、時間的なパフォーマンスがあまり良くないが、パッチなどで使うならば結果のデータ量を絞り込めるという利点がある。時間的なコストが重要なシナリオでは、並列化を検討すると良い。</p>
-</div>
-<div class="section" id="id5">
-<h2>動かしてみる</h2>
-<p>Storageの接続文字列は、環境変数 AZURE_STORAGE_CONNECTION_STRING から拾うようにした。VSから実行するときは、プロジェクトのプロパティでデバックを選択し環境変数を設定する。デバック時に環境変数を設定出来るのは非常に便利、Visual Studio では今ままで無かったのが不思議なぐらい。ランタイムも選択できるが、dnvm install などで予め入れておく必要がある。</p>
-<img alt="../../../_images/vsscreen05.png" src="_images/vsscreen05.png"/>
-<p>コマンドラインの場合は、下記のようにビルドして実行する。シェルの違いなどで若干違うが、ほとんど同じような感じで実行できる。便利である。</p>
-<ul class="simple">
-<li>Windows 10 TH2</li>
-</ul>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nv">$env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"Azure Storage Key"</span>
-$ dnu restore
-$ dnu build
-$ <span class="nb">cd</span> bin<span class="se">\o</span>utput<span class="se">\a</span>pproot
-$ .<span class="se">\s</span>clxplatclr.cmd ListTable
-</pre></div>
-</div>
-<ul class="simple">
-<li>Mac OSX 10.11.1</li>
-</ul>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nb">export</span> <span class="nv">AZURE_STORAGE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"Azure Storage Key"</span>
-$ dnu restore
-$ dnu build
-$ <span class="nb">cd</span> bin/output/approot
-$ ./sclxplatclr.cmd ListTable
-</pre></div>
-</div>
-<p>実行しているのはテーブルのリストを取ってるだけの簡単なコードなので、結果は省略</p>
-</div>
-<div class="section" id="id6">
-<h2>最後に</h2>
-<p>結局、ubuntu 15.04 でやったのは下記のようになって動かなかった。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnu restore
-failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared object file: No such file or directory
-</pre></div>
-</div>
-<p>言語は同じC#でも、ライブラリ回りで細かい違いがあってなかなかコーディングの手間がかかる。今回だと、MEFを使おうかと思ったら dnxcore50 に対応してなくて、<a class="reference external" href="https://www.nuget.org/packages/Microsoft.Framework.DependencyInjection/1.0.0-beta8">Microsoft.Framework.DependencyInjection</a>を使ってみたり、<cite>Environment.CurrentDirectory()</cite>が、dnxcore50 に無かったり、カレントのAppDomain取ろうとしたら出来なかったり<a class="footnote-reference" href="#ref4" id="id8">[4]</a>などなど。</p>
-<p>でもまあ、単独のバイナリに変換されるようになると、クロスプラットフォームなコンソールツールを作成する手段として重宝するんじゃないかなとは思った。</p>
-<table class="docutils footnote" frame="void" id="ref1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>DNX環境のセットアップ、<a class="reference external" href="https://docs.asp.net/en/latest/getting-started/installing-on-mac.html">Installing ASP.NET 5 On Mac OS X</a>、<a class="reference external" href="https://docs.asp.net/en/latest/getting-started/installing-on-linux.html">Installing ASP.NET 5 On Linux</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>Fluent Mode と IQueryable Mode については、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/09/07/announcing-storage-client-library-2-1-rtm.aspx">Announcing Storage Client Library 2.1 RTM &amp; CTP for Windows Phone</a>の Conceptual model の部分が詳しい。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="http://dotnet.readthedocs.org/en/latest/getting-started/installing-core-linux.html">Installing .NET Core on Linux</a>では、Ubuntu 14.04 TLS を使っている。RTMではなるべく14.04以降など広いバージョンのUbuntuをサポートして欲しいところ。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[4]</a></td><td><a class="reference external" href="https://github.com/dotnet/corefx/issues/1784">Assembly.GetExecutingAssembly, AppDomain.CurrentDomain and similar</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/sdk.html">SDK</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/12/02/using_dnx_was.html#disqus_thread" data-disqus-identifier="2015/12/02/using_dnx_was">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -442,6 +295,8 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a>
+        </li><li>
             <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
         </li><li>
             <a href="2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
@@ -459,15 +314,13 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
             <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
         </li><li>
             <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
-        </li><li>
-            <a href="2015/12/02/using_dnx_was.html">Azure Storage Client Library をDNXで使ってみた</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (33)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/powershell.html">PowerShell</a> (1)</li><li><a href="categories/powershell.html">powershell</a> (1)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/servicefabric.html">ServiceFabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (34)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure Powershell</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (1)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/servcie_fabric.html">Servcie Fabric</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (1)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure Powershell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">Powershell</a> (2), <a href="tags/powershell.html">PowerShell</a> (1), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

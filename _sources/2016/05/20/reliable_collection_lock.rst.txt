@@ -50,6 +50,6 @@ Reliable Collection は結構手堅くしっかり作っている感じを受け
 
 
 .. author:: default
-.. categories:: ServiceFabric
+.. categories:: Service Fabric
 .. tags:: none
 .. comments::

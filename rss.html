@@ -5,8 +5,155 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sun, 14 May 2017 00:00:00 +0900</pubDate>
+        <pubDate>Fri, 19 May 2017 00:00:00 +0900</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2017/05/19/install_azure_powershell.html</link>
+            <guid>http://kyrt.in/2017/05/19/install_azure_powershell.html</guid>
+            <title><![CDATA[Azure PowerShellのインストール事情]]></title>
+            <description><![CDATA[<h1>Azure PowerShellのインストール事情</h1>
+<p>最近のAzure PowerShellのインストール事情が少々メンドクサイことになっているのでメモ代わりに書き留める。</p>
+<p><strong>2017/5/19、Azure PowerShell 4.0.1 時点の情報です</strong></p>
+<a class="reference external image-reference" href="https://flic.kr/p/T8kWHy"><img alt="sky" class="align-center" src="https://c1.staticflickr.com/5/4184/33557301834_6e7ab21ef7_c.jpg"/></a>
+<div class="line-block">
+<div class="line"><br/></div>
+</div>
+<div class="section" id="id1">
+<h2>推薦されるインストール方法</h2>
+<p>以前は、WebPI経由でAzure PowerShellをインストールしていたが、現在では PowerShell Gallery 経由のインストールが推薦だ。公式ドキュメント、<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps">Install and configure Azure PowerShell</a>にも、下記のように書かれている。（ちょっと翻訳が追いついていないようで、サイトは英語のまま）</p>
+<blockquote>
+<div>Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.</div></blockquote>
+<p>Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある<a class="footnote-reference" href="#ref1" id="id2">[1]</a>。</p>
+<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Moduleで入れると記載</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Install-Module AzureRm
+</pre></div>
+</div>
+</div>
+<div class="section" id="msi">
+<h2>MSIからのインストール</h2>
+<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロードなどの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、前記のような経路でインストールするとMSI経由となる。</p>
+<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介しているのでよく読まないとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
+</div>
+<div class="section" id="msi-install-module">
+<h2>問題点：MSI -&gt; Install-Module でエラー</h2>
+<p>PowerShell Gallery と、MSI 経由のインストールには互換性が無く、MSI経由でAzure PowerShellが入った環境に PowerShell Gallery で新しいものを入れたり<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>、アップデート<span class="docutils literal"><span class="pre">Update-Module</span> <span class="pre">AzureRm</span></span>することはできない。</p>
+<p>例えば、Visual Studio 2017のインストールで、Azure PowerShellが入っている状態で、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>を やると下記のようなエラーになる。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ install-module AzureRm
+
+PackageManagement\Install-Package : The following commands are already available on this system:'Get-AzureStorageContainerAcl,Start-CopyAzureStorageBlob,Stop-CopyAzureStorageBlob'. This module 'Azure.Storage' may override the existing commands. If you still want to install this module 'Azure.Storage', use -AllowClobber parameter.
+At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:1809 char:21
++ ...          $null = PackageManagement\Install-Package @PSBoundParameters
++                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (Microsoft.Power....InstallPackage:InstallPackage) [Install-Package], Exception
+    + FullyQualifiedErrorId : CommandAlreadyAvailable,Validate-ModuleCommandAlreadyAvailable,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage
+</pre></div>
+</div>
+<p>つまり、MSIインストールとInstall-Moduleは互換性が無く、「混ぜるな危険」という状況だ。</p>
+</div>
+<div class="section" id="id4">
+<h2>解決策</h2>
+<p>もし混ざってしまったからどうするか。</p>
+<p>MSIで入れたものを、設定画面の、「アプリと機能」、あるいはコントロールパネルの「プログラムのアンインストールまたは変更」からアンイストール後、再度 Install-Moduleで PowerShell Gallery からインストールする。</p>
+<p>下記は、PowerShellからアンインストールする方法。実行には、Admin権限が必要。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ $app = Get-WmiObject -Class Win32_Product -Filter "Name like '%Azure PowerShell%'"
+$ $app
+
+IdentifyingNumber : {CB3F8A12-1570-4964-8206-17274AB9EF4D}
+Name              : Microsoft Azure PowerShell - September 2016
+Vendor            : Microsoft Corporation
+Version           : 2.1.0
+Caption           : Microsoft Azure PowerShell - September 2016
+
+$ $app.Uninstall()
+</pre></div>
+</div>
+<p>これで下記のように入れ直すと入る。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Install-Module AzureRM
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>原因</h2>
+<p>MSIで入れた場合とInstall-Moduleで入れた場合、モジュールは別の場所に入る。</p>
+<p>MSIの場合は、下記のPSModulePathに入り</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellResourceManagerAzureResourceManager</div>
+<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellServiceManagement</div>
+<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellStorage</div>
+</div>
+</div></blockquote>
+<p>Install-Moduleの場合は下記に入る</p>
+<blockquote>
+<div>C:Program FilesWindowsPowerShellModules</div></blockquote>
+<p>MSIで入れた後にInstall-Moduleで入れた場合、MSIで入れたものを認識せずにインストールが進み、途中で別のバージョンのモジュールをロードして前記のエラーになる。Install-Moduleで入れた後に、MSIで入れると次のような問題が起きる。</p>
+</div>
+<div class="section" id="id6">
+<h2>MSIインストールの問題点</h2>
+<p>現在のMSIインストールで把握している問題点は3点ある（増えるかも）、そのうち深刻なのは1つ目の問題だ。</p>
+<ol class="arabic simple">
+<li>Install-Moduleのモジュールを無条件上書きする</li>
+<li>Import-Module AzureRMでエラー</li>
+<li>WebPIでのリリースが遅い</li>
+</ol>
+</div>
+<div class="section" id="install-module">
+<h2>1. Install-Moduleのモジュールを無条件上書</h2>
+<p>現在のMSIインストールは、Install-Moduleで入れたModuleがあれば削除してから、モジュールのインストールを行う。そのとき既存のモジュールのバージョンは見ていないので、Install-Moduleで4.0.1などのあたらしいバージョンを入れていても、VS 2017 を入れると、2.1.0になってしまうなどの現象が起きる。削除処理は、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/preview/setup/Setup/RemoveGalleryModules.ps1">setup/Setup/RemoveGalleryModules.ps1</a>のあたり。 Scope CurrentUserで入れた場合は考慮されておらず、なかなか残念なコードだ。</p>
+<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
+<p>これは非常にメンドクサイ</p>
+</div>
+<div class="section" id="import-module-azurerm">
+<h2>2. Import-Module AzureRMでエラー</h2>
+<p>MSIで入れると、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRm</span></span>がエラーになる。これは、<span class="docutils literal"><span class="pre">AzureRM</span></span>というマニフェストモジュールが無いのが原因。Azure Poshの説明のあちこちで、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRM</span></span>が出て来るが、実はあまり意味がなく、モジュールはインストール時にModule Path配下に配置され、自動的にロードされるので、マニフェストモジュールが無くても動作上の不都合は無い。ただ、ドキュメントに書いてあるものがエラーになるのはちょと混乱する。ちなみに、<span class="docutils literal"><span class="pre">Install-Module</span></span>経由で入れてた場合は、AzureRM マニフェストモジュールが入り、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRM</span></span>も成功する。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ import-module azurerm
+import-module : The specified module 'azurerm' was not loaded because no valid module file was found in any module directory.
+At line:1 char:1
++ import-module azurerm
++ ~~~~~~~~~~~~~~~~~~~~~
+   + CategoryInfo          : ResourceUnavailable: (azurerm:String) [Import-Module], FileNotFoundException
+   + FullyQualifiedErrorId : Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand
+</pre></div>
+</div>
+</div>
+<div class="section" id="webpi">
+<h2>3. WebPIでのリリースが遅い</h2>
+<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id8">[2]</a></p>
+</div>
+<div class="section" id="id9">
+<h2>まとめ</h2>
+<p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合で新しいバージョンを入れたいなら、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
+<p>今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。</p>
+<p>現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が<span class="docutils literal"><span class="pre">Install-Module</span></span>経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。</p>
+</div>
+<div class="section" id="id10">
+<h2>参考</h2>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps?view=azurermps-4.0.0#how-to-get-powershellget">How to get PowerShellGet</a>WMF 5.0 を入れようという話が書いてある</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[2]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+            <category><![CDATA[ Azure ]]></category>
+            <category><![CDATA[ Posh ]]></category>
+            <category><![CDATA[ PowerShell ]]></category>
+             <pubDate>Fri, 19 May 2017 00:00:00 +0900</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2017/05/14/azure_cosmos_intro.html</link>
             <guid>http://kyrt.in/2017/05/14/azure_cosmos_intro.html</guid>
@@ -422,7 +569,7 @@
 </table>
 </div>
 ]]></description>
-            <category><![CDATA[ powershell ]]></category>
+            <category><![CDATA[ PowerShell ]]></category>
              <pubDate>Mon, 13 Feb 2017 00:00:00 +0900</pubDate>
         </item>
     
@@ -506,7 +653,7 @@
 <div class="section" id="id2">
 <h1>エラーの確認を実行</h1>
 <p>下記の様に実行すると、DatasetName, ErrorMessage でサマった数が表示されます。下記の例だとエラーメッセージが長過ぎて最後まで見れませんが、コマンド行に、<span class="docutils literal"><span class="pre">|</span> <span class="pre">Out-String</span> <span class="pre">-Width</span> <span class="pre">4096</span></span><a class="footnote-reference" href="#ref1" id="id3">[1]</a>を追加すると最後まで表示されます。（幅は随時変更してください）</p>
-<div class="highlight-posh"><div class="highlight"><pre><span/>$ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
 
 Count DatasetName                ErrorMessage
 ----- -----------                ------------
@@ -522,7 +669,7 @@ Count DatasetName                ErrorMessage
 <a class="reference external image-reference" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines#パイプラインとアクティビティの状態の理解"><img alt="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png" src="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png"/></a>
 <p>問題の修正が完了したら、下記のスクリプトで、失敗したタイムスライスを再実行します、スクリプトでは失敗したタイムスライスを古いものから順にWaitingにするだけです。タイムスライス毎に設定をしているので、pipelineで指定したバックフィルの順序が反映されません。タイムスライス間に依存関係がある場合は問題が出るかもしれませんので注意してください。</p>
 <script src="https://gist.github.com/takekazuomi/64c969362ec122781f006ddad571f009.js">&amp;amp;nbsp;</script><p>実行には、上記で確認したエラーになったデータセットを指定します。再実行になったタイムスライスを表示します。</p>
-<div class="highlight-posh"><div class="highlight"><pre><span/>$ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
 
 DatasetName                Start
 -----------                -----
@@ -627,7 +774,7 @@ DatasetAzureSqlDestination 2016/08/09 23:00:00
 <p>「上記２つに更に .NET の ReaderWriterLockSlim と、Jeffrey Richter の OneManyLock を入れて、永続化の有無がどう影響するのか考察したら面白いのかな？」と一瞬思ったのですが、今回はこの辺で。勉強会の前に明確にしておけば良かったのですが、ちょっと見逃してました。でも、SQL Serverと違って、lock やwait の状態が見えないのがちょっと不便ですね。これだと、ラッシュテストしないとデッドロックとかわからないです。</p>
 </div>
 ]]></description>
-            <category><![CDATA[ ServiceFabric ]]></category>
+            <category><![CDATA[ Service Fabric ]]></category>
              <pubDate>Fri, 20 May 2016 00:00:00 +0900</pubDate>
         </item>
     
@@ -745,34 +892,34 @@ OperationStatus      : Succeeded
 <img alt="../../../_images/scl001.png" class="align-center" src="http://kyrt.in/_images/scl001.png"/>
 <p>これで、見慣れぬ構造でプロジェクトが出来る。ソリューションのフォルダーには、sln のファイルと一緒に global.json が出来、プロジェクト本体は、src/[プロジェクト名] の下に作成される。プロジェクトファイルは、project.json とJSONのファイルになっている。（コメント書けないのでJSONは止めて欲しい）</p>
 <p>dnxは、最新の実行環境を使うことにした。今のところ、stable とか release に拘ってもあまり意味ないほどころころとよく変わっている。dnvm コマンドのインストール方法はプラットフォーム毎に違うが、その後はかなり同じような感じで使える。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm upgrade -a x86 -r coreclr -u
+<div class="code bash highlight-default"><div class="highlight"><pre><span/>$ dnvm upgrade -a x86 -r coreclr -u
 </pre></div>
 </div>
 <p>dnvm upgrade で入れると、alias default が定義され PATHも切られる。<cite>dnvm install</cite>と、<cite>dnvm use</cite>を使って方が良いかもしれない。入っているかを、dnvm list で確認する。最後の行が active になっている。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnvm list
+<div class="code bash highlight-default"><div class="highlight"><pre><span/>$ dnvm list
 
 Active Version           Runtime Architecture OperatingSystem Alias
 ------ -------           ------- ------------ --------------- -----
-       <span class="m">1</span>.0.0-beta5       clr     x64          win
-       <span class="m">1</span>.0.0-beta5       clr     x86          win
-       <span class="m">1</span>.0.0-beta5       coreclr x64          win
-       <span class="m">1</span>.0.0-beta5       coreclr x86          win
-       <span class="m">1</span>.0.0-beta7       clr     x86          win
-       <span class="m">1</span>.0.0-beta7       coreclr x86          win
-       <span class="m">1</span>.0.0-beta8       clr     x64          win             clr
-       <span class="m">1</span>.0.0-beta8       clr     x86          win
-       <span class="m">1</span>.0.0-beta8       coreclr x64          win             coreclr
-       <span class="m">1</span>.0.0-beta8       coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-15838   clr     x86          win
-       <span class="m">1</span>.0.0-rc1-15838   coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-15904   clr     x86          win
-       <span class="m">1</span>.0.0-rc1-15904   coreclr x86          win
-       <span class="m">1</span>.0.0-rc1-update1 clr     x64          win
-       <span class="m">1</span>.0.0-rc1-update1 clr     x86          win
-       <span class="m">1</span>.0.0-rc1-update1 coreclr x64          win
-       <span class="m">1</span>.0.0-rc1-update1 coreclr x86          win
-       <span class="m">1</span>.0.0-rc2-16249   clr     x86          win
-  *    <span class="m">1</span>.0.0-rc2-16249   coreclr x86          win             default
+       1.0.0-beta5       clr     x64          win
+       1.0.0-beta5       clr     x86          win
+       1.0.0-beta5       coreclr x64          win
+       1.0.0-beta5       coreclr x86          win
+       1.0.0-beta7       clr     x86          win
+       1.0.0-beta7       coreclr x86          win
+       1.0.0-beta8       clr     x64          win             clr
+       1.0.0-beta8       clr     x86          win
+       1.0.0-beta8       coreclr x64          win             coreclr
+       1.0.0-beta8       coreclr x86          win
+       1.0.0-rc1-15838   clr     x86          win
+       1.0.0-rc1-15838   coreclr x86          win
+       1.0.0-rc1-15904   clr     x86          win
+       1.0.0-rc1-15904   coreclr x86          win
+       1.0.0-rc1-update1 clr     x64          win
+       1.0.0-rc1-update1 clr     x86          win
+       1.0.0-rc1-update1 coreclr x64          win
+       1.0.0-rc1-update1 coreclr x86          win
+       1.0.0-rc2-16249   clr     x86          win
+  *    1.0.0-rc2-16249   coreclr x86          win             default
 </pre></div>
 </div>
 <p>このあたりは、ASP.NET 5 の アドベントカレンダー のネタなので軽く飛ばします。<a class="footnote-reference" href="#ref1" id="id2">[1]</a></p>
@@ -781,7 +928,7 @@ Active Version           Runtime Architecture OperatingSystem Alias
 <h2>コードの概要</h2>
 <p>基本的に、Azure Storage Client コード部分はほとんど従来の物と変わらない。</p>
 <p>テーブルのリストを取る部分は、こんな感じ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/>TableContinuationToken token = null;
+<div class="code csharp highlight-default"><div class="highlight"><pre><span/>TableContinuationToken token = null;
 do
 {
     var result = await _tableClient.ListTablesSegmentedAsync(null, null, token, null, null, cancellationToken);
@@ -793,36 +940,36 @@ do
 </pre></div>
 </div>
 <p>ちょっと困ったのは、Table のQueryが Fluent Mode しかサポートしていなくて IQueryable Mode が使えないこと。<a class="footnote-reference" href="#ref2" id="id4">[2]</a>試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">RunAsync</span><span class="p">(</span><span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span>
-<span class="p">{</span>
-         <span class="kt">var</span> <span class="n">sw</span> <span class="p">=</span> <span class="n">Stopwatch</span><span class="p">.</span><span class="n">StartNew</span><span class="p">();</span>
-         <span class="kt">var</span> <span class="n">min</span> <span class="p">=</span> <span class="n">_fromDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
-         <span class="kt">var</span> <span class="n">max</span> <span class="p">=</span> <span class="n">_toDate</span><span class="p">.</span><span class="n">ToUniversalTime</span><span class="p">().</span><span class="n">Ticks</span><span class="p">;</span>
+<div class="code csharp highlight-default"><div class="highlight"><pre><span/>public async Task RunAsync(CancellationToken cancellationToken)
+{
+         var sw = Stopwatch.StartNew();
+         var min = _fromDate.ToUniversalTime().Ticks;
+         var max = _toDate.ToUniversalTime().Ticks;
 
-         <span class="kt">var</span> <span class="n">table</span> <span class="p">=</span> <span class="n">_tableClient</span><span class="p">.</span><span class="n">GetTableReference</span><span class="p">(</span><span class="s">"WADPerformanceCountersTable"</span><span class="p">);</span>
+         var table = _tableClient.GetTableReference("WADPerformanceCountersTable");
 
-         <span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TableQuery</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;()</span>
-             <span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">TableQuery</span><span class="p">.</span><span class="n">CombineFilters</span><span class="p">(</span>
-                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">GreaterThanOrEqual</span><span class="p">,</span> <span class="n">min</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">)),</span>
-                 <span class="n">TableOperators</span><span class="p">.</span><span class="n">And</span><span class="p">,</span>
-                 <span class="n">TableQuery</span><span class="p">.</span><span class="n">GenerateFilterCondition</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">,</span> <span class="n">QueryComparisons</span><span class="p">.</span><span class="n">LessThan</span><span class="p">,</span> <span class="n">max</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">"d19"</span><span class="p">))));</span>
+         var query = new TableQuery&lt;WADPerformanceCountersTable&gt;()
+             .Where(TableQuery.CombineFilters(
+                 TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, min.ToString("d19")),
+                 TableOperators.And,
+                 TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThan, max.ToString("d19"))));
 
-         <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">WADPerformanceCountersTable</span><span class="p">&gt;();</span>
-         <span class="n">TableContinuationToken</span> <span class="n">token</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
-         <span class="k">do</span>
-         <span class="p">{</span>
-             <span class="kt">var</span> <span class="n">segment</span> <span class="p">=</span> <span class="k">await</span> <span class="n">table</span><span class="p">.</span><span class="n">ExecuteQuerySegmentedAsync</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span>
-             <span class="n">token</span> <span class="p">=</span> <span class="n">segment</span><span class="p">.</span><span class="n">ContinuationToken</span><span class="p">;</span>
-             <span class="n">result</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">segment</span><span class="p">.</span><span class="n">Results</span><span class="p">);</span>
-             <span class="c1">// Console.Write($"{segment.Results.Count}.");</span>
+         var result = new List&lt;WADPerformanceCountersTable&gt;();
+         TableContinuationToken token = null;
+         do
+         {
+             var segment = await table.ExecuteQuerySegmentedAsync(query, token, null, null, cancellationToken);
+             token = segment.ContinuationToken;
+             result.AddRange(segment.Results);
+             // Console.Write($"{segment.Results.Count}.");
 
-         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="p">!=</span> <span class="k">null</span><span class="p">);</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+         } while (token != null);
+         Console.WriteLine();
 
-         <span class="n">sw</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec"</span><span class="p">,</span>
-             <span class="n">result</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">result</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="n">result</span><span class="p">.</span><span class="n">Max</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">PartitionKey</span><span class="p">),</span> <span class="p">(</span><span class="n">sw</span><span class="p">.</span><span class="n">ElapsedMilliseconds</span> <span class="p">/</span> <span class="m">1000.0</span><span class="p">));</span>
-<span class="p">}</span>
+         sw.Stop();
+         Console.WriteLine("Count:{0}, Min: {1}, Max: {2}, Elapsed: {3:F2} sec",
+             result.Count, result.Min(e =&gt; e.PartitionKey), result.Max(e =&gt; e.PartitionKey), (sw.ElapsedMilliseconds / 1000.0));
+}
 </pre></div>
 </div>
 <p>余談だが、WAD(Windows Azure Diagonestics )のテーブルは、tickを”d19”で書式化したもので、パーテーションを指定すると時系列で絞り込むことができる。この方法は、パーテーションのレンジクリーになるので、時間的なパフォーマンスがあまり良くないが、パッチなどで使うならば結果のデータ量を絞り込めるという利点がある。時間的なコストが重要なシナリオでは、並列化を検討すると良い。</p>
@@ -835,20 +982,20 @@ do
 <ul class="simple">
 <li>Windows 10 TH2</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nv">$env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+<div class="code bash highlight-default"><div class="highlight"><pre><span/>$ $env:AZURE_STORAGE_CONNECTION_STRING="Azure Storage Key"
 $ dnu restore
 $ dnu build
-$ <span class="nb">cd</span> bin<span class="se">\o</span>utput<span class="se">\a</span>pproot
-$ .<span class="se">\s</span>clxplatclr.cmd ListTable
+$ cd bin\output\approot
+$ .\sclxplatclr.cmd ListTable
 </pre></div>
 </div>
 <ul class="simple">
 <li>Mac OSX 10.11.1</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nb">export</span> <span class="nv">AZURE_STORAGE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"Azure Storage Key"</span>
+<div class="code bash highlight-default"><div class="highlight"><pre><span/>$ export AZURE_STORAGE_CONNECTION_STRING="Azure Storage Key"
 $ dnu restore
 $ dnu build
-$ <span class="nb">cd</span> bin/output/approot
+$ cd bin/output/approot
 $ ./sclxplatclr.cmd ListTable
 </pre></div>
 </div>
@@ -857,7 +1004,7 @@ $ ./sclxplatclr.cmd ListTable
 <div class="section" id="id6">
 <h2>最後に</h2>
 <p>結局、ubuntu 15.04 でやったのは下記のようになって動かなかった。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dnu restore
+<div class="code bash highlight-default"><div class="highlight"><pre><span/>$ dnu restore
 failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared object file: No such file or directory
 </pre></div>
 </div>
@@ -3603,7 +3750,7 @@ ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt;
 <div class="section" id="owin-middleware-azure-cache-session">
 <h2>OWIN Middleware Azure Cache Session</h2>
 <p>そんなわけで、Azure Cache に Session を保存するOWIN Middleware を作成した。コードはGitHubにある<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware">OWIN Azure Cache Session Middleware</a>手探りで作った習作だが、簡単に中身を説明する。OWIN Middleware を使って下記のような構成にする。Azure CacheとSessionのMiddlewareはブラウザとアプリケーションの間にフィルタのように入る。この手のパターンは便利でWeb Application Frameworkでは随所に出てくる。今回、CacheとSessionで分ける必要があるか迷ったが、書いてみたら分けた方がシンプルになったので分けてある。</p>
-<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-a908e6d0d726c68a53c10ba5f2c3e774f2d84a1b.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-a908e6d0d726c68a53c10ba5f2c3e774f2d84a1b.png" width="600.0"/></a></div></div>
+<div><a class="reference internal image-reference" href="http://kyrt.in/_images/seqdiag-8f2eeb28ecdddedcbd15b7454d37dd303aef57bf.png"><img height="372.11538461538464" src="http://kyrt.in/_images/seqdiag-8f2eeb28ecdddedcbd15b7454d37dd303aef57bf.png" width="600.0"/></a></div></div>
 <div class="section" id="owin-selfhost-application">
 <h2>OWIN SelfHost Applicationの作成</h2>
 <p>まずは試しで、OWIN Selft Host環境を作って書いてみる。</p>

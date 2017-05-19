@@ -26,7 +26,7 @@
 
 dnxは、最新の実行環境を使うことにした。今のところ、stable とか release に拘ってもあまり意味ないほどころころとよく変わっている。dnvm コマンドのインストール方法はプラットフォーム毎に違うが、その後はかなり同じような感じで使える。
 
-.. code-block:: bash
+.. code:: bash
 
    $ dnvm upgrade -a x86 -r coreclr -u
 
@@ -34,7 +34,7 @@ dnxは、最新の実行環境を使うことにした。今のところ、stabl
 dnvm upgrade で入れると、alias default が定義され PATHも切られる。 `dnvm install` と、 `dnvm use` を使って方が良いかもしれない。
 入っているかを、dnvm list で確認する。最後の行が active になっている。
 
-.. code-block:: bash
+.. code:: bash
 
    $ dnvm list
 
@@ -72,7 +72,7 @@ dnvm upgrade で入れると、alias default が定義され PATHも切られる
 
 テーブルのリストを取る部分は、こんな感じ。
 
-.. code-block:: csharp
+.. code:: csharp
 
    TableContinuationToken token = null;
    do
@@ -89,7 +89,7 @@ dnvm upgrade で入れると、alias default が定義され PATHも切られる
 試しに、WADのPerformanceカウンターを保存しているテーブルを操作するコードを書たら下記のようになった。フィルターの部分が少々煩雑だ。
 
 
-.. code-block:: csharp
+.. code:: csharp
 
    public async Task RunAsync(CancellationToken cancellationToken)
    {
@@ -135,7 +135,7 @@ VSから実行するときは、プロジェクトのプロパティでデバッ
 
 * Windows 10 TH2
 
-.. code-block:: bash
+.. code:: bash
 
    $ $env:AZURE_STORAGE_CONNECTION_STRING="Azure Storage Key"
    $ dnu restore
@@ -145,7 +145,7 @@ VSから実行するときは、プロジェクトのプロパティでデバッ
 
 * Mac OSX 10.11.1
 
-.. code-block:: bash
+.. code:: bash
 
    $ export AZURE_STORAGE_CONNECTION_STRING="Azure Storage Key"
    $ dnu restore
@@ -161,7 +161,7 @@ VSから実行するときは、プロジェクトのプロパティでデバッ
 ======
 結局、ubuntu 15.04 でやったのは下記のようになって動かなかった。 [#ref3]_
 
-.. code-block:: bash
+.. code:: bash
 
    $ dnu restore
    failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared object file: No such file or directory

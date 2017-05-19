@@ -1,0 +1,157 @@
+====================================
+ Azure PowerShellのインストール事情
+====================================
+最近のAzure PowerShellのインストール事情が少々メンドクサイことになっているのでメモ代わりに書き留める。
+
+**2017/5/19、Azure PowerShell 4.0.1 時点の情報です**
+
+.. image:: https://c1.staticflickr.com/5/4184/33557301834_6e7ab21ef7_c.jpg
+   :target: https://flic.kr/p/T8kWHy
+   :alt: sky
+   :align: center
+
+|
+
+推薦されるインストール方法
+==========================
+以前は、WebPI経由でAzure PowerShellをインストールしていたが、現在では PowerShell Gallery 経由のインストールが推薦だ。
+公式ドキュメント、 `Install and configure Azure PowerShell <https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps>`_ にも、下記のように書かれている。（ちょっと翻訳が追いついていないようで、サイトは英語のまま）
+
+ Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.
+
+Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある [#ref1]_ 。
+
+PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Moduleで入れると記載
+
+.. code:: posh
+
+   $ Install-Module AzureRm
+
+
+MSIからのインストール
+=====================
+Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロードなどの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、前記のような経路でインストールするとMSI経由となる。
+
+また、ググって出てくる日本語の公式ページが `その他のインストール方法 <https://docs.microsoft.com/ja-jp/powershell/azure/other-install>`_ で、その他の方法としてMSIでのインストール方法を紹介しているのでよく読まないとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。
+
+
+問題点：MSI -> Install-Module でエラー
+=======================================
+PowerShell Gallery と、MSI 経由のインストールには互換性が無く、MSI経由でAzure PowerShellが入った環境に PowerShell Gallery で新しいものを入れたり ``Install-Module AzureRM`` 、アップデート ``Update-Module AzureRm`` することはできない。
+
+例えば、Visual Studio 2017のインストールで、Azure PowerShellが入っている状態で、 ``Install-Module AzureRM`` を やると下記のようなエラーになる。
+
+.. code:: posh
+
+   $ install-module AzureRm
+
+   PackageManagement\Install-Package : The following commands are already available on this system:'Get-AzureStorageContainerAcl,Start-CopyAzureStorageBlob,Stop-CopyAzureStorageBlob'. This module 'Azure.Storage' may override the existing commands. If you still want to install this module 'Azure.Storage', use -AllowClobber parameter.
+   At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:1809 char:21
+   + ...          $null = PackageManagement\Install-Package @PSBoundParameters
+   +                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       + CategoryInfo          : InvalidOperation: (Microsoft.Power....InstallPackage:InstallPackage) [Install-Package], Exception
+       + FullyQualifiedErrorId : CommandAlreadyAvailable,Validate-ModuleCommandAlreadyAvailable,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage
+
+つまり、MSIインストールとInstall-Moduleは互換性が無く、「混ぜるな危険」という状況だ。
+
+解決策
+======
+もし混ざってしまったからどうするか。
+
+MSIで入れたものを、設定画面の、「アプリと機能」、あるいはコントロールパネルの「プログラムのアンインストールまたは変更」からアンイストール後、再度 Install-Moduleで PowerShell Gallery からインストールする。
+
+下記は、PowerShellからアンインストールする方法。実行には、Admin権限が必要。
+
+.. code:: posh
+
+   $ $app = Get-WmiObject -Class Win32_Product -Filter "Name like '%Azure PowerShell%'"
+   $ $app
+
+   IdentifyingNumber : {CB3F8A12-1570-4964-8206-17274AB9EF4D}
+   Name              : Microsoft Azure PowerShell - September 2016
+   Vendor            : Microsoft Corporation
+   Version           : 2.1.0
+   Caption           : Microsoft Azure PowerShell - September 2016
+
+   $ $app.Uninstall()
+
+
+これで下記のように入れ直すと入る。
+
+.. code:: posh
+
+   $ Install-Module AzureRM
+
+
+原因
+====
+MSIで入れた場合とInstall-Moduleで入れた場合、モジュールは別の場所に入る。
+
+MSIの場合は、下記のPSModulePathに入り
+
+ | C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ResourceManager\AzureResourceManager\
+ | C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ServiceManagement\
+ | C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\Storage\
+
+
+Install-Moduleの場合は下記に入る
+
+ C:\Program Files\WindowsPowerShell\Modules
+
+MSIで入れた後にInstall-Moduleで入れた場合、MSIで入れたものを認識せずにインストールが進み、途中で別のバージョンのモジュールをロードして前記のエラーになる。Install-Moduleで入れた後に、MSIで入れると次のような問題が起きる。
+
+
+MSIインストールの問題点
+=======================
+現在のMSIインストールで把握している問題点は3点ある（増えるかも）、そのうち深刻なのは1つ目の問題だ。
+
+1. Install-Moduleのモジュールを無条件上書きする
+2. Import-Module AzureRMでエラー
+3. WebPIでのリリースが遅い
+
+1. Install-Moduleのモジュールを無条件上書
+=========================================
+現在のMSIインストールは、Install-Moduleで入れたModuleがあれば削除してから、モジュールのインストールを行う。そのとき既存のモジュールのバージョンは見ていないので、Install-Moduleで4.0.1などのあたらしいバージョンを入れていても、VS 2017 を入れると、2.1.0になってしまうなどの現象が起きる。削除処理は、 `setup/Setup/RemoveGalleryModules.ps1 <https://github.com/Azure/azure-powershell/blob/preview/setup/Setup/RemoveGalleryModules.ps1>`_ のあたり。 Scope CurrentUserで入れた場合は考慮されておらず、なかなか残念なコードだ。
+
+MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。 [#ref3]_
+
+これは非常にメンドクサイ
+
+2. Import-Module AzureRMでエラー
+================================
+MSIで入れると、 ``Import-Module AzureRm`` がエラーになる。これは、 ``AzureRM`` というマニフェストモジュールが無いのが原因。Azure Poshの説明のあちこちで、 ``Import-Module AzureRM`` が出て来るが、実はあまり意味がなく、モジュールはインストール時にModule Path配下に配置され、自動的にロードされるので、マニフェストモジュールが無くても動作上の不都合は無い。ただ、ドキュメントに書いてあるものがエラーになるのはちょと混乱する。ちなみに、 ``Install-Module`` 経由で入れてた場合は、AzureRM マニフェストモジュールが入り、 ``Import-Module AzureRM`` も成功する。
+
+.. code:: posh
+
+   $ import-module azurerm
+   import-module : The specified module 'azurerm' was not loaded because no valid module file was found in any module directory.
+   At line:1 char:1
+   + import-module azurerm
+   + ~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : ResourceUnavailable: (azurerm:String) [Import-Module], FileNotFoundException
+      + FullyQualifiedErrorId : Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand
+
+3. WebPIでのリリースが遅い
+==========================
+なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。 [#ref2]_
+
+まとめ
+======
+Azure PowerShell を使う場合、 ``Install-Module AzureRM`` で入れる、VS 2017や以前WebPIで入れている場合で新しいバージョンを入れたいなら、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。
+
+今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。
+
+現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が ``Install-Module`` 経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。
+
+
+参考
+====
+.. [#ref1] `How to get PowerShellGet <https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps?view=azurermps-4.0.0#how-to-get-powershellget>`_ WMF 5.0 を入れようという話が書いてある
+.. [#ref2] `azure-powershell.4.0.1.msi <https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017>`_ リリースのとこに、msiへのリンクがある。
+.. [#ref3] `VS Installer overwrite with old version Azure PowerShell. <https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html>`_ すぐTriaged になったけど、その後の動きがない。
+
+
+.. author:: default
+.. categories:: Azure, Posh, PowerShell
+.. tags:: Install, Posh, PowerShell, Bugs
+.. comments::

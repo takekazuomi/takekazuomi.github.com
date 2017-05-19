@@ -51,6 +51,6 @@ PsEvnの紹介
 
 
 .. author:: default
-.. categories:: powershell
+.. categories:: PowerShell
 .. tags:: none
 .. comments::

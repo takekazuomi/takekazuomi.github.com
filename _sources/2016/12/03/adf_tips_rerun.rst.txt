@@ -19,7 +19,7 @@ Azure DataFactory Tips タイムスライスの再実行
 ==================
 下記の様に実行すると、DatasetName, ErrorMessage でサマった数が表示されます。下記の例だとエラーメッセージが長過ぎて最後まで見れませんが、コマンド行に、 ``| Out-String -Width 4096``  [#ref1]_ を追加すると最後まで表示されます。（幅は随時変更してください）
 
-.. code-block:: posh
+.. code:: posh
 
    $ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
 
@@ -45,7 +45,7 @@ Azure DataFactoryのタイムスライスの再実行には、スライスの状
 
 実行には、上記で確認したエラーになったデータセットを指定します。再実行になったタイムスライスを表示します。
 
-.. code-block:: posh
+.. code:: posh
 
    $ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
 
