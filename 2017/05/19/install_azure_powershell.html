@@ -41,6 +41,10 @@
 <meta property="og:title" content="Azure PowerShellのインストール事情 &mdash; Kyrt Blog" />
 <meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
 <meta property="og:url" content="http://kyrt.in/2017/05/19/install_azure_powershell.html" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Azure PowerShellのインストール事情 &mdash; Kyrt Blog" />
+<meta name="twitter:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta name="twitter:image" content="_static/kyrt_logo4sq.gif" />
 </head>
     <body role="document">
         <!--[if lt IE 7]>
@@ -200,7 +204,7 @@ At line:1 char:1
 </div>
 <div class="section" id="id9">
 <h2>まとめ</h2>
-<p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合で新しいバージョンを入れたいなら、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
+<p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合は、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
 <p>今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。</p>
 <p>現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が<span class="docutils literal"><span class="pre">Install-Module</span></span>経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。</p>
 </div>

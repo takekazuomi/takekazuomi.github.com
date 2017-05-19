@@ -137,7 +137,7 @@ MSIで入れると、 ``Import-Module AzureRm`` がエラーになる。これ�
 
 まとめ
 ======
-Azure PowerShell を使う場合、 ``Install-Module AzureRM`` で入れる、VS 2017や以前WebPIで入れている場合で新しいバージョンを入れたいなら、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。
+Azure PowerShell を使う場合、 ``Install-Module AzureRM`` で入れる、VS 2017や以前WebPIで入れている場合は、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。
 
 今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。
 
