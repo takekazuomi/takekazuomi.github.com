@@ -107,6 +107,6 @@ Hadoop MRv1 では JobTrancker がボトルネックとなって働かない Nod
 
 
 .. author:: default
-.. categories:: Azure, Servcie Fabric
+.. categories:: Azure, Service Fabric
 .. tags:: JAZUG
 .. comments::

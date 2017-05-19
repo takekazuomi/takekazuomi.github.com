@@ -1,7 +1,7 @@
 =========================================
- Windows Azure Powershell 0.7.2 リリース
+ Windows Azure PowerShell 0.7.2 リリース
 =========================================
-Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
+Windows Azure PowerShell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。
 | 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。
 
 .. image:: http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg
@@ -88,8 +88,8 @@ Windows Azure Powershell 0.7.2 がリリースされました。 10月の 0.7.0 
 
 
 .. author:: default
-.. categories:: Azure, Azure Powershell, GitHub観察記
-.. tags:: Azure, Azure Powershell, Powershell, posh,Release
+.. categories:: Azure, Azure PowerShell, GitHub観察記
+.. tags:: Azure, Azure PowerShell, PowerShell, posh,Release
 .. comments::
 
 .. highlight:: bash

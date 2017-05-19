@@ -56,8 +56,8 @@ ModuleVersionが更新されていない件について、GitHubに `Issue <http
 ちなみに、バージョン番号は、 `Semantic Versioning <http://semver.org/>`_ に沿って付けられているそうです。nugetでは、 `Versioning <http://docs.nuget.org/docs/reference/versioning>`_ は、semverなので揃える方向性なんでしょうか、開発者的には分かりやすくなって嬉しいですね。
 
 .. author:: default
-.. categories:: Azure, Azure Powershell, GitHub観察記
-.. tags:: Azure, Azure Powershell, Powershell, posh, Hotfix
+.. categories:: Azure, Azure PowerShell, GitHub観察記
+.. tags:: Azure, Azure PowerShell, PowerShell, posh, Hotfix
 .. comments::
 
 
