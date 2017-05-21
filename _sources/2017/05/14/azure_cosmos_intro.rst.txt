@@ -1,7 +1,7 @@
 Azure Cosmos DB がやってきた
 ============================
 
-DocumentDB の記事を書いていたら、//Build 2017で、Azure Cosmos DB が発
+DocumentDB の記事を書いていたら [#ref15]_ 、//Build 2017で、Azure Cosmos DB が発
 表 [#ref1]_ された。 Cosmos DBは、Multi-model database and multi-API
 のGlobally Distributed データベース・サービスだ。
 
@@ -183,7 +183,7 @@ Fidderで通信を覗いてみたところ、Premium Table SDKは、Premiumに�
 .. [#ref12] `接続文字列の切替部分 <https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24>`_
 .. [#ref13] `AppSettingsでの設定箇所 <https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14>`_
 .. [#ref14] `Blob、キュー、テーブル、およびファイルのスケーラビリティ ターゲット <https://docs.microsoft.com/ja-jp/azure/storage/storage-scalability-targets#a-namescalability-targets-for-blobs-queues-tables-and-filesablobキューテーブルおよびファイルのスケーラビリティ-ターゲット>`_ サンプルコードでは、IDでの読込が1 RU/秒程度、エンティティ作成が10 RU/秒程度を消費していた。それをベースに試算すると、読込はStandard Tableのストレージアカウントの10倍、書込は同等のスループットということになる。ここでは、Read/Write混合を想定して「上回る」という表現にした。
-
+.. [#ref15] `日経クラウドファースト 2016年6月号 <http://itpro.nikkeibp.co.jp/atclncf/service/00019/051500002/>`_ Azure DocumentDB 予約性能と実測値がほぼ一致　応答時間はデータストアーで最高レベル
 
 その他の参考リンク
 ==================

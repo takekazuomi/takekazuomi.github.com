@@ -23,7 +23,7 @@
 
 Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある [#ref1]_ 。
 
-PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Moduleで入れると記載
+PowerShellGetでPowerShell Galleryから方法は簡単だ。（以下、Install-Moduleで入れると記載）
 
 .. code:: posh
 
@@ -32,9 +32,9 @@ PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Mo
 
 MSIからのインストール
 =====================
-Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロードなどの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、前記のような経路でインストールするとMSI経由となる。
+Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロード [#ref2]_ などの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、VS経由の時にように選択の余地なくMSI経路でインストールされてしまうこともある。
 
-また、ググって出てくる日本語の公式ページが `その他のインストール方法 <https://docs.microsoft.com/ja-jp/powershell/azure/other-install>`_ で、その他の方法としてMSIでのインストール方法を紹介しているのでよく読まないとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。
+また、ググって出てくる日本語の公式ページが `その他のインストール方法 <https://docs.microsoft.com/ja-jp/powershell/azure/other-install>`_ で、その他の方法としてMSIでのインストール方法を紹介している。ここには推薦は、Install-Moduleを使うことだと書いてあるが、よく読まないで書いてある通りに操作するとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。
 
 
 問題点：MSI -> Install-Module でエラー

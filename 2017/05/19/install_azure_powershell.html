@@ -105,15 +105,15 @@
 <blockquote>
 <div>Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.</div></blockquote>
 <p>Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある<a class="footnote-reference" href="#ref1" id="id2">[1]</a>。</p>
-<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Moduleで入れると記載</p>
+<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。（以下、Install-Moduleで入れると記載）</p>
 <div class="code posh highlight-default"><div class="highlight"><pre><span></span>$ Install-Module AzureRm
 </pre></div>
 </div>
 </div>
 <div class="section" id="msi">
 <h2>MSIからのインストール</h2>
-<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロードなどの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、前記のような経路でインストールするとMSI経由となる。</p>
-<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介しているのでよく読まないとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
+<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロード<a class="footnote-reference" href="#ref2" id="id3">[2]</a>などの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、VS経由の時にように選択の余地なくMSI経路でインストールされてしまうこともある。</p>
+<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介している。ここには推薦は、Install-Moduleを使うことだと書いてあるが、よく読まないで書いてある通りに操作するとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
 </div>
 <div class="section" id="msi-install-module">
 <h2>問題点：MSI -&gt; Install-Module でエラー</h2>
@@ -131,7 +131,7 @@ At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm
 </div>
 <p>つまり、MSIインストールとInstall-Moduleは互換性が無く、「混ぜるな危険」という状況だ。</p>
 </div>
-<div class="section" id="id4">
+<div class="section" id="id5">
 <h2>解決策</h2>
 <p>もし混ざってしまったからどうするか。</p>
 <p>MSIで入れたものを、設定画面の、「アプリと機能」、あるいはコントロールパネルの「プログラムのアンインストールまたは変更」からアンイストール後、再度 Install-Moduleで PowerShell Gallery からインストールする。</p>
@@ -153,7 +153,7 @@ $ $app.Uninstall()
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
+<div class="section" id="id6">
 <h2>原因</h2>
 <p>MSIで入れた場合とInstall-Moduleで入れた場合、モジュールは別の場所に入る。</p>
 <p>MSIの場合は、下記のPSModulePathに入り</p>
@@ -169,7 +169,7 @@ $ $app.Uninstall()
 <div>C:Program FilesWindowsPowerShellModules</div></blockquote>
 <p>MSIで入れた後にInstall-Moduleで入れた場合、MSIで入れたものを認識せずにインストールが進み、途中で別のバージョンのモジュールをロードして前記のエラーになる。Install-Moduleで入れた後に、MSIで入れると次のような問題が起きる。</p>
 </div>
-<div class="section" id="id6">
+<div class="section" id="id7">
 <h2>MSIインストールの問題点</h2>
 <p>現在のMSIインストールで把握している問題点は3点ある（増えるかも）、そのうち深刻なのは1つ目の問題だ。</p>
 <ol class="arabic simple">
@@ -181,7 +181,7 @@ $ $app.Uninstall()
 <div class="section" id="install-module">
 <h2>1. Install-Moduleのモジュールを無条件上書</h2>
 <p>現在のMSIインストールは、Install-Moduleで入れたModuleがあれば削除してから、モジュールのインストールを行う。そのとき既存のモジュールのバージョンは見ていないので、Install-Moduleで4.0.1などのあたらしいバージョンを入れていても、VS 2017 を入れると、2.1.0になってしまうなどの現象が起きる。削除処理は、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/preview/setup/Setup/RemoveGalleryModules.ps1">setup/Setup/RemoveGalleryModules.ps1</a>のあたり。 Scope CurrentUserで入れた場合は考慮されておらず、なかなか残念なコードだ。</p>
-<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
+<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id8">[3]</a></p>
 <p>これは非常にメンドクサイ</p>
 </div>
 <div class="section" id="import-module-azurerm">
@@ -199,15 +199,15 @@ At line:1 char:1
 </div>
 <div class="section" id="webpi">
 <h2>3. WebPIでのリリースが遅い</h2>
-<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id8">[2]</a></p>
+<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id9">[2]</a></p>
 </div>
-<div class="section" id="id9">
+<div class="section" id="id10">
 <h2>まとめ</h2>
 <p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合は、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
 <p>今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。</p>
 <p>現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が<span class="docutils literal"><span class="pre">Install-Module</span></span>経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。</p>
 </div>
-<div class="section" id="id10">
+<div class="section" id="id11">
 <h2>参考</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -218,13 +218,13 @@ At line:1 char:1
 <table class="docutils footnote" frame="void" id="ref2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[2]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> <a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
 </tbody>
 </table>
 </div>

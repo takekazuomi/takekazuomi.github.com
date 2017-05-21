@@ -93,15 +93,15 @@
 <blockquote>
 <div>Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.</div></blockquote>
 <p>Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある<a class="footnote-reference" href="#ref1" id="id2">[1]</a>。</p>
-<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。以下、Install-Moduleで入れると記載</p>
+<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。（以下、Install-Moduleで入れると記載）</p>
 <div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Install-Module AzureRm
 </pre></div>
 </div>
 </div>
 <div class="section" id="msi">
 <h2>MSIからのインストール</h2>
-<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロードなどの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、前記のような経路でインストールするとMSI経由となる。</p>
-<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介しているのでよく読まないとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
+<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロード<a class="footnote-reference" href="#ref2" id="id3">[2]</a>などの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、VS経由の時にように選択の余地なくMSI経路でインストールされてしまうこともある。</p>
+<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介している。ここには推薦は、Install-Moduleを使うことだと書いてあるが、よく読まないで書いてある通りに操作するとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
 </div>
 <div class="section" id="msi-install-module">
 <h2>問題点：MSI -&gt; Install-Module でエラー</h2>
@@ -119,7 +119,7 @@ At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm
 </div>
 <p>つまり、MSIインストールとInstall-Moduleは互換性が無く、「混ぜるな危険」という状況だ。</p>
 </div>
-<div class="section" id="id4">
+<div class="section" id="id5">
 <h2>解決策</h2>
 <p>もし混ざってしまったからどうするか。</p>
 <p>MSIで入れたものを、設定画面の、「アプリと機能」、あるいはコントロールパネルの「プログラムのアンインストールまたは変更」からアンイストール後、再度 Install-Moduleで PowerShell Gallery からインストールする。</p>
@@ -141,7 +141,7 @@ $ $app.Uninstall()
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
+<div class="section" id="id6">
 <h2>原因</h2>
 <p>MSIで入れた場合とInstall-Moduleで入れた場合、モジュールは別の場所に入る。</p>
 <p>MSIの場合は、下記のPSModulePathに入り</p>
@@ -157,7 +157,7 @@ $ $app.Uninstall()
 <div>C:Program FilesWindowsPowerShellModules</div></blockquote>
 <p>MSIで入れた後にInstall-Moduleで入れた場合、MSIで入れたものを認識せずにインストールが進み、途中で別のバージョンのモジュールをロードして前記のエラーになる。Install-Moduleで入れた後に、MSIで入れると次のような問題が起きる。</p>
 </div>
-<div class="section" id="id6">
+<div class="section" id="id7">
 <h2>MSIインストールの問題点</h2>
 <p>現在のMSIインストールで把握している問題点は3点ある（増えるかも）、そのうち深刻なのは1つ目の問題だ。</p>
 <ol class="arabic simple">
@@ -169,7 +169,7 @@ $ $app.Uninstall()
 <div class="section" id="install-module">
 <h2>1. Install-Moduleのモジュールを無条件上書</h2>
 <p>現在のMSIインストールは、Install-Moduleで入れたModuleがあれば削除してから、モジュールのインストールを行う。そのとき既存のモジュールのバージョンは見ていないので、Install-Moduleで4.0.1などのあたらしいバージョンを入れていても、VS 2017 を入れると、2.1.0になってしまうなどの現象が起きる。削除処理は、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/preview/setup/Setup/RemoveGalleryModules.ps1">setup/Setup/RemoveGalleryModules.ps1</a>のあたり。 Scope CurrentUserで入れた場合は考慮されておらず、なかなか残念なコードだ。</p>
-<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id7">[3]</a></p>
+<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id8">[3]</a></p>
 <p>これは非常にメンドクサイ</p>
 </div>
 <div class="section" id="import-module-azurerm">
@@ -187,15 +187,15 @@ At line:1 char:1
 </div>
 <div class="section" id="webpi">
 <h2>3. WebPIでのリリースが遅い</h2>
-<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id8">[2]</a></p>
+<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id9">[2]</a></p>
 </div>
-<div class="section" id="id9">
+<div class="section" id="id10">
 <h2>まとめ</h2>
 <p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合は、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
 <p>今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。</p>
 <p>現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が<span class="docutils literal"><span class="pre">Install-Module</span></span>経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。</p>
 </div>
-<div class="section" id="id10">
+<div class="section" id="id11">
 <h2>参考</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
@@ -206,13 +206,13 @@ At line:1 char:1
 <table class="docutils footnote" frame="void" id="ref2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[2]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> <a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref3" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
 </tbody>
 </table>
 </div>
@@ -240,28 +240,28 @@ At line:1 char:1
         <div class="section">
             <div class="section" id="azure-cosmos-db">
 <h1><a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a></h1>
-<p>DocumentDB の記事を書いていたら、//Build 2017で、Azure Cosmos DB が発表<a class="footnote-reference" href="#ref1" id="id1">[1]</a>された。 Cosmos DBは、Multi-model database and multi-APIのGlobally Distributed データベース・サービスだ。</p>
-<div class="figure align-center" id="id27">
+<p>DocumentDB の記事を書いていたら<a class="footnote-reference" href="#ref15" id="id1">[15]</a>、//Build 2017で、Azure Cosmos DB が発表<a class="footnote-reference" href="#ref1" id="id2">[1]</a>された。 Cosmos DBは、Multi-model database and multi-APIのGlobally Distributed データベース・サービスだ。</p>
+<div class="figure align-center" id="id29">
 <img alt="Azure Cosmos DB in KeyNote" src="_images/keynote01.png"/>
-<p class="caption"><span class="caption-text">//Build 2017 Keynote より <a class="footnote-reference" href="#ref1" id="id2">[1]</a></span></p>
+<p class="caption"><span class="caption-text">//Build 2017 Keynote より <a class="footnote-reference" href="#ref1" id="id3">[1]</a></span></p>
 </div>
-<p>「DocumentDB何処行った、名前が変わったの？」と思ったら、そんなに簡単な話では無かった、Azure Cosmos DBは、DocumentDB、MongoDB, Azure Table,Gremlin などの複数のAPIをサポートしたマルチモデルの分散データベース<a class="footnote-reference" href="#ref2" id="id3">[2]</a>で Document DBはそのAPIの一つという位置づけになった。従来の Document DBで使ってた分散データベース基盤の部分は、ある程度汎用的に出来ていてJSON以外のデータモデルも扱えるので、今回はKey-Value と GraphのデータモデルにAPIを付けてブランディングも新たにお披露目したよという話だ。素晴らしい。</p>
+<p>「DocumentDB何処行った、名前が変わったの？」と思ったら、そんなに簡単な話では無かった、Azure Cosmos DBは、DocumentDB、MongoDB, Azure Table,Gremlin などの複数のAPIをサポートしたマルチモデルの分散データベース<a class="footnote-reference" href="#ref2" id="id4">[2]</a>で Document DBはそのAPIの一つという位置づけになった。従来の Document DBで使ってた分散データベース基盤の部分は、ある程度汎用的に出来ていてJSON以外のデータモデルも扱えるので、今回はKey-Value と GraphのデータモデルにAPIを付けてブランディングも新たにお披露目したよという話だ。素晴らしい。</p>
 <p>ざっくりまとめると、下図のような感じになってる。Cosmos 分散データベース基盤に、データモデルが乗っていて、それぞれAPIを提供するといった感じだ。AzureTable(Key-Value), Gremlin(Graph) は、Preview(既に試すことができる)で、Splark は、アナウンスだけ、DocumentDBとMongoDB APIはGAのままだ。この２つがGAのままなのは、Cosmos DBになっても基本的な実装は同じだからだろう。</p>
-<div class="figure align-center" id="id28">
+<div class="figure align-center" id="id30">
 <img alt="Azure Cosmos DB in KeyNote" src="_images/pic01.png"/>
 <p class="caption"><span class="caption-text">Azure Cosmos DB スタック</span></p>
 </div>
 </div>
 <div class="section" id="breakout-session">
 <h1>Breakout Session</h1>
-<p>//Build 2017のCosmos DBの2つのBreakout Session、B8047<a class="footnote-reference" href="#ref3" id="id4">[3]</a>と、T6058<a class="footnote-reference" href="#ref4" id="id5">[4]</a>では、もう少し詳細に触れられている。</p>
-<div class="figure align-center" id="id29">
+<p>//Build 2017のCosmos DBの2つのBreakout Session、B8047<a class="footnote-reference" href="#ref3" id="id5">[3]</a>と、T6058<a class="footnote-reference" href="#ref4" id="id6">[4]</a>では、もう少し詳細に触れられている。</p>
+<div class="figure align-center" id="id31">
 <img alt="Table API in Azure Cosmos DB" src="_images/B8047-02.png"/>
-<p class="caption"><span class="caption-text">//Build 2017 B8047 より <a class="footnote-reference" href="#ref3" id="id6">[3]</a></span></p>
+<p class="caption"><span class="caption-text">//Build 2017 B8047 より <a class="footnote-reference" href="#ref3" id="id7">[3]</a></span></p>
 </div>
-<p>その中でも興味深いのは、B8047 のTable APIの下りだ（動画だと35:50あたり<a class="footnote-reference" href="#ref5" id="id7">[5]</a>)。超訳すると。</p>
+<p>その中でも興味深いのは、B8047 のTable APIの下りだ（動画だと35:50あたり<a class="footnote-reference" href="#ref5" id="id8">[5]</a>)。超訳すると。</p>
 <blockquote>
-<div>Cosmos DB に、既存のTable Storage（以下Standard Storage)互換のTable API（以下Premium Table）を実装した。もう、Premium Table SDK<a class="footnote-reference" href="#ref6" id="id8">[6]</a>をダウンロードして試せる。アプリケーションの変更は必要ない（SDKでを切り替えるだけ）で、ローレイテンシー、5つの一貫性、グローバルディストリビューション、セカンダリーインデックス等、数々のCosmos DBの特性が得られる。</div></blockquote>
+<div>Cosmos DB に、既存のTable Storage（以下Standard Storage)互換のTable API（以下Premium Table）を実装した。もう、Premium Table SDK<a class="footnote-reference" href="#ref6" id="id9">[6]</a>をダウンロードして試せる。アプリケーションの変更は必要ない（SDKでを切り替えるだけ）で、ローレイテンシー、5つの一貫性、グローバルディストリビューション、セカンダリーインデックス等、数々のCosmos DBの特性が得られる。</div></blockquote>
 <p>特に重要なのは、これに続く部分だ。</p>
 <blockquote>
 <div>現在「storage optimized offer」に向けて作業中、現在の Cosmos DB は、スループットの最適化、ローレイテンシーなどのpremium experience にフォーカスしているが、hot work load 以外の場合でも選択肢にできるように取り組んでいる。</div></blockquote>
@@ -269,12 +269,12 @@ At line:1 char:1
 </div>
 <div class="section" id="blog">
 <h1>同時に公開されたBlogから</h1>
-<p>Cosmos DBも発表共に公開されたBlogもなかなか面白い。<strong>Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</strong><a class="footnote-reference" href="#ref7" id="id9">[7]</a>の A Brief History of Cosmosには簡単なCosmos DBの歴史が書いてあった。それによると、</p>
+<p>Cosmos DBも発表共に公開されたBlogもなかなか面白い。<strong>Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</strong><a class="footnote-reference" href="#ref7" id="id10">[7]</a>の A Brief History of Cosmosには簡単なCosmos DBの歴史が書いてあった。それによると、</p>
 <blockquote>
 <div>Azure Cosmos DBは、2010年に「Project Florence」で開始、グローバルディストリビューションの課題を解決するためにMSの社内で使っていたが、他の皆にも役に立つと思い、2015年にAzure DocumentDBの形でこのテクノロジの第1世代を利用できるようにした。</div></blockquote>
 <p>云々だそうだ。世界中で展開するサービスの下りをみて連想したのは、AzurePortal。「最近ポータルが速くなってきてるのはエンドポイントを日本に持ってきたからかな、でもUSのリソースも普通に見れて操作できるしどうなっているのだろう」と思っていたが。Cosmos DBのようなグローバルディストリビューションの仕組みがあれば実装イメージが湧いてくる。実際のところはどうなっているかはわからないが。なかなか興味深い。</p>
-<p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id10">[8]</a>に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id11">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。</p>
-<iframe width="100%" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen=""/><p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id12">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
+<p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id11">[8]</a>に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id12">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。</p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen=""/><p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id13">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
 <p>この記事には、Azure Cosmos DBのデータベースエンジンの中身についても少し書いてあった。以下超訳</p>
 <blockquote>
 <div>Azure Cosmos DBのデータベースエンジンのコアタイプシステムは、汎用的にどのようなデータにも対応するatom-record-sequence (ARS)と呼ばれる構造となっている。Atomは、文字列、論理型、数値などのprimitive型、recordは構造体、sequence はatom、record、sequenceの配列である。また、Azure Cosmos DBのデータベースエンジンは、JSONなどのAPIが利用するデータモデルとARSベースのコアデータモデルの効率的な変換と投影を実装し、動的型付き言語（dynamically typed programming languages）からコアデータモデルへのネイティブアクセスをサポートする。このデータベースエンジンを使うことで、Cosmos DBのAPIは、battle-tested でフルマネージドな、グローバル分散型データベースシステムのすべての利点を得ることができる。</div></blockquote>
@@ -283,8 +283,8 @@ At line:1 char:1
 <div class="section" id="premium-table">
 <h1>Premium Tableの現況</h1>
 <p>大分長くなってしまったので、最後に、Premium Tableをちょっと動かしてみた感想を書いて終わりにする。</p>
-<p>GitHubに、<strong>Getting started with Azure Cosmos DB: Table API</strong><a class="footnote-reference" href="#ref11" id="id13">[11]</a>というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。</p>
-<table border="1" class="docutils" id="id30">
+<p>GitHubに、<strong>Getting started with Azure Cosmos DB: Table API</strong><a class="footnote-reference" href="#ref11" id="id14">[11]</a>というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。</p>
+<table border="1" class="docutils" id="id32">
 <caption><span class="caption-text">Premium/Standard Table のレイテンシー</span></caption>
 <colgroup>
 <col width="17%"/>
@@ -420,8 +420,8 @@ At line:1 char:1
 </div>
 <div class="section" id="premium-table-sdk">
 <h1>Premium Table SDK</h1>
-<p>サンプルコードを見ると、PremiumとStandardの切替は接続文字列<a class="footnote-reference" href="#ref12" id="id14">[12]</a>の設定だけだ。Premium Tableには、DocumentDBと同じように、Consistencyや接続モードの設定がある、それをどうやってやるのかと言うと、現状では、AppSettings に書く<a class="footnote-reference" href="#ref13" id="id15">[13]</a>。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。この方法だと、Standard Tableのコードを修正せずに動かしたいという目的は果たせるが、Premium Tableに最適化されたコードを書きたい場合には、あまり適さない。コードで変更できるようにして欲しい。</p>
-<table border="1" class="docutils" id="id31">
+<p>サンプルコードを見ると、PremiumとStandardの切替は接続文字列<a class="footnote-reference" href="#ref12" id="id15">[12]</a>の設定だけだ。Premium Tableには、DocumentDBと同じように、Consistencyや接続モードの設定がある、それをどうやってやるのかと言うと、現状では、AppSettings に書く<a class="footnote-reference" href="#ref13" id="id16">[13]</a>。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。この方法だと、Standard Tableのコードを修正せずに動かしたいという目的は果たせるが、Premium Tableに最適化されたコードを書きたい場合には、あまり適さない。コードで変更できるようにして欲しい。</p>
+<table border="1" class="docutils" id="id33">
 <caption><span class="caption-text">AppSettings での設定項目</span></caption>
 <colgroup>
 <col width="100%"/>
@@ -465,103 +465,109 @@ At line:1 char:1
 <p>リクエストとレスポンスはこんな感じだ</p>
 <script src="https://gist.github.com/takekazuomi/f7ad2f152fb546113ba8114a9de19dcc.js">&amp;amp;nbsp;</script><p>ちょっと見 DocumentDBとウリ2つだ。Premium Table SDK が、DocumentDB Client SDK を参照していることからも、実際の通信はDocumentDBと同じプロトコルを使っていることが伺える。このままGAになるかどうかは分からないが、この仕組だとプロトコルレベルではStandardとPremiumは別物になるので、既存のStandard Table Storage向けのライブラリは作り直す必要がある。最初に聞いたときは、REST APIレベルで互換なのかと思ったので、ちょっと肩透かしだ。しかし、パフォーマンスを考えた場合、今のStandardのREST APIよりDocumentDB形式の方が将来性がある気もする。なかなか面白いアプローチではある。</p>
 </div>
-<div class="section" id="id16">
+<div class="section" id="id17">
 <h1>まとめ</h1>
-<p>つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047<a class="footnote-reference" href="#ref5" id="id17">[5]</a>の話を聞いて、今はとても期待している。</p>
+<p>つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047<a class="footnote-reference" href="#ref5" id="id18">[5]</a>の話を聞いて、今はとても期待している。</p>
 <p>今の気分は、「Cosmos DBはいいぞ」と言う感じだ。</p>
 </div>
-<div class="section" id="id18">
+<div class="section" id="id19">
 <h1>追記 (2017/5/15)</h1>
-<p>現在のTable APIではパーテーション無しコレクションしか作成できず、コレクションの容量は10GBだ。これはプレビューの制限だと思われる。10GB以上のデータで評価したい場合は要注意だ。現時点でもスループットは、10万 RU/秒まで設定でき、Standardのストレージアカウント全体のパフォーマンスターゲット(1Kエンティティで毎秒20,000トランザクション)<a class="footnote-reference" href="#ref14" id="id19">[14]</a>を上回る。また、Table StorageのTableがCosmos DBのコレクションになるので、Table単位で課金される。Standardだと割りと気軽にTableを作れたのでこれも設計変更の要因になるだろう。</p>
+<p>現在のTable APIではパーテーション無しコレクションしか作成できず、コレクションの容量は10GBだ。これはプレビューの制限だと思われる。10GB以上のデータで評価したい場合は要注意だ。現時点でもスループットは、10万 RU/秒まで設定でき、Standardのストレージアカウント全体のパフォーマンスターゲット(1Kエンティティで毎秒20,000トランザクション)<a class="footnote-reference" href="#ref14" id="id20">[14]</a>を上回る。また、Table StorageのTableがCosmos DBのコレクションになるので、Table単位で課金される。Standardだと割りと気軽にTableを作れたのでこれも設計変更の要因になるだろう。</p>
 </div>
-<div class="section" id="id20">
+<div class="section" id="id21">
 <h1>脚注</h1>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h22m26s">[1:22:26]</a>Azure Cosmos DB Introduction</td></tr>
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h22m26s">[1:22:26]</a>Azure Cosmos DB Introduction</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h27m20s">[1:27:20]</a>Rimma Nehme, Azure Cosmos DB demonstration</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/KEY01#time=1h27m20s">[1:27:20]</a>Rimma Nehme, Azure Cosmos DB demonstration</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref3" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047">B8047 How to build globally-distributed, fast, billion-user applications with Azure Cosmos DB</a></td></tr>
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id7">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047">B8047 How to build globally-distributed, fast, billion-user applications with Azure Cosmos DB</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/T6058">T6058 Azure Cosmos DB: NoSQL capabilities everyone should know about</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/T6058">T6058 Azure Cosmos DB: NoSQL capabilities everyone should know about</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref5" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id7">1</a>, <a class="fn-backref" href="#id17">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s">[0:35:50]</a>B8047 のTable APIの部分</td></tr>
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id18">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s">[0:35:50]</a>B8047 のTable APIの部分</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref6" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[6]</a></td><td><a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage-PremiumTable/0.1.0-preview">Premium Table SDK</a>ソースは未公開</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id9">[6]</a></td><td><a class="reference external" href="https://www.nuget.org/packages/WindowsAzure.Storage-PremiumTable/0.1.0-preview">Premium Table SDK</a>ソースは未公開</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref7" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[7]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/azure-cosmos-db-microsofts-globally-distributed-multi-model-database-service/">Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id10">[7]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/azure-cosmos-db-microsofts-globally-distributed-multi-model-database-service/">Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref8" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[8]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/a-technical-overview-of-azure-cosmos-db/">A technical overview of Azure Cosmos DB</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id11">[8]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/a-technical-overview-of-azure-cosmos-db/">A technical overview of Azure Cosmos DB</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref9" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id11">[9]</a></td><td><a class="reference external" href="https://www.youtube.com/watch?v=L_PPKyAsR3w">Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long</a>レスリー ランポート先生のインタビュー、お勧めです。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id12">[9]</a></td><td><a class="reference external" href="https://www.youtube.com/watch?v=L_PPKyAsR3w">Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long</a>レスリー ランポート先生のインタビュー、お勧めです。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref10" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id12">[10]</a></td><td><a class="reference external" href="https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract">How Amazon Web Services Uses Formal Methods</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id13">[10]</a></td><td><a class="reference external" href="https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract">How Amazon Web Services Uses Formal Methods</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref11" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id13">[11]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started">Getting started with Azure Cosmos DB: Table API</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id14">[11]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started">Getting started with Azure Cosmos DB: Table API</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref12" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id14">[12]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24">接続文字列の切替部分</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id15">[12]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24">接続文字列の切替部分</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref13" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id15">[13]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14">AppSettingsでの設定箇所</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id16">[13]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14">AppSettingsでの設定箇所</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref14" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id19">[14]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/storage/storage-scalability-targets#a-namescalability-targets-for-blobs-queues-tables-and-filesablobキューテーブルおよびファイルのスケーラビリティ-ターゲット">Blob、キュー、テーブル、およびファイルのスケーラビリティ ターゲット</a>サンプルコードでは、IDでの読込が1 RU/秒程度、エンティティ作成が10 RU/秒程度を消費していた。それをベースに試算すると、読込はStandard Tableのストレージアカウントの10倍、書込は同等のスループットということになる。ここでは、Read/Write混合を想定して「上回る」という表現にした。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id20">[14]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/storage/storage-scalability-targets#a-namescalability-targets-for-blobs-queues-tables-and-filesablobキューテーブルおよびファイルのスケーラビリティ-ターゲット">Blob、キュー、テーブル、およびファイルのスケーラビリティ ターゲット</a>サンプルコードでは、IDでの読込が1 RU/秒程度、エンティティ作成が10 RU/秒程度を消費していた。それをベースに試算すると、読込はStandard Tableのストレージアカウントの10倍、書込は同等のスループットということになる。ここでは、Read/Write混合を想定して「上回る」という表現にした。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref15" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[15]</a></td><td><a class="reference external" href="http://itpro.nikkeibp.co.jp/atclncf/service/00019/051500002/">日経クラウドファースト 2016年6月号</a>Azure DocumentDB 予約性能と実測値がほぼ一致　応答時間はデータストアーで最高レベル</td></tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id26">
+<div class="section" id="id28">
 <h1>その他の参考リンク</h1>
 <ul class="simple">
 <li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8118">B8118 How to run massively scaling mobile games on Microsoft Azure</a></li>
