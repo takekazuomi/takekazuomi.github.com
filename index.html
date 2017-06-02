@@ -81,13 +81,13 @@
         <div class="section">
             <div class="section" id="azure-oauth-2-0-device-flow">
 <h1><a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a></h1>
-<p>この前<strong>az login</strong>でログイン出来なくなった時に、azure cli 2.0 のコードを見ていたら、Azureのドキュメントには出てこない使い方をしてたので確認も兼ねてdevice flow でloginして Beare Tokenを取得するコンソールプログラム<strong>azlogin</strong><a class="footnote-reference" href="#ref1" id="id1">[1]</a>を書いてみた。</p>
+<p>この前<strong>az login</strong>でログイン出来なくなった時に、azure cli 2.0 のコードを見ていたら、Azureのドキュメントには出てこない（見慣れない）使い方をしてたので確認も兼ねて生REST、OAuth 2.0 Device Flow<a class="footnote-reference" href="#ref1" id="id1">[1]</a>でAzrueにloginして Beare Tokenを取得するコンソールプログラム<strong>azlogin</strong><a class="footnote-reference" href="#ref2" id="id2">[2]</a>を書いてみた。</p>
 <a class="reference external image-reference" href="https://flic.kr/p/TPKV1d"><img alt="curry" class="align-center" src="https://c1.staticflickr.com/3/2871/34014638600_dbb3a232b1_c.jpg"/></a>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id3">
 <h1>使い方</h1>
 <p><strong>azlogin</strong>を実行すると、azure cli 2.0 と同じように、デバイスコードと入力用のURLが表示される。この画面のメッセージが<strong>azure cli 2.0</strong>と一文一句違わず同じなのは、AIPが返して来るメッセージをそのまま表示してるからだ。</p>
 <p>ログインに成功すると、アカウントに紐づいたテナントを全部取得して、テナントのアクセストークンを取得し、それを使ってサブスクリプションの情報を取得。結果をJSONで出力する。</p>
@@ -130,22 +130,23 @@ $ curl -H  "Authorization: Bearer $bearer" "https://management.azure.com/subscri
 </div>
 <p>Bearer tokenさえ手に入れれば、こんな感じでサクッと管理APIが呼べる。</p>
 </div>
-<div class="section" id="id3">
+<div class="section" id="id4">
 <h1>最後に</h1>
-<p>Azureのドキュメントだとよくわからないが、普通のOAuth 2.0 なので認証自体はそんなに難しくない。このあたりで困ったら、OAuth 2.0 のドキュメント（Googleのとか<a class="footnote-reference" href="#ref2" id="id4">[2]</a>、翻訳もある<a class="footnote-reference" href="#ref3" id="id5">[3]</a>）を読むと良い。Azure固有の問題は、松崎さんのブログ<a class="footnote-reference" href="#ref4" id="id6">[4]</a>がお勧めだ。今回は、生RESTだけで構築したが、認証だけならそれほど難しいことはない。本格的にAzureを触ろうと思うとモデルが欲しくなり。触っていくと大量のモデルが出てくるので自前で作るのはとてもメンドクサイ。その場合はAzure SDKを使うと既にモデルが用意去れているので便利だ。</p>
+<p>Azureのドキュメントだとごちゃごちゃしてて良くわからないが、認証は基本普通のOAuth 2.0 なのでそれほど難しくない。このあたりで困ったら、OAuth2.0 のドキュメント（Googleのとか 、翻訳もある<a class="footnote-reference" href="#ref3" id="id5">[3]</a>）を読むと良い。Azure固有の問題は、松崎さんのブログ<a class="footnote-reference" href="#ref4" id="id6">[4]</a>がお勧めだ。</p>
+<p>今回は、生RESTだけで構築したが、認証だけならそれほど難しいことはない。本格的にAzureを触ろうと思うとモデルが欲しくなり。触っていくと大量のモデルが出てくるので自前で作るのはとてもメンドクサイ。その場合はAzureSDKを使うと既にモデルが用意去れているので便利だ。</p>
 </div>
 <div class="section" id="id7">
 <h1>参考</h1>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://github.com/takekazuomi/azlogin">Azure Login OAuth 2.0 Device Flow Console Program.</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://developers.google.com/identity/protocols/OAuth2">Using OAuth 2.0 to Access Google APIs</a>,<a class="reference external" href="https://developers.google.com/identity/protocols/OAuth2ForDevices">OAuth 2.0 for TV and Limited-Input Device Applications</a>,</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="https://developers.google.com/identity/protocols/OAuth2">Using OAuth 2.0 to Access Google APIs</a>,<a class="reference external" href="https://developers.google.com/identity/protocols/OAuth2ForDevices">OAuth 2.0 for TV and Limited-Input Device Applications</a>,</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="https://github.com/takekazuomi/azlogin">Azure Login OAuth 2.0 Device Flow Console Program.</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref3" rules="none">
@@ -157,7 +158,7 @@ $ curl -H  "Authorization: Bearer $bearer" "https://management.azure.com/subscri
 <table class="docutils footnote" frame="void" id="ref4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><a class="reference external" href="https://blogs.msdn.microsoft.com/tsmatsuz/2016/03/12/azure-ad-device-profile-oauth-flow/">Login UI が出せない Client の OAuth フロー (Azure AD)</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><a class="reference external" href="https://blogs.msdn.microsoft.com/tsmatsuz/2016/03/12/azure-ad-device-profile-oauth-flow/">Login UI が出せない Client の OAuth フロー (Azure AD)</a>この記事より松崎さんのブログを読んだほうが良いだろう。</td></tr>
 </tbody>
 </table>
 <p>下記のコードも参考になる</p>

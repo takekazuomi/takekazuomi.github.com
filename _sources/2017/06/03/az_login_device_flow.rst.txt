@@ -1,8 +1,8 @@
 Azure に OAuth 2.0 Device Flow でログインする
 =============================================
 この前 **az login** でログイン出来なくなった時に、azure cli 2.0 のコー
-ドを見ていたら、Azureのドキュメントには出てこない使い方をしてたので確
-認も兼ねてdevice flow でloginして Beare Tokenを取得するコンソールプログラム **azlogin** [#ref1]_  を書いてみた。
+ドを見ていたら、Azureのドキュメントには出てこない（見慣れない）使い方をしてたので確
+認も兼ねて生REST、OAuth 2.0 Device Flow [#ref1]_ でAzrueにloginして Beare Tokenを取得するコンソールプログラム **azlogin** [#ref2]_  を書いてみた。
 
 .. image:: https://c1.staticflickr.com/3/2871/34014638600_dbb3a232b1_c.jpg
    :target: https://flic.kr/p/TPKV1d
@@ -76,18 +76,25 @@ Bearer tokenさえ手に入れれば、こんな感じでサクッと管理API�
 
 最後に
 ======
-Azureのドキュメントだとよくわからないが、普通のOAuth 2.0 なので認証自体はそんなに難しくない。このあたりで困ったら、OAuth 2.0 のドキュメント（Googleのとか [#ref2]_ 、翻訳もある [#ref3]_ ）を読むと良い。Azure固有の問題は、松崎さんのブログ [#ref4]_ がお勧めだ。
-今回は、生RESTだけで構築したが、認証だけならそれほど難しいことはない。本格的にAzureを触ろうと思うとモデルが欲しくなり。触っていくと大量のモデルが出てくるので自前で作るのはとてもメンドクサイ。その場合はAzure SDKを使うと既にモデルが用意去れているので便利だ。
+Azureのドキュメントだとごちゃごちゃしてて良くわからないが、認証は基本
+普通のOAuth 2.0 なのでそれほど難しくない。このあたりで困ったら、OAuth
+2.0 のドキュメント（Googleのとか 、翻訳もある [#ref3]_ ）を読むと良い。
+Azure固有の問題は、松崎さんのブログ [#ref4]_ がお勧めだ。
+
+今回は、生RESTだけで構築したが、認証だけならそれほど難しいことはない。
+本格的にAzureを触ろうと思うとモデルが欲しくなり。触っていくと大量のモ
+デルが出てくるので自前で作るのはとてもメンドクサイ。その場合はAzure
+SDKを使うと既にモデルが用意去れているので便利だ。
 
 
 
 参考
 ====
 
-.. [#ref1] `Azure Login OAuth 2.0 Device Flow Console Program. <https://github.com/takekazuomi/azlogin>`_
-.. [#ref2] `Using OAuth 2.0 to Access Google APIs <https://developers.google.com/identity/protocols/OAuth2>`_ , `OAuth 2.0 for TV and Limited-Input Device Applications <https://developers.google.com/identity/protocols/OAuth2ForDevices>`_ ,
+.. [#ref1] `Using OAuth 2.0 to Access Google APIs <https://developers.google.com/identity/protocols/OAuth2>`_ , `OAuth 2.0 for TV and Limited-Input Device Applications <https://developers.google.com/identity/protocols/OAuth2ForDevices>`_ ,
+.. [#ref2] `Azure Login OAuth 2.0 Device Flow Console Program. <https://github.com/takekazuomi/azlogin>`_
 .. [#ref3] `OAuth 2.0 Flow: Devices <https://developers.google.com/youtube/v3/guides/auth/devices?hl=ja>`_ YouTube Data APIのドキュメントだが、翻訳されている。
-.. [#ref4] `Login UI が出せない Client の OAuth フロー (Azure AD) <https://blogs.msdn.microsoft.com/tsmatsuz/2016/03/12/azure-ad-device-profile-oauth-flow/>`_
+.. [#ref4] `Login UI が出せない Client の OAuth フロー (Azure AD) <https://blogs.msdn.microsoft.com/tsmatsuz/2016/03/12/azure-ad-device-profile-oauth-flow/>`_ この記事より松崎さんのブログを読んだほうが良いだろう。
 
 下記のコードも参考になる
 
