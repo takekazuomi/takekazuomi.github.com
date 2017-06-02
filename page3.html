@@ -76,6 +76,58 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>February 05, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a></h1>
+<p>.NET Framework 4.5, 4.5.1 のサポート終了に少し遅れましたが、Azure の Cloud　Service でも、Gest OS 4.28 から .NET 4.5.2 がサポートされるようになりました。<a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/cloud-services-guestos-update-matrix">Azure Guest OS releases and SDK compatibility matrix</a></p>
+<p>現在絶賛展開中ですが、手元のCloud Serviceには、すでに来ていました。</p>
+<div class="section" id="visual-studio">
+<h2>Visual Studio での確認</h2>
+<p>現在の Guest OSのバージョンは、下記のように、Visual Studio で、Roleのプロパティを開くと確認することができます。</p>
+<img alt="vsimage" class="align-center" src="_images/vs001.PNG"/>
+</div>
+<div class="section" id="azure-powershell">
+<h2>Azure PowerShell での確認</h2>
+<p>Azure PowerShell は、1.1.0 では確認できなかったのですが、今回のように、GUEST OSのバージョンが重要な場合に確認出来ないのは不便なので、OSVersionが帰ってくるようなパッチを作って PR を出してみたら、さくっと翌日にはマージされ次のリリースで無事に現在のバージョンがわかるようになりました。（もともと、REST APIには存在するし簡単な修正だったので、なにかの拍子に漏れてしまっただけだと思います）</p>
+<p><a class="reference external" href="https://github.com/Azure/azure-powershell/pull/1638">Fix to missing OS Version in Get-AzureRole #1638</a></p>
+<img alt="../../../_images/git001.png" class="align-center" src="_images/git001.png"/>
+<p>Azure PowerShell Team オープンですね！<strong>素晴らしい</strong></p>
+<p>こんな感じで確認することができます。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRole -ServiceName kinmugics10 -Slot Staging
+
+RoleName             : WorkerRole1
+InstanceCount        : <span class="m">1</span>
+DeploymentID         : c49d5437f1a84345b9739a79ff333056
+OSVersion            : WA-GUEST-OS-4.28_201601-01
+ServiceName          : kinmugics10
+OperationDescription : Get-AzureRole
+OperationId          : 0ffbd548-3b37-6c15-afa4-e091056e0849
+OperationStatus      : Succeeded
+</pre></div>
+</div>
+<p>現状だと、「新ポータル、旧ポータル」では、適応されているcscfgの内容だけで、自動更新に設定されている場合にどのGuest OS が使われているかは確認できません。</p>
+</div>
+<div class="section" id="get-azuredeploymant">
+<h2>おまけ、Get-AzureDeploymant</h2>
+<p>似たような情報を返してくるコマンドに、Get-AzureDeployment というのがあり、OSVersionが帰ってきます。「*」 が帰ってきて、すぐに実行中のGest OSがかえってくるわけではないことがわかりますが、ソースを確認してみます。コード的には、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/v1.1.0-January2016/src/ServiceManagement/Compute/Commands.ServiceManagement/Model/DeploymentInfoContext.cs#L253">このあたりで</a>OSVersion のプロパティを設定しています。つまり、csdefで設定されている<strong>osVersion</strong>が入り、自動更新を設定した場合、「*」となって現在のOS バージョンは分かりません。</p>
+<p>最初これで行けるかと思ったんですがね。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_powershell.html">Azure PowerShell</a>, <a href="categories/powershell.html">PowerShell</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html#disqus_thread" data-disqus-identifier="2016/02/05/how_to_get_current_running_guest_os_version">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 02, 2015</span>
         </div>
         <div class="section">
@@ -755,100 +807,6 @@ $ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/09/01/go_5_jazug_service_fabric_session.html#disqus_thread" data-disqus-identifier="2015/09/01/go_5_jazug_service_fabric_session">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>August 23, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/08/23/how_to_use_nlog_in_cloud_service.html">Cloud Service で NLog を使う</a></h1>
-<p>先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので、ローカルストレージの定義を、NLogの設定ファイルに書けるようにした layout renderer ${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を作ってみました。</p>
-<a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/19430236414/in/dateposted-public/"><img alt="face" class="align-center" src="https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg"/></a>
-<p>「<a class="reference internal" href="2015/04/08/azure_diagonestics_1_3_bugs.html"><span class="doc">Azure Diagnostics 1.3 PaaS BUGS</span></a>」は、無事 1.4で改修されて再び使えるようになりました。これで、普通に使えるようになったのですが、相変わらず面倒がことが２つ。</p>
-<ol class="arabic simple">
-<li>ローカルストレージからのカスタムログ転送はVSからの設定ができない</li>
-<li>ローカルストレージのパスはデプロイ毎に変わる</li>
-</ol>
-<p>今回の趣旨は、２のデプロイ毎に変わるパスをNLogの設定ファイルに書くにはどうするかという話です。</p>
-<p>ローカル ストレージ リソース については、MSDNの 「<a class="reference external" href="https://msdn.microsoft.com/ja-jp/library/azure/Ee758708.aspx">ローカル ストレージ リソースを構成する</a>」 を見てください。</p>
-<div class="section" id="id2">
-<h2>1. ローカルストレージからのカスタムログ転送設定</h2>
-<p>ここは前段です。残念ながら現在のVisual Studioでは、GUIでローカルストレージからのカスタムログ転送設定ができません。ここはdiagnostics.wadcfgxに手で書きます。たいして面倒でもなくDataSources のタグの中が今回追加した記述です。これだけで、ローカルストレージ LogStorage からBlobコンテナdiagnostics-custom-logs への転送を定義になります。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/> <span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
- <span class="nt">&lt;DiagnosticsConfiguration</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
-   <span class="nt">&lt;PublicConfig</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration"</span><span class="nt">&gt;</span>
-     <span class="nt">&lt;WadCfg&gt;</span>
-       <span class="nt">&lt;DiagnosticMonitorConfiguration</span> <span class="na">overallQuotaInMB=</span><span class="s">"4096"</span><span class="nt">&gt;</span>
-         <span class="nt">&lt;DiagnosticInfrastructureLogs</span> <span class="na">scheduledTransferLogLevelFilter=</span><span class="s">"Error"</span> <span class="nt">/&gt;</span>
-         <span class="nt">&lt;Directories</span> <span class="na">scheduledTransferPeriod=</span><span class="s">"PT1M"</span><span class="nt">&gt;</span>
-           <span class="nt">&lt;IISLogs</span> <span class="na">containerName=</span><span class="s">"wad-iis-logfiles"</span> <span class="nt">/&gt;</span>
-           <span class="nt">&lt;FailedRequestLogs</span> <span class="na">containerName=</span><span class="s">"wad-failedrequestlogs"</span> <span class="nt">/&gt;</span>
-<span class="hll">           <span class="nt">&lt;DataSources&gt;</span>
-</span><span class="hll">             <span class="nt">&lt;DirectoryConfiguration</span> <span class="na">containerName=</span><span class="s">"diagnostics-custom-logs"</span><span class="nt">&gt;</span>
-</span><span class="hll">               <span class="nt">&lt;LocalResource</span> <span class="na">relativePath=</span><span class="s">"."</span> <span class="na">name=</span><span class="s">"LogStorage"</span> <span class="nt">/&gt;</span>
-</span><span class="hll">             <span class="nt">&lt;/DirectoryConfiguration&gt;</span>
-</span><span class="hll">           <span class="nt">&lt;/DataSources&gt;</span>
-</span>         <span class="nt">&lt;/Directories&gt;</span>
-
-     ... 省略 ...
-
- <span class="nt">&lt;/DiagnosticsConfiguration&gt;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id3">
-<h2>2. ローカルストレージのパスはデプロイ毎に変わる</h2>
-<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer “${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
-<p>バイナリがNuGetに上げてあるので、インストールはここからします。微妙な気もするので、まだpreviewにしてあります。</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>$ Install-Package NLog.Azure -Pre
-</pre></div>
-</div>
-<p>これでインストールしたら、NLog.configに下記のように書くと実行時にローカルストレージのパスに展開されます。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;variable</span> <span class="na">name=</span><span class="s">"logDirectory"</span> <span class="na">value=</span><span class="s">"${azure-local-resource:name=LogStorage:default=c\:/Logs/}"</span><span class="nt">/&gt;</span>
-</pre></div>
-</div>
-<p><a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure.Example/WebRole1/NLog.config">NLog.configのサンプル</a></p>
-<p>name という引数に ローカルストレージ名を書きます。default は、ServiceRuntime が存在しないとき、あるいはローカルストレージの定義が無い場合に使われるバスを書きます。Azureの本番環境あるいはエミュレータ環境では、ローカルストレージにログを書き、そうでない場合はdefaultで指定された場所にログを書くという風に使うことを想定しています。NLogは結構素直な出来で、ここまではすっきり、さくっとできました。log4net よりいい感じですね。</p>
-<p>参考までに、簡単なWebRoleのプロジェクトをGitHubに上げてあります。<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/tree/master/NLog.Azure.Example">NLog.Azure.Example</a></p>
-</div>
-<div class="section" id="id5">
-<h2>おまけ</h2>
-<p>実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、必ず Azure SDK を入れないと開発/実行できないということです。Storageなどのライブラリは、Azure SDK無しでもNuGet から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。NuGetからも入らないのでなかなか<strong>メンドクサイ</strong>ことになります。今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに<strong>意味が無い</strong>、単純なASP.NETのアプリはそのままでに動くようにしておきたいのに。</p>
-<p>こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出すという方法があります。今回はServiceRuntimeのアセンブリはGACに登録されているけど物理パスがわからない！、さて困った。そんなときは Fusion API でGACから探し出すのが上等手段です。<a class="footnote-reference" href="#r1" id="id6">[1]</a>常套手段と言っても普通に暮らしてるとあまり出番ないですが。Fusion (Unmanaged API Reference)<a class="footnote-reference" href="#r2" id="id7">[2]</a>は、GACに登録されているアセンブリを操作する Unmanaged API です、昔はドキュメント無かった気がしますが今は普通に書いてありますね。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、<a class="reference external" href="https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19">GetAssemblyPath()</a>のあたり。あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに<strong>メンドクサイ</strong></p>
-</div>
-<div class="section" id="id8">
-<h2>最後に</h2>
-<p>ずいぶん間が空いてしまいましたが、2015/5/12 に、株式会社 kyrt にしました、先月には、2015年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞をいただきました。皆さまのおかげです、これらかもよろしくお願いいたします。</p>
-<p>File System をバッファーとして使うロギングシステムではパフォーマンスに注意した方が良さそうです。Azure Diagonesticsを使うと、out-process の log collector でよしなにBlobへの転送をしてくれるので、直にBlobやTableに書くより良いとは思いますが、アプリとout-process の間のつなぎがFile System なのは信頼性は良いけどパフォーマンスが疑問です。そんなにログ書くのかという話はあると思いますが。そう考えるとアプリとlog collectorの間はETWが良いような気もします。ついでに、log collector でアーカイブだけじゃなくてリアルタイム系のフィルタリングとかやってくれると便利なんだけど。<a class="reference external" href="https://github.com/mspnp/semantic-logging">SLAB</a>に期待ですね。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[1]</a></td><td><a class="reference external" href="http://stackoverflow.com/questions/19456547/how-to-programmatically-determine-if-net-assembly-is-installed-in-gac">How to programmatically determine if .NET assembly is installed in GAC?</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/ms404523.aspx">Fusion (Unmanaged API Reference)</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/diagonestics.html">Diagonestics</a>, <a href="tags/nlog.html">NLog</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/08/23/how_to_use_nlog_in_cloud_service.html#disqus_thread" data-disqus-identifier="2015/08/23/how_to_use_nlog_in_cloud_service">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -857,6 +815,8 @@ $ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
+        </li><li>
             <a href="2017/05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a>
         </li><li>
             <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
@@ -874,13 +834,11 @@ $ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="
             <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
         </li><li>
             <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
-        </li><li>
-            <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (34)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>

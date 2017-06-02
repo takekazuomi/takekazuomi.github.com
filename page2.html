@@ -76,6 +76,92 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 03, 2016</span>
+        </div>
+        <div class="section">
+            <div class="section" id="azure-datafactory-tips">
+<h1><a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a></h1>
+<p><a class="reference external" href="http://qiita.com/advent-calendar/2016/azure">Microsoft Azure Advent Calendar 2016 3日目</a>として書きました。</p>
+<p><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-introduction">Azure DataFactory</a>(以下ADF)は、データの移動や変換を自動化するクラウドベースのデータインテグレーションサービスです。 ADFには、コピーアクティビティとデータ変換アクティビティの２種類があります。このうちコピーアクティビティは、単純なETLツールで優れたパフォーマンスとリーズナブルな価格で魅力的なサービスです。個人的にはコピーアクティビティはシンプルでなかなかよく出来ており、お気にいりました。データ変換アクティビティはクラスタを上げて変換処理をするのが利点でもあり難点でもあるって感じですね。</p>
+<p>今回は、スクリプトからのエラーリカバリ、タイムスライスの再実行について記述します。ADFでは実行はタイムスライス単位で行われデータソースの問題で複数のタイムスライスが失敗した時などエラーの数が多くなり勝ちです。エラーが多くなるとポータルの画面から再実行をするのはポチポチが多くなってとても面倒になります。そんな時にはということで、Azure PowerShell から、失敗したタイムスライスを再実行してみます。</p>
+<p>参照： この記事の基本は概ね、<a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines">Azure Data Factory のパイプラインの監視と管理</a>に書いてありますので、そちらもどうぞ。</p>
+</div>
+<div class="section" id="id1">
+<h1>原因究明</h1>
+<p>まずは、エラーの原因を確認します。エラーが大量に出ていると面倒なので、下記のようなスクリプトでエラーメッセージでサマります。やっていることは、 ログの<span class="docutils literal"><span class="pre">sort</span> <span class="pre">|</span><span class="pre">uniq</span> <span class="pre">-c</span></span>です。</p>
+<script src="https://gist.github.com/takekazuomi/84aceb5aa49139dc115c8eace5f634df.js">&amp;amp;nbsp;</script></div>
+<div class="section" id="id2">
+<h1>エラーの確認を実行</h1>
+<p>下記の様に実行すると、DatasetName, ErrorMessage でサマった数が表示されます。下記の例だとエラーメッセージが長過ぎて最後まで見れませんが、コマンド行に、<span class="docutils literal"><span class="pre">|</span> <span class="pre">Out-String</span> <span class="pre">-Width</span> <span class="pre">4096</span></span><a class="footnote-reference" href="#ref1" id="id3">[1]</a>を追加すると最後まで表示されます。（幅は随時変更してください）</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\adferror1.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+Count DatasetName                ErrorMessage
+----- -----------                ------------
+    7 DatasetAzureSqlDestination Copy activity encountered a user error at Sink:tcp:kinmugisql01.database.windows.net,1433 s...
+</pre></div>
+</div>
+<p>簡単にスクリプトの説明をします。Get-AzureRmDataFactorySlice でエラーになっているタイムスライスを取得して Get-AzureRmDataFactoryRun で、そのタイムスライスの詳細な情報を取得し、最後にエラーメッセージでグルーピングしてカウントしています。</p>
+</div>
+<div class="section" id="id4">
+<h1>再実行</h1>
+<p>これでエラーが分かるので問題を修正して、再実行します。</p>
+<p>Azure DataFactoryのタイムスライスの再実行には、スライスの状態遷移を理解しなければなりません。そんなに複雑なことは無く、タイムスライスの状態遷移図は下記のようになっており、再実行は、Failed 状態から Waiting に変更することで行います。</p>
+<a class="reference external image-reference" href="https://docs.microsoft.com/ja-jp/azure/data-factory/data-factory-monitor-manage-pipelines#パイプラインとアクティビティの状態の理解"><img alt="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png" src="https://docs.microsoft.com/ja-jp/azure/data-factory/media/data-factory-monitor-manage-pipelines/state-diagram.png"/></a>
+<p>問題の修正が完了したら、下記のスクリプトで、失敗したタイムスライスを再実行します、スクリプトでは失敗したタイムスライスを古いものから順にWaitingにするだけです。タイムスライス毎に設定をしているので、pipelineで指定したバックフィルの順序が反映されません。タイムスライス間に依存関係がある場合は問題が出るかもしれませんので注意してください。</p>
+<script src="https://gist.github.com/takekazuomi/64c969362ec122781f006ddad571f009.js">&amp;amp;nbsp;</script><p>実行には、上記で確認したエラーになったデータセットを指定します。再実行になったタイムスライスを表示します。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\\adfrerun.ps1 -ResourceGroupName "TestADF01" -DataFactoryName "APITutorial" -DatasetName "DatasetAzureSqlDestination" -StartDateTime 2016-08-09T10:00:00 -EndDateTime 2016-08-09T11:00:00
+
+DatasetName                Start
+-----------                -----
+DatasetAzureSqlDestination 2016/08/09 9:00:00
+DatasetAzureSqlDestination 2016/08/09 10:00:00
+DatasetAzureSqlDestination 2016/08/09 11:00:00
+DatasetAzureSqlDestination 2016/08/09 22:00:00
+DatasetAzureSqlDestination 2016/08/09 23:00:00
+</pre></div>
+</div>
+<p>下記のようなコマンドで、タイムスライスの状態を確認することができます。ここでは、Ready以外を表示しています。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRmDataFactorySlice -ResourceGroupName <span class="s2">"TestADF01"</span> -DataFactoryName <span class="s2">"APITutorial"</span> -DatasetName <span class="s2">"DatasetAzureSqlDestination"</span> -StartDateTime <span class="m">2016</span>-08-09T10:00:00 -EndDateTime <span class="m">2016</span>-08-09T11:00:00 <span class="p">|</span> ? <span class="o">{</span><span class="nv">$_</span>.State -ne <span class="s1">'Ready'</span><span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h1>最後に</h1>
+<p>Azure PowerShellを使っていると、PowerShellのオブジェクトパイプランが強力さを肌で感じます。パイプで繋いで、<span class="docutils literal"><span class="pre">%,</span> <span class="pre">?</span></span>とやるのが気に入ってしまいました。</p>
+<p>今回ちょっと分かり辛らかったのは、 タイムスライスを返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactorySlice</span></span>と タイムスライス の実行結果を返す<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>の関係でした。最初<span class="docutils literal"><span class="pre">Get-AzureRmDataFactoryRun</span></span>がデータセットの実行結果を取得するのかと勘違いしていたこともあり、どのようなパラメータを渡せば良いのかが分からず…　このコマンドが、タイムスライスの実行結果を返すもので、タイムスライス（slice）のIDとして開始時間を渡すということに大分時間を無駄にしました。後で、マニュアル<a class="footnote-reference" href="#ref2" id="id6">[2]</a>見たらちゃんと書いてあったんですが、、、、</p>
+<p><a class="reference external" href="https://docs.microsoft.com/en-us/powershell/module/azurerm.datafactories/set-azurermdatafactoryslicestatus">Set-AzureRmDataFactorySliceStatus</a>は、期間を渡せるので、個々のタイムスライスを指定するのではなく。期間をわたしてざっくり再実行でも良いかもしれません。その場合は、エラーになったタイムスライスを探して、その周辺の時間帯をざっくり再実行って感じですかね。それはそれで、実用性は高そうな気がしてきました。</p>
+<p>締めは、<span class="docutils literal"><span class="pre">Azure</span> <span class="pre">DataFactory</span> <span class="pre">はいいぞ！</span></span>ということで。</p>
+</div>
+<div class="section" id="id7">
+<h1>脚注</h1>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>poshのデフォルトではコンソール出力はコンソールバッファーの幅で省略されます。この仕様は余計なお世話な気がします。そのまま出してくれれば良いのに。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[2]</a></td><td><a class="reference external" href="https://docs.microsoft.com/en-us/powershell/resourcemanager/azurerm.datafactories/v2.3.0/get-azurermdatafactoryrun">Get-AzureRmDataFactoryRun</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/datafactory.html">DataFactory</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2016/12/03/adf_tips_rerun.html#disqus_thread" data-disqus-identifier="2016/12/03/adf_tips_rerun">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 04, 2016</span>
         </div>
         <div class="section">
@@ -237,58 +323,6 @@
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html#disqus_thread" data-disqus-identifier="2016/04/04/build_2016_azure_cool_storage">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>February 05, 2016</span>
-        </div>
-        <div class="section">
-            <h1><a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a></h1>
-<p>.NET Framework 4.5, 4.5.1 のサポート終了に少し遅れましたが、Azure の Cloud　Service でも、Gest OS 4.28 から .NET 4.5.2 がサポートされるようになりました。<a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/cloud-services-guestos-update-matrix">Azure Guest OS releases and SDK compatibility matrix</a></p>
-<p>現在絶賛展開中ですが、手元のCloud Serviceには、すでに来ていました。</p>
-<div class="section" id="visual-studio">
-<h2>Visual Studio での確認</h2>
-<p>現在の Guest OSのバージョンは、下記のように、Visual Studio で、Roleのプロパティを開くと確認することができます。</p>
-<img alt="vsimage" class="align-center" src="_images/vs001.PNG"/>
-</div>
-<div class="section" id="azure-powershell">
-<h2>Azure PowerShell での確認</h2>
-<p>Azure PowerShell は、1.1.0 では確認できなかったのですが、今回のように、GUEST OSのバージョンが重要な場合に確認出来ないのは不便なので、OSVersionが帰ってくるようなパッチを作って PR を出してみたら、さくっと翌日にはマージされ次のリリースで無事に現在のバージョンがわかるようになりました。（もともと、REST APIには存在するし簡単な修正だったので、なにかの拍子に漏れてしまっただけだと思います）</p>
-<p><a class="reference external" href="https://github.com/Azure/azure-powershell/pull/1638">Fix to missing OS Version in Get-AzureRole #1638</a></p>
-<img alt="../../../_images/git001.png" class="align-center" src="_images/git001.png"/>
-<p>Azure PowerShell Team オープンですね！<strong>素晴らしい</strong></p>
-<p>こんな感じで確認することができます。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-AzureRole -ServiceName kinmugics10 -Slot Staging
-
-RoleName             : WorkerRole1
-InstanceCount        : <span class="m">1</span>
-DeploymentID         : c49d5437f1a84345b9739a79ff333056
-OSVersion            : WA-GUEST-OS-4.28_201601-01
-ServiceName          : kinmugics10
-OperationDescription : Get-AzureRole
-OperationId          : 0ffbd548-3b37-6c15-afa4-e091056e0849
-OperationStatus      : Succeeded
-</pre></div>
-</div>
-<p>現状だと、「新ポータル、旧ポータル」では、適応されているcscfgの内容だけで、自動更新に設定されている場合にどのGuest OS が使われているかは確認できません。</p>
-</div>
-<div class="section" id="get-azuredeploymant">
-<h2>おまけ、Get-AzureDeploymant</h2>
-<p>似たような情報を返してくるコマンドに、Get-AzureDeployment というのがあり、OSVersionが帰ってきます。「*」 が帰ってきて、すぐに実行中のGest OSがかえってくるわけではないことがわかりますが、ソースを確認してみます。コード的には、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/v1.1.0-January2016/src/ServiceManagement/Compute/Commands.ServiceManagement/Model/DeploymentInfoContext.cs#L253">このあたりで</a>OSVersion のプロパティを設定しています。つまり、csdefで設定されている<strong>osVersion</strong>が入り、自動更新を設定した場合、「*」となって現在のOS バージョンは分かりません。</p>
-<p>最初これで行けるかと思ったんですがね。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_powershell.html">Azure PowerShell</a>, <a href="categories/powershell.html">PowerShell</a></span>
-        </div>
-        
-        <div class="comments">
-            <a href="http://kyrt.in/2016/02/05/how_to_get_current_running_guest_os_version.html#disqus_thread" data-disqus-identifier="2016/02/05/how_to_get_current_running_guest_os_version">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -297,6 +331,8 @@ OperationStatus      : Succeeded
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
+        </li><li>
             <a href="2017/05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a>
         </li><li>
             <a href="2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
@@ -314,13 +350,11 @@ OperationStatus      : Succeeded
             <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
         </li><li>
             <a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a>
-        </li><li>
-            <a href="2016/02/05/how_to_get_current_running_guest_os_version.html">現在 のGuest OS Version の確認方法</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (34)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (2)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>

@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2017/06/03/az_login_device_flow
    2017/05/19/install_azure_powershell
    2017/05/14/azure_cosmos_intro
    2017/02/13/psenv_tabexpansion
