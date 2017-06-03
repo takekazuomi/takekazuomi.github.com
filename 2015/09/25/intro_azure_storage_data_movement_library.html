@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Go (5) JAZUG で Service Fabric の話をします" href="../01/go_5_jazug_service_fabric_session.html" /><link rel="prev" title="Niigata.NET Page Blob Download 最適化" href="../../10/16/niigata_net_2015_10_dml.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -200,7 +200,7 @@ $ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="
 <li>ダウンロード済みのファイルがあればSkipする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L71">TransferContext.OverwriteCallback</a>で、ダウンロード先にファイルがあるかどうかを見ています。WADDirectoriesTable の中のFileTime、FileSize と比較して同じだったらスキップとしています。WADDirectoriesTable のデータを参照するために、_sourceFileDictionary を参照しているのがイマイチな気がします。OverwriteCallback に、オプションのobject とか渡せれば解決なのですが…</li>
 <li>MD5 Validation をOffにする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L83">DownloadOptions.DisableContentMD5Validation</a>WADのCustom log 転送を使って転送したBlobにはMD5Sumが付いていないので仕方ない。ここはOffです。WADDirectoriesTable の FileSize と同じかどうかを確認できるので大丈夫かな？と思いますが、選択できても良い気がします。MD5Sumの計算はコストが高いのでなるべく避けたい気持ちもわかりますが。</li>
 <li>TransferException をハンドルする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L100">TransferException</a>ここでは、TransferErrorCode の TransferAlreadyExists、NotOverwriteExistingDestination を特別扱いしています。 TransferContext.OverwriteCallback で、false を返すと、NotOverwriteExistingDestination が帰ります。今回はすでにダウンロード済みの場合は、スキップしているのでエラーではありません。 TransferManager.DownloadAsync に、同じ source, dest のセットが追加されると TransferAlreadyExists が発生します。今回は、WADDirectoriesTable に残っている転送履歴からBlobを探しているので、複数回転送されると TransferAlreadyExists になります。これは、WAD の Custom Log転送をどう使うのかという話にも絡みますが、今回はスキップで扱います。<a class="footnote-reference" href="#r6" id="id11">[6]</a></li>
-<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ....</li>
+<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ….</li>
 </ol>
 <p>あとは、 CountdownEvent を使って、全部のTaskの終了を待ちます。ProgressHandler をフックすると、転送量とか転送ファイル数のステータスをもらえるのは便利です。</p>
 </div>

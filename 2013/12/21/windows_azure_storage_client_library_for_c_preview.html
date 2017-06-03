@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Storage Client Library for Java v. 0.5.0" href="../20/windows_azure_storage_client_library_for_java_v_0_5_0.html" /><link rel="prev" title="Windows Azure Powershell 0.7.2.1 リリース" href="../22/azure_posh_2012_12_19_version_0_7_2_1.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -130,7 +130,7 @@
 <li>wastorage.redist.0.2.0-preview.nupkg：このパッケージを実行し、アプリケーションを再配布するために必要なDLLファイルが含まれています。</li>
 <li>wastorage.symbols.0.2.0-preview.nupkg：このパッケージには、それぞれのDLLファイルのシンボルが含まれています。オプションのパッケージです。</li>
 </ul>
-<p>パッケージは、<a class="reference external" href="https://www.nuget.org/packages/cpprestsdk/">C++ REST SDK</a>に依存しており、それもNuGetで自動的にインストールされます。<a class="reference external" href="http://casablanca.codeplex.com/">C++ REST SDK (codename &#8220;Casablanca&#8221;)</a>は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。</p>
+<p>パッケージは、<a class="reference external" href="https://www.nuget.org/packages/cpprestsdk/">C++ REST SDK</a>に依存しており、それもNuGetで自動的にインストールされます。<a class="reference external" href="http://casablanca.codeplex.com/">C++ REST SDK (codename “Casablanca”)</a>は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。</p>
 </div>
 <div class="section" id="id7">
 <h3>できること</h3>
@@ -176,7 +176,7 @@
 </div>
 <div class="section" id="blobs">
 <h3>Blobs</h3>
-<p>ここでは、blob container を作成し、<cite>&#8220;some text</cite>&#8221; と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
+<p>ここでは、blob container を作成し、<cite>”some text</cite>” と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Create a blob container</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_client</span> <span class="n">blob_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_blob_client</span><span class="p">();</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_container</span> <span class="n">container</span> <span class="o">=</span> <span class="n">blob_client</span><span class="p">.</span><span class="n">get_container_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">&quot;mycontainer&quot;</span><span class="p">));</span>
@@ -197,7 +197,7 @@
 </div>
 <div class="section" id="tables">
 <h3>Tables</h3>
-<p>以下のサンプルでは、 Tableを作成し、様々な型のプロパティの組をエンティティに挿入し、最終的にはその指定したエンティティを取得します。最初の検索操作では、ポイント·クエリを実行し、特定のエンティティを取得します。一方クエリ操作では、PartitionKeyが<cite>&#8220;partition&#8221;</cite>に等しく、かつ、RowKey が、<cite>&#8220;m&#8221;</cite>より大きいすべてのエンティティを照会します。これは、結果的にinsertした全てのエンティティになります。</p>
+<p>以下のサンプルでは、 Tableを作成し、様々な型のプロパティの組をエンティティに挿入し、最終的にはその指定したエンティティを取得します。最初の検索操作では、ポイント·クエリを実行し、特定のエンティティを取得します。一方クエリ操作では、PartitionKeyが<cite>“partition”</cite>に等しく、かつ、RowKey が、<cite>“m”</cite>より大きいすべてのエンティティを照会します。これは、結果的にinsertした全てのエンティティになります。</p>
 <p>Windows Azure Tables に関する詳しい情報は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx">Understanding the Table Service Data Model</a>の記事と、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2010/11/06/how-to-get-most-out-of-windows-azure-tables.aspx">How to get most out of Windows Azure Tables</a>の blog post を見て下さい。</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Create a table</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_table_client</span> <span class="n">table_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_table_client</span><span class="p">();</span>
@@ -342,7 +342,7 @@ ucout &lt;&lt; U(&quot;Executed &quot;) &lt;&lt; context.request_results().size(
 <h2>まとめ</h2>
 <p>C++用のクライアントは良いですね、やっぱり欲しい。</p>
 <p>その他に、今回<a class="reference external" href="http://coapp.org/">CoApp tools</a>が気になりました。native code をnugetでpackege化して配布するプロジェクトです。 Windows にapt-getみたいな位置づけに機能を盛り込むのを狙っているようで、期待できます。<a class="footnote-reference" href="#r4" id="id16">[4]</a>これで、python、ruby、node.js で Windows パッケージのバイナリコードのビルドに引っかかる問題も、このレポジトリを参照することで解決できると良いなあと思いますが、今のところプロジェクトのターゲットに入っていないようで、そこはちょっと残念です。</p>
-<p>もう一つ、<a class="reference external" href="http://casablanca.codeplex.com/">http://casablanca.codeplex.com/</a>は、<a class="reference external" href="http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx">MSDN C++ REST SDK (Codename &#8220;Casablanca&#8221;)</a>に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。<a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a>今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。</p>
+<p>もう一つ、<a class="reference external" href="http://casablanca.codeplex.com/">http://casablanca.codeplex.com/</a>は、<a class="reference external" href="http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx">MSDN C++ REST SDK (Codename “Casablanca”)</a>に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。<a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a>今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。</p>
 <p>nugetを見てみたところ、C++ REST SDK も、SDK、 Redist、Symbols の３本立てになってました。でも、SDKが1.4.0なのに他が1.3.1のままですね。</p>
 <ul class="simple">
 <li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a></li>

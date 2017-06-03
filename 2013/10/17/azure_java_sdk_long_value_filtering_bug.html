@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1" href="../15/windows_azure_plugin_for_eclipse_with_java.html" /><link rel="prev" title="Windows Azure Tables の Breaking Changes 2013/11" href="../../11/24/windows_azure_tables_breaking_changes_2013_11.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -92,7 +92,7 @@
     
     <div class="section" id="azure-sdk-for-java-0-4-6-longfilter-bug">
 <h1>Azure SDK for Java 0.4.6 long値のfilter BUG</h1>
-<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の&#8217;L&#8217;が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
+<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
 <p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
 <p>修正して、Pull Requestを投げています。(2013/10/13)</p>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
@@ -100,11 +100,11 @@
 <hr class="docutils" />
 <div class="section" id="id1">
 <h2>修正内容</h2>
-<script src="https://gist.github.com/takekazuomi/7031393.js">&nbsp;</script><p>edmType が、EdmType.INT64の場合に、値のpostfixに&#8217;L&#8217;を付けるように変更しました。</p>
+<script src="https://gist.github.com/takekazuomi/7031393.js">&nbsp;</script><p>edmType が、EdmType.INT64の場合に、値のpostfixに’L’を付けるように変更しました。</p>
 </div>
 <div class="section" id="id2">
 <h2>元の仕様</h2>
-<p>どこからこの&#8217;L&#8217;が出てきたかという話をチョットします。Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。&#8217;L&#8217;ですね。</p>
+<p>どこからこの’L’が出てきたかという話をチョットします。Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
 <table border="1" class="docutils" id="id3">
 <caption><span class="caption-text">OData Primitive Data Types</span></caption>
 <colgroup>

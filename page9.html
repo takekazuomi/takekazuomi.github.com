@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page10.html" /><link rel="prev" title="Newer" href="page8.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -76,261 +76,131 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
-            <span>November 28, 2013</span>
+            <span>December 11, 2013</span>
         </div>
         <div class="section">
-            <h1><a href="2013/11/28/using_helios_on_azure_cloud_service.html">Helios を Azure Cloud Service で使う</a></h1>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-fix-runtime"><span class="std std-ref">2013/12/13 追記</span></a> Microsoft.Owin.Host.IIS 0.1.1-pre では、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span class="std std-ref">WebRoleのStartup taskの作成</span></a> の問題は解決されました。</div>
+            <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
+<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
+<div class="section" id="id2">
+<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
+<ul class="simple">
+<li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
+<li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
+<li>Tables: Nuget package に Microsoft.Data.Services.Client への明示的な参照を追加</li>
+<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細:<a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
+<li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
+</ul>
 </div>
-</div></blockquote>
-<p>巷で話題のHeliosをCloud Serviceで使おうとしたらちょっとハマりました。基本的には、<a class="reference external" href="http://weblog.west-wind.com/posts/2013/Nov/23/Checking-out-the-Helios-IIS-Owin-Web-Server-Host">Checking out the Helios IIS Owin Web Server Host</a>と同じですが、Cloud Service、WebRoleの組み合わせでDeployしたら下記のようなエラーになります。</p>
-<a class="reference internal image-reference" href="_images/2013_11_helios009.png"><img alt="../../../_images/2013_11_helios009.png" class="align-center" src="_images/2013_11_helios009.png" style="width: 600px;"/></a>
-<p>最初、なにかアセンブリが足りないのかと思って、Fusion Logを調べたりしていたのですが、結局Helios内で使っているnavite code dllが依存しているVC12のランタイムが無かったという話でした。startup taskを用意してVC12のランタイムを入れてやると上手く動くようになります。</p>
-<p>ここでは、Cloud Serviceの作成から、Heliosの組み込み、startup taskの作成まで一通り説明します。</p>
+<div class="section" id="id3">
+<h2>メモ</h2>
+<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/hotfix.html">Hotfix</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/11/windows_azure_storage_client_3_0_1.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_storage_client_3_0_1">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>December 11, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure PowerShell 0.7.2 リリース</a></h1>
+<p>Windows Azure PowerShell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
 <div class="section" id="id1">
-<h2>手順の確認</h2>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="webrolehelios">
-<h3>WebRoleの作成からHeliosのインストールまで</h3>
-<ol class="arabic simple">
-<li>Cloud Service を作ってWebRoleを追加します普通にCloudServiceを作成し、WebRoleを追加します。テンプレートはEmptyにします</li>
-</ol>
-<a class="reference internal image-reference" href="_images/2013_11_helios003.png"><img alt="../../../_images/2013_11_helios003.png" class="align-center" src="_images/2013_11_helios003.png" style="width: 600px;"/></a>
-<ol class="arabic simple" start="2">
-<li>projectを、.NET 4.5.1 を使うようにします</li>
-</ol>
-<a class="reference internal image-reference" href="_images/2013_11_helios004.png"><img alt="../../../_images/2013_11_helios004.png" class="align-center" src="_images/2013_11_helios004.png" style="width: 600px;"/></a>
-<ol class="arabic" start="3">
-<li><p class="first">コンパイルして問題無いのを確認します。</p>
-</li>
-<li><p class="first">System.Webの参照を全て削除します</p>
-</li>
-<li><p class="first">nugetを使って、Microsoft.Owin.Host.IISをインストールします:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>Install-Package Microsoft.Owin.Host.IIS -Pre
+<h2>インストール</h2>
+<p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    <span class="m">0</span>.0
+Azure                                                       <span class="m">0</span>.7.2
+Microsoft.PowerShell.Management                             <span class="m">3</span>.1.0.0
+Microsoft.PowerShell.Utility                                <span class="m">3</span>.1.0.0
+posh-git                                                    <span class="m">0</span>.0
+PsEnv                                                       <span class="m">0</span>.0
+PSReadline                                                  <span class="m">1</span>.0.0.1
 </pre></div>
-</div>
-</li>
-</ol>
-<p>下記のような参照になります</p>
-<img alt="../../../_images/2013_11_helios006.png" class="align-center" src="_images/2013_11_helios006.png"/>
-</div>
-<div class="section" id="startup-class">
-<h3>Startup Classの設定</h3>
-<p>下記のようなStartup classのコードを追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>using System;
-using Microsoft.Owin;
-using Owin;
-
-[assembly: OwinStartup(typeof(WebRole1.Startup))]
-
-namespace WebRole1
-{
-    public class Startup
-    {
-        public void Configuration(IAppBuilder app)
-        {
-
-            app.Run(async context =&gt;  // IOWinContext
-            {
-                context.Response.StatusCode = 200;
-                context.Response.ContentType = "text/html";
-
-                await context.Response.WriteAsync("Hello Herios. Time is: " + DateTime.Now.ToString());
-            });
-        }
-    }
-}
-</pre></div>
-</div>
-<p>これで、WebRoleを動かしてみて、動くことを確認します。</p>
-</div>
-<div class="section" id="webrolestartup-task">
-<span id="helios-startuptask"/><h3>WebRoleのStartup taskの作成</h3>
-<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>の中で使われている、unmanaged codeがmsvcr120.dllに依存しているので、動作環境ではVC12 のランタイムが必要です。ここでは、WebRoleのstartup taskでVC12のランタイムをインストールする方法を説明します。</p>
-<img alt="../../../_images/2013_11_helios007.png" class="align-center" src="_images/2013_11_helios007.png"/>
-<p>ServiceDefinition.csdefに下記の定義を追加します:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;ServiceDefinition name="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2"&gt;
-  &lt;WebRole name="WebRole1" vmsize="Small"&gt;
-    &lt;Startup&gt;
-      &lt;Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" /&gt;
-    &lt;/Startup&gt;
-
-    &lt;Sites&gt;
-    以下省略・・・・
-</pre></div>
-</div>
-<p>WebRoleのプロジェクトに、startup.cmdというbatchファイルとvcredist_x64.exeを追加して、プロパティで出力ディレクトリにコピーするように設定します。</p>
-<dl class="docutils">
-<dt>startup.cmd::</dt>
-<dd>vcredist_x64.exe /install /quiet</dd>
-</dl>
-<p>vcredist_x64.exe は、<a class="reference external" href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40784">Visual Studio 2013 の Visual C++ 再頒布可能パッケージ</a>からダウンロードできます。VS 2013をインストールしている場合は、<cite>C:Program Files (x86)Microsoft Visual Studio 12.0VCredist</cite>等のディレクトリにファイルがあります。</p>
-<p>startup taskについて：<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/hh180155.aspx">Windows Azure でスタートアップ タスクを実行する</a></p>
-</div>
-<div class="section" id="osfamily">
-<h3>osFamilyの変更</h3>
-<p>.NET Framework 4.5.1は、Windows Server 2012R2では最初から入っています。簡単なので、osFamilyを4にして.NET Framework 4.5.1を使います。</p>
-<p>ServiceConfiguration.(Local|Cloud).cscfgのosFamilyを3から4に変更します:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;ServiceConfiguration serviceName="HelloHelios" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2013-10.2.2"&gt;
-  &lt;Role name="WebRole1"&gt;
-</pre></div>
-</div>
 </div>
 </div>
 <div class="section" id="id2">
-<h2>まとめ</h2>
-<p><a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Helios 0.1.0</a>runtimeには、native codeのDLLが含まれている。このDLLは、VC12(VS2013)のランタイム、msvcr120.dllに依存している。msvcr120.dllは、Cloud Service のWindows 2013R2 サーバーに存在しない。vcredist_x64.exeを使うとmsvcr120.dllがインストールされて問題が解決する。この問題は、厳密に言うと<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.0-pre">Microsoft.Owin.Host.IIS 0.1.0-pre</a>が使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.0-pre">Microsoft.AspNet.Loader.IIS 0.1.0-pre</a>に起因する。このままだとちょっと使いづらいですね。</p>
-</div>
-<div class="section" id="helios-fix-runtime">
-<span id="id4"/><h2>2013/12/13 追記</h2>
-<p>2013/12/02<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Owin.Host.IIS/0.1.1-pre">Microsoft.Owin.Host.IIS 0.1.1-pre</a>では、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.AspNet.Loader.IIS/0.1.1-pre">Microsoft.AspNet.Loader.IIS 0.1.1-pre</a>に含まれる。Microsoft.AspNet.Loader.IIS.Interop.dll がMSVCR120.DLLに依存しなくなりました。そのため、<a class="reference internal" href="2013/11/28/using_helios_on_azure_cloud_service.html#helios-startuptask"><span class="std std-ref">WebRoleのStartup taskの作成</span></a>のようなことをしないでも動作します。これで普通に使えるようになりますね。</p>
-<img alt="../../../_images/2013_11_helios011.png" src="_images/2013_11_helios011.png"/>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/helios.html">Helios</a>, <a href="categories/owin.html">OWIN</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/cloud_service.html">Cloud Service</a>, <a href="tags/webrole.html">WebRole</a>, <a href="tags/owin.html">OWIN</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/11/28/using_helios_on_azure_cloud_service.html#disqus_thread" data-disqus-identifier="2013/11/28/using_helios_on_azure_cloud_service">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>November 24, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/11/24/windows_azure_storage_known_issues_2013_11.html">Windows Azure Storage Known Issues 2013/11</a></h1>
-<blockquote>
-<div><div class="line-block">
-<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-storage-known-issues.aspx">Windows Azure ストレージの既知の問題</a></div>
-</div>
-<div class="line-block">
-<div class="line">2013/11/30 <a class="reference internal" href="2013/11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-201311"><span class="std std-ref">Table Query での Cast 問題</span></a> が解決されたStorage Client Libraryがリリースされています。検証記事 <a class="reference internal" href="2013/11/30/fixed_storage_client_cast_problem_in_2013_08_15_version.html"><span class="doc">Storage Client 2.1.0.4 以降での Cast問題の修正</span></a></div>
-</div>
-</div></blockquote>
-<p>cros, json 対応などのmajor releaseの準備に伴って実装が変更されているようです。それが原因でいくつかの意図しない問題が発生していることが報告されています。以下は Windows Azure Storage の Blog<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-known-issues-november-2013.aspx">Windows Azure Storage Known Issues (November 2013)</a>からの抜粋です。これらの問題が修正されプロダクションに公開され次第 Blog の記事は更新されるということです。</p>
-<div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
-<span id="known-issue-20131101"/><h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
-<ul class="simple">
-<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の<cite>“//”</cite>は、<cite>“/”</cite>に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は<cite>“//”</cite>を送らないようにして下さい</li>
-</ul>
-<p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
-</div>
-<div class="section" id="windows-azure-tablesissue">
-<h2>Windows Azure TablesのIssue</h2>
-<p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
-<ol class="arabic simple" id="known-issue-20131102">
-<li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
-</ol>
-<p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
-<span class="n">TableServiceContext</span> <span class="n">tableServiceContext</span> <span class="o">=</span> <span class="n">cloudTableClient</span><span class="o">.</span><span class="na">GetDataServiceContext</span><span class="o">();</span>
-<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">ResolveName</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">(</span><span class="n">Type</span> <span class="n">entityType</span><span class="o">)</span>
-<span class="o">{</span>
-<span class="c1">// This would cause class name to be sent as the value for term in the category element and service would return Bad Request.</span>
-<span class="k">return</span> <span class="n">entityType</span><span class="o">.</span><span class="na">FullName</span><span class="o">;</span>
-<span class="o">};</span>
-
-<span class="n">SimpleEntity</span> <span class="n">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SimpleEntity</span><span class="o">(</span><span class="s">"somePK"</span><span class="o">,</span> <span class="s">"someRK"</span><span class="o">);</span>
-<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">AddObject</span><span class="o">(</span><span class="s">"sometable"</span><span class="o">,</span> <span class="n">entity</span><span class="o">);</span>
-<span class="n">tableServiceContext</span><span class="o">.</span><span class="na">SaveChanges</span><span class="o">();</span>
-</pre></div>
-</div>
-<p>この Issue の解決のためには client 側で<cite>tableServiceContext.ResolveName</cite>delegate の設定を外してください。</p>
-<ol class="arabic simple" id="known-issue-201311" start="2">
-<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
-</ol>
-<p>下記は問題があるコードです</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>
-<span class="o">{</span>
-    <span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
-    <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-<p>このように書くと 2.1 storage client library の IQueryable interface は、下記のUriに展開されて新しい service updateでは、400 (Bad Request) で拒否されます</p>
-<p><cite>http://myaccount.table.core.windows.net/invalidfiltertable?$filter=cast%28%27%27%29%2FPartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
-<p>コードを下記のように変更してquery の castを取り除いてください。そうすれば、cast operator は送信されません</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">IQueryable</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">CreateQuery</span><span class="o">&lt;</span><span class="n">SimpleEntity</span><span class="o">&gt;().</span><span class="na">Where</span><span class="o">(</span><span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">PartitionKey</span> <span class="o">==</span> <span class="s">"mypk"</span><span class="o">);</span>
-<span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="na">ToList</span><span class="o">();</span>
-</pre></div>
-</div>
-<p>Uri request は下記のようになり、service に受け付けられます</p>
-<p><cite>http://myaccount.table.core.windows.net/validfiltertable?$filter=PartitionKey%20eq%20%27mypk%27&amp;timeout=90</cite></p>
-<p>We apologize for these issues and we are working on a hotfix to address them. (我々はこれらの問題について謝罪し、我々はそれらに対処するための修正プログラムに取り組んでいます)</p>
-</div>
-<div class="section" id="id1">
-<h2>感想、コメント等</h2>
-<ul class="simple">
-<li>最後の Uriに cast operatorが出てしまって、それがあるとサーバーではねられて 400 (Bad Request) というのは嵌りそうです。回避策もなかなか厳しい気がします。</li>
-<li>コンテナの前が<cite>//</cite>になってるとSASが効かないっていうのは、自前でUriを作成していると起きそうな気がします。要注意ですね。</li>
-<li>ResolveName の件は、DataServiceContextにあって、TableServiceContextでは動作に関係しないものという混乱の原因になりがちなやつです。元々意味無かったはずなので、外せば良いと思います。</li>
-</ul>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/issue.html">Issue</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/11/24/windows_azure_storage_known_issues_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_storage_known_issues_2013_11">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>November 24, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
-<blockquote>
-<div><div class="line-block">
-<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx">Windows Azure テーブルにおける重大な（互換性のない）変更</a></div>
-</div>
-</div></blockquote>
-<p>Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
-<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a>から変更点を紹介します。</p>
-<div class="section" id="id1">
 <h2>変更点</h2>
-<ol class="arabic simple">
-<li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
-<li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
-<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、<cite>type=feed</cite>が追加されます変更前: Content-Type: application/atom+xml;charset=utf-8変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
-<li>MIME type のセキュリティ リスクの削減のための新しいresponse header<cite>X-Content-Type-Options: nosniff</cite>が返されます。参照：<a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
-</ol>
-</div>
-<div class="section" id="id2">
-<h2>感想等</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
 <ul class="simple">
-<li>手元のアカウントで確認してみたら既に上記の通りに変更されていました。事前に予告が欲しいです。</li>
-<li>改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。</li>
-<li>XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。</li>
-<li>AtomPub内のXML elementの順番に関しては、<a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
-<li>HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</li>
+<li>HDInsight cmdlets<ul>
+<li>Add-AzureHDInsightConfigValues</li>
+<li>Add-AzureHDInsightMetastore</li>
+<li>Add-AzureHDInsightStorage</li>
+<li>Get-AzureHDInsightCluster</li>
+<li>Get-AzureHDInsightJob</li>
+<li>Get-AzureHDInsightJobOutput</li>
+<li>Get-AzureHDInsightProperties</li>
+<li>New-AzureHDInsightCluster</li>
+<li>New-AzureHDInsightClusterConfig</li>
+<li>New-AzureHDInsightHiveJobDefinition</li>
+<li>New-AzureHDInsightMapReduceJobDefinition</li>
+<li>New-AzureHDInsightPigJobDefinition</li>
+<li>New-AzureHDInsightSqoopJobDefinition</li>
+<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
+<li>Remove-AzureHDInsightCluster</li>
+<li>Revoke-AzureHDInsightHttpServicesAccess</li>
+<li>Set-AzureHDInsightDefaultStorage</li>
+<li>Start-AzureHDInsightJob</li>
+<li>Stop-AzureHDInsightJob</li>
+<li>Use-AzureHDInsightCluster</li>
+<li>Wait-AzureHDInsightJob</li>
+<li>Grant-AzureHDInsightHttpServicesAccess</li>
+<li>Invoke-AzureHDInsightHiveJob</li>
 </ul>
-<p>json対応に向けて着々と進んでいるのは、とても嬉しいです。</p>
+</li>
+<li>Web Site の WebSocket と managed pipe mode の設定<ul>
+<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
+</ul>
+</li>
+<li>Web Site の remote debugging 設定<ul>
+<li>Enable-AzureWebsiteDebug -Version</li>
+<li>Disable-AzureWebsiteDebug</li>
+</ul>
+</li>
+<li>VM を削除した時の VHD cleaning up オプション<ul>
+<li>Remove-AzureVM -DeleteVHD</li>
+<li>Remove-AzureService -DeleteAll</li>
+<li>Remove-AzureDeployment -DeleteVHD</li>
+</ul>
+</li>
+<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
+<li>Get-AzureDeployment</li>
+<li>Get-AzureReservedIP</li>
+<li>New-AzureReservedIP</li>
+<li>New-AzureVM</li>
+<li>Remove-AzureReservedIP</li>
+</ul>
+</li>
+<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
+<li>Start-AzureEmulator</li>
+<li>Publish-AzureServiceProject</li>
+<li>Save-AzureServiceProjectPackage</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>最後に</h2>
+<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
 </div>
 
         </div>
@@ -341,58 +211,324 @@ namespace WebRole1
         <div class="categories">
             <span>
                 Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure PowerShell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
         </div>
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure PowerShell</a>, <a href="tags/powershell.html">PowerShell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/release.html">Release</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+            <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>October 17, 2013</span>
+            <span>December 06, 2013</span>
         </div>
         <div class="section">
-            <h1><a href="2013/10/17/azure_java_sdk_long_value_filtering_bug.html">Azure SDK for Java 0.4.6 long値のfilter BUG</a></h1>
-<p>Azure SDK for Java 0.4.6 では、Azure TableのプロパティをLong値で$filterした場合に、URL展開で数字の末尾の’L’が付かないという不備があります。その結果、MAX_INTより大きな値を条件にするとサーバーの処理がエラーになってしまいます。</p>
-<p>この問題に気が付いたのは、0.4.4で、0.4.6でもまだ修正されていません。</p>
-<p>修正して、Pull Requestを投げています。(2013/10/13)</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-java/pull/413">#413 Long value filtering has error when value more than MAX_INT</a></p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9742098820/"><img alt="Amago by takekazu, on Flickr" src="http://farm8.staticflickr.com/7459/9742098820_0d6eb52271_z.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="id1">
-<h2>修正内容</h2>
-<script src="https://gist.github.com/takekazuomi/7031393.js">&amp;amp;nbsp;</script><p>edmType が、EdmType.INT64の場合に、値のpostfixに’L’を付けるように変更しました。</p>
+            <h1><a href="2013/12/06/azure_table_json_payload.html">Windows Azure Table の JSON payload</a></h1>
+<p>2013/11/27 に公開された最新のWindows Azure Storageでは新しくJSON Payload Format が導入されました。変更点の詳細が Windows Azure Storage Team Blog の<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a>に出ています、興味深い内容です。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/11248464764"><img alt="mojya mojya by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3755/11248464764_54794780d3_z.jpg"/></a>
+<p>翻訳は追々出ると思うので、拾い読みしながら気になったことを書きます。</p>
+<blockquote>
+<div><ul class="simple">
+<li>[引用]JSON Payloadは、version “2013-08-15”の一部してリリースされました。JSONは従来の AtomPub<a class="footnote-reference" href="#f1" id="id1">[1]</a>フォーマットの OData payload format に比べて著しくサイズが小さくなり latency が低くなっています。また、payload size を削減するため、 insert の payload echo を Off にする方法を提供します。これらの新機能は、新しい<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a>ではデフォルトの機能として働きます。</li>
+</ul>
+</div></blockquote>
+<p>従来の HTTP request/response を見ていると無駄が目立ったので、それが削減されるのは大歓迎です。ここには、version “2013-08-15”でのplayloadの削減が書いてありますが、2013年11月（先月）ぐらいから、version “2012-02-12” の AtomPub でも余計な改行や空白を削減するなどの変更が行われています。このあたりの変更については、<a class="reference internal" href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html"><span class="doc">Windows Azure Tables の Breaking Changes 2013/11</span></a>を見て下さい。</p>
+<p>Insert の payload echo を Off にする話が出ていますが、version “2011-08-18” でサポートされた<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh452241.aspx">Insert Or Merge Entity (REST API)</a>ではレスポンスのBODYが空でステータスコードは204 (No Content) を返すようになっていました、これを insert でも同じように動作するモードを付けたということのようです。Insertの時にサーバー側で付与される情報はETagとTimestampだけで、それ以外は送信した内容と同じです、レスポンスヘッダーにETagは返ってくるので、エンティティ全体が帰ってこなくても困ることはほとんど無いと思います。場合によっては、Timestamp を使う場合があるかもしれませんが、その場合は設計を見直すか、エンティティ全体を返すモードで使うかになります。</p>
+<div class="section" id="what-is-json">
+<h2>What is JSON</h2>
+<blockquote>
+<div><ul class="simple">
+<li>[引用]<a class="reference external" href="http://json.org/">JSON</a>(JavaScript Object Notation) は、構造化データをシリアライズするための lightweight text format です。<a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a>と同じように、 OData extends JSON formatでは、エンティティとプロパティの一般的な規則を定義します。AtomPubは異なり、OData JSON では response payload が一部がペイロードサイズを低減するために省略されます。そのため、受信側でlink, type と control dataなどのデータを再構成ための表現力が不足しています。OData には下記のような複数の JSON フォーマットがあります:</li>
+</ul>
+</div></blockquote>
+<p>ちょっと分かりづらいです（訳が悪いのでしょうか）、この辺りの考えは、<a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/cos01/odata-json-format-v4.0-cos01.html#_Toc372793038">OData JSON Format Version 4.0 2 Candidate OASIS Standard 01 の 2.JSON Format Design</a>がわかりやすく考え方を説明してくれています。それによると、実際のpayloadからwire formatの予測可能な部分を取り除いて送信できるようにするという考えでデザインされているそうです。クライアントがデータに関するメタデータを持っているというシナリオでは毎回のpayloadに全メタ情報を載せて送る（以前のAtomPubのように）のは無駄なので省略できるようにしますという話です。どこまでメタデータを持たせるかは nometadata、minimalmetadata、fullmetadata の3段階用意しています。あとそれに伴って、name/valueのペアに順序の制約を付けています。順序の話は、Hashにそのまま読み込めなくなるので少々面倒な制約です。IDLやXML Schema のようなメタ情報を定義する仕組みを持ち込まずに、受信側のクライアントのコードで実装もしくは、JSON内にメタ情報埋め込みという話にしたのは、JSONの手軽さを損なわないという点で評価できます。</p>
+<p>nometadata、minimalmetadata、fullmetadata や、JSON payload の詳細については<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dn535600.aspx">Payload Format for Table Service Operations</a>を見て下さい。</p>
 </div>
-<div class="section" id="id2">
-<h2>元の仕様</h2>
-<p>どこからこの’L’が出てきたかという話をチョットします。Azure Table REST APIは、OData の仕様に準拠しているのでリテラルの書式などはそれを見ると書いてあるはずです。ODataのPrimitive Data Typesでは、64bit整数は下記のように定義されていました。’L’ですね。</p>
-<table border="1" class="docutils" id="id3">
-<caption><span class="caption-text">OData Primitive Data Types</span></caption>
+<div class="section" id="atompub-vs-json-format">
+<h2>AtomPub vs JSON format</h2>
+<p>具体的に、AtomPubとJSONを比較してみます。JSONにすると、基本的に閉じタグが無くなるので、それだけでもかなりの削減になるのはすぐわかります。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span class="std std-ref">AtomPub [引用]</span></a>と、<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#json-nometadata"><span class="std std-ref">JSON nometadata [引用]</span></a>を見ると一目瞭然です。<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#fullatompub"><span class="std std-ref">AtomPub [引用]</span></a>の方は、元々、<a class="reference external" href="http://ja.wikipedia.org/wiki/Atom#Atom_Publishing_Protocol">Atom Publishing Protocol</a>もので、インターネット上でのコンテンツの交換を目的として設計されたものです。Table Storageでは使われない、冗長なタグが散見されます。title、id、link、author あたりとか、namespace は不要なので、それも外してしまうと結構スッキリします。試しに、XMLで余計なタグを削った<a class="reference internal" href="2013/12/06/azure_table_json_payload.html#xml-nometadata"><span class="std std-ref">XML nometadata （参考までに作ってみました）</span></a>というのを作ってみました。閉じタグだけはなんとも成らないですが、結構シンプルになります。これを見ると、XMLを選択した功罪というより AtomPub を選択した問題の方が大きかったことがわかります。OData/WCFの流れに拘りすぎてちょっと遠回りしてしまったようです。</p>
+<p>Payloadの違いによる比較のテーブルが面白いので引用します</p>
+<table border="1" class="docutils" id="id12">
+<caption><span class="caption-text">To compare JSON and AtomPub</span></caption>
 <colgroup>
-<col width="25%"/>
-<col width="25%"/>
-<col width="25%"/>
-<col width="25%"/>
+<col width="14%"/>
+<col width="14%"/>
+<col width="14%"/>
+<col width="14%"/>
+<col width="14%"/>
+<col width="14%"/>
+<col width="14%"/>
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">Primitive Types     Literal Form    Example</th>
-<th class="head"> </th>
-<th class="head"> </th>
-<th class="head"> </th>
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Request Header Size</th>
+<th class="head">Request Body Size</th>
+<th class="head">Response Header Size</th>
+<th class="head">Response Body Size</th>
+<th class="head">% Savings in HTTP Body Size only vs. AtomPub</th>
+<th class="head">% Savings in total HTTP transfer vs. AtomPub</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>Edm.Int64 Represents a signed 64-bit</td>
-<td>integer value</td>
-<td>[-] [0-9]+L</td>
-<td>Example 1: 64L Example 2: -64L</td>
+<tr class="row-even"><td>AtomPub</td>
+<td>3,611</td>
+<td>2,861</td>
+<td>3,211</td>
+<td>8,535</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr class="row-odd"><td>JSON MinimalMetadata</td>
+<td>3,462</td>
+<td>771</td>
+<td>3,360</td>
+<td>2,529</td>
+<td>71%</td>
+<td>44%</td>
+</tr>
+<tr class="row-even"><td>JSON NoMetadata</td>
+<td>3,432</td>
+<td>771</td>
+<td>3,330</td>
+<td>1,805</td>
+<td>77%</td>
+<td>49%</td>
 </tr>
 </tbody>
 </table>
-<p><a class="reference external" href="http://www.odata.org/documentation/overview/#AbstractTypeSystem">odata.org  6. Primitive Data Types</a>より</p>
-<p>念のため他のデータ型の実装も確認すると、Azure Tableでサポートされているデータ型でリテラル表記に癖があるEdm.Guid, Edm.DateTimeのあたりですは問題なさそうです。</p>
+<div class="section" id="fullatompub">
+<span id="id2"/><h3>AtomPub [引用]</h3>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;feed</span> <span class="na">xml:base=</span><span class="s">"http://someaccount.table.core.windows.net/"</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices"</span> <span class="na">xmlns:m=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</span> <span class="na">xmlns:georss=</span><span class="s">"http://www.georss.org/georss"</span> <span class="na">xmlns:gml=</span><span class="s">"http://www.opengis.net/gml"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers<span class="nt">&lt;/id&gt;</span>
+  <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Customers<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">title=</span><span class="s">"Customers"</span> <span class="na">href=</span><span class="s">"Customers"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">"W/&amp;quot;datetime'2013-12-03T06%3A37%3A20.9709094Z'&amp;quot;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Jonathan',RowKey='Foster')<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"someaccount.Customers"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">title=</span><span class="s">"Customers"</span> <span class="na">href=</span><span class="s">"Customers(PartitionKey='Jonathan',RowKey='Foster')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
+    <span class="nt">&lt;author&gt;</span>
+      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/xml"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;m:properties&gt;</span>
+        <span class="nt">&lt;d:PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/d:PartitionKey&gt;</span>
+        <span class="nt">&lt;d:RowKey&gt;</span>Foster<span class="nt">&lt;/d:RowKey&gt;</span>
+        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2013-12-03T06:37:20.9709094Z<span class="nt">&lt;/d:Timestamp&gt;</span>
+        <span class="nt">&lt;d:Address&gt;</span>1234 SomeStreet St, Bellevue, WA 75001<span class="nt">&lt;/d:Address&gt;</span>
+        <span class="nt">&lt;d:Email&gt;</span>Jonathan@fourthcoffee.com<span class="nt">&lt;/d:Email&gt;</span>
+        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
+        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2005-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
+        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>3<span class="nt">&lt;/d:Rating&gt;</span>
+      <span class="nt">&lt;/m:properties&gt;</span>
+    <span class="nt">&lt;/content&gt;</span>
+  <span class="nt">&lt;/entry&gt;</span>
+  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">"W/&amp;quot;datetime'2013-12-03T06%3A37%3A21.1259249Z'&amp;quot;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Lisa',RowKey='Miller')<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"someaccount.Customers"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">title=</span><span class="s">"Customers"</span> <span class="na">href=</span><span class="s">"Customers(PartitionKey='Lisa',RowKey='Miller')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
+    <span class="nt">&lt;author&gt;</span>
+      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/xml"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;m:properties&gt;</span>
+        <span class="nt">&lt;d:PartitionKey&gt;</span>Lisa<span class="nt">&lt;/d:PartitionKey&gt;</span>
+        <span class="nt">&lt;d:RowKey&gt;</span>Miller<span class="nt">&lt;/d:RowKey&gt;</span>
+        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2013-12-03T06:37:21.1259249Z<span class="nt">&lt;/d:Timestamp&gt;</span>
+        <span class="nt">&lt;d:Address&gt;</span>4567 NiceStreet St, Seattle, WA 54332<span class="nt">&lt;/d:Address&gt;</span>
+        <span class="nt">&lt;d:Email&gt;</span>Lisa@northwindtraders.com<span class="nt">&lt;/d:Email&gt;</span>
+        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
+        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2003-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
+        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>2<span class="nt">&lt;/d:Rating&gt;</span>
+      <span class="nt">&lt;/m:properties&gt;</span>
+    <span class="nt">&lt;/content&gt;</span>
+  <span class="nt">&lt;/entry&gt;</span>
+  <span class="nt">&lt;entry</span> <span class="na">m:etag=</span><span class="s">"W/&amp;quot;datetime'2013-12-03T06%3A37%3A20.7628886Z'&amp;quot;"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers(PartitionKey='Walter',RowKey='Harp')<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"someaccount.Customers"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">title=</span><span class="s">"Customers"</span> <span class="na">href=</span><span class="s">"Customers(PartitionKey='Walter',RowKey='Harp')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;updated&gt;</span>2013-12-03T06:37:21Z<span class="nt">&lt;/updated&gt;</span>
+    <span class="nt">&lt;author&gt;</span>
+      <span class="nt">&lt;name</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/xml"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;m:properties&gt;</span>
+        <span class="nt">&lt;d:PartitionKey&gt;</span>Walter<span class="nt">&lt;/d:PartitionKey&gt;</span>
+        <span class="nt">&lt;d:RowKey&gt;</span>Harp<span class="nt">&lt;/d:RowKey&gt;</span>
+        <span class="nt">&lt;d:Timestamp</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2013-12-03T06:37:20.7628886Z<span class="nt">&lt;/d:Timestamp&gt;</span>
+        <span class="nt">&lt;d:Address&gt;</span>1345 Fictitious St, St Buffalo, NY 98052<span class="nt">&lt;/d:Address&gt;</span>
+        <span class="nt">&lt;d:Email&gt;</span>Walter@contoso.com<span class="nt">&lt;/d:Email&gt;</span>
+        <span class="nt">&lt;d:PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/d:PhoneNumber&gt;</span>
+        <span class="nt">&lt;d:CustomerSince</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2010-01-05T00:00:00Z<span class="nt">&lt;/d:CustomerSince&gt;</span>
+        <span class="nt">&lt;d:Rating</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>4<span class="nt">&lt;/d:Rating&gt;</span>
+      <span class="nt">&lt;/m:properties&gt;</span>
+    <span class="nt">&lt;/content&gt;</span>
+  <span class="nt">&lt;/entry&gt;</span>
+<span class="nt">&lt;/feed&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-minimalmetadata">
+<span id="id3"/><h3>JSON minimalmetadata [引用]</h3>
+<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
+    <span class="nt">"odata.metadata"</span><span class="p">:</span><span class="s2">"http://someaccount.table.core.windows.net/$metadata#Customers"</span><span class="p">,</span>
+    <span class="nt">"value"</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Jonathan"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Foster"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:39:56.6443475Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"1234 SomeStreet St, Bellevue, WA 75001"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Jonathan@fourthcoffee.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince@odata.type"</span><span class="p">:</span><span class="s2">"Edm.DateTime"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2005-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">3</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Lisa"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Miller"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:39:56.7943625Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"4567 NiceStreet St, Seattle, WA 54332"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Lisa@northwindtraders.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince@odata.type"</span><span class="p">:</span><span class="s2">"Edm.DateTime"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2003-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">2</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Walter"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Harp"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:39:56.4743305Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"1345 Fictitious St, St Buffalo, NY 98052"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Walter@contoso.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince@odata.type"</span><span class="p">:</span><span class="s2">"Edm.DateTime"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2010-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">4</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-nometadata">
+<span id="id4"/><h3>JSON nometadata [引用]</h3>
+<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
+    <span class="nt">"value"</span><span class="p">:[</span>
+	<span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Jonathan"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Foster"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:45:00.7254269Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"1234 SomeStreet St, Bellevue, WA 75001"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Jonathan@fourthcoffee.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2005-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">3</span>
+	<span class="p">},</span>
+	<span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Lisa"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Miller"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:45:00.8834427Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"4567 NiceStreet St, Seattle, WA 54332"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Lisa@northwindtraders.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2003-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">2</span>
+	<span class="p">},</span>
+	<span class="p">{</span>
+            <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Walter"</span><span class="p">,</span>
+            <span class="nt">"RowKey"</span><span class="p">:</span><span class="s2">"Harp"</span><span class="p">,</span>
+            <span class="nt">"Timestamp"</span><span class="p">:</span><span class="s2">"2013-12-03T06:45:00.5384082Z"</span><span class="p">,</span>
+            <span class="nt">"Address"</span><span class="p">:</span><span class="s2">"1345 Fictitious St, St Buffalo, NY 98052"</span><span class="p">,</span>
+            <span class="nt">"Email"</span><span class="p">:</span><span class="s2">"Walter@contoso.com"</span><span class="p">,</span>
+            <span class="nt">"PhoneNumber"</span><span class="p">:</span><span class="s2">"425-555-0101"</span><span class="p">,</span>
+            <span class="nt">"CustomerSince"</span><span class="p">:</span><span class="s2">"2010-01-05T00:00:00Z"</span><span class="p">,</span>
+            <span class="nt">"Rating"</span><span class="p">:</span><span class="mi">4</span>
+	<span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xml-nometadata">
+<span id="id5"/><h3>XML nometadata （参考までに作ってみました）</h3>
+<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" ?&gt;</span>
+<span class="nt">&lt;Feed&gt;</span>
+  <span class="nt">&lt;Properties&gt;</span>
+    <span class="nt">&lt;PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/PartitionKey&gt;</span>
+    <span class="nt">&lt;RowKey&gt;</span>Foster<span class="nt">&lt;/RowKey&gt;</span>
+    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.6443475Z<span class="nt">&lt;/Timestamp&gt;</span>
+    <span class="nt">&lt;Address&gt;</span>1234 SomeStreet St, Bellevue, WA 75001<span class="nt">&lt;/Address&gt;</span>
+    <span class="nt">&lt;Email&gt;</span>Jonathan@fourthcoffee.com<span class="nt">&lt;/Email&gt;</span>
+    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
+    <span class="nt">&lt;CustomerSince&gt;</span>2005-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
+    <span class="nt">&lt;Rating&gt;</span>3<span class="nt">&lt;/Rating&gt;</span>
+  <span class="nt">&lt;/Properties&gt;</span>
+  <span class="nt">&lt;Properties&gt;</span>
+    <span class="nt">&lt;PartitionKey&gt;</span>Lisa<span class="nt">&lt;/PartitionKey&gt;</span>
+    <span class="nt">&lt;RowKey&gt;</span>Miller<span class="nt">&lt;/RowKey&gt;</span>
+    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.7943625Z<span class="nt">&lt;/Timestamp&gt;</span>
+    <span class="nt">&lt;Address&gt;</span>4567 NiceStreet St, Seattle, WA 54332<span class="nt">&lt;/Address&gt;</span>
+    <span class="nt">&lt;Email&gt;</span>Lisa@northwindtraders.com<span class="nt">&lt;/Email&gt;</span>
+    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
+    <span class="nt">&lt;CustomerSince&gt;</span>2003-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
+    <span class="nt">&lt;Rating&gt;</span>2<span class="nt">&lt;/Rating&gt;</span>
+  <span class="nt">&lt;/Properties&gt;</span>
+  <span class="nt">&lt;Properties&gt;</span>
+    <span class="nt">&lt;PartitionKey&gt;</span>Walter<span class="nt">&lt;/PartitionKey&gt;</span>
+    <span class="nt">&lt;RowKey&gt;</span>Harp<span class="nt">&lt;/RowKey&gt;</span>
+    <span class="nt">&lt;Timestamp&gt;</span>2013-12-03T06:39:56.4743305Z<span class="nt">&lt;/Timestamp&gt;</span>
+    <span class="nt">&lt;Address&gt;</span>1345 Fictitious St, St Buffalo, NY 98052<span class="nt">&lt;/Address&gt;</span>
+    <span class="nt">&lt;Email&gt;</span>Walter@contoso.com<span class="nt">&lt;/Email&gt;</span>
+    <span class="nt">&lt;PhoneNumber&gt;</span>425-555-0101<span class="nt">&lt;/PhoneNumber&gt;</span>
+    <span class="nt">&lt;CustomerSince&gt;</span>2010-01-05T00:00:00Z<span class="nt">&lt;/CustomerSince&gt;</span>
+    <span class="nt">&lt;Rating&gt;</span>4<span class="nt">&lt;/Rating&gt;</span>
+  <span class="nt">&lt;/Properties&gt;</span>
+<span class="nt">&lt;/Feed&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>最後に</h2>
+<p>書き始めたら案外知らないことが多く。てっきり、OData V3 の JSON<a class="footnote-reference" href="#f2" id="id7">[2]</a>、<cite>Content-Type: application/json;odata=verbose</cite>、<cite>json light (content-type : application/json; odata=light)</cite>が使われているのかと思ったら、いつの間にかOData Version 4.0 JSON<a class="footnote-reference" href="#f3" id="id8">[3]</a>なんてものがあって、そっちが使われていたことに気が付いたり。</p>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Client 3.0</a>で使っている、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.Data.OData/5.6.0">ODataLib 5.6.0</a>から OData V4をサポートしているらしい<a class="footnote-reference" href="#f4" id="id10">[4]</a>ということが分かったりということで手間取りました。</p>
+<p>じゃあ、ODataLib 5.6.0 のコードちょっと見ておくかと思ったら、odata.codeplex.com の ODataLib は2011年から放置状態になっていて（これは知ってました）、<a class="reference external" href="http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0">http://www.symbolsource.org/Public/Metadata/NuGet/Project/Microsoft.Data.Services/5.6.0</a>からコードが確認できるってことに気が付いたりで手間取りました。</p>
+<p>今回は前半しか紹介できていないので、そのうち続きを書きたいと思います。</p>
+<div class="section" id="resources">
+<h3>Resources</h3>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/atom-format/">AtomPub</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td><a class="reference external" href="http://www.odata.org/documentation/odata-v3-documentation/json-verbose-format/">OData V3 JSON Verbose Format</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td><a class="reference external" href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">OData JSON Format Version 4.0 Candidate OASIS Standard 01 19 November 2013</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[4]</a></td><td>OData V4 のstackが、ODataLib として提供されることがコメントに書いてある<a class="reference external" href="http://blogs.msdn.com/b/astoriateam/archive/2013/08/26/wcf-data-services-5-6-0-release.aspx">WCF Data Services 5.6.0 Release</a></td></tr>
+</tbody>
+</table>
+</div>
 </div>
 
         </div>
@@ -403,244 +539,45 @@ namespace WebRole1
         <div class="categories">
             <span>
                 Filed under:
-                <a href="categories/azure_sdk.html">Azure SDK</a></span>
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure_sdk.html">Azure SDK</a></span>
         </div>
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a>, <a href="tags/java.html">Java</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/bug.html">BUG</a></span>
+                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/json.html">JSON</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/2013/10/17/azure_java_sdk_long_value_filtering_bug.html#disqus_thread" data-disqus-identifier="2013/10/17/azure_java_sdk_long_value_filtering_bug">Leave a comment</a>
+            <a href="http://kyrt.in/2013/12/06/azure_table_json_payload.html#disqus_thread" data-disqus-identifier="2013/12/06/azure_table_json_payload">Leave a comment</a>
         </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>October 15, 2013</span>
+            <span>December 06, 2013</span>
         </div>
         <div class="section">
-            <h1><a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></h1>
-<p>Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを簡単に流します。Java, Play Frameworkに付いてある程度知識があって、Windows Azureを使ってみようという人を前提としています。</p>
-<div class="section" id="id1">
-<h2>必要環境</h2>
-<p>確認は下記の環境で行いました。</p>
+            <h1><a href="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html">GitHub/Windows Azure Storage Libraries for .NET 3.0.0</a></h1>
+<p>3.0.0では、GitHub上の Windows Azure Storage の .NET Client ライブラリの場所が変わりました。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9269858396"><img alt="leaf by Takekazu Omi, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5471/9269858396_5b59a95e64_z.jpg"/></a>
+<p>Storage の .NET Client ライブラリは、2.1までは、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a>にありましたが、3.0からは、Storageは独立して<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">Windows Azure Storage Libraries for .NET github:azure-storage-net</a>になりました。2.1系は継続して、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET github:azure-sdk-for-net</a>でメンテされるようです。現在2.1系の最新は、<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/tree/v2.1.0.4">2.1.0.4</a>です。</p>
+<p>今後<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net">Windows Azure SDK for .NET</a>は、<a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.ConfigurationManager/">Windows Azure Configuration Manager</a>や<a class="reference external" href="http://www.nuget.org/packages/Microsoft.WindowsAzure.Management.Libraries/0.9.2-preview">Windows Azure Management Libraries</a>の場所ということになりそうです。</p>
+<p>最初は、Windows Azure SDK for .NET という名前で、中身がStorageのライブラリで始まって、そのうち Configuration Manager が追加、Management Libraries が追加され、Media関連はディレクトリはあるけど別レポジトリ、とだんだん膨れてわかり辛くなってきたところだったので整理するにはいいタイミングだった気がします。</p>
+<div class="section" id="breaking-changes">
+<h2>Breaking Changes</h2>
+<p><a class="reference internal" href="2013/12/05/minute_metrics_storage_version_2013_08_15.html"><span class="doc">Windows Azure Storage 2013-08-15 の Minute Metrics</span></a>で、3.0の変更点が分からないと書きましたが、レポジトリの<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/BreakingChanges.txt#L33">BreakingChanges.txt</a>に記載がありました。</p>
+<p>３つあります。簡単にまとめます。</p>
 <ol class="arabic simple">
-<li>Windows 8</li>
-<li>Java Developer Kit (JDK), v1.7</li>
-<li>Eclipse IDE for Java EE Developers Kepler</li>
-<li>Windows Azure SDK 2.1</li>
-<li>Play Framework 2.1</li>
+<li>テーブルの操作にDataServiceContextを使った場合、OperationContextのresponse received eventは no longer fired（もはや起こらない）</li>
+<li>ContinuationToken の WriteXml()/ReadXml()が変更されました。詳細は原文を参照してください。</li>
+<li>ServiceProperties では、uploadされたものだけが変更されます。例えば、CORSの設定だけをすると、Logging と Metering 関連の設定は変更されません。</li>
 </ol>
-<p>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1の開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
-<div class="section" id="windows-azure-sdk-2-1">
-<h3>Windows Azure SDK 2.1のインストール</h3>
-<p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
-<p>Web Platform Installerを起動して、右上の検索ボックス①に<span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span>と入力して改行すると検索結果が表示されます。その中の<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>だけです。</p>
-<p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
-<img alt="../../../_images/2013_10_webpi002.png" src="_images/2013_10_webpi002.png"/>
-<ul class="simple">
-<li>Web Platform Installer 4.6 は、<a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a>からインストールできます。</li>
-</ul>
+<p>ServicePropertiesのプロパティが変更された件などは、上記 Breaking Changes に書いてありませんので互換性に関しては注意が必要だと思います。</p>
 </div>
-<div class="section" id="id2">
-<h3>もっと簡単な方法</h3>
-<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using theWeb Platform Installer (WebPI) 経由で<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>をインストールするplugin(exe)も配布されています。<a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a>このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
-</div>
-</div>
-<div class="section" id="windows-azure-plugin-for-eclipse-with-java-by-microsoft-open-technologies">
-<h2>Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</h2>
-<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
-<p>レポジトリとして、<span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span>を追加すると、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span>が表示されます。</p>
-<img alt="../../../_images/2013_10_javaplugininstall002.png" src="_images/2013_10_javaplugininstall002.png"/>
-<p>必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。</p>
 <div class="section" id="id3">
-<h3>サポートされているライブラリの種類</h3>
-<p>Windows Azure Plugin for Eclipse with Javaが、EclipseのUIとツールを提供するもので、その他のものはAzureのAPIをラップしたクラスライブラリです。</p>
-<ul class="simple">
-<li>Microsoft JDBC Driver 4.0 for SQL Server: SQL Database 用のコンポーネント</li>
-<li>Package for Apache Qpid Client Libraries for JMS (by MS Open Tech): Azureのメッセージングサービス向けのJMS client library （Apache Qpid project が元になっています）</li>
-<li>Package for Windows Azure Libraries for Java (by MS Open Tech): このコンポーネントは、Windows Azure でスケーラブルなクラウドコンピューティングを実現するためのライブラリを提供</li>
-<li>Windows Azure Access Control Services Filter (by MS Open Tech): このコンポーネントはWindows Azure ACS を使った認証アプリケーション向け</li>
-<li>Windows Azure Common Plugin (by MS Open Tech): 他のこのコンポーネントとの共通コンポーネント</li>
-<li>Windows Azure Plugin for Eclipse with Java (by MS Open Tech): このコンポーネントは、project configuration logic、the publish-to-cloud wizard、と user interfaceを含む</li>
-</ul>
-<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span>のチェックを外してみてください。</p>
-<p>ここまでの内容は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a>に詳しく書いてありますので、そちらも参照してください。</p>
+<h2>まとめ</h2>
+<p>このレポジトリの移動に関して<a class="reference internal" href="2013/11/28/cors_json_minute_metrics_and_more.html"><span class="doc">Windows Azure Storage Release - CORS、JSON、Minute Metrics の紹介</span></a>に下記のような記述があります。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">これらの機能に対応した、Windows Azure Storage Client Library を <a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a> にリリースします。</div>
 </div>
-</div>
-<div class="section" id="play-frameworkeclipse">
-<h2>Play Frameworkのプロジェクト作成からEclipseへの取り込へ</h2>
-<p>動作確認のためにPlay Frameworkのプロジェクトを作成して、Eclipseへ取り込みます。</p>
-<p>MyFirstAppという名前で、play frameworkのアプリを作ります。今回は全くコードは書かないので関係ありませんが言語はJavaを選択します:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>$ play new MyFirstApp
-       _            _
- _ __ | | __ _ _  _| |
-| '_ \| |/ _' | || |_|
-|  __/|_|\____|\__ (_)
-|_|            |__/
-
-play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
-
-The new application will be created in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp
-
-What is the application name? [MyFirstApp]
-&gt;
-
-Which template do you want to use for this new application?
-
-  1             - Create a simple Scala application
-  2             - Create a simple Java application
-
-&gt; 2
-OK, application MyFirstApp is created.
-
-Have fun!
-</pre></div>
-</div>
-<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、<span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span>の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>$ cd .\MyFirstApp
-$ play
-[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
-[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
-       _            _
- _ __ | | __ _ _  _| |
-| '_ \| |/ _' | || |_|
-|  __/|_|\____|\__ (_)
-|_|            |__/
-
-play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
-
-&gt; Type "help play" or "license" for more information.
-&gt; Type "exit" or use Ctrl+D to leave this console.
-
-[MyFirstApp] $ eclipse
-[info] About to create Eclipse project files for your project(s).
-[info] Updating {file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/}MyFirstApp...
-[info] Done updating.
-[info] Compiling 4 Scala sources and 2 Java sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\classes...
-[info] Successfully created Eclipse project files for project(s):
-[info] MyFirstApp
-[MyFirstApp] $ exit
-</pre></div>
-</div>
-<p>AzureのDeploy用のパッケージ(cspkg)に入れるためアプリの配布用zipを作成します:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>$ play dist
-[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
-[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
-[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-sources.jar ...
-[info] Done packaging.
-[info] Generating Scala API documentation for main sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\api...
-[info] Wrote C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.pom
-[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.jar ...
-[info] Done packaging.
-model contains 17 documentable templates
-[info] Scala API documentation generation successful.
-[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-javadoc.jar ...
-[info] Done packaging.
-
-Your application is ready in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\dist\myfirstapp-1.0-SNAPSHOT.zip
-
-[success] Total time: 8 s, completed 2013/10/15 14:57:13
-$
-</pre></div>
-</div>
-<p>この時に、<span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span>の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
-<p>eclipseを起動して、プロジェクトをimportします。</p>
-<img alt="../../../_images/2013_10_eclipse002.png" src="_images/2013_10_eclipse002.png"/>
-<p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
-<p>参考：<a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
-</div>
-<div class="section" id="azure-project">
-<h2>Azure 用のProjectの作成</h2>
-<p>ツールバーの<span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span>を押します。</p>
-<img alt="../../../_images/2013_10_eclipse003.png" src="_images/2013_10_eclipse003.png"/>
-<p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
-<img alt="../../../_images/2013_10_eclipse004.png" src="_images/2013_10_eclipse004.png"/>
-<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
-<img alt="../../../_images/2013_10_eclipse005.png" src="_images/2013_10_eclipse005.png"/>
-<p>下記のような内容のプロジェクトが作成されます。</p>
-<img alt="../../../_images/2013_10_eclipse006.png" src="_images/2013_10_eclipse006.png"/>
-<div class="section" id="workerrole1myfirstappdist-zip">
-<h3>プロジェクトのWorkerRole1へMyFirstAppのdist zipを追加する</h3>
-<p>WorkerRole1を選択してプロパティを開き、Windows Azure RoleのTreeを開いてComponentsを選びます。コンポーネントリストにHelloWorld.warがありますが、不要なのでremoveします。その後Addを押してMyFirstAppのdist zipを追加します。</p>
-<img alt="../../../_images/2013_10_eclipse007.png" src="_images/2013_10_eclipse007.png"/>
-<p>「Windows Azure Role Component」のpopupをでは、Import into packageのFrom Pathの部分に、dist zip のフルパス名を入れます。Methodは、copyを選択、As Nameは、dist zipのファイル名入れます（ここは、From Pathのファイル名部分がデフォルトで入力されるはずです）その下の、Deploy from packageの設定は、Methodをunzip、To directoryを.にしてください。今回</p>
-<img alt="../../../_images/2013_10_eclipse008.png" src="_images/2013_10_eclipse008.png"/>
-</div>
-<div class="section" id="id4">
-<h3>環境変数の追加</h3>
-<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、<span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span>)を定義します。</p>
-<img alt="../../../_images/2013_10_eclipse009.png" src="_images/2013_10_eclipse009.png"/>
-</div>
-<div class="section" id="endpoint">
-<h3>EndPointを変更</h3>
-<p>play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。publicで定義されているのがAzure のload brancer がインターネット上で公開しているポート番号で、privateがAzure インスタンスでアプリが待ち受けているポート番号です。play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。Azure Load brancerがこの定義に基いてポート変換を実行します。</p>
-<img alt="../../../_images/2013_10_eclipse010.png" src="_images/2013_10_eclipse010.png"/>
-</div>
-<div class="section" id="script">
-<h3>scriptの変更</h3>
-<p>MyAzureProject/WorkerRole1/approotにあるstartup.cmdとrun.cmdを下記のように変更します。</p>
-<p>startup.cmd:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>del /q run_body.cmd
-powershell -ExecutionPolicy RemoteSigned -f replace.ps1 run_body.cmd.template &gt; run_body.cmd
-</pre></div>
-</div>
-<p>run.cmd:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>rem @ECHO OFF
-
-set _SLEEPLENGTH=15000
-set _FILENAME=run_body.cmd
-
-@REM Create a temporary sleep script in VBScript
-echo WScript.sleep(%_SLEEPLENGTH%) &gt; %Temp%\_mysleep.vbs
-
-:Loop
-if exist %_FILENAME% (goto:StartToRun)
-
-cscript /Nologo %Temp%\_mysleep.vbs
-goto:Loop
-
-del %Temp%\_mysleep.vbs
-
-:StartToRun
-call %_FILENAME%
-</pre></div>
-</div>
-<p>replace.ps1と、run_body.cmd.templateの2つファイルを追加します。</p>
-<p>replace.ps1:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>cat $args[0] | % {$l = $_ -creplace '__JAVA_HOME__',"$Env:JAVA_HOME"; "$l" } | % {$l = $_ -creplace '__ZIP_NAME__',"$Env:ZIP_NAME"; "$l" }
-</pre></div>
-</div>
-<p>run_body.cmd.template:</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>set JAVA_HOME=__JAVA_HOME__
-set ZIP_NAME=__ZIP_NAME__
-
-set PATH=%JAVA_HOME%\bin;%PATH%
-
-setlocal
-set d=%~dp0
-set d=%d:\=/%
-java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
-</pre></div>
-</div>
-</div>
-<div class="section" id="emulator">
-<h3>Emulatorでの実行</h3>
-<p>これで準備ができました。<span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span>を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
-<img alt="../../../_images/2013_10_eclipse011.png" src="_images/2013_10_eclipse011.png"/>
-<p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
-<img alt="../../../_images/2013_10_eclipse012.png" src="_images/2013_10_eclipse012.png"/>
-</div>
-<div class="section" id="azuredeploy">
-<h3>Azure環境へのDeploy</h3>
-<p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
-<img alt="../../../_images/2013_10_eclipse013.png" src="_images/2013_10_eclipse013.png"/>
-<p>この設定だと、Azure環境ではAzure LoadBarancerが介在して外部から port 80で見えます。</p>
-</div>
-</div>
-<div class="section" id="bookmarks">
-<h2>Bookmarks</h2>
-<ul class="simple">
-<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>Java開発の入り口</li>
-<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx">Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a></li>
-</ul>
+</div></blockquote>
+<p>今までのレポジトリを見てソースが上がってこないので、3.0のソースは公開されないのかと思って困惑していましたが、無事ソースも確認できて安心しました。</p>
 </div>
 
         </div>
@@ -651,15 +588,15 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
         <div class="categories">
             <span>
                 Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/java.html">Java</a></span>
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
         </div>
         <div class="tags">
             <span>
                 Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/emulator.html">Emulator</a>, <a href="tags/deploy.html">Deploy</a>, <a href="tags/tutorial.html">Tutorial</a>, <a href="tags/play_framework.html">Play Framework</a>, <a href="tags/step_by_step.html">Step By Step</a>, <a href="tags/eclipse.html">Eclipse</a></span>
+                <a href="tags/azure.html">Azure</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/azure_sdk.html">Azure SDK</a></span>
         </div>
         <div class="comments">
-            <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
+            <a href="http://kyrt.in/2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html#disqus_thread" data-disqus-identifier="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">

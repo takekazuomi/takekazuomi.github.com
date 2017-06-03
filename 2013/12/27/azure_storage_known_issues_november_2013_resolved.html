@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Powershell 0.7.2.1 リリース" href="../22/azure_posh_2012_12_19_version_0_7_2_1.html" /><link rel="prev" title="Windows Azure Storage 3.0.2 Hotfix" href="../../../2014/01/06/windows_azure_storage_3_0_2_hotfix.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -118,7 +118,7 @@
 </ol>
 </div>
 <div class="section" id="sas">
-<h2><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の &#8220;//&#8221; 問題</span></a></h2>
+<h2><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の “//” 問題</span></a></h2>
 <p>下記のようなプログラムで確認しました。Signitureの生成結果を確認しやすいように、2013/12/01から一年有効なREADのSASにしています。Storage Client 2.1.0.4 では、2012-02-12 versionが使われて、コンテナの前が<span class="docutils literal"><span class="pre">&quot;//&quot;</span></span>になっていても動きましたが、3.0.1だと、2013-08-15 versionが使われ、400 のエラーで弾かれるという結果になりました。もともと、<span class="docutils literal"><span class="pre">&quot;//&quot;</span></span>と書いたら<span class="docutils literal"><span class="pre">&quot;/&quot;</span></span>と解釈されるというのはあまりイケてない動きなので、古いバージョンのみ互換性を持つように変更して新しいものでは動作変更ということにしたのは妥当な落とし所かと思います。Storage Versionによって動作が違うようです。</p>
 <div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">private</span> <span class="k">static</span> <span class="kt">string</span> <span class="nf">GetSASUrl</span><span class="p">(</span><span class="n">CloudStorageAccount</span> <span class="n">storageAccount</span><span class="p">,</span> <span class="kt">string</span> <span class="n">containerName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">blobName</span><span class="p">)</span>
 <span class="p">{</span>
@@ -382,7 +382,7 @@ B2
 </div>
 <div class="section" id="id11">
 <h2>まとめ</h2>
-<p><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html"><span class="doc">Windows Azure Storage Known Issues 2013/11</span></a>で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。ただし、<a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の &#8220;//&#8221; 問題</span></a>は、2013-08-15 version では仕様となり、<a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span class="std std-ref">TableのDataServiceContext.ResolveName 指定 問題</span></a>も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。</p>
+<p><a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html"><span class="doc">Windows Azure Storage Known Issues 2013/11</span></a>で報告されている既知の Braking Change は、2.1.0.4 の修正と、サーバー側(service)の修正でFIXされました。ただし、<a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131101"><span class="std std-ref">SASとコンテナの前の “//” 問題</span></a>は、2013-08-15 version では仕様となり、<a class="reference internal" href="../../11/24/windows_azure_storage_known_issues_2013_11.html#known-issue-20131102"><span class="std std-ref">TableのDataServiceContext.ResolveName 指定 問題</span></a>も、Storage Client 3.0.1 では、ResolveNameの指定をすると動作しません。 最新のライブラリを使う場合はコードを直して欲しいということだと思います。</p>
 <p>2.1系のライブラリを使う場合は上記3点の問題がFIXされた 2.1.0.4 がお勧めです。3.x系は、幾つかのBraking Changeが含まれるので既存のコードは移行が必要ですが、2013-08-15 versionのパフォーマンス向上策がちゃんと活用できるのが大きな利点だと言えます。</p>
 <div class="line-block">
 <div class="line"><br /></div>

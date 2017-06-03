@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page4.html" /><link rel="prev" title="Newer" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -76,6 +76,116 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>May 20, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a></h1>
+<p>先日、5/18 に、<a class="reference external" href="https://jazug.doorkeeper.jp/events/44447">第1回Jazug Tokyo Night</a>で、Azure Fabric Service の Reliable Collection 話をしました。<a class="reference external" href="https://jazug.doorkeeper.jp/events/40440">Global Azure Boot Camp 2016 in Japan</a>でも話をしたのですが、1時間ぐらいだと概要も話し切れない感じでなかなか厳しい。4回ぐらいに分けても少し深いところ（そんなにDeepじゃないですが）をしたいなぁと思っていたところ、ちょうど良い機会が出来たので、早速時間を貰うことにしました。</p>
+<p>今回は、その時の補足です。まずは、その時の資料です。<strong>Lock compatibility matrixの部分を更新しました</strong></p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/ruN7VgUvtARNlv" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="www.slideshare.net/takekazuomi/azure-fabric-service-reliable-collection">Azure Fabric Service Reliable Collection</a></p>
+<p>勉強会の時に、下記の Lock compatibility matrix の赤枠の部分だけ、SQL Serverと違うという話をしました。「もしかしたら、ドキュメントが間違っているのかも」というようなことをその場では言いましたが、どきょメントが間違っているわけではなく、そこはSQL Serverと動きが違うとのことでした。そのあたりの話を説明します。（公式ドキュメントでは無いので、参考程度で）</p>
+<img alt="Lock compatibility matrix" class="align-center" src="_images/lock002.png"/>
+<div class="section" id="lock-compatibility-matrix">
+<h2>Lock compatibility matrix</h2>
+<p>Reliable Collectionは、書込に最適化されていおり、matxi の赤枠の部分が、G(U)/R(S)時の動きが SQL Server とは異なっています。また、Reliable Collection では、update lockの期間は短くほとんどの場合、exclusive に昇格して終わることを前提としています。設計思想が違うという話のようです。</p>
+<p>下図のような場合で動作を説明します。</p>
+<img alt="tnx and lock" class="align-center" src="_images/lock001.png"/>
+<ul class="simple">
+<li>上が、Reliable Collection,下がSQL Server</li>
+<li>横軸が時間で、それぞれ、２つのtransactionがある</li>
+<li>黄色線が、tnxid 2 が、shard lock を要求したタイミング</li>
+</ul>
+<p>TxnId1が、update lockを掛けている時、TxnId2がShard Lockを要求した場合(垂直黄線)、Reliable CollectionではUpdate Lock が、Exclusive Lock になって更新が終わりlockが開放されるまでshard lockは待機します。それに対して、SQL Serverでは、即時にshard lockは成功します。全てのshard lockが開放されてから、exclusive lock -&gt;更新という処理に流れになります。この違いはなかなか面白いですね。</p>
+</div>
+<div class="section" id="id1">
+<h2>参考</h2>
+<p>SQL Server の<a class="reference external" href="https://technet.microsoft.com/ja-jp/library/ms186396(v=sql.105).aspx">ロックの互換性 (データベース エンジン)</a></p>
+</div>
+<div class="section" id="id3">
+<h2>最後に</h2>
+<p>Reliable Collection は結構手堅くしっかり作っている感じを受けます。この手のものがあると、<strong>Data Locality</strong>を健全に保てるのでレイテンシー上は非常に有利になります、いいですね。</p>
+<p>「上記２つに更に .NET の ReaderWriterLockSlim と、Jeffrey Richter の OneManyLock を入れて、永続化の有無がどう影響するのか考察したら面白いのかな？」と一瞬思ったのですが、今回はこの辺で。勉強会の前に明確にしておけば良かったのですが、ちょっと見逃してました。でも、SQL Serverと違って、lock やwait の状態が見えないのがちょっと不便ですね。これだと、ラッシュテストしないとデッドロックとかわからないです。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/service_fabric.html">Service Fabric</a></span>
+        </div>
+        
+        <div class="comments">
+            <a href="http://kyrt.in/2016/05/20/reliable_collection_lock.html#disqus_thread" data-disqus-identifier="2016/05/20/reliable_collection_lock">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>April 04, 2016</span>
+        </div>
+        <div class="section">
+            <h1><a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a></h1>
+<p>BUILD 2016<a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a>で<strong>Cool Storage</strong>という、とても興味深い新機能が発表されていました。<a class="reference external" href="https://blogs.msdn.microsoft.com/windowsazurestorage/2016/03/31/cross-post-build-2016-azure-storage-announcements/">Build 2016: Azure Storage announcements</a>に入ってなくて、見落としそうになります…</p>
+<a class="reference internal image-reference" href="_images/m001.PNG"><img alt="Cool Storage" class="align-center" src="_images/m001.PNG" style="width: 800px;"/></a>
+<p><strong>Cool Storage</strong>は、アクセス頻度の低いデータを安価に保存するための新機能で、Block Blob でサポートされます。</p>
+<p>これで、Block Blob は、２の tier に別れます。</p>
+<ol class="arabic simple">
+<li>Hot - 通常利用のデータ向け (従来のBlob）</li>
+<li>Cool - あまりアクセスしないデータ向け （あたらしいやつ）</li>
+</ol>
+<div class="section" id="id1">
+<h2>概要</h2>
+<ul class="simple">
+<li>APIは、100% 互換で、同様のスループットとレイテンシーを実現（Coolでも性能が同じなのは設計しやすくなるので有り難いことです）</li>
+<li>LRS, GRS, RA-GRSの信頼性オプションを提供（ 同じですね）</li>
+<li>可用性は、Coolが 99% で、Hot が 99.9%（ちょっと、Coolが低くなります）</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>お値段関係</h2>
+<p>Hotは、頻繁に使った場合に費用が抑えられ、Coolは、容量が大きい場合に安くなるという価格体系で構成されるようです。話の中ではちょっとはっきりしませんでしたが、トランザクションコストやデータ転送コストで差を付けるという感じなのかもしれません。</p>
+<p>HotからCoolへの切替もできるようなので、履歴系のデータを保存するにはとても便利な気がします。next few weeks で、public preview に入るそうです。楽しみですね。</p>
+<p>この話は、動画では、33分、パワポの資料では、30p 当たりで話が出来てますので、興味のある方はぜひ、chanel 9 をご覧ください。<a class="footnote-reference" href="#r1" id="id3">[1]</a></p>
+</div>
+<div class="section" id="id4">
+<h2>最後に</h2>
+<p>どうも、AWS の S3 Standard-IA とか、Google Nearline あたりと同じような領域をカバーするサービスのようです。S3 Standard-IA は、Google Nearline とは違って、レスポンスタイムが通常のBlob並ってところは良い感じです。価格の詳しい条件がわからないので、現時点でS3との比較は難しいですが、Cool Storageは、Hot/Coolの切替がアカウント単離っぽいので、実データのコピーは必要無さそうで、そのあたりで差がでてくるのでは無いかと言う気がします。</p>
+<p>今回の、BUILDでは、 Server Siide Encription<a class="footnote-reference" href="#r2" id="id5">[2]</a>も発表されて、Storage Team に活気を感じました。これからが、楽しみです。</p>
+</div>
+<div class="section" id="id6">
+<h2>参考</h2>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">BUILD  2016/B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/storage-service-encryption/">Azure Storage Service Encryption for Data at Rest (Preview)</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/storage.html">Storage</a>, <a href="categories/azure_blob.html">Azure Blob</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/cool_storage.html">Cool Storage</a>, <a href="tags/build2016.html">BUILD2016</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html#disqus_thread" data-disqus-identifier="2016/04/04/build_2016_azure_cool_storage">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>February 05, 2016</span>
         </div>
         <div class="section">
@@ -305,508 +415,6 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/12/02/using_dnx_was.html#disqus_thread" data-disqus-identifier="2015/12/02/using_dnx_was">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>October 16, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/10/16/niigata_net_2015_10_dml.html">Niigata.NET Page Blob Download 最適化</a></h1>
-<p>10/10(土) に、<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>に参加してきました。日本酒とへぎ蕎麦が美味しかったのでまた行きたいところ。LTで話した（かった）ことをここにまとめておきます。</p>
-<a class="reference external image-reference" href="https://flic.kr/p/zQKV5z"><img alt="soba" class="align-center" src="https://farm6.staticflickr.com/5766/22211533525_cc58e2a2ac_c.jpg"/></a>
-<div class="section" id="id1">
-<h2>最初に</h2>
-<p>Azure Storage 上でデータの移動が必要な場合、現時点でもっともお勧めなのは、AzCopy<a class="footnote-reference" href="#ref1" id="id2">[1]</a>です、多めのデータをアップロード、ダウンロードしたい場合には AzCopyを試してください。<a class="footnote-reference" href="#ref2" id="id3">[2]</a>ほかのツールを使うよりリソースをうまく使って効率的にデータを転送してくれます。転送に必要な時間は、ほぼネットワークインターの速度に依存します。（諸条件に依存しますが、ざっくり言うと）</p>
-</div>
-<div class="section" id="azure-storage-data-movement-library-preview">
-<h2>Azure Storage Data Movement Library (Preview)</h2>
-<p>AzCopyのライブラリー版 が、<a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">Azure Storage Data Movement Library (Preview)</a>です。（以下 DML)<a class="footnote-reference" href="#ref3" id="id5">[3]</a>ライブラリなので、スクリプト＋AzCopyではちょっと難しいような細かい制御しながらデータの転送をすることが出来ます。DMLの実装では API の呼び出し方が Azure Storage に合わせてチューニングされていて、パフォーマンスが出るというのが大きな特徴です。DMLについては、<a class="reference internal" href="2015/09/25/intro_azure_storage_data_movement_library.html"><span class="doc">Intro Azure Storage Data Movement Library</span></a>も参考にしてください。</p>
-<p>チューニングの基本戦略は２つです。これは、Azure Storage では共通の戦略となります。</p>
-<ol class="arabic simple">
-<li>並列化<a class="footnote-reference" href="#ref5" id="id6">[5]</a></li>
-<li>転送量の最小化</li>
-</ol>
-<p>今回は、Page Blob での転送量の最小化の話をします。（DMLでは、その他にもGCとかLOH周りの工夫も使われています）</p>
-</div>
-<div class="section" id="page-blob-download">
-<h2>Page Blob Download 最適化</h2>
-<p>昨今の近代的なファイシステムでは、sparse file という仕組みを持っています。<a class="footnote-reference" href="#ref6" id="id7">[6]</a>大きなファイルであっても、zero の部分はDISK上にアロケートされずにデータが書きこまれた部分(緑の部分)だけが確保されます。</p>
-<img alt="../../../_images/sparse.png" src="_images/sparse.png"/>
-<p>Azure では、仮想マシンのDisk は VHD ファイルを Azure Storage Page Blob に配置されており、そのPage Blobは sparse data の保存のための仕組みをがあります。仕組は結構簡単で、Page Blob では、データが書き込まれた部分をページ単位(512B)でレンジ管理しており、実際にBlobにデータが保存されるのはこの領域だけです。この領域の外を読むと0 fill のデータが帰ります。（これが、俗に言われるPage Blogが、Disk アクセスに最適化されているという機能の一つです）REST APIの GetPageRanges<a class="footnote-reference" href="#ref7" id="id8">[7]</a>では、有効なデータを含むすべての連続したページ範囲のリストを返します。<a class="footnote-reference" href="#ref8" id="id9">[8]</a></p>
-<p>つまり、GetPageRanges APIを使うと、Page Blob から実際にデータが入っている部分だけを取得することができます。例えば、100GBの仮想DISKであっても転送するのは実際使っている10GBだけにすることが可能になります。</p>
-</div>
-<div class="section" id="dml">
-<h2>DMLでの実装</h2>
-<p>DMでは、PageBlobReader.DoGetRangesAsync() でGetPageRangesAsyncを実行してRangeを取得<a class="footnote-reference" href="#ref9" id="id10">[9]</a>しています。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">protected</span> <span class="k">override</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;&gt;</span> <span class="n">DoGetRangesAsync</span><span class="p">(</span><span class="n">RangesSpan</span> <span class="n">rangesSpan</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">AccessCondition</span> <span class="n">accessCondition</span> <span class="p">=</span> <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateIfMatchConditionWithCustomerCondition</span><span class="p">(</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">Blob</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">ETag</span><span class="p">,</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">AccessCondition</span><span class="p">);</span>
-
-    <span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;</span> <span class="n">rangeList</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Range</span><span class="p">&gt;();</span>
-
-    <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">pageRange</span> <span class="k">in</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="n">pageBlob</span><span class="p">.</span><span class="n">GetPageRangesAsync</span><span class="p">(</span>
-            <span class="n">rangesSpan</span><span class="p">.</span><span class="n">StartOffset</span><span class="p">,</span>
-            <span class="n">rangesSpan</span><span class="p">.</span><span class="n">EndOffset</span> <span class="p">-</span> <span class="n">rangesSpan</span><span class="p">.</span><span class="n">StartOffset</span> <span class="p">+</span> <span class="m">1</span><span class="p">,</span>
-            <span class="n">accessCondition</span><span class="p">,</span>
-            <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateBlobRequestOptions</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">Location</span><span class="p">.</span><span class="n">BlobRequestOptions</span><span class="p">),</span>
-            <span class="n">Utils</span><span class="p">.</span><span class="n">GenerateOperationContext</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">Controller</span><span class="p">.</span><span class="n">TransferContext</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="n">CancellationToken</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="n">rangeList</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Range</span><span class="p">()</span>
-        <span class="p">{</span>
-            <span class="n">StartOffset</span> <span class="p">=</span> <span class="n">pageRange</span><span class="p">.</span><span class="n">StartOffset</span><span class="p">,</span>
-            <span class="n">EndOffset</span> <span class="p">=</span> <span class="n">pageRange</span><span class="p">.</span><span class="n">EndOffset</span><span class="p">,</span>
-            <span class="n">HasData</span> <span class="p">=</span> <span class="k">true</span>
-        <span class="p">});</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="n">rangeList</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>ここはわかり易いですね。range list は、RangeBasedReader.DoGetRangesAsync() でダウンロードする範囲を決めるのに使われます。</p>
-<p>ちょっと脱線しますが、Win32 APIでファイルシステムを操作する場合には、DeviceIoControl で FSCTL_QUERY_ALLOCATED_RANGES<a class="footnote-reference" href="#ref10" id="id11">[10]</a>を使うと実際にデータが保持されている range を取得することができます。</p>
-</div>
-<div class="section" id="id12">
-<h2>資料</h2>
-<p>LTで用意した資料です。</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/aluSAloWPZpeGH" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/azure-storage-data-movement-library-pageblob-optimize">Azure Storage Data Movement Library Page Blob Optimize</a></p>
-</div>
-<div class="section" id="id13">
-<h2>最後に</h2>
-<p>最後に、「<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>」を聞きながら、思ったことを少し書きます。</p>
-<p>プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。</p>
-<p>make -&gt; ant -&gt; nant -&gt; msbuild -&gt; maven ... と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。</p>
-<p>package manager は、dnxで改善されるはずなので、それに期待したいところ。install.ps1 とか必要になるとソウルジェムが濁ります。</p>
-<p>「MEF の、Core CLR 対応ってどうなっているの？」という話が出たので、帰ってきてちょっと見たら、ASP.NET 5 と Entity Framework 7 では、<a class="reference external" href="https://github.com/aspnet/DependencyInjection">Microsoft.Framework.DependencyInjection</a>ってやつが使われていました。聞いたことがあったような気もするけど、使ったこと無かったので少し試してみたら、どうも、container builder、setter injection などが無いようで、えらくシンプルな実装。でもまあ、これはこれで良いのかなという感じでした。</p>
-<p>「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、その台詞を聞いた瞬間「linq がすべてを台無しにしてしまったなぁ」と思いました。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状でしょう。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があります。</p>
-<p>これは Linq だけの罪かと言うと、そういうわけでは無く、「生産性の高いライブラリを使う場合に起こる一般的な課題」です。抽象化度の高いものは人間に理解し易く生産性の向上に貢献しますが、実際のノイマン型コンピューターの仕組みと乖離が大きくなり、実行ステップとコードの乖離も大きくなります。簡単に言うと、「こう書いたからこう動く」という世界から離れていくことになる。 じゃあ、乖離してはダメなのかという、そうでもない。全てはバランスによって決まる。ズルズルと、長くなったので、これぐらいで。</p>
-<p>プログラムを読むことに関しては、このOSS全盛時代に読むコードに困ることは無いと思うので、ぜひガンガン読んで欲しい。</p>
-<p>などなど、いろいろ思うことがあって面白かった。</p>
-</div>
-<div class="section" id="id15">
-<h2>追記</h2>
-<p>Azure Files でも同じように sparse file が、サポートされていて、DMLでは対応しています。</p>
-<table class="docutils footnote" frame="void" id="ref1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/storage-use-azcopy/">AzCopy コマンド ライン ユーティリティの概要</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2015/06/05/build-2015-azure-storage-announcements.aspx">Azure Storage に関する Build 2015 での発表</a>によれば、そろそろ日本にも Import/Export が来ます。<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/storage-import-export-service/">Microsoft Azure Import/Export サービスを使用した BLOB ストレージへのデータの転送</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2015/09/23/introducing-azure-storage-data-movement-library-preview.aspx">Introducing Azure Storage Data Movement Library Preview</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement">Microsoft Azure Storage Data Movement Library (0.1.0)</a><a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">nuget Microsoft Azure Storage Data Movement... 0.1.0</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="http://kyrt.in/2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Sparse_file">Sparse file</a><a class="reference external" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365566(v=vs.85).aspx">MSDN Sparse File Operations</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[7]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/ee691973.aspx">Get Page Ranges REST API</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref8" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/03/26/getting-the-page-ranges-of-a-large-page-blob-in-segments.aspx">Getting the Page Ranges of a Large Page Blob in Segments</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref9" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[9]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferControllers/TransferReaders/PageBlobReader.cs#L70">DoGetRangesAsync</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref10" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id11">[10]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364582(v=vs.85).aspx">FSCTL_QUERY_ALLOCATED_RANGES control code</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/blob.html">Blob</a>, <a href="tags/dml.html">DML</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/10/16/niigata_net_2015_10_dml.html#disqus_thread" data-disqus-identifier="2015/10/16/niigata_net_2015_10_dml">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>September 25, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/09/25/intro_azure_storage_data_movement_library.html">Intro Azure Storage Data Movement Library</a></h1>
-<p>先日（2015/9/23）、Microsoft Azure Storage Data Movement Library (Preview 以下 DML) というAzure Storage用のファイル転送ライブラリが公開されました。<a class="footnote-reference" href="#r1" id="id1">[1]</a></p>
-<p>DML は、従来 Storage Client Library だけでは難しかったような、高速なファイル転送を簡単にアプリで実装できるようなライブライです。（ベースは AzCopyと同じらしい） Azure File、Blob、Local の ３つの間のデータ移動ができます。</p>
-<a class="reference external image-reference" href="https://flic.kr/p/w6vCML"><img alt="brick" class="align-center" src="https://farm4.staticflickr.com/3810/19753067526_5e3efd7613_k.jpg"/></a>
-<p>下記のような、関数が揃っていて、sourceとdestをセットして呼ぶとその間でデータが転送されるって感じです。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="k">public</span> <span class="k">static</span> <span class="n">Task</span> <span class="nf">CopyAsync</span><span class="p">(</span>
-     <span class="n">Uri</span> <span class="n">sourceUri</span><span class="p">,</span>
-     <span class="n">CloudBlob</span> <span class="n">destBlob</span><span class="p">,</span>
-     <span class="kt">bool</span> <span class="n">isServiceCopy</span><span class="p">,</span>
-     <span class="n">CopyOptions</span> <span class="n">options</span><span class="p">,</span>
-     <span class="n">TransferContext</span> <span class="n">context</span><span class="p">,</span>
-     <span class="n">CancellationToken</span> <span class="n">cancellationToken</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>どんな組み合わせがサポートされているかとを表にまとめるとこんな感じ。このうちUrl-&gt;Blob, Url-&gt;FileのCopyだけ isServerCopy (サーバー側で実行される非同期コピー) のオプションがあります。Local to Local はサポートされていません。現在のバージョンでは、すべての処理はファイル（オブジェクト）１つの単位です。例えば、ディレクトリを指定して、その下をまとめてUploadなどのようなことはできません。表は横が転送元で縦が転送先です。</p>
-<table border="1" class="colwidths-given docutils" id="id13">
-<caption><span class="caption-text">DML Matrix</span></caption>
-<colgroup>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">元/先</th>
-<th class="head">Local</th>
-<th class="head">Blob</th>
-<th class="head">File</th>
-<th class="head">Url</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Local</td>
-<td>なし</td>
-<td>DownloadAsync</td>
-<td>DownloadAsync</td>
-<td>なし</td>
-</tr>
-<tr class="row-odd"><td>Blob</td>
-<td>UploadAsync</td>
-<td>CopyAsync</td>
-<td>CopyAsync</td>
-<td>CopyAsync※</td>
-</tr>
-<tr class="row-even"><td>File</td>
-<td>UploadAsync</td>
-<td>CopyAsync</td>
-<td>CopyAsync</td>
-<td>CopyAsync※</td>
-</tr>
-</tbody>
-</table>
-<p>isServerCopy(※付きのやつ) は、URLとして指定できるようなものならコピー元（ソース）にすることができます。public に公開されているURLなら、そのまま。private のものでも、S3のように、pre-signed URLが使えるならば、そのURLからAzure Storageにコピーすることが可能です。<a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/03609d0c-9ce9-c005-aaf5-ccc4cb017806.htm">TransferManager.CopyAsync Method (Uri, CloudBlob, Boolean, CopyOptions, TransferContext, CancellationToken)</a></p>
-<p>これは、DMLの機能というよりAzure Storage Blobの機能で、2012/6 に追加された<strong>Asynchronous Cross-Account Copy Blob</strong>の副産物（？）です。<a class="footnote-reference" href="#r2" id="id2">[2]</a>（気が付いて無かったですが orz)</p>
-<dl class="docutils">
-<dt>Introducing Asynchronous Cross-Account Copy Blob から引用</dt>
-<dd>Note: The source blob could even be a blob outside of Windows Azure, as long as it is publicly accessible or accessible via some form of a Signed URL. For source blobs outside of Windows Azure, they will be copied to block blobs.</dd>
-</dl>
-<p>「Note: 公開された url あるいは、なんらかのSigned URLのようなものなら Azure の外側でもかまいません。それは、block blob として copy されます」という感じでしょうか。DMLのAPIを見ると、Azure Fileにもコピーできますね、これは、2015/8/3 に公開された新機能です、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2015/08/04/azure-files-preview-update.aspx">Azure Files Preview Update</a>version 2015-02-21 から利用できます。<a class="footnote-reference" href="#r7" id="id3">[7]</a></p>
-<p>DML のGitHub レポジトリを見ると、S3から Azure Blobにコピーするサンプルコードが公開されています。<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/tree/master/samples/S3ToAzureSample">S3ToAzureSample</a></p>
-<p>余談ですが、このサンプルを読んでいて気になったことがあったので PR を出してみたらさくっとマージされました。<a class="footnote-reference" href="#r3" id="id4">[3]</a>（軽微な修正ですが）</p>
-<div class="section" id="wad-custom-log-downloader">
-<h2>WAD Custom Log Downloader</h2>
-<p>とりあえず、なにか作ってみようと思い Azure Diagonestics の Custom Log をローカルにDownloadするアプリ<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader">WADCustomLogDownloader</a>を書きました。AzCopyだけだと、ダウンロード対象のファイルのリストがどこか外部にあって参照しながらダウンロードするというのは効率悪くWADのCustom Logなどは不得意パターンでした。それをライブラリになったので、ちょっとやってみようという感じです。</p>
-<p>環境変数<strong>AZURE_STORAGE_CONNECTION_STRING</strong>に、StorageのConnection文字列を入れて、下記のように実行します。-f から、-t の間のFileTimeのログを、WADDirectoriesTable から探し対応するファイルをblobから、-d で指定したローカルディレクトリにダウンロードします。ちょっと動かしてみた感じだとAzCopyと同じような速度を期待できそうです。（ちゃんと計っていないのですが）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ <span class="nv">$env</span>:AZURE_STORAGE_CONNECTION_STRING<span class="o">=</span><span class="s2">"YOUR_STORAGE_KEY"</span>
-$ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="se">\t</span>emp<span class="se">\l</span>ogs -f <span class="m">2015</span>-09-10 -t <span class="m">2015</span>-09-23 -v
-</pre></div>
-</div>
-<p>ここから、コードの解説をしながらコーディングしていて気が付いた点をいくつか並べていきます。</p>
-</div>
-<div class="section" id="id5">
-<h2>基本的な作り</h2>
-<p>ダウンロード対象のBlobのリストを、Azure Table の WADDirectoriesTable から読んで、<a class="reference external" href="https://msdn.microsoft.com/en-us/library/dd997371(v=vs.110).aspx">BlockingCollection</a>に突っ込み、別TaskでBlockingCollection を読んで対象のBlobをダウンロードするという流れになっています。Producer が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L30">ListWadCustomLogs()</a>で、Consumer が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L64">DownloadFromBlob()</a>、その間を繋ぐ queue が、<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L25">BlockingCollection _jobQueue</a>です。</p>
-<p>今回は、Producer が軽いので割と序盤で全部 queue に入ってしまって、順次 Consumer が処理するということになります。大量に対象のファイルがある場合、BlockingCollection の本領発揮なのでしょうが、今回は Producer–consumer problem<a class="footnote-reference" href="#r4" id="id6">[4]</a>には引っかからない気がするので枠組みだけ使ってさくっと進みます。この基本構造は、DMLのS3のサンプルからいただきました、王道ですね。</p>
-</div>
-<div class="section" id="id7">
-<h2><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement#best-practice">Best Practice</a></h2>
-<p>パフォーマンスを出すには、DefaultConnectionLimit を増やすのと、 100-continue をOffにする必要があります。Azure Storage を使っている人にはお馴染みかと思いますが。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Environment</span><span class="p">.</span><span class="n">ProcessorCount</span> <span class="p">*</span> <span class="m">8</span><span class="p">;</span>
-<span class="n">ServicePointManager</span><span class="p">.</span><span class="n">Expect100Continue</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
-</pre></div>
-</div>
-<p>ちなみに、ASP.NET環境下では、HttpRuntimeの初期化が走ると、HttpRuntime.InitializeHostingFeatures() から、いろいろ呼ばれて、<a class="reference external" href="http://referencesource.microsoft.com/#System.Web/HttpRuntime.cs,1202">HttpRuntime.SetAutoConfigLimits()</a>で、下記のコードが実行されるので、DefaultConnectionLimit の変更は不要です。Consoleアプリや、WorkerRoleでは必須なので要注意です。</p>
-<div class="highlight-csharp"><div class="highlight"><pre><span/><span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">ServicePointManager</span><span class="p">.</span><span class="n">DefaultConnectionLimit</span> <span class="p">=</span> <span class="n">Int32</span><span class="p">.</span><span class="n">MaxValue</span><span class="p">;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="producer-listwadcustomlogs">
-<h2>Producer <a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L30">ListWadCustomLogs</a></h2>
-<p>WADDirectoriesTable から、該当日付近のデータを取り出します。WAD(Windows Azure Diagonestics)では、PartitionKey にTickを使っているので日付をUTCにしてTickを19桁の文字列に展開します。ここは、Partition Queryなので、速度が必要なら分割してパラレルで実行した方が良いですが、実測で DC内で 100 ms/1000件 程度、西から東を見た場合でも、140ms/1000件、の時間でした。そのためあまり気にせず単純なクエリーで書きます。件数が多くなるのが想定できる場合は、適時分割した方が良いと思います。</p>
-<p>ソース：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L38">WADDirectoriesTable から該当期間のログのエンティティを取得</a></p>
-<p>そのあと、ExecuteSegmentedAsync() を使って、1000件毎にエンティティを取得し、jobQueueに入れます。全部入れ終わたら、<strong>_jobQueue.CompleteAdding()</strong>します。Consumer 側では、<strong>_jobQueue.IsCompleted</strong>がtrueなら処理終了と判断します。true になるのは、complete とマークされてて queue が空の時です。<a class="footnote-reference" href="#r5" id="id9">[5]</a>これだけでも<strong>BlockingCollection</strong>ちょっと便利ですね。</p>
-<p>今回は、<strong>BlockingCollection</strong>の maximum capacity を設定していないので<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L56">_jobQueue.Add(result.Results)</a>はブロックしません。Producer と Consumer のバランスをとる必要がある場合は適時設定するといいでしょう。</p>
-</div>
-<div class="section" id="consumer-downloadfromblob">
-<h2>Consumer <a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L64">DownloadFromBlob</a></h2>
-<p>_jobQueue に乗っている WADDirectoriesTable を<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L97">TransferManager.DownloadAsync</a>に渡してダウンロードするタスクを作成します。ここは、Task の作成しすぎとかは、気にせずにグルグル回してしまって良く、実際のTaskのスケジューリングは適時 DML内でやってくれます。基本的には、4MB chunk で、DownloadRangeToStreamAsync を使って分割ダウンロード、chunk は、buffer pool を利用、core 数*8 を並列実行という感じです。</p>
-<p>DMLソース：<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferControllers/TransferReaders/BlockBasedBlobReader.cs#L301">BlokBlob ダウンロードの実装部分</a></p>
-<p>並列度は、<a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/00d502f9-54dc-f902-6571-367fd8851081.htm">TransferConfigurations</a>で設定できます。デフォルトは、<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferConfigurations.cs#L45">core数*8</a>、その下の行を見ると、chunk size は、4MB（固定？）です。使うメモリーは、<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/GlobalMemoryStatusNativeMethods.cs#L19">Native Method の GlobalMemoryStatusEx()</a>を呼んで物理メモリーサイズを拾っています。<strong>(なんと！)</strong></p>
-<p>そして、DMLの一番の肝は、 buffer pool と並列実行度をリンクさせたスケジューラー<a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/blob/master/lib/TransferScheduler.cs#L21">TransferSchedulerTransferScheduler</a>ですね。Blobでパフォーマンスを上げるなら並列度を上げるのが重要で、大きなファイルを扱うためにはGCを避けるのが王道なので、こんな感じになるのかという気がします。</p>
-<p>DMLの中に脱線していました、まだあまり読めてないのですが、いろいろ参考になるコードだと思います。</p>
-<p>Consumerの細かいところを説明すると、大体４点</p>
-<ol class="arabic simple">
-<li>ダウンロード済みのファイルがあればSkipする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L71">TransferContext.OverwriteCallback</a>で、ダウンロード先にファイルがあるかどうかを見ています。WADDirectoriesTable の中のFileTime、FileSize と比較して同じだったらスキップとしています。WADDirectoriesTable のデータを参照するために、_sourceFileDictionary を参照しているのがイマイチな気がします。OverwriteCallback に、オプションのobject とか渡せれば解決なのですが…</li>
-<li>MD5 Validation をOffにする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L83">DownloadOptions.DisableContentMD5Validation</a>WADのCustom log 転送を使って転送したBlobにはMD5Sumが付いていないので仕方ない。ここはOffです。WADDirectoriesTable の FileSize と同じかどうかを確認できるので大丈夫かな？と思いますが、選択できても良い気がします。MD5Sumの計算はコストが高いのでなるべく避けたい気持ちもわかりますが。</li>
-<li>TransferException をハンドルする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L100">TransferException</a>ここでは、TransferErrorCode の TransferAlreadyExists、NotOverwriteExistingDestination を特別扱いしています。 TransferContext.OverwriteCallback で、false を返すと、NotOverwriteExistingDestination が帰ります。今回はすでにダウンロード済みの場合は、スキップしているのでエラーではありません。 TransferManager.DownloadAsync に、同じ source, dest のセットが追加されると TransferAlreadyExists が発生します。今回は、WADDirectoriesTable に残っている転送履歴からBlobを探しているので、複数回転送されると TransferAlreadyExists になります。これは、WAD の Custom Log転送をどう使うのかという話にも絡みますが、今回はスキップで扱います。<a class="footnote-reference" href="#r6" id="id11">[6]</a></li>
-<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ....</li>
-</ol>
-<p>あとは、 CountdownEvent を使って、全部のTaskの終了を待ちます。ProgressHandler をフックすると、転送量とか転送ファイル数のステータスをもらえるのは便利です。</p>
-</div>
-<div class="section" id="id12">
-<h2>まとめ</h2>
-<p>ちょっと長いコードになりましたが、割と簡単に効率的な転送プログラムが実装できました。DMLの内部構造を見てわかる通り、CPUとメモリーがある程度あるマシンでないと本来の性能が発揮できない傾向があります。合計1.6GB の50本ほどのlog を D1とD3の両方でダウンロードしてみたところ、D1で 12 Mbps ぐらい、D3では 800 Mbps ぐらいのスループットになりました。（速度を見るにはもう少し本格的にやってみないといけないので参考程度ですが）</p>
-<p>exe 単体で動作するように、 Release Build では、ILMergeで、wadcldl.exe を作っています。</p>
-<p>環境変数 AZURE_STORAGE_CONNECTION_STRING にStorage Account Keyをセットするスクリプト<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/setenv.ps1">setenv.ps1</a>を入れてあるので参考にしてください。実行前に、Add-AzureAccount をします。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/blog/introducing-azure-storage-data-movement-library-preview-2/">2015/9/23 Introducing Azure Storage Data Movement Library Preview</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2012/06/12/introducing-asynchronous-cross-account-copy-blob.aspx">Introducing Asynchronous Cross-Account Copy Blob</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement/pull/8">Dispose GetObjectResponse object. Here are many run.</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Producer%E2%80%93consumer_problem">Producer–consumer problem</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[5]</a></td><td><a class="reference external" href="http://referencesource.microsoft.com/#System/sys/system/collections/concurrent/BlockingCollection.cs,97">Reference Source  BlockingCollection.IsCompleted</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id11">[6]</a></td><td><a class="reference external" href="http://azure.github.io/azure-storage-net-data-movement/html/c0cc97ae-9bd8-37b2-a727-c4d714b5cc8f.htm">TransferErrorCode Enumeration</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[7]</a></td><td><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/mt427372.aspx">MSDN Copy File</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/blob.html">Blob</a>, <a href="tags/dml.html">DML</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/09/25/intro_azure_storage_data_movement_library.html#disqus_thread" data-disqus-identifier="2015/09/25/intro_azure_storage_data_movement_library">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>September 01, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a></h1>
-<p>今週末、9/5の<a class="reference external" href="http://r.jazug.jp/index.html">JAZUG</a>5周年記念イベント<a class="reference external" href="https://jazug.doorkeeper.jp/events/29529">「ごーごー じゃずゆーじー」 Go(5) JAZUG</a>で、Azure Service Fabric<a class="footnote-reference" href="#r1" id="id1">[1]</a>をネタに<a class="reference external" href="http://tatsuakisakai.net/">酒井さん</a>と話をします。宣伝とメモを兼ねてちょっと予告編です。興味を持たれた方は是非ご来場下さい ↓click↓</p>
-<a class="reference external image-reference" href="https://jazug.doorkeeper.jp/events/29529"><img alt="gogo jazug" class="align-center" src="_images/29529_normal_1438663713_logo.png" style="width: 600px;"/></a>
-<div class="section" id="azure-service-fabric">
-<h2>Azure Service Fabric とは</h2>
-<p>Azure Service Fabric は、BUILD 2015 に先駆けて発表された、「スケーラブルで信頼性が高く管理しやすいクラウド向けアプリケーションの構築向けの分散型システム プラットフォーム」<a class="footnote-reference" href="#r2" id="id3">[2]</a>です。</p>
-<p>2015/4/20 に、Mark Russinovich が書いたBlog<a class="footnote-reference" href="#r3" id="id4">[3]</a>、翻訳<a class="footnote-reference" href="#r4" id="id5">[4]</a>から引用します。</p>
-<ul class="simple">
-<li>Service Fabric は、高度な制御プラットフォーム</li>
-<li>開発者や ISV は、拡張性とカスタマイズ性の高いクラウド サービスを構築可</li>
-<li>ミッションクリティカルなクラウド サービスを提供してきたマイクロソフトの経験を基礎として開発</li>
-<li>5 年以上にわたって実際に運用</li>
-<li>基盤となるテクノロジは、Azure のコア インフラストラクチャに使用（実証済）</li>
-<li>Skype for Business、Intune、Event Hubs、DocumentDB、Azure SQL Database 、Bing Cortana などの基盤で利用</li>
-<li>毎秒 5 億回を超える評価に対応可能な拡張性を持つ</li>
-</ul>
-<p>ざっくりまとめると、「マイクロソフトでAzureのインフラとして5年以上使っている技術がベースにとなっていて実績もいろいろあるよ」ってことのようです。これまでのAzureだとCloud Native アプリケーションの Computing は、<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/cloud-services/">Cloud Service</a>あるいは<a class="reference external" href="https://azure.microsoft.com/ja-jp/services/app-service/">App Service</a>でということでしたが、新しい選択肢として<strong>Service Fabric</strong>というのが出てきたってことです。（まだ、preview でローカルの開発環境でしか動きませんが）</p>
-<p>※ここでは、便宜上WebRole/WorkerRole を使う<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/cloud-services-choose-me/#tellmecs/">Cloud Services</a>を<strong>PaaSv1</strong>と呼び、それに対して、Service Fabric を<strong>SF</strong>or<strong>PaaSv2</strong>と呼びます。</p>
-<p>BUILD 2015のセッション<a class="footnote-reference" href="#r5" id="id6">[5]</a>,<a class="footnote-reference" href="#r6" id="id7">[6]</a>や、ドキュメントを見ると機能が結構盛りだくさんなのですが、「<strong>SF</strong>が取り組んで問題は何なのか、何故必要なのか？」というのが分かりずらい、面白そうだけど、<strong>ﾍ(ﾟдﾟ)ﾉ ﾅﾆｺﾚ?</strong>って感じもします。</p>
-<p>9/5 のセッションでは、Service Fabricが出てから既に、4カ月以上経っているし、「Azure Service Fabric とは」的な内容はさくっと流して、私が感じていた<strong>SF</strong>に対する疑問に焦点を当てて話をしてみようと思います。</p>
-</div>
-<div class="section" id="service-fabric">
-<h2>Service Fabricが取り組んでいる課題</h2>
-<p>課題ですね、英語だと<strong>Challenge</strong>です。無理筋なのをやるとダメなやつですが、ここでは関係ありません。クラウド時代に突入してモダンなサービスは可用性とスケーラビリティを求められるようになりました。<a class="footnote-reference" href="#r7" id="id8">[7]</a></p>
-<p>その結果、Cluster アプリケーションでは複数のマシンに配置されることになります（つまり分散、分割）。複数台で構成されているので障害時に全停止せず、台数を増やせば処理能力が増えてスケールすると言うのが基本的なストーリーです。</p>
-<p>この考えに沿ったアーキテクチャの典型が、<strong>PaaSv1</strong>です。WebRole/WorkerRole を複数の障害ドメインのマシンに配置することで耐障害性を担保し、アプリケーションをステートレスにすることで、台数増加を性能向上に直結させ (<a class="reference external" href="http://www.publickey1.jp/blog/14/immutable_infrastructure_1.html">Immutable Infrastructure</a>ってやつです) 、高可用でスケーラブルなサービスを構築するというのが物語の粗筋です。</p>
-<p>これはこれで良いのですが、<strong>PaaSv1</strong>では、全てのRoleは仮想マシンを専有するような配置を行います。そのため、OSの設定やランタイムのインストールなど細かいことを自由にできるという大きなメリットがありますが「問題もあるよね」というのが今回の話しです。<strong>SF</strong>が、取り組んでいる課題はいろいろあるのですが、今回はこの配置に関する課題の話をします。</p>
-</div>
-<div class="section" id="static-partitioning">
-<h2>Static Partitioning 問題</h2>
-<p><strong>PaaSv1</strong>では、Role毎に台数を増減できますが、複数のWebRoleを同一の仮想マシンで動かすことはできません。また、WebRoleとWorkerRoleを同一仮想マシンでホストすることもできません。<a class="footnote-reference" href="#r8" id="id9">[8]</a>このようにRoleの分割が静的に行われているのを、Static Partitioning （静的分割？）と言います。Static Partitioning は、Role を増やせば、増すほど扱いづらくなりますし、ワークロードによっては事前に予測することが難しい場合もあり、リソースの利用効率という観点からは<strong>ムダ</strong>が生じやすい仕組みで、これは大きな課題ですね。</p>
-<img alt="../../../_images/pat01.png" class="align-center" src="_images/pat01.png"/>
-<p>Static Partitioning はシンプルなせいか、Cluster アプリケーションで広く使われてきました。最初のHadoop とか、昔の twitter とかですね。その結果あちこちから問題が聞こえてくるようになりました。その課題の解法の1つとして注目されているのが、Apache Mesos などで導入された手法です。 Mesosだと、このドキュメントが面白いです<a class="reference external" href="http://www.slideshare.net/charmalloc/buildingdeployingapplicationsmesos">Building and Deploying Application to Apache Mesos</a>、ちょっと引用します。</p>
-<p>Mesos 以前は、Static Partition（静的分割）だった。<strong>Static Partition（静的分割）IS BAD</strong>、とても扱いづらい。</p>
-<ul class="simple">
-<li>マシンの効率的な利用ができない</li>
-<li>効果的なスケールが出来ない</li>
-<li>障害の取り扱いが難しく、ダウンタイムの発生を招く</li>
-</ul>
-<p>リンク先には、「動的リソース割り当てが必要だ。 Operating System === Datacenter で、Mesos =&gt; data center の<em>kernel</em>だ」というようなことが書いてあります。Hadoopも、台数増えてくると十分Nodeが働かないという問題がありました。<a class="footnote-reference" href="#r9" id="id10">[9]</a></p>
-<p>確かにサービスを構成するアプリケーションを複数のコンポーネントに分けた場合、（例えばWeb Frontと、管理サイト、日時バッチ、月次バッチとか）。それぞれ、ワークロードも違えば、開発サイクルも違う。これを、クラスターに最適配置しようとするといろいろ<strong>メンドクサイ</strong>。<strong>PaaSv1</strong>で、現実的な解はRoleを分けることですが、月次バッチはWebFrontのオフピークの夜間にして効率的な運用をなどを考えると面倒なことになってくる・・・</p>
-</div>
-<div class="section" id="dynamic-partitioning">
-<h2>Dynamic Partitioning</h2>
-<p>Mesosから離れて、Service Fabric でどうしているのかを見てみます。 Service Fabric では、複数のNodeでクラスターを構成して、アプリケーションは同一Node内に複数配置することができます。どのように配置するかは、アプリケーションが要求を出して、配置条件にあたところにService Fabric が配置するという流れです。配置条件は、サービス マニフェストまたはアプリケーション マニフェストを使用するか、コード内で直接定義します。<a class="footnote-reference" href="#r10" id="id11">[10]</a></p>
-<img alt="../../../_images/pat04.png" class="align-center" src="_images/pat04.png"/>
-<p>Node内に複数のアプリケーションを配置することができ、リソースの有効利用を実現します。YARNとかMesosとかも同じようなことができます。このあたりの考え方は最近のトレンドのようです。</p>
-</div>
-<div class="section" id="cluster-manager">
-<h2>Cluster Manager <a class="footnote-reference" href="#r11" id="id12">[11]</a></h2>
-<p>このように、Datacenetrから仮想マシンをまとめて借りだして Cluserとしてプールし、アプリケーションの要求に応じてリソースを割り当てるのコンポーネントを、<strong>Cluster Manager</strong>と呼びます。（最近のクラウド界隈は、混沌としているので名称はちょっと曖昧さがあるけど）代表的な<strong>Cluster Manager</strong>を、Service Fabric も含め上げておきます。Hadoop MRv1 では JobTrancker がボトルネックとなって働かない Node 問題が発生しており、YARNが対策として作成されました。いずれの、Cluster Manager (YARN では、Resource Managerと呼ぶ）も、万単位のサーバーを扱うの前提で作成されているので完全に１つのリソースプールに全部入れてしまって、そこからリースするような使い方でも行けそうです。</p>
-<ul class="simple">
-<li><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/service-fabric/">Service Fabric</a></li>
-<li><a class="reference external" href="http://mesos.apache.org/">Apache Mesos</a></li>
-<li><a class="reference external" href="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html">YARN, Apache Hadoop</a></li>
-<li><a class="reference external" href="http://www.infoq.com/jp/news/2015/04/google-borg">Google Borg/Omega</a></li>
-</ul>
-</div>
-<div class="section" id="id14">
-<h2>最後に</h2>
-<p>こんな感じで、Service Fabricがアプリケーションをクラスターに配置してくれるので、リソースとアプリケーションの分割の関係を柔軟に構成することができます。ワークロードと配置の関係をコード外でコントロールできるのは、なかなか嬉しい感じです。今回は時間の都合上入れられないと思いますが、開発支援、運用支援の機能もService Fabricには盛り込まれていて、かなり拾い範囲をサポートした分散型システム プラットフォームと言えそうです。</p>
-<p>ソフトウェアの基本は、「分割して統治せよ」だと思いますが、残念ながら分割にはもろもろのメリットとデメリットがあり、過剰な分割はデスマーチの元という面もありました。Service Fabricは、今風に多くの問題を解決し次世代クラウドアプリケーションの作成に役立ってくれそうで</p>
-<p>※Spark は、複数のCluster Managerに対応していて、これはこれで面白いと思います。</p>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-overview/">Service Fabric の概要</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="ServiceFabricドキュメント">Service Fabric ドキュメント</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td><a class="reference external" href="http://azure.microsoft.com/ja-jp/blog/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world/">Announcing Azure Service Fabric: Reducing Complexity in a Hyper-scale World</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2015/04/23/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world.aspx">翻訳：Azure Service Fabric を発表: 高度なスケーラビリティをより簡単に実現</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/3-618">BUILD 2015, Mark Russinovich, The Next Generation of Azure Compute Platform with Mark Russinovich</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/2-640">BUILD 2015, Gopal Kakivaya, Microsoft Azure Service Fabric Architecture</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[7]</a></td><td>クラウドだから可用性とスケーラビリティを求められるのか、両者が求めらるからクラウドなのかは ニワトリと卵の関係のような気もします。クラウドによって、いくつかの面でコストが抑えられるようになったので、現実的なビジネスでの適応局面が増えたという言い方もできるます。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r8" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td>WebRole で複数Siteを定義すれば複数Endpoint Hostできます、また、WebRoleのRoleEntryPointのRunをoverride するとWorkerRole的なことが出来たりします。これらの方法の課題はアプリケーション間が無用に密接にくっついてしまっていることです。できるけど、イマイチやなという感じです。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r9" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[9]</a></td><td><a class="reference external" href="http://www.ibm.com/developerworks/jp/analytics/library/bd-yarn-intro/">YARN の紹介</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r10" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id11">[10]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-service-description/">サービス記述の概要</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r11" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id12">[11]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Cluster_manager">Cluster manager</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r12" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[12]</td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-cluster-description/">クラスターの説明</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/service_fabric.html">Service Fabric</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/jazug.html">JAZUG</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/09/01/go_5_jazug_service_fabric_session.html#disqus_thread" data-disqus-identifier="2015/09/01/go_5_jazug_service_fabric_session">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">

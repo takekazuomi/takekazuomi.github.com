@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Tables の Breaking Changes 2013/11" href="windows_azure_tables_breaking_changes_2013_11.html" /><link rel="prev" title="Helios を Azure Cloud Service で使う" href="../28/using_helios_on_azure_cloud_service.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -104,7 +104,7 @@
 <div class="section" id="windows-azure-blobs-tables-and-queue-shared-access-signature-sas-issue">
 <span id="known-issue-20131101"></span><h2>Windows Azure Blobs, Tables and Queue Shared Access Signature (SAS)のIssue</h2>
 <ul class="simple">
-<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の<cite>&#8220;//&#8221;</cite>は、<cite>&#8220;/&#8221;</cite>に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は<cite>&#8220;//&#8221;</cite>を送らないようにして下さい</li>
+<li>下記のような、2012-02-12 バージョンのSASが、 HTTP Status Code 400 (Bad Request)になります。従来の実装だと、コンテナの前の<cite>“//”</cite>は、<cite>“/”</cite>に折りたたまれて処理されていましたが、現時点ではコンテナが無効である（null）として解釈されてしまいます。これは、修正される予定ですが、当面は<cite>“//”</cite>を送らないようにして下さい</li>
 </ul>
 <p><cite>http://myaccount.blob.core.windows.net//container/blob?sv=2012-02-12&amp;si=sasid&amp;sx=xxxx</cite></p>
 </div>
@@ -112,7 +112,7 @@
 <h2>Windows Azure TablesのIssue</h2>
 <p>下記の2つの既知のissueがあります。サービス側または当社のクライアント·ライブラリの一部としてhotfixを出す予定です。</p>
 <ol class="arabic simple" id="known-issue-20131102">
-<li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の &#8220;Category&#8221; element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の &#8220;category&#8221; element は送信されません。</li>
+<li>clients で、<cite>DataServiceContext.ResolveName</cite>を定義し、<cite>&lt;Account Name&gt;.&lt;Table Name&gt;</cite>以外の型の名前を指定すると、CUD operation が 400 (Bad Request) を返します。これは、新しい実装では、ATOM の “Category” element の term 属性が、&lt;Account Name&gt;.&lt;Table Name&gt; と同じで無ければいけないのが原因です。以前のバージョン（実装）では、送信された型の名前は無視していました。これは再び無視するように修正される予定ですが、それまでの間は次の回避策を検討してください。ResolveName の設定は、Azure Tables では必要無いのでclient application のから外してください。そうすると OData の “category” element は送信されません。</li>
 </ol>
 <p>下記は問題が発生するコードの例です。これを実行するとサーバー側で失敗します。</p>
 <div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">CloudTableClient</span> <span class="n">cloudTableClient</span> <span class="o">=</span> <span class="n">storageAccount</span><span class="o">.</span><span class="na">CreateCloudTableClient</span><span class="o">();</span>
@@ -130,7 +130,7 @@
 </div>
 <p>この Issue の解決のためには client 側で<cite>tableServiceContext.ResolveName</cite>delegate の設定を外してください。</p>
 <ol class="arabic simple" id="known-issue-201311" start="2">
-<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty &#8220;cast&#8221; があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
+<li>service updateの一環として、サーバー側で使っている新しい .NET WCF Data Services library は、$filter query の 一部に empty “cast” があると 400 (Bad Request) で拒否します。古い .NET framework libraryではそうではありませんでした。これによって、Windows Azure Storage Client Library 2.1のIQueryable implementationに影響が出ます。.NET の DataServiceContext の挙動を、cast を送信しないようにクライアントライブラリを修正中です。これは、数週間以内に利用できるようになります( this should be available in the next couple of weeks )それまでの間次の回避策を検討してください。このクライアントライブラリの問題では、IEnumerable&lt;T&gt; で ITableEntityインターフェイスに制約するのでは無く、インスタンス化される型を明示的に使うことで回避できます。</li>
 </ol>
 <p>下記は問題があるコードです</p>
 <div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">static</span> <span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">GetEntities</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;(</span><span class="n">CloudTable</span> <span class="n">table</span><span class="o">)</span>  <span class="n">where</span> <span class="n">T</span> <span class="o">:</span> <span class="n">ITableEntity</span><span class="o">,</span> <span class="k">new</span><span class="o">()</span>

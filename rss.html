@@ -11,16 +11,14 @@
             <link>http://kyrt.in/2017/06/03/az_login_device_flow.html</link>
             <guid>http://kyrt.in/2017/06/03/az_login_device_flow.html</guid>
             <title><![CDATA[Azure に OAuth 2.0 Device Flow でログインする]]></title>
-            <description><![CDATA[<div class="section" id="azure-oauth-2-0-device-flow">
-<h1>Azure に OAuth 2.0 Device Flow でログインする</h1>
+            <description><![CDATA[<h1>Azure に OAuth 2.0 Device Flow でログインする</h1>
 <p>この前<strong>az login</strong>でログイン出来なくなった時に、azure cli 2.0 のコードを見ていたら、Azureのドキュメントには出てこない（見慣れない）使い方をしてたので確認も兼ねて生REST、OAuth 2.0 Device Flow<a class="footnote-reference" href="#ref1" id="id1">[1]</a>でAzrueにloginして Beare Tokenを取得するコンソールプログラム<strong>azlogin</strong><a class="footnote-reference" href="#ref2" id="id2">[2]</a>を書いてみた。</p>
 <a class="reference external image-reference" href="https://flic.kr/p/TPKV1d"><img alt="curry" class="align-center" src="https://c1.staticflickr.com/3/2871/34014638600_dbb3a232b1_c.jpg"/></a>
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-</div>
 <div class="section" id="id3">
-<h1>使い方</h1>
+<h2>使い方</h2>
 <p><strong>azlogin</strong>を実行すると、azure cli 2.0 と同じように、デバイスコードと入力用のURLが表示される。この画面のメッセージが<strong>azure cli 2.0</strong>と一文一句違わず同じなのは、AIPが返して来るメッセージをそのまま表示してるからだ。</p>
 <p>ログインに成功すると、アカウントに紐づいたテナントを全部取得して、テナントのアクセストークンを取得し、それを使ってサブスクリプションの情報を取得。結果をJSONで出力する。</p>
 <div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\azlogin
@@ -63,12 +61,12 @@ $ curl -H  "Authorization: Bearer $bearer" "https://management.azure.com/subscri
 <p>Bearer tokenさえ手に入れれば、こんな感じでサクッと管理APIが呼べる。</p>
 </div>
 <div class="section" id="id4">
-<h1>最後に</h1>
+<h2>最後に</h2>
 <p>Azureのドキュメントだとごちゃごちゃしてて良くわからないが、認証は基本普通のOAuth 2.0 なのでそれほど難しくない。このあたりで困ったら、OAuth2.0 のドキュメント（Googleのとか 、翻訳もある<a class="footnote-reference" href="#ref3" id="id5">[3]</a>）を読むと良い。Azure固有の問題は、松崎さんのブログ<a class="footnote-reference" href="#ref4" id="id6">[4]</a>がお勧めだ。</p>
 <p>今回は、生RESTだけで構築したが、認証だけならそれほど難しいことはない。本格的にAzureを触ろうと思うとモデルが欲しくなり。触っていくと大量のモデルが出てくるので自前で作るのはとてもメンドクサイ。その場合はAzureSDKを使うと既にモデルが用意去れているので便利だ。</p>
 </div>
 <div class="section" id="id7">
-<h1>参考</h1>
+<h2>参考</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
@@ -255,24 +253,22 @@ At line:1 char:1
             <link>http://kyrt.in/2017/05/14/azure_cosmos_intro.html</link>
             <guid>http://kyrt.in/2017/05/14/azure_cosmos_intro.html</guid>
             <title><![CDATA[Azure Cosmos DB がやってきた]]></title>
-            <description><![CDATA[<div class="section" id="azure-cosmos-db">
-<h1>Azure Cosmos DB がやってきた</h1>
+            <description><![CDATA[<h1>Azure Cosmos DB がやってきた</h1>
 <p>DocumentDB の記事を書いていたら<a class="footnote-reference" href="#ref15" id="id1">[15]</a>、//Build 2017で、Azure Cosmos DB が発表<a class="footnote-reference" href="#ref1" id="id2">[1]</a>された。 Cosmos DBは、Multi-model database and multi-APIのGlobally Distributed データベース・サービスだ。</p>
-<div class="figure align-center" id="id29">
+<div class="figure align-center" id="id30">
 <img alt="Azure Cosmos DB in KeyNote" src="http://kyrt.in/_images/keynote01.png"/>
 <p class="caption"><span class="caption-text">//Build 2017 Keynote より <a class="footnote-reference" href="#ref1" id="id3">[1]</a></span></p>
 </div>
 <p>「DocumentDB何処行った、名前が変わったの？」と思ったら、そんなに簡単な話では無かった、Azure Cosmos DBは、DocumentDB、MongoDB, Azure Table,Gremlin などの複数のAPIをサポートしたマルチモデルの分散データベース<a class="footnote-reference" href="#ref2" id="id4">[2]</a>で Document DBはそのAPIの一つという位置づけになった。従来の Document DBで使ってた分散データベース基盤の部分は、ある程度汎用的に出来ていてJSON以外のデータモデルも扱えるので、今回はKey-Value と GraphのデータモデルにAPIを付けてブランディングも新たにお披露目したよという話だ。素晴らしい。</p>
 <p>ざっくりまとめると、下図のような感じになってる。Cosmos 分散データベース基盤に、データモデルが乗っていて、それぞれAPIを提供するといった感じだ。AzureTable(Key-Value), Gremlin(Graph) は、Preview(既に試すことができる)で、Splark は、アナウンスだけ、DocumentDBとMongoDB APIはGAのままだ。この２つがGAのままなのは、Cosmos DBになっても基本的な実装は同じだからだろう。</p>
-<div class="figure align-center" id="id30">
+<div class="figure align-center" id="id31">
 <img alt="Azure Cosmos DB in KeyNote" src="http://kyrt.in/_images/pic01.png"/>
 <p class="caption"><span class="caption-text">Azure Cosmos DB スタック</span></p>
 </div>
-</div>
 <div class="section" id="breakout-session">
-<h1>Breakout Session</h1>
+<h2>Breakout Session</h2>
 <p>//Build 2017のCosmos DBの2つのBreakout Session、B8047<a class="footnote-reference" href="#ref3" id="id5">[3]</a>と、T6058<a class="footnote-reference" href="#ref4" id="id6">[4]</a>では、もう少し詳細に触れられている。</p>
-<div class="figure align-center" id="id31">
+<div class="figure align-center" id="id32">
 <img alt="Table API in Azure Cosmos DB" src="http://kyrt.in/_images/B8047-02.png"/>
 <p class="caption"><span class="caption-text">//Build 2017 B8047 より <a class="footnote-reference" href="#ref3" id="id7">[3]</a></span></p>
 </div>
@@ -285,23 +281,23 @@ At line:1 char:1
 <p>現在のCosmos DB（旧DocumentDB）の料金体系は、基本hot work load向けだ。アクセス頻度が低いデータが多くなってくるとAzure Storageとのコスト差がどんどん大きくなっていく。データ全体の中で一部だけのアクセス頻度が高く、殆どのデータはアクセス頻度が低い場合は、Cosmos DBだけでなく、なんからの外部データストアとの連繫を検討する必要がある。これは特に、Standard Table（これからは、Azure Table StorageのことはStandard Tableと呼ぼう）からの移行を考えた時に重要な検討課題だろう。それがうまく解決できるなら、かなり有り難い。</p>
 </div>
 <div class="section" id="blog">
-<h1>同時に公開されたBlogから</h1>
+<h2>同時に公開されたBlogから</h2>
 <p>Cosmos DBも発表共に公開されたBlogもなかなか面白い。<strong>Azure Cosmos DB: The industry’s first globally-distributed, multi-model database service</strong><a class="footnote-reference" href="#ref7" id="id10">[7]</a>の A Brief History of Cosmosには簡単なCosmos DBの歴史が書いてあった。それによると、</p>
 <blockquote>
 <div>Azure Cosmos DBは、2010年に「Project Florence」で開始、グローバルディストリビューションの課題を解決するためにMSの社内で使っていたが、他の皆にも役に立つと思い、2015年にAzure DocumentDBの形でこのテクノロジの第1世代を利用できるようにした。</div></blockquote>
 <p>云々だそうだ。世界中で展開するサービスの下りをみて連想したのは、AzurePortal。「最近ポータルが速くなってきてるのはエンドポイントを日本に持ってきたからかな、でもUSのリソースも普通に見れて操作できるしどうなっているのだろう」と思っていたが。Cosmos DBのようなグローバルディストリビューションの仕組みがあれば実装イメージが湧いてくる。実際のところはどうなっているかはわからないが。なかなか興味深い。</p>
-<p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id11">[8]</a>に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id12">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。</p>
-<iframe width="100%" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen=""/><p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id13">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
+<p>あと<strong>A technical overview of Azure Cosmos DB</strong><a class="footnote-reference" href="#ref8" id="id11">[8]</a>に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+<a class="footnote-reference" href="#ref9" id="id12">[9]</a>のCosmosでの活用の話をしていたのが興味深かった。<a class="footnote-reference" href="#ref9" id="id13">[9]</a></p>
+<p>「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている<a class="footnote-reference" href="#ref10" id="id14">[10]</a>と話題になったが、MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者サイドからの一貫性の検証は難しいので設計、実装の取り組みがわかるのは有り難い。</p>
 <p>この記事には、Azure Cosmos DBのデータベースエンジンの中身についても少し書いてあった。以下超訳</p>
 <blockquote>
 <div>Azure Cosmos DBのデータベースエンジンのコアタイプシステムは、汎用的にどのようなデータにも対応するatom-record-sequence (ARS)と呼ばれる構造となっている。Atomは、文字列、論理型、数値などのprimitive型、recordは構造体、sequence はatom、record、sequenceの配列である。また、Azure Cosmos DBのデータベースエンジンは、JSONなどのAPIが利用するデータモデルとARSベースのコアデータモデルの効率的な変換と投影を実装し、動的型付き言語（dynamically typed programming languages）からコアデータモデルへのネイティブアクセスをサポートする。このデータベースエンジンを使うことで、Cosmos DBのAPIは、battle-tested でフルマネージドな、グローバル分散型データベースシステムのすべての利点を得ることができる。</div></blockquote>
 <p>ARSは、プリミティブ型を単純に並べただけの構造なのでJSONをそのまま保存するよりは効率は良いだろうし、別のデータモデルを実装し易いだろう。コアデータ・モデルを扱うデータベースとしての基本的な部分、整合性、リプリケーション、バックアップなどは共通の仕組みが使えるというわけだ。</p>
 </div>
 <div class="section" id="premium-table">
-<h1>Premium Tableの現況</h1>
+<h2>Premium Tableの現況</h2>
 <p>大分長くなってしまったので、最後に、Premium Tableをちょっと動かしてみた感想を書いて終わりにする。</p>
-<p>GitHubに、<strong>Getting started with Azure Cosmos DB: Table API</strong><a class="footnote-reference" href="#ref11" id="id14">[11]</a>というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。</p>
-<table border="1" class="docutils" id="id32">
+<p>GitHubに、<strong>Getting started with Azure Cosmos DB: Table API</strong><a class="footnote-reference" href="#ref11" id="id15">[11]</a>というサンプルコードがある。Premium/Standard Table に繋いで簡単な速度を測るようなコードだ。それを動かしてみた。まずは結果から。※Premium Table の測定は、2000 RU/秒のパーテーション無しコレクションで行った。</p>
+<table border="1" class="docutils" id="id33">
 <caption><span class="caption-text">Premium/Standard Table のレイテンシー</span></caption>
 <colgroup>
 <col width="17%"/>
@@ -436,9 +432,9 @@ At line:1 char:1
 <p>総じて、Premiumが速く、特にセカンダリーインデックスが効くと劇的に速くなる。全体的にPremiumのレイテンシーはバラツキが小さく一貫してレイテンシーが低いのは好印象だ。</p>
 </div>
 <div class="section" id="premium-table-sdk">
-<h1>Premium Table SDK</h1>
-<p>サンプルコードを見ると、PremiumとStandardの切替は接続文字列<a class="footnote-reference" href="#ref12" id="id15">[12]</a>の設定だけだ。Premium Tableには、DocumentDBと同じように、Consistencyや接続モードの設定がある、それをどうやってやるのかと言うと、現状では、AppSettings に書く<a class="footnote-reference" href="#ref13" id="id16">[13]</a>。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。この方法だと、Standard Tableのコードを修正せずに動かしたいという目的は果たせるが、Premium Tableに最適化されたコードを書きたい場合には、あまり適さない。コードで変更できるようにして欲しい。</p>
-<table border="1" class="docutils" id="id33">
+<h2>Premium Table SDK</h2>
+<p>サンプルコードを見ると、PremiumとStandardの切替は接続文字列<a class="footnote-reference" href="#ref12" id="id16">[12]</a>の設定だけだ。Premium Tableには、DocumentDBと同じように、Consistencyや接続モードの設定がある、それをどうやってやるのかと言うと、現状では、AppSettings に書く<a class="footnote-reference" href="#ref13" id="id17">[13]</a>。 AppSettingsには下記の設定ができるようだ。基本的にはDocumentClient関連の設定だ。この方法だと、Standard Tableのコードを修正せずに動かしたいという目的は果たせるが、Premium Tableに最適化されたコードを書きたい場合には、あまり適さない。コードで変更できるようにして欲しい。</p>
+<table border="1" class="docutils" id="id34">
 <caption><span class="caption-text">AppSettings での設定項目</span></caption>
 <colgroup>
 <col width="100%"/>
@@ -482,17 +478,17 @@ At line:1 char:1
 <p>リクエストとレスポンスはこんな感じだ</p>
 <script src="https://gist.github.com/takekazuomi/f7ad2f152fb546113ba8114a9de19dcc.js">&amp;amp;nbsp;</script><p>ちょっと見 DocumentDBとウリ2つだ。Premium Table SDK が、DocumentDB Client SDK を参照していることからも、実際の通信はDocumentDBと同じプロトコルを使っていることが伺える。このままGAになるかどうかは分からないが、この仕組だとプロトコルレベルではStandardとPremiumは別物になるので、既存のStandard Table Storage向けのライブラリは作り直す必要がある。最初に聞いたときは、REST APIレベルで互換なのかと思ったので、ちょっと肩透かしだ。しかし、パフォーマンスを考えた場合、今のStandardのREST APIよりDocumentDB形式の方が将来性がある気もする。なかなか面白いアプローチではある。</p>
 </div>
-<div class="section" id="id17">
-<h1>まとめ</h1>
-<p>つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047<a class="footnote-reference" href="#ref5" id="id18">[5]</a>の話を聞いて、今はとても期待している。</p>
+<div class="section" id="id18">
+<h2>まとめ</h2>
+<p>つらつらと書いていたら随分長くなってしまった。これで、Graph APIの話とかTLA＋の話も書きたかったが疲れたので、この辺で一旦終わる。最初、Premium Tableを聞いた時は、DocumentDB時代の価格体系だとちょと用途が限定される気がして、どうなのかとも思ったが、B8047<a class="footnote-reference" href="#ref5" id="id19">[5]</a>の話を聞いて、今はとても期待している。</p>
 <p>今の気分は、「Cosmos DBはいいぞ」と言う感じだ。</p>
 </div>
-<div class="section" id="id19">
-<h1>追記 (2017/5/15)</h1>
-<p>現在のTable APIではパーテーション無しコレクションしか作成できず、コレクションの容量は10GBだ。これはプレビューの制限だと思われる。10GB以上のデータで評価したい場合は要注意だ。現時点でもスループットは、10万 RU/秒まで設定でき、Standardのストレージアカウント全体のパフォーマンスターゲット(1Kエンティティで毎秒20,000トランザクション)<a class="footnote-reference" href="#ref14" id="id20">[14]</a>を上回る。また、Table StorageのTableがCosmos DBのコレクションになるので、Table単位で課金される。Standardだと割りと気軽にTableを作れたのでこれも設計変更の要因になるだろう。</p>
+<div class="section" id="id20">
+<h2>追記 (2017/5/15)</h2>
+<p>現在のTable APIではパーテーション無しコレクションしか作成できず、コレクションの容量は10GBだ。これはプレビューの制限だと思われる。10GB以上のデータで評価したい場合は要注意だ。現時点でもスループットは、10万 RU/秒まで設定でき、Standardのストレージアカウント全体のパフォーマンスターゲット(1Kエンティティで毎秒20,000トランザクション)<a class="footnote-reference" href="#ref14" id="id21">[14]</a>を上回る。また、Table StorageのTableがCosmos DBのコレクションになるので、Table単位で課金される。Standardだと割りと気軽にTableを作れたのでこれも設計変更の要因になるだろう。</p>
 </div>
-<div class="section" id="id21">
-<h1>脚注</h1>
+<div class="section" id="id22">
+<h2>脚注</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
@@ -520,7 +516,7 @@ At line:1 char:1
 <table class="docutils footnote" frame="void" id="ref5" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id18">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s">[0:35:50]</a>B8047 のTable APIの部分</td></tr>
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id19">2</a>)</em> <a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8047#time=34m50s">[0:35:50]</a>B8047 のTable APIの部分</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref6" rules="none">
@@ -544,37 +540,37 @@ At line:1 char:1
 <table class="docutils footnote" frame="void" id="ref9" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id12">[9]</a></td><td><a class="reference external" href="https://www.youtube.com/watch?v=L_PPKyAsR3w">Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long</a>レスリー ランポート先生のインタビュー、お勧めです。</td></tr>
+<tr><td class="label">[9]</td><td><em>(<a class="fn-backref" href="#id12">1</a>, <a class="fn-backref" href="#id13">2</a>)</em> <a class="reference external" href="https://www.youtube.com/watch?v=L_PPKyAsR3w">Foundations of Azure Cosmos DB with Dr. Leslie Lamport, long</a>レスリー ランポート先生のインタビュー、お勧めです。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref10" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id13">[10]</a></td><td><a class="reference external" href="https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract">How Amazon Web Services Uses Formal Methods</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id14">[10]</a></td><td><a class="reference external" href="https://cacm.acm.org/magazines/2015/4/184701-how-amazon-web-services-uses-formal-methods/abstract">How Amazon Web Services Uses Formal Methods</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref11" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id14">[11]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started">Getting started with Azure Cosmos DB: Table API</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id15">[11]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started">Getting started with Azure Cosmos DB: Table API</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref12" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id15">[12]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24">接続文字列の切替部分</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id16">[12]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/Program.cs#L24">接続文字列の切替部分</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref13" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id16">[13]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14">AppSettingsでの設定箇所</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id17">[13]</a></td><td><a class="reference external" href="https://github.com/Azure-Samples/azure-cosmos-db-table-dotnet-getting-started/blob/master/PremiumTableGetStarted/App.config#L14">AppSettingsでの設定箇所</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref14" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id20">[14]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/storage/storage-scalability-targets#a-namescalability-targets-for-blobs-queues-tables-and-filesablobキューテーブルおよびファイルのスケーラビリティ-ターゲット">Blob、キュー、テーブル、およびファイルのスケーラビリティ ターゲット</a>サンプルコードでは、IDでの読込が1 RU/秒程度、エンティティ作成が10 RU/秒程度を消費していた。それをベースに試算すると、読込はStandard Tableのストレージアカウントの10倍、書込は同等のスループットということになる。ここでは、Read/Write混合を想定して「上回る」という表現にした。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id21">[14]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/storage/storage-scalability-targets#a-namescalability-targets-for-blobs-queues-tables-and-filesablobキューテーブルおよびファイルのスケーラビリティ-ターゲット">Blob、キュー、テーブル、およびファイルのスケーラビリティ ターゲット</a>サンプルコードでは、IDでの読込が1 RU/秒程度、エンティティ作成が10 RU/秒程度を消費していた。それをベースに試算すると、読込はStandard Tableのストレージアカウントの10倍、書込は同等のスループットということになる。ここでは、Read/Write混合を想定して「上回る」という表現にした。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref15" rules="none">
@@ -584,8 +580,8 @@ At line:1 char:1
 </tbody>
 </table>
 </div>
-<div class="section" id="id28">
-<h1>その他の参考リンク</h1>
+<div class="section" id="id29">
+<h2>その他の参考リンク</h2>
 <ul class="simple">
 <li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/B8118">B8118 How to run massively scaling mobile games on Microsoft Azure</a></li>
 <li><a class="reference external" href="https://channel9.msdn.com/Events/Build/2017/P4011">P4011 Azure Cosmos DB: API for MongoDB</a></li>
@@ -604,36 +600,34 @@ At line:1 char:1
             <link>http://kyrt.in/2017/02/13/psenv_tabexpansion.html</link>
             <guid>http://kyrt.in/2017/02/13/psenv_tabexpansion.html</guid>
             <title><![CDATA[PsEnv への TabExpansion の実装]]></title>
-            <description><![CDATA[<div class="section" id="psenv-tabexpansion">
-<h1>PsEnv への TabExpansion の実装</h1>
+            <description><![CDATA[<h1>PsEnv への TabExpansion の実装</h1>
 <p>git-poshのコードを見ていたら、PowerShell 3.0 から導入された TabExtentionを使ってタブ補完を実装していた。<a class="footnote-reference" href="#r1" id="id1">[1]</a>仕組みはシンプルで便利な機能だったので、いつも使っているPsEnv<a class="footnote-reference" href="#r2" id="id2">[2]</a>に実装してみた。<a class="footnote-reference" href="#r3" id="id3">[3]</a>簡単なコードだが知らないテクニックが使われていて面白かったので軽く紹介。</p>
 <a class="reference external image-reference" href="https://flic.kr/p/tgGg8d"><img alt="Piccolo" class="align-center" src="https://c1.staticflickr.com/1/257/17899235534_5062afb52c_c.jpg"/></a>
-</div>
 <div class="section" id="tabextention">
-<h1>TabExtentionの基本</h1>
+<h2>TabExtentionの基本</h2>
 <p>「コマンドラインで、タブを押したときに Function:TabExtention が呼ばれ、コマンドラインと最後のワードが渡される、TabExtention の関数で文字列の配列を返すとコマンドラインでは補完文字列として扱われる」</p>
 <p>基本、これだけなので、非常にシンプルでわかり易い。<a class="footnote-reference" href="#r4" id="id4">[4]</a>git-poshのコードを見ながら実装してみたら、こんな感じになった。</p>
 <script src="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140.js">&amp;amp;nbsp;</script></div>
 <div class="section" id="id5">
-<h1>コード解説</h1>
+<h2>コード解説</h2>
 <p><a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L33">L33</a>で現在のTabExpansionの関数をリネームして保存しておく、補完処理が自分と関係無い場合は、このコードにフォールバックする。（関数名を変更できるのは知らなかった）コールバックチェーンの実装方法の一つらしい。TabExpansion は、Globalな名前空間にExportされてるが、TabExpansionBackup はExportされておらず、名前が衝突する心配は無い。タブが押されると、<a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L37">L37 TabExpansion</a>関数が呼ばれる。正規表現で引っ掛けて、補完処理対象のコマンドラインなら<cite>PsEnvTabExpansion</cite>へ、その他は<cite>TabExpansionBackup</cite>へフォールバックする。</p>
 <p><a class="reference external" href="https://gist.github.com/takekazuomi/c601e9ff055c83652269d65cdd0b3140#file-psenvtabexpansion-ps1-L19">L19 PsEnvTabExpansion</a>は、コマンドラインのラストブロックを貰って、正規表現で引っ掛けて対象の補完文字列を返す。switch と正規表現を使うとスッキリ書けて気持ちいい。</p>
 </div>
 <div class="section" id="dynamicparam">
-<h1>DynamicParamとの比較</h1>
+<h2>DynamicParamとの比較</h2>
 <p>TabExtention では、仕組みがコマンドライン文字列のパターンマッチングなので PowerShell Cmdlet 以外のWin32 EXE などの補完も実装できる。PsEnvはCmdletなので、DynamicParamでも良かったかなという気もするが、実装を比べると.NETのクラス出まくりのDynamicParamに比べTabExtentionは綺麗に書ける。しかし、TabExpansion はGlobalなキー入力をフックするので下手に作るとキー入力のレスポンスが悪くなるという欠点がある。どっちも、デバックし辛いのは欠点。</p>
 </div>
 <div class="section" id="psevn">
-<h1>PsEvnの紹介</h1>
+<h2>PsEvnの紹介</h2>
 <p>あまり知られていない気がするので、<a class="reference external" href="https://github.com/DuFace/PsEnv">PsEnv</a>の紹介を簡単に書いておく。Windowsでは環境変数の取り合いになって、うまく共存できない環境がママある。linuxや、Macだと、rubyや、pythonの仮想的に切り替える仕組みだけで足りたりするのだが、Windowsだと駄目だったり。cygwin, msys さらにそのバージョン違いでコンパイルされていたりして混ざって動かなくなったりすることがある。そのため、標準の環境変数はなるべくクリーンにしておいて環境によって必要な環境変数を設定するようにしている。PsEnvは環境変数を設定するのに便利なCmdletだ。</p>
 <p>使い方は、<a class="reference external" href="https://github.com/DuFace/PsEnv">PsEnv</a>を見てもらうとして、使ってる設定ファイル<a class="reference external" href="https://gist.github.com/takekazuomi/b6d8fd537e1a16adc62884b2f84d5e38">psenv.json</a>を参考までに上げておく。ゴミが多くて少々長い申し訳無い。</p>
 </div>
 <div class="section" id="id7">
-<h1>最後に</h1>
+<h2>最後に</h2>
 <p>これを書いている途中で、TabExtention++ が、PSReadlineと同時に WMF5の標準機能として取り込まれている<a class="footnote-reference" href="#r5" id="id8">[5]</a>のを知った。共存しても問題無いのだろうか。このあたり<a class="footnote-reference" href="#r6" id="id9">[6]</a>には、PowerTab（？）対応のコードが入ってるので余計気になる。</p>
 </div>
 <div class="section" id="id10">
-<h1>参考</h1>
+<h2>参考</h2>
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
@@ -726,7 +720,7 @@ At line:1 char:1
 <h1>最後に</h1>
 <p>これで、Azure 仮想マシンのDisk関連はだいぶ変わったことになるが、普通にリソースとしてディスクが使えるようになったので、全体的にはスッキリして分かりやすくなった。未だに、Azure PowerShellのManaged Disk 対応版 (3.5.0)が出てないのが気になるが、ブランチには<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/release-3.5.0/src/ResourceManager/Compute/ChangeLog.md#version-260">release-3.5.0</a>居るので、そのうち出てくるでしょう。</p>
 <p>ARM template でManaged Diskを操作するなら、<a class="reference external" href="https://github.com/chagarw/MDPP">https://github.com/chagarw/MDPP</a>を見るのがお勧めだ。ほとんどのパターンが網羅されている。</p>
-<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz...</p>
+<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz…</p>
 <div class="section" id="id4">
 <h2>追記 2017/2/10</h2>
 <p>PowerShellGallery には、3.5 が出ていると教えてもらいました。流石もっともHQに近い男と言われるしばやん。<a class="reference external" href="https://www.powershellgallery.com/packages/AzureRM/3.5.0">https://www.powershellgallery.com/packages/AzureRM/3.5.0</a></p>
@@ -1214,7 +1208,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <h2>最後に</h2>
 <p>最後に、「<a class="reference external" href="https://ngtnet.doorkeeper.jp/events/30553">Niigata.NET 2015-10</a>」を聞きながら、思ったことを少し書きます。</p>
 <p>プロジェクトで、最初にビルドとかnuget周りを揃えて置くのはとても良いと思います。msbuild 、nuget の闇に飲み込まれない範囲で華麗に捌いてくれる人が１人入ればイイデスネ。</p>
-<p>make -&gt; ant -&gt; nant -&gt; msbuild -&gt; maven ... と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。</p>
+<p>make -&gt; ant -&gt; nant -&gt; msbuild -&gt; maven … と使ってきたけど、小技を使い過ぎると分からなくなるのが問題で。ビルドファイルを、いろいろ弄っているうちに秘伝のタレ化して触れなくなりがちです。</p>
 <p>package manager は、dnxで改善されるはずなので、それに期待したいところ。install.ps1 とか必要になるとソウルジェムが濁ります。</p>
 <p>「MEF の、Core CLR 対応ってどうなっているの？」という話が出たので、帰ってきてちょっと見たら、ASP.NET 5 と Entity Framework 7 では、<a class="reference external" href="https://github.com/aspnet/DependencyInjection">Microsoft.Framework.DependencyInjection</a>ってやつが使われていました。聞いたことがあったような気もするけど、使ったこと無かったので少し試してみたら、どうも、container builder、setter injection などが無いようで、えらくシンプルな実装。でもまあ、これはこれで良いのかなという感じでした。</p>
 <p>「コードが”短く”書かれている」のが良いって話は、総論としては文句無いですが、その台詞を聞いた瞬間「linq がすべてを台無しにしてしまったなぁ」と思いました。基本的に短い方が何をしたいのかが理解し易いけど、それがメモリとCPUにどういう影響を与えるかは別問題で、アルゴリズム、遅延評価、linq 関数の実装を理解しないとコード見ただけでは短い方が良いかどうか分からないのが現状でしょう。結局いろいろ考えても分からないので、データを用意して流してプロファイラに掛けるしか無いという現実があります。</p>
@@ -1246,7 +1240,7 @@ failed to locate libcoreclr with error libunwind-x86_64.so.8: cannot open shared
 <table class="docutils footnote" frame="void" id="ref4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement">Microsoft Azure Storage Data Movement Library (0.1.0)</a><a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">nuget Microsoft Azure Storage Data Movement... 0.1.0</a></td></tr>
+<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/Azure/azure-storage-net-data-movement">Microsoft Azure Storage Data Movement Library (0.1.0)</a><a class="reference external" href="https://www.nuget.org/packages/Microsoft.Azure.Storage.DataMovement">nuget Microsoft Azure Storage Data Movement… 0.1.0</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref5" rules="none">
@@ -1404,7 +1398,7 @@ $ ./WADCustomLogDownloader -container diagnostics-custom-logs -d c:<span class="
 <li>ダウンロード済みのファイルがあればSkipする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L71">TransferContext.OverwriteCallback</a>で、ダウンロード先にファイルがあるかどうかを見ています。WADDirectoriesTable の中のFileTime、FileSize と比較して同じだったらスキップとしています。WADDirectoriesTable のデータを参照するために、_sourceFileDictionary を参照しているのがイマイチな気がします。OverwriteCallback に、オプションのobject とか渡せれば解決なのですが…</li>
 <li>MD5 Validation をOffにする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L83">DownloadOptions.DisableContentMD5Validation</a>WADのCustom log 転送を使って転送したBlobにはMD5Sumが付いていないので仕方ない。ここはOffです。WADDirectoriesTable の FileSize と同じかどうかを確認できるので大丈夫かな？と思いますが、選択できても良い気がします。MD5Sumの計算はコストが高いのでなるべく避けたい気持ちもわかりますが。</li>
 <li>TransferException をハンドルする：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L100">TransferException</a>ここでは、TransferErrorCode の TransferAlreadyExists、NotOverwriteExistingDestination を特別扱いしています。 TransferContext.OverwriteCallback で、false を返すと、NotOverwriteExistingDestination が帰ります。今回はすでにダウンロード済みの場合は、スキップしているのでエラーではありません。 TransferManager.DownloadAsync に、同じ source, dest のセットが追加されると TransferAlreadyExists が発生します。今回は、WADDirectoriesTable に残っている転送履歴からBlobを探しているので、複数回転送されると TransferAlreadyExists になります。これは、WAD の Custom Log転送をどう使うのかという話にも絡みますが、今回はスキップで扱います。<a class="footnote-reference" href="#r6" id="id11">[6]</a></li>
-<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ....</li>
+<li>ダウンロード後のファイルのタイムスタンプを合わせる：<a class="reference external" href="https://github.com/takekazuomi/WADCustomLogDownloader/blob/master/WADCustomLogDownloader/Program.cs#L124">File.SetLastWriteTimeUtc</a>ここは、見て通りです。よく見ると、余計なcaptureがあるし、cancel とかの場合の分岐が出来てませんね orz ….</li>
 </ol>
 <p>あとは、 CountdownEvent を使って、全部のTaskの終了を待ちます。ProgressHandler をフックすると、転送量とか転送ファイル数のステータスをもらえるのは便利です。</p>
 </div>
@@ -2206,7 +2200,7 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <div class="section" id="git-push">
 <h2>git push後の自動ビルド</h2>
-<p>標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive で、kudu.exeを起動します。kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
+<p>標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive<a class="footnote-reference" href="#r1" id="id2">[1]</a><a class="footnote-reference" href="#r7" id="id3">[7]</a>で、kudu.exe<a class="footnote-reference" href="#r2" id="id4">[2]</a>を起動します。kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。<a class="footnote-reference" href="#r3" id="id5">[3]</a>今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
 <p>まずは、Javaのアプリの準備をします。</p>
 <p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
 <p>ディレクトリ構成</p>
@@ -2314,56 +2308,58 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
 </div>
 <p>ただ一つだけ問題があります。最初に、WebSitesの作成したwebappsには、ROOTのディレクトリがあるのにROOT.warが無いので autoDeploy が上手く動作しません。どこかを修正してpushし直すか、ポータルから redeploy してください。問題があるのは初回だけで２回めからは前回upしたROOT.warがあるので無事自動展開されます。</p>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id6">
 <h2>最後に</h2>
-<p>kuduの仕組みが良く出来ていて特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました。ただ、<a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a>にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
-<p>下記のサイトを参考にしました</p>
+<p>kuduの仕組みが良く出来ていて<a class="footnote-reference" href="#r4" id="id7">[4]</a><a class="footnote-reference" href="#r5" id="id8">[5]</a><a class="footnote-reference" href="#r6" id="id9">[6]</a>特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました<a class="footnote-reference" href="#r8" id="id10">[8]</a>。ただ、<a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a>にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
+</div>
+<div class="section" id="id11">
+<h2>下記のサイトを参考にしました</h2>
 <table class="docutils footnote" frame="void" id="r1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><a class="reference external" href="http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Git のカスタマイズ - Git フック</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Git のカスタマイズ - Git フック</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[2]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs">kudu.exeは、Kudu.Console</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs">kudu.exeは、Kudu.Console</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r3" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[3]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Investigating-issues">SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Investigating-issues">SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[4]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs">Well Known Environment Variables</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs">Well Known Environment Variables</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r5" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[5]</td><td><a class="reference external" href="https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs">KuduSync のオプション</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id8">[5]</a></td><td><a class="reference external" href="https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs">KuduSync のオプション</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r6" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[6]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow">Deployment Logic Flow</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id9">[6]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow">Deployment Logic Flow</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r7" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[7]</td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-hooks">Deployment hooks</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[7]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-hooks">Deployment hooks</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="r8" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label">[8]</td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id10">[8]</a></td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -2885,7 +2881,7 @@ Date: Wed, 29 Jan 2014 09:04:42 GMT
 <table class="docutils footnote" frame="void" id="r2" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932">We escalated this internally ...</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/pull/17#issuecomment-31676932">We escalated this internally …</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -3244,7 +3240,7 @@ B2
 <h2>インストール</h2>
 <p>Web Platform Installer を使うと最新版が入ります。12/18 リリースのWindows Azure Poershell を選択してください。</p>
 <img alt="../../../_images/2013_12_22_webpi001.png" src="http://kyrt.in/_images/2013_12_22_webpi001.png"/>
-<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz....</p>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2 のママです orz….</p>
 <div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
 
 Name                                                        Version
@@ -3374,7 +3370,7 @@ PSReadline                                                  <span class="m">1</s
 </div>
 <div class="section" id="blobs">
 <h3>Blobs</h3>
-<p>ここでは、blob container を作成し、<cite>“some text</cite>” と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
+<p>ここでは、blob container を作成し、<cite>”some text</cite>” と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
 <div class="highlight-c++"><div class="highlight"><pre><span/><span class="c1">// Create a blob container</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_client</span> <span class="n">blob_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_blob_client</span><span class="p">();</span>
 <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_container</span> <span class="n">container</span> <span class="o">=</span> <span class="n">blob_client</span><span class="p">.</span><span class="n">get_container_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mycontainer"</span><span class="p">));</span>

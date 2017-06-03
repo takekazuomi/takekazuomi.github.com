@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page3.html" /><link rel="prev" title="Newer" href="index.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -76,6 +76,81 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>February 10, 2017</span>
+        </div>
+        <div class="section">
+            <div class="section" id="azure-managed-disk-ga">
+<h1><a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a></h1>
+<p>PowerShellが出ないので、とりあえず ARM Template を使った Managed Disk の操作方法を書く。</p>
+<p>そもそも、Managed Diskとは何かという話は、<a class="reference external" href="http://qiita.com/tsubasaxZZZ/items/7c0a15ce76d0b4d0b83f">Azure の Managed Disk のまとめ</a>に書いてあるので、そっちをどうぞ。</p>
+<p>ざっくりと言うと、今ままでは Storage Account を作成して、Page Blobを置いて仮想ディスクとしてマウントするというのがAzureのブロックデバイスの扱いだったが、Managed Disk では Storage Account を意識することなくブロックデバイス（仮想ディスク）をリソースとして使えるようになりましたという話。</p>
+<p>これでまた一つ普通になりましたという話で、Storage Accountとか、Page Blobとかを Azure 側で管理してくれる仕組みなので、Managed Disk（＝良さ気に管理されたディスク）と呼ばれている。従来のものは、ドキュメント上は Unmanaged Disk と呼ばれているようだ。いつものように、名前がベタすぎてかえってわかりづらい。</p>
+<a class="reference external image-reference" href="https://flic.kr/p/PSUTJy"><img alt="Dried persimmon" class="align-center" src="https://c1.staticflickr.com/6/5616/31424912752_f00605ae0f_c.jpg"/></a>
+</div>
+<div class="section" id="id1">
+<h1>改善点</h1>
+<p>いろいろあるのが、特に注目すべき改善点をいくつか上げる</p>
+<ol class="arabic simple">
+<li>仮想マシンのディスクリソースの定義の簡易化</li>
+<li>スナップショットの取得、仮想イメージの作成の容易性</li>
+<li>Storage Account の制限を意識する必要が無く。パフォーマンス設計が簡略化</li>
+<li>Storage Account KeyとPage BlobとしてのEndpointが無くなり運用設計が簡略化された</li>
+</ol>
+<p>今回は、仮想マシンのリソース定義がどれぐらい簡略化されたのか、スナップショット関連はどうかを見てみる</p>
+</div>
+<div class="section" id="id2">
+<h1>概要</h1>
+<p>従来の仮想マシンのリソース定義では、下記のように書いてた。<cite>storageProfile</cite>の<cite>imageReference</cite>には、元になるイメージの情報が、<cite>osDisk</cite>にはイメージから仮想ディスクを作成する旨とPage BlobのURLが定義される。<cite>storageProfile</cite>だけを引用するとこんな感じだ。</p>
+<script src="https://gist.github.com/takekazuomi/583f0a3fc74a90ddbddb9c4febafea3f.js?file=storageProfile.json">&amp;amp;nbsp;</script><p>このテンプレートでは、Page Blob を置くストレージアカウントを定義して使っている。</p>
+<p>Managed Disk では、StorageProfile の osDisk の部分を省略でき下記のようになる。osDisk の部分がざっくりと無くなった感じだ。</p>
+<script src="https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524.js?file=storageProfile.json">&amp;amp;nbsp;</script><p>このように省略した場合、暗黙のうちに Managed Disk リソースが作成され自動的に名前が付く。インスタンスがS付きの場合はPremium_LRS、それ以外はStandard_LRS、キャッシュはRead/WriteでDiskが作成される。DataDiskの場合はキャッシュのデフォルトはReadOnlyとなる。</p>
+<p>※<a class="reference external" href="https://gist.github.com/takekazuomi/915791900b1c35dc81c7bd9510ef2524#file-azuredeploy-json">managed disk の場合のdeploy template 全文</a></p>
+<p>省略した場合は、インスタンスのタイプでデフォルトが決まるが、ストレージの種別を指定したい場合、例えば、SでもStandard Storageを使う場合は、osDisk の managedDisk にstorageAccountTypeとして Standard_LRS を指定する。ストレージの定義も無くスッキリ書けるようになった。</p>
+<script src="https://gist.github.com/takekazuomi/d6bcdc2108bc8fc7b43f839042e24eea.js?file=osDisk.json">&amp;amp;nbsp;</script><p>Managed DiskはARMリソースになるので、Diskを定義して、仮想マシンにアタッチすることもできる。下記ではDataDiskをDiskリソースとして定義しVMへの接続している。</p>
+<script src="https://gist.github.com/takekazuomi/abf26310b979f7a1c3c47f1b0168a6e6.js?file=disks_vm.json">&amp;amp;nbsp;</script><p>スナップショットが簡単に取れるようになったので、スナップショットの取得、スナップショットからディスクの作成、仮想マシンの起動をテンプレートを使ってやってみた。</p>
+</div>
+<div class="section" id="snapshot">
+<h1>Snapshotを取る</h1>
+<p>このテンプレートでは、パラメータとしてDiskをもらって、<cite>Microsoft.Compute/snapshots</cite>のリソースを作成している。sourceUri の部分にソースとなるDiskのリソースIDを指定してスナップショットを作成するという流れだ。今回何度か実行した感じだと30GBのOsDiskのスナップショットで30秒程度という感じだった。基本仮想マシンを停止して取ることになると思うが、起動中でもスナップショットを取ることはできる。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=snapshot.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="snapshot-managed-disk">
+<h1>Snapshot からの Managed Diskの作成</h1>
+<p>スナップショットの名前とリソースグループ名をパラメータでもらって、Managed Diskを作成する。accountType でStandard、Premiumを指定することができる。これも、ソースとなるリソースは、sourceUri で指定する。これも30秒程度だった。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=createmd.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="managed-disk">
+<h1>Managed Diskで仮想マシンを起動</h1>
+<p>作成したOsDiskを使って、仮想マシンを起動する。これはちょっと長いので一部を引用する。イメージから起動するのと違って、<cite>osProfile</cite>と、<cite>storageProfile</cite>の<cite>imageReference</cite>が無い。既にあるDiskリソースを<cite>managedDisk</cite>の<cite>id</cite>で指定する。</p>
+<script src="https://gist.github.com/takekazuomi/2d0ae27c2d18fd8eca59b674f5f29c01.js?file=azuredeploy-explicit-osdisk-vm.json">&amp;amp;nbsp;</script></div>
+<div class="section" id="id3">
+<h1>最後に</h1>
+<p>これで、Azure 仮想マシンのDisk関連はだいぶ変わったことになるが、普通にリソースとしてディスクが使えるようになったので、全体的にはスッキリして分かりやすくなった。未だに、Azure PowerShellのManaged Disk 対応版 (3.5.0)が出てないのが気になるが、ブランチには<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/release-3.5.0/src/ResourceManager/Compute/ChangeLog.md#version-260">release-3.5.0</a>居るので、そのうち出てくるでしょう。</p>
+<p>ARM template でManaged Diskを操作するなら、<a class="reference external" href="https://github.com/chagarw/MDPP">https://github.com/chagarw/MDPP</a>を見るのがお勧めだ。ほとんどのパターンが網羅されている。</p>
+<p>※ このエントリのためにPRを書いた<a class="reference external" href="https://github.com/shomah4a/sphinx-gist-embed/pull/3">support gist file option</a>よく見たら同じようなのが2つも既に出ていた orz…</p>
+<div class="section" id="id4">
+<h2>追記 2017/2/10</h2>
+<p>PowerShellGallery には、3.5 が出ていると教えてもらいました。流石もっともHQに近い男と言われるしばやん。<a class="reference external" href="https://www.powershellgallery.com/packages/AzureRM/3.5.0">https://www.powershellgallery.com/packages/AzureRM/3.5.0</a></p>
+<blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">Managed Disk 対応の Azure PowerShell は Web PI にないだけ</p>— しばやん (@shibayan) <a href="https://twitter.com/shibayan/status/829962830744989697">February 10, 2017</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"/></div>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/manageddisk.html">ManagedDisk</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2017/02/10/managed_disk_1.html#disqus_thread" data-disqus-identifier="2017/02/10/managed_disk_1">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 03, 2016</span>
         </div>
         <div class="section">
@@ -213,116 +288,6 @@ DatasetAzureSqlDestination 2016/08/09 23:00:00
         
         <div class="comments">
             <a href="http://kyrt.in/2016/07/01/2016_mvp.html#disqus_thread" data-disqus-identifier="2016/07/01/2016_mvp">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>May 20, 2016</span>
-        </div>
-        <div class="section">
-            <h1><a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a></h1>
-<p>先日、5/18 に、<a class="reference external" href="https://jazug.doorkeeper.jp/events/44447">第1回Jazug Tokyo Night</a>で、Azure Fabric Service の Reliable Collection 話をしました。<a class="reference external" href="https://jazug.doorkeeper.jp/events/40440">Global Azure Boot Camp 2016 in Japan</a>でも話をしたのですが、1時間ぐらいだと概要も話し切れない感じでなかなか厳しい。4回ぐらいに分けても少し深いところ（そんなにDeepじゃないですが）をしたいなぁと思っていたところ、ちょうど良い機会が出来たので、早速時間を貰うことにしました。</p>
-<p>今回は、その時の補足です。まずは、その時の資料です。<strong>Lock compatibility matrixの部分を更新しました</strong></p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/ruN7VgUvtARNlv" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="www.slideshare.net/takekazuomi/azure-fabric-service-reliable-collection">Azure Fabric Service Reliable Collection</a></p>
-<p>勉強会の時に、下記の Lock compatibility matrix の赤枠の部分だけ、SQL Serverと違うという話をしました。「もしかしたら、ドキュメントが間違っているのかも」というようなことをその場では言いましたが、どきょメントが間違っているわけではなく、そこはSQL Serverと動きが違うとのことでした。そのあたりの話を説明します。（公式ドキュメントでは無いので、参考程度で）</p>
-<img alt="Lock compatibility matrix" class="align-center" src="_images/lock002.png"/>
-<div class="section" id="lock-compatibility-matrix">
-<h2>Lock compatibility matrix</h2>
-<p>Reliable Collectionは、書込に最適化されていおり、matxi の赤枠の部分が、G(U)/R(S)時の動きが SQL Server とは異なっています。また、Reliable Collection では、update lockの期間は短くほとんどの場合、exclusive に昇格して終わることを前提としています。設計思想が違うという話のようです。</p>
-<p>下図のような場合で動作を説明します。</p>
-<img alt="tnx and lock" class="align-center" src="_images/lock001.png"/>
-<ul class="simple">
-<li>上が、Reliable Collection,下がSQL Server</li>
-<li>横軸が時間で、それぞれ、２つのtransactionがある</li>
-<li>黄色線が、tnxid 2 が、shard lock を要求したタイミング</li>
-</ul>
-<p>TxnId1が、update lockを掛けている時、TxnId2がShard Lockを要求した場合(垂直黄線)、Reliable CollectionではUpdate Lock が、Exclusive Lock になって更新が終わりlockが開放されるまでshard lockは待機します。それに対して、SQL Serverでは、即時にshard lockは成功します。全てのshard lockが開放されてから、exclusive lock -&gt;更新という処理に流れになります。この違いはなかなか面白いですね。</p>
-</div>
-<div class="section" id="id1">
-<h2>参考</h2>
-<p>SQL Server の<a class="reference external" href="https://technet.microsoft.com/ja-jp/library/ms186396(v=sql.105).aspx">ロックの互換性 (データベース エンジン)</a></p>
-</div>
-<div class="section" id="id3">
-<h2>最後に</h2>
-<p>Reliable Collection は結構手堅くしっかり作っている感じを受けます。この手のものがあると、<strong>Data Locality</strong>を健全に保てるのでレイテンシー上は非常に有利になります、いいですね。</p>
-<p>「上記２つに更に .NET の ReaderWriterLockSlim と、Jeffrey Richter の OneManyLock を入れて、永続化の有無がどう影響するのか考察したら面白いのかな？」と一瞬思ったのですが、今回はこの辺で。勉強会の前に明確にしておけば良かったのですが、ちょっと見逃してました。でも、SQL Serverと違って、lock やwait の状態が見えないのがちょっと不便ですね。これだと、ラッシュテストしないとデッドロックとかわからないです。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/service_fabric.html">Service Fabric</a></span>
-        </div>
-        
-        <div class="comments">
-            <a href="http://kyrt.in/2016/05/20/reliable_collection_lock.html#disqus_thread" data-disqus-identifier="2016/05/20/reliable_collection_lock">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>April 04, 2016</span>
-        </div>
-        <div class="section">
-            <h1><a href="2016/04/04/build_2016_azure_cool_storage.html">BUILD/2016 Azure Cool Storage</a></h1>
-<p>BUILD 2016<a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a>で<strong>Cool Storage</strong>という、とても興味深い新機能が発表されていました。<a class="reference external" href="https://blogs.msdn.microsoft.com/windowsazurestorage/2016/03/31/cross-post-build-2016-azure-storage-announcements/">Build 2016: Azure Storage announcements</a>に入ってなくて、見落としそうになります…</p>
-<a class="reference internal image-reference" href="_images/m001.PNG"><img alt="Cool Storage" class="align-center" src="_images/m001.PNG" style="width: 800px;"/></a>
-<p><strong>Cool Storage</strong>は、アクセス頻度の低いデータを安価に保存するための新機能で、Block Blob でサポートされます。</p>
-<p>これで、Block Blob は、２の tier に別れます。</p>
-<ol class="arabic simple">
-<li>Hot - 通常利用のデータ向け (従来のBlob）</li>
-<li>Cool - あまりアクセスしないデータ向け （あたらしいやつ）</li>
-</ol>
-<div class="section" id="id1">
-<h2>概要</h2>
-<ul class="simple">
-<li>APIは、100% 互換で、同様のスループットとレイテンシーを実現（Coolでも性能が同じなのは設計しやすくなるので有り難いことです）</li>
-<li>LRS, GRS, RA-GRSの信頼性オプションを提供（ 同じですね）</li>
-<li>可用性は、Coolが 99% で、Hot が 99.9%（ちょっと、Coolが低くなります）</li>
-</ul>
-</div>
-<div class="section" id="id2">
-<h2>お値段関係</h2>
-<p>Hotは、頻繁に使った場合に費用が抑えられ、Coolは、容量が大きい場合に安くなるという価格体系で構成されるようです。話の中ではちょっとはっきりしませんでしたが、トランザクションコストやデータ転送コストで差を付けるという感じなのかもしれません。</p>
-<p>HotからCoolへの切替もできるようなので、履歴系のデータを保存するにはとても便利な気がします。next few weeks で、public preview に入るそうです。楽しみですね。</p>
-<p>この話は、動画では、33分、パワポの資料では、30p 当たりで話が出来てますので、興味のある方はぜひ、chanel 9 をご覧ください。<a class="footnote-reference" href="#r1" id="id3">[1]</a></p>
-</div>
-<div class="section" id="id4">
-<h2>最後に</h2>
-<p>どうも、AWS の S3 Standard-IA とか、Google Nearline あたりと同じような領域をカバーするサービスのようです。S3 Standard-IA は、Google Nearline とは違って、レスポンスタイムが通常のBlob並ってところは良い感じです。価格の詳しい条件がわからないので、現時点でS3との比較は難しいですが、Cool Storageは、Hot/Coolの切替がアカウント単離っぽいので、実データのコピーは必要無さそうで、そのあたりで差がでてくるのでは無いかと言う気がします。</p>
-<p>今回の、BUILDでは、 Server Siide Encription<a class="footnote-reference" href="#r2" id="id5">[2]</a>も発表されて、Storage Team に活気を感じました。これからが、楽しみです。</p>
-</div>
-<div class="section" id="id6">
-<h2>参考</h2>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2016/B816">BUILD  2016/B816 Learn How to Store and Serve PBs of Object Data with Azure Block Blobs</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td><a class="reference external" href="https://azure.microsoft.com/en-us/documentation/articles/storage-service-encryption/">Azure Storage Service Encryption for Data at Rest (Preview)</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/storage.html">Storage</a>, <a href="categories/azure_blob.html">Azure Blob</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/cool_storage.html">Cool Storage</a>, <a href="tags/build2016.html">BUILD2016</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2016/04/04/build_2016_azure_cool_storage.html#disqus_thread" data-disqus-identifier="2016/04/04/build_2016_azure_cool_storage">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">

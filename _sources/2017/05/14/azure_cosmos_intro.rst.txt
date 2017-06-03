@@ -1,5 +1,6 @@
-Azure Cosmos DB がやってきた
-============================
+==============================
+ Azure Cosmos DB がやってきた
+==============================
 
 DocumentDB の記事を書いていたら [#ref15]_ 、//Build 2017で、Azure Cosmos DB が発
 表 [#ref1]_ された。 Cosmos DBは、Multi-model database and multi-API
@@ -66,11 +67,7 @@ Portal。「最近ポータルが速くなってきてるのはエンドポイ�
 際のところはどうなっているかはわからないが。なかなか興味深い。
 
 あと **A technical overview of Azure Cosmos DB** [#ref8]_ に、Leslie Lamport 博士が出てきて、Cosmos DBの一貫性の設計、実装にTLA+ [#ref9]_
-のCosmosでの活用の話をしていたのが興味深かった。
-
-.. raw:: html
-
-   <iframe width="100%" height="315" src="https://www.youtube.com/embed/Yfmw7swCtZs" frameborder="0" allowfullscreen></iframe>
+のCosmosでの活用の話をしていたのが興味深かった。 [#ref9]_
 
 「正しく動く分散システムを作るのはなかなか難しい、そんな中で形式手法が有効だ。Cosmos DBは設計、実装で、TLA+が複数の一貫性のサポートやSLAの提供に貢献した」的なことを言っている（超訳過ぎるので原文参照）。AWSでは、2011年からFormal Methodsを使って、重要な分散システムのアルゴリズム設計を行っている [#ref10]_ と話題になったが、
 MSが分散システムの設計に使っている公言したのは初めてな気がする。利用者

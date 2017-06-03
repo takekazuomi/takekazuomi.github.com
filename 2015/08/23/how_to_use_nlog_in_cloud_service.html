@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="tinker 1.5 + sphinx 1.3.1 に updateしました" href="../../05/05/update_tinker_1_5_sphinx_1_3.html" /><link rel="prev" title="Go (5) JAZUG で Service Fabric の話をします" href="../../09/01/go_5_jazug_service_fabric_session.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -128,7 +128,7 @@
 </div>
 <div class="section" id="id3">
 <h2>2. ローカルストレージのパスはデプロイ毎に変わる</h2>
-<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer &#8220;${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
+<p>これで、ローカルストレージ LogStorage へログを書けばカスタムログ転送でBlobへ送られます。しかし、Cloud Service だと起動するまでローカルストレージがわかりません。また、デプロイ毎に異なったディレクトリを割り当てられます。WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、<a class="reference external" href="https://github.com/NLog/NLog/wiki/Environment-layout-renderer">Environment layout renderer</a>を使ってパスを展開するという技も使えます。しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer “${azure-local-resource}<a class="reference external" href="https://www.nuget.org/packages/NLog.Azure/">NLog.Azure</a>を書きました。（名前がおおざっぱ過ぎたかもしれません）</p>
 <p>バイナリがNuGetに上げてあるので、インストールはここからします。微妙な気もするので、まだpreviewにしてあります。</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>$ Install-Package NLog.Azure -Pre
 </pre></div>

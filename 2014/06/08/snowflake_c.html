@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="FiddlerCoreでRead-Access Geo Redundant Storage を検証する" href="../../03/02/read_access_geo_redundant_storage.html" /><link rel="prev" title="WebSites で、Java + gradle + git を使う" href="../09/websites_gradle_git.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.5.1',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -114,7 +114,7 @@
 </div>
 <div class="section" id="id3">
 <h2>採番のユニーク性</h2>
-<p>採番と考えると最低限の要求は 「一意であること UNIQUENESS」でしょう。これには、発番した時にユニーク性を担保するか、永続化したときにユニーク性を担保するかの２つの選択肢があります。採番した時に一意性を担保するパターンとしては、<a class="reference external" href="http://ja.wikipedia.org/wiki/GUID">GUID</a>を使う方法よく知られています。ここでは、Guidを使う方法については深くふれません、<a class="reference external" href="http://blogs.msdn.com/b/oldnewthing/archive/2008/06/27/8659071.aspx">GUIDs are globally unique, but substrings of GUIDs aren&#8217;t</a>で面白い話が書いてあるんのでぜひ読んでみてください。（中には Snowflakeへのヒントになることも記述されています）</p>
+<p>採番と考えると最低限の要求は 「一意であること UNIQUENESS」でしょう。これには、発番した時にユニーク性を担保するか、永続化したときにユニーク性を担保するかの２つの選択肢があります。採番した時に一意性を担保するパターンとしては、<a class="reference external" href="http://ja.wikipedia.org/wiki/GUID">GUID</a>を使う方法よく知られています。ここでは、Guidを使う方法については深くふれません、<a class="reference external" href="http://blogs.msdn.com/b/oldnewthing/archive/2008/06/27/8659071.aspx">GUIDs are globally unique, but substrings of GUIDs aren’t</a>で面白い話が書いてあるんのでぜひ読んでみてください。（中には Snowflakeへのヒントになることも記述されています）</p>
 <p>GUIDは非常に手軽で便利ですが、128bit(longlong)でかなり長い。時系列で並ばないなどの問題があります。</p>
 </div>
 <div class="section" id="id4">
