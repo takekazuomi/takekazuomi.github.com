@@ -2,7 +2,7 @@
 Cloud Service で NLog を使う
 ==============================
 
-先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので、ローカルストレージの定義を、NLogの設定ファイルに書けるようにした layout renderer ${azure-local-resource} `NLog.Azure <https://www.nuget.org/packages/NLog.Azure/>`_ を作ってみました。
+先日故合ってNLogのコードを見てたら、Cloud Service のカスタムログ転送で面倒なところが簡単に改善できそうだったので、ローカルストレージの定義を、NLogの設定ファイルに書けるようにした ``layout renderer ${azure-local-resource}`` `NLog.Azure <https://www.nuget.org/packages/NLog.Azure/>`_ を作ってみました。
 
 
 .. image:: https://farm1.staticflickr.com/395/19430236414_f9c9e427fd_c.jpg
@@ -54,7 +54,7 @@ Cloud Service で NLog を使う
 WorkerRoleでは、csdef でローカルストレージのパスを環境変数に入れておいて、NLog.config の中で、 `Environment layout renderer <https://github.com/NLog/NLog/wiki/Environment-layout-renderer>`_ を使ってパスを展開するという技も使えます。
 しかしWebRoleがFull IISになって以来、csdefが解釈実行されるプロセスとアプリケーションが動くプロセスが別になったので、ローカルストレージのパスを環境変数に入れて、configに渡すという技が使えなくなりました。（WebRoleがFull IIS になったのは、はるか昔のAzure SDK 1.3のことですが）
 基本的には、Microsoft.WindowsAzure.ServiceRuntime の RoleEnviromentからローカルストレージのパスを取得するのですが、そのためにはNLogの設定をコードでコニョゴニョしないといけません。
-そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、layout renderer "${azure-local-resource} `NLog.Azure <https://www.nuget.org/packages/NLog.Azure/>`_ を書きました。（名前がおおざっぱ過ぎたかもしれません）
+そこで、NLog の設定ファイルにローカルストレージのパスを展開できるような、 ``layout renderer "${azure-local-resource}`` `NLog.Azure <https://www.nuget.org/packages/NLog.Azure/>`_ を書きました。（名前がおおざっぱ過ぎたかもしれません）
 
 バイナリがNuGetに上げてあるので、インストールはここからします。微妙な気もするので、まだpreviewにしてあります。
 
@@ -81,10 +81,10 @@ NLogは結構素直な出来で、ここまではすっきり、さくっとで�
 ======
 実は、Microsoft.WindowsAzure.ServiceRuntime.dll には、再配布可能では無いという大きな問題があります。これはどういうことかというと、プロジェクトでServiceRuntime.dllを参照している場合、必ず Azure SDK を入れないと開発/実行できないということです。
 Storageなどのライブラリは、Azure SDK無しでもNuGet から落としてきたのだけで動くのに、ASP.NETの普通のプロジェクトとして作っていてもServiceRuntime に依存した瞬間にAzure SDKが必要です。NuGetからも入らないのでなかなか **メンドクサイ** ことになります。
-今回の ${azure-local-resource} layout renderer も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに **意味が無い** 、単純なASP.NETのアプリはそのままでに動くようにしておきたいのに。
+今回の ``${azure-local-resource} layout renderer`` も、ServiceRuntimeを参照してしまうと、Azure SDK の入ってない環境ではアセンブリのロードでエラーになってしまいます。せっかく、defaultパラメータとか作ったのに **意味が無い** 、単純なASP.NETのアプリはそのままでに動くようにしておきたいのに。
 
 こんなとき、.NET では、アセンブリを直接参照しないで自前でロードしてリフレクションで関数を呼び出すという方法があります。今回はServiceRuntimeのアセンブリはGACに登録されているけど物理パスがわからない！、さて困った。そんなときは Fusion API でGACから探し出すのが上等手段です。 [#r1]_  常套手段と言っても普通に暮らしてるとあまり出番ないですが。
-Fusion (Unmanaged API Reference) [#r2]_ は、GACに登録されているアセンブリを操作する Unmanaged API です、昔はドキュメント無かった気がしますが今は普通に書いてありますね。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、 `GetAssemblyPath() <https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19>`_ のあたり。
+Fusion (Unmanaged API Reference) [#r2]_ は、GACに登録されているアセンブリを操作する Unmanaged API です、昔はドキュメント無かった気がしますが今は普通に書いてありますね。今回は、GACからアセンブリを探してパスを所得するのだけに使います。CreateAssemblyCache() を呼んで AssemblyInfo を取得し、AssemblyInfo を読むだけです簡単ですね。 コード的には、 `GetAssemblyPath() <https://github.com/takekazuomi/NLog.Azure/blob/master/NLog.Azure/FusionAPI.cs#L19-L33>`_ のあたり。
 あとは、リフレクションを駆使して、RoleEnvironment.IsAvailable とか、LocalResource.RootPath を呼んでいますが、ここはコード生成するべきかもしれません。 やっていることは簡単なのに **メンドクサイ**
 
 
