@@ -35,7 +35,7 @@ About kyrt inc.
 ====
 * `過去公開資料 Slide Share <http://www.slideshare.net/takekazuomi/>`_
 
-* `2017 Global Azure Bootcamp 2017@Tokyo DocumentDB Deep Dive < https://www.slideshare.net/takekazuomi/documentdb-deep-drive >`_
+* `2017 Global Azure Bootcamp 2017@Tokyo DocumentDB Deep Dive <https://www.slideshare.net/takekazuomi/documentdb-deep-drive>`_
 
 * .NET Fringe 2016 日本初のオルタナティブ.NET イベント 開催、登壇
   * `Azure Storageにおけるパーテーショニングの詳細と実装 <http://www.slideshare.net/takekazuomi/azure-storage-partition-internals>`_
