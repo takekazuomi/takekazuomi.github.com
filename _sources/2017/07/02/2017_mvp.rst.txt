@@ -1,0 +1,20 @@
+2017 Microsoft MVP Award を受賞しました
+=======================================
+
+2017年7月期、Microsoft Azure のカテゴリで、Microsoft MVP Award を受賞しました。
+
+今年は、Cosmos DBの年ですね、楽しみな年になりそうです。
+
+これからも、よろしくお願いいたします。
+
+.. image:: https://farm1.staticflickr.com/517/19156699324_42857a33b9_c.jpg
+   :target: https://flic.kr/p/vbP6io
+   :alt: Stone
+   :align: center
+
+|
+
+.. author:: default
+.. categories:: MVP
+.. tags:: none
+.. comments::
