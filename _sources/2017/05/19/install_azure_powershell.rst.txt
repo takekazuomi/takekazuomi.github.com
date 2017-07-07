@@ -14,9 +14,7 @@ https://developercommunity.visualstudio.com/solutions/67232/view.html
  | To work around the issue please install the latest Azure PowerShell MSI from GitHub.
  | https://github.com/Azure/azure-powershell/releases
 
-VS 2017を入れている場合は、とりあえず MSI経由のインストールをして欲しい、最新版は、GitHubのリリースページにあるよ。
-
-色々あるけど、当面はMSIで入れるのが良さそうです。
+「VS 2017を入れている場合は、とりあえず MSI経由のインストールをして欲しい、最新版は、GitHubのリリースページにあるよ」ということで、色々あるけど当面はMSIで入れましょう。
 
 **2017/5/19、Azure PowerShell 4.0.1 時点の情報です**
 
@@ -29,7 +27,7 @@ VS 2017を入れている場合は、とりあえず MSI経由のインストー
 
 推薦されるインストール方法
 ==========================
-以前は、WebPI経由でAzure PowerShellをインストールしていたが、現在では PowerShell Gallery 経由のインストールが推薦だ。
+以前は、WebPI経由でAzure PowerShellをインストールしていたが、現在では PowerShell Gallery 経由のインストールが推薦になっている。
 公式ドキュメント、 `Install and configure Azure PowerShell <https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps>`_ にも、下記のように書かれている。（ちょっと翻訳が追いついていないようで、サイトは英語のまま）
 
  Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.
