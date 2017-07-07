@@ -49,7 +49,7 @@ sequence が入る」 [#ref1]_
 （sequenceの要素にsequenceを含む）、動的型付け言語 [#ref2]_ からのネイ
 ティブアクセスの経路を持つということだ。
 
-
+Schema-agnostic database engine
 
 
 
@@ -58,6 +58,10 @@ sequence が入る」 [#ref1]_
 
 .. [#ref1] A Multi-Model, Multi-API Database Service の付近 `A technical overview of Azure Cosmos DB <https://azure.microsoft.com/en-us/blog/a-technical-overview-of-azure-cosmos-db/>`_
 .. [#ref2] `Running JavaScript in Azure DocumentDB with Chakra <https://azure.microsoft.com/en-us/blog/the-road-ahead-for-azure-documentdb-with-chakracore/>`_
+
+
+
+`Schema Agnostic Indexing with Azure DocumentDB <https://www.slideshare.net/dharmas1>`_
 
 
 .. author:: default
