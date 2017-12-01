@@ -1,12 +1,19 @@
-複数Subscriptionへの同時デプロイ
-================================
+複数Subscriptionへのデプロイ
+============================
 
 この記事は `Microsoft Azure Advent Calendar 2017 <https://qiita.com/advent-calendar/2017/azure>`_  の2日目の記事です。
 
 ちょっと便利な、ARM template の小技を紹介します。
-以前から、１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが [#ref1]_ 。さらに、 ``Microsoft.Resources/deployments`` の ``API Version: 2017-05-10`` からは、別のサブスクリプションへもデプロイできるようになりました。
 
-リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template( ``Microsoft.Resources/deployments`` ) を使います。 ``Microsoft.Resources/deployments`` の、subscriptionId プロパティに指定したサブスクリプションにnested templateで定義されたリソースが展開されるのです、簡単ですね。
+以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが [#ref1]_ 。さらに、 ``Microsoft.Resources/deployments`` の ``API Version: 2017-05-10`` から、別のサブスクリプションへもデプロイできるようになりました。
+
+リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template( ``Microsoft.Resources/deployments`` ) を使います。 deployments リソースにsubscriptionId プロパティが追加され、そこに指定したサブスクリプションにnested templateで定義したリソースが展開されるってわけです、簡単ですね。
+
+.. raw:: html
+
+   <a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+
+
 
 ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。 [#ref2]_ テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。
 
@@ -15,9 +22,9 @@
    <script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"></script>
 
 
-これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイするとストレージアカウント(東日本)を作成し、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）を作成します。
+これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイします。そうするとストレージアカウント(東日本)が作成され、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）も作成されます。
 
-まずは、サブスクリプションを切替ながら、リソースグループを両側に用意します。
+実行には事前に、リソースグループが必要です。サブスクリプションを切替ながら、リソースグループを両側に用意します。
 
 .. code:: posh
 

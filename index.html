@@ -79,13 +79,14 @@
             <span>December 02, 2017</span>
         </div>
         <div class="section">
-            <h1><a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへの同時デプロイ</a></h1>
+            <h1><a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a></h1>
 <p>この記事は<a class="reference external" href="https://qiita.com/advent-calendar/2017/azure">Microsoft Azure Advent Calendar 2017</a>の2日目の記事です。</p>
-<p>ちょっと便利な、ARM template の小技を紹介します。以前から、１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>からは、別のサブスクリプションへもデプロイできるようになりました。</p>
-<p>リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template(<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>) を使います。<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の、subscriptionId プロパティに指定したサブスクリプションにnested templateで定義されたリソースが展開されるのです、簡単ですね。</p>
-<p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref2" id="id2">[2]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
-<script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"/><p>これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイするとストレージアカウント(東日本)を作成し、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）を作成します。</p>
-<p>まずは、サブスクリプションを切替ながら、リソースグループを両側に用意します。</p>
+<p>ちょっと便利な、ARM template の小技を紹介します。</p>
+<p>以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>から、別のサブスクリプションへもデプロイできるようになりました。</p>
+<p>リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template(<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>) を使います。 deployments リソースにsubscriptionId プロパティが追加され、そこに指定したサブスクリプションにnested templateで定義したリソースが展開されるってわけです、簡単ですね。</p>
+<a data-flickr-embed="true" href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"/></a><script async="" src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"/><p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref2" id="id2">[2]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
+<script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"/><p>これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイします。そうするとストレージアカウント(東日本)が作成され、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）も作成されます。</p>
+<p>実行には事前に、リソースグループが必要です。サブスクリプションを切替ながら、リソースグループを両側に用意します。</p>
 <div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
 $ New-AzureRmResourceGroup -Name LocalRG -Location japaneast
 
@@ -456,7 +457,7 @@ At line:1 char:1
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
-            <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへの同時デプロイ</a>
+            <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
         </li><li>
