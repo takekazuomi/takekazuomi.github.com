@@ -1,0 +1,211 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>複数Subscriptionへの同時デプロイ &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="2017 Microsoft MVP Award を受賞しました" href="../../07/02/2017_mvp.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="複数Subscriptionへの同時デプロイ &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/2017/12/02/cross_subscription_deployment.html" />
+<meta name="twitter:image" content="http://kyrt.in/_static/kyrt_logo4sq.png" />
+
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+        </li>
+        </ul>
+      <ul>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li>
+        <li class="mvp-nav">
+	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>December 02, 2017</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="subscription">
+<h1>複数Subscriptionへの同時デプロイ</h1>
+<p>この記事は<a class="reference external" href="https://qiita.com/advent-calendar/2017/azure">Microsoft Azure Advent Calendar 2017</a>の2日目の記事です。</p>
+<p>ちょっと便利な、ARM template の小技を紹介します。以前から、１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>からは、別のサブスクリプションへもデプロイできるようになりました。</p>
+<p>リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template(<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>) を使います。<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の、subscriptionId プロパティに指定したサブスクリプションにnested templateで定義されたリソースが展開されるのです、簡単ですね。</p>
+<p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref2" id="id2">[2]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
+<script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"></script><p>これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイするとストレージアカウント(東日本)を作成し、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）を作成します。</p>
+<p>まずは、サブスクリプションを切替ながら、リソースグループを両側に用意します。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span></span>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+$ New-AzureRmResourceGroup -Name LocalRG -Location japaneast
+
+$ Select-AzureRmSubscription -SubscriptionId ff05d8ad-12ee-4c68-97bb-78baefa1c01a
+$ New-AzureRmResourceGroup -Name RemoteRG -Location japanwest
+</pre></div>
+</div>
+<p>これでリソースグループが出来たので、local subscription を選択し直して、前記のテンプレートをデプロイします。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span></span>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+$ New-AzureRmResourceGroupDeployment -TemplateFile .\deploystorage.json `
+       -StorageAccountName kyrtlocal01 `
+       -ResourceGroupName LocalRG `
+       -RemoteResourceGroup RemoteRG `
+       -RemoteSubscriptionId ff05d8ad-12ee-4c68-97bb-78baefa1c01a `
+       -RemoteStorageAccountName kyrtremote01
+</pre></div>
+</div>
+<p>思った通りに出来ているか確認しましょう。</p>
+<div class="code posh highlight-default"><div class="highlight"><pre><span></span>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+$ Get-AzureRmStorageAccount -ResourceGroupName RemoteRG | fl ResourceGroupName,Id, Location
+
+ResourceGroupName : localrg
+Id                : /subscriptions/08.../resourceGroups/localrg/providers/Microsoft.Storage/storageAccounts/kyrtlocal01
+Location          : japaneast
+
+
+$ Select-AzureRmSubscription -SubscriptionId ff05d8ad-12ee-4c68-97bb-78baefa1c01a
+$ Get-AzureRmStorageAccount -ResourceGroupName RemoteRG | fl ResourceGroupName,Id, Location
+
+ResourceGroupName : remoterg
+Id                : /subscriptions/ff.../resourceGroups/remoterg/providers/Microsoft.Storage/storageAccounts/kyrtremote01
+Location          : japanwest
+</pre></div>
+</div>
+<p>ストレージアカウントが２つ作成され、それぞれ別のサブスクリプションに東日本と西日本に配置されているのが確認できました。複数サブスクリプションへの配置が必要なケースはあまり無い気もしますが、なかなか面白いですね。</p>
+<div class="section" id="id3">
+<h2>注意</h2>
+<p>テンプレートの、<a class="reference external" href="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38">38行目</a>で、location を西日本を直接指定しています。 ここを、<span class="docutils literal"><span class="pre">location&quot;:</span> <span class="pre">&quot;[resourceGroup().location]</span></span>としたら、locationが東日本になってしました。<span class="docutils literal"><span class="pre">resourceGroup()</span></span>は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。</p>
+</div>
+<div class="section" id="id5">
+<h2>参照</h2>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><cite>複数のリソース グループに Azure リソースをデプロイする &lt;https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-cross-resource-group-deployment&gt;</cite></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>完全なテンプレート<cite>deploystorage.json &lt;https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json&gt;</cite></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2017/12/02/cross_subscription_deployment";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2017/12/02/cross_subscription_deployment";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="#">複数Subscriptionへの同時デプロイ</a>
+        </li><li>
+            <a href="../../07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
+        </li><li>
+            <a href="../../06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
+        </li><li>
+            <a href="../../05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a>
+        </li><li>
+            <a href="../../05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
+        </li><li>
+            <a href="../../02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
+        </li><li>
+            <a href="../../02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
+        </li><li>
+            <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
+        </li><li>
+            <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
+        </li><li>
+            <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/azure.html">Azure</a> (35)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (3)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/posh.html">Posh</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (3)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

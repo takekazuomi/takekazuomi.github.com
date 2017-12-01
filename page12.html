@@ -76,6 +76,56 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>November 24, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/11/24/windows_azure_tables_breaking_changes_2013_11.html">Windows Azure Tables の Breaking Changes 2013/11</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/11/29 以下の内容は正式な日本語訳が出ています <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/11/29/blog-windows-azure-tables-breaking-changes.aspx">Windows Azure テーブルにおける重大な（互換性のない）変更</a></div>
+</div>
+</div></blockquote>
+<p>Azure Storage Team より、Windows Azure Table のJSONサポート準備のため Table の response が一部変更されている旨アナウンスされました。基本的に、HTTP、AtomPubの規格内の変更で互換性を保てるように最大限の努力をしているということですが、自前のカスタムパーサーを書いている場合などは問題になるかもしれません。</p>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/23/windows-azure-storage-breaking-changes-for-windows-azure-tables-november-2013.aspx">Windows Azure Tables Breaking Changes (November 2013)</a>から変更点を紹介します。</p>
+<div class="section" id="id1">
+<h2>変更点</h2>
+<ol class="arabic simple">
+<li>新しいリリースでは、AtomPub response は、XML要素の間に改行、空白がありません。</li>
+<li>AtomPub XML Responce内のXML element（title、idなど）は、順番が変更される場合があります。</li>
+<li>HTTP HeaderのContent-Typeに”type” placeholder が追加されました。例えば, query の response (point query以外) は、content type に charset と application/atom+xmlに、<cite>type=feed</cite>が追加されます変更前: Content-Type: application/atom+xml;charset=utf-8変更後: Content-Type: application/atom+xml;type=feed;charset=utf-8</li>
+<li>MIME type のセキュリティ リスクの削減のための新しいresponse header<cite>X-Content-Type-Options: nosniff</cite>が返されます。参照：<a class="reference external" href="http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/ie/gg622941(v=vs.85).aspx</a></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>感想等</h2>
+<ul class="simple">
+<li>手元のアカウントで確認してみたら既に上記の通りに変更されていました。事前に予告が欲しいです。</li>
+<li>改行、空白が無くなった件は、今までのは、「XMLが element毎に改行されインデントされてるようなフォーマットで人が読むわけではないのに転送データ量が増えてMOTTAINAI」と思ってたので妥当な変更な気がします。これは、普通のXML parsersを通していれば問題になることは無さそうですし。</li>
+<li>XML element の順番の件は引っかかるとちょっと面倒ですが、元々AtomPubの仕様に沿ったものなので無茶な話ではないと思います。</li>
+<li>AtomPub内のXML elementの順番に関しては、<a class="reference external" href="http://www.futomi.com/lecture/japanese/rfc4287.html#s4_1_1">RFC 4287 The Atom Syndication Format 日本語訳</a>が参考になります。feedの中のelementはどんな順番で出てきても良いことになっていますね。</li>
+<li>HTTP ヘッダーの変更は、ここまでパースしていることがあまり無いような気がするので、「影響はあまり無いのかな」という気がします。</li>
+</ul>
+<p>json対応に向けて着々と進んでいるのは、とても嬉しいです。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/translate_selected_passages.html">Translate Selected Passages</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/11/24/windows_azure_tables_breaking_changes_2013_11.html#disqus_thread" data-disqus-identifier="2013/11/24/windows_azure_tables_breaking_changes_2013_11">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>October 17, 2013</span>
         </div>
         <div class="section">
@@ -489,327 +539,6 @@ java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2012/12/26/asc2_dot_0asyncbug.html#disqus_thread" data-disqus-identifier="2012/12/26/asc2_dot_0asyncbug">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 22, 2012</span>
-        </div>
-        <div class="section">
-            <h1><a href="2012/12/22/azurevmfix1221.html">Azure Virtual MachineのDISK性能</a></h1>
-<p>twitterで、「<a class="reference external" href="https://twitter.com/kamebuchi/status/282094138269261825">Azure VMのLinuxを21日以降作るか、更新手順を実施するとパフォーマンスが改善されるらしー</a>」というのを読んで、以前DISK性能を調べ始めてそのまま放置していたのを思い出した。Azure Ubuntu 12.04 iozone 速報 2012/7/4</p>
-<p>Azure Storageの非同期と同期の比較をしようと始めたのだけど、なかなか手間取って進まない。ちょっと寄り道して速くなったというAzure VMを試してみることにした。</p>
-<p>前のVMは消してしまったので、新たにインストールし直すところから始める。AzureのポータルからUbuntuをインストールして、DataDiskを接続するあたりまでは他に任せてubuntuが起動した後から書いていきます。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/7987640250/"><img alt="Triangle by takekazu, on Flickr" src="http://farm9.staticflickr.com/8450/7987640250_b87fdcf1f1_c.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="ubuntu">
-<h2>Ubuntu 環境の準備</h2>
-<p>基本的には、前回と同じになるようにします。だたUbuntuを12.10にして、data diskのホストキャッシュの設定を変えて3つのDISKを接続して測定しました。以前の測定:Azure Ubuntu 12.04 iozone 速報 2012/7/4ホストキャッシュの設定はポータルからはできずに、デフォルトでした。その時(2012/7/4)は、ホストキャッシュ無しがデフォルトだったと思うのですが、ちょっとドキュメントが見つからないので前の結果は参考程度にしてください。</p>
-<p>Azure iDC は、West USで、2 coreのインスタンス（M）を使いました。Sにするか少し考えたのですが、クラウドサービスについては、I/O パフォーマンスがXS、Sでは制限されているのでMを使うことにしました。参考：<a class="reference external" href="http://www.windowsazure.com/ja-jp/pricing/details/">Windows Azure の料金と、請求の計測単位の詳細</a></p>
-<p>正確には、今回試そうとしているVirtual Machine はまだ Previewで Cloud Serviceと同じような制限になるかは情報が公開されていない（私は知らないだけかもしれませんが）のですが、同じになってそうな気がしたのでMにしました。</p>
-<p>ちょっと古いものでは、<a class="reference external" href="http://msdn.microsoft.com/ja-jp/library/windowsazure/ee814754.aspx">仮想マシンのサイズの構成方法</a>という情報もあります。</p>
-<p>インスタンスの選択で考慮する必要があると思われるのは、「Data Diskはネットワーク経由で接続されるく、ソフトウェアで処理する部分が多い＝CPUを使う」ということです。従ってネットワーク帯域制限やCore数の影響を無視できないはずです。XSやSのインスタンスだと何を測定しているのか不安になる気がしたのでMを選択しました。実際どのインスタンスサイズの程度影響があるのかは興味ありますが未測定です。</p>
-<p>ざっと流すと、以下のような手順踏んで用意をします。</p>
-<ol class="arabic simple">
-<li>Ubuntu 12.10 を、azure portalから、virtual machineイメージをインストール</li>
-<li>data disk を、256Gで3つ作成、/dev/sdc, sdd, sdeを確認、キャッシュをそれぞれ「なし、読み取り専用、読み取り/書き込み」と指定</li>
-<li>fdiskして、/dev/sd[cde]1にext4でfilesystemを作成し/mnt/data, /mnt/data1, /mnt/data2へmount</li>
-<li>apt-get update, upgrade して最新に更新</li>
-<li>/etc/apt/sources.list で、multiverse を追加（コメントを外しただけ）</li>
-<li>apt-get install iozone3 でインストール</li>
-</ol>
-</div>
-<div class="section" id="id2">
-<h2>ディスク構成</h2>
-<table border="1" class="docutils" id="id7">
-<caption><span class="caption-text">表1 ディスク構成</span></caption>
-<colgroup>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-<col width="20%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">ディスク</th>
-<th class="head">種類</th>
-<th class="head">ホスト キャッシュ</th>
-<th class="head">サイズ</th>
-<th class="head">備考</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>/dev/sda</td>
-<td>OS ディスク</td>
-<td>読み取り/書き込み</td>
-<td>30GB</td>
-<td> </td>
-</tr>
-<tr class="row-odd"><td>/dev/sdc</td>
-<td>データ ディスク</td>
-<td>なし</td>
-<td>256GB</td>
-<td> </td>
-</tr>
-<tr class="row-even"><td>/dev/sdd</td>
-<td>データ ディスク</td>
-<td>読み取り専用</td>
-<td>256GB</td>
-<td> </td>
-</tr>
-<tr class="row-odd"><td>/dev/sde</td>
-<td>データ ディスク</td>
-<td>読み取り/書き込み</td>
-<td>256GB</td>
-<td> </td>
-</tr>
-</tbody>
-</table>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id3">
-<h2>手順</h2>
-<p>今後の再テストのためのメモも兼ねて、コマンドをラインに流したもの抜粋を挙げておきます。(以下sudo省略)</p>
-<ol class="arabic simple">
-<li>ポータルで256Gでdata diskを作成して接続を確認</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ dmesg <span class="p">|</span> grep -e <span class="s2">"\[sd[a-z]\]"</span>
-sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">32</span>.2 GB/30.0 GiB<span class="o">)</span>
-sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
-sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
-sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Attached SCSI disk
-sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> <span class="m">283115520</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">144</span> GB/135 GiB<span class="o">)</span>
-sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write Protect is off
-sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
-sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd <span class="m">3</span>:0:1:0: <span class="o">[</span>sdb<span class="o">]</span> Attached SCSI disk
-sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write Protect is off
-sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
-sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd <span class="m">6</span>:0:0:0: <span class="o">[</span>sdc<span class="o">]</span> Attached SCSI disk
-sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write Protect is off
-sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
-sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd <span class="m">6</span>:0:0:1: <span class="o">[</span>sdd<span class="o">]</span> Attached SCSI disk
-sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> <span class="m">536870912</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">274</span> GB/256 GiB<span class="o">)</span>
-sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write Protect is off
-sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
-sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Write cache: enabled, <span class="nb">read</span> cache: enabled, supports DPO and FUA
-sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]</span> Attached SCSI disk
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li>parted で全セクタを使ってパーテーションを作成</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ sudo parted /dev/sdc --script mklabel gpt
-$ sudo parted /dev/sdc --script <span class="s1">'mkpart disk1 ext4 1M -1'</span>
-$ sudo parted /dev/sdc --script <span class="s1">'print'</span>
-
-Model: Msft Virtual Disk <span class="o">(</span>scsi<span class="o">)</span>
-Disk /dev/sdc: 275GB
-Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 512B/512B
-Partition Table: gpt
-
-Number  Start   End    Size   File system  Name   Flags
-<span class="m">1</span>      1049kB  275GB  275GB  ext4         disk1
-
-$ sudo parted /dev/sdd --script mklabel gpt
-$ sudo parted /dev/sdd --script <span class="s1">'mkpart disk2 ext4 1M -1'</span>
-$ sudo parted /dev/sdd --script <span class="s1">'print'</span>
-
-___ snip ___
-
-$ sudo parted /dev/sde --script mklabel gpt
-$ sudo parted /dev/sde --script <span class="s1">'mkpart disk3 ext4 1M -1'</span>
-$ sudo parted /dev/sde --script <span class="s1">'print'</span>
-
-___ snip ___
-
-$ sudo mkfs.ext4 /dev/sdc1
-___ snip ___
-$ sudo mkfs.ext4 /dev/sdd1
-___ snip ___
-$ sudo mkfs.ext4 /dev/sde1
-___ snip ___
-</pre></div>
-</div>
-<ol class="arabic simple" start="3">
-<li>mount point 作って、/mnt/resouceとともにパーミッションを変更</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir /mnt/data1 /mnt/data2 /mnt/data3
-$ chmod a+wrx /mnt/data*
-$ chmod a+wrx /mnt/resource
-$ ls -l /mnt/
-total <span class="m">20</span>
-drwx------ <span class="m">3</span> root root <span class="m">4096</span> Dec <span class="m">21</span> <span class="m">15</span>:56 cdrom
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">21</span>:04 data1
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">21</span>:04 data2
-drwxrwxrwx <span class="m">2</span> root root <span class="m">4096</span> Dec <span class="m">22</span> <span class="m">22</span>:47 data3
-drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <span class="m">21</span> <span class="m">22</span>:14 resource
-</pre></div>
-</div>
-<ol class="arabic simple" start="4">
-<li>とりあえず、マウントして確認</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ sudo mount -t ext4 /dev/sdc1 /mnt/data1
-$ sudo mount -t ext4 /dev/sdd1 /mnt/data2
-$ sudo mount -t ext4 /dev/sde1 /mnt/data3
-
-$ df -T
-Filesystem     Type     1K-blocks    Used Available Use% Mounted on
-/dev/sda1      ext4      <span class="m">30953664</span> <span class="m">1142056</span>  <span class="m">28539332</span>   <span class="m">4</span>% /
-udev           devtmpfs   <span class="m">1751196</span>      <span class="m">12</span>   <span class="m">1751184</span>   <span class="m">1</span>% /dev
-tmpfs          tmpfs       <span class="m">704872</span>     <span class="m">280</span>    <span class="m">704592</span>   <span class="m">1</span>% /run
-none           tmpfs         <span class="m">5120</span>       <span class="m">0</span>      <span class="m">5120</span>   <span class="m">0</span>% /run/lock
-none           tmpfs      <span class="m">1762172</span>       <span class="m">0</span>   <span class="m">1762172</span>   <span class="m">0</span>% /run/shm
-none           tmpfs       <span class="m">102400</span>       <span class="m">0</span>    <span class="m">102400</span>   <span class="m">0</span>% /run/user
-/dev/sdb1      ext4     <span class="m">139334632</span>  <span class="m">192000</span> <span class="m">132064848</span>   <span class="m">1</span>% /mnt/resource
-/dev/sdc1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data1
-/dev/sdd1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data2
-/dev/sde1      ext4     <span class="m">264221700</span>  <span class="m">191576</span> <span class="m">250608456</span>   <span class="m">1</span>% /mnt/data3
-</pre></div>
-</div>
-<ol class="arabic simple" start="5">
-<li>再起動してもマウントされるように、UUIDを確認して /etc/fstab に追加。</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ blkid
-/dev/sda1: <span class="nv">LABEL</span><span class="o">=</span><span class="s2">"cloudimg-rootfs"</span> <span class="nv">UUID</span><span class="o">=</span><span class="s2">"56d8a977-c1fe-461e-a328-b19fc47c743f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
-/dev/sdb1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"d063d8a2-32fc-486c-a9b4-e6bcf7e5deae"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
-/dev/sdd1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"88f28b19-fdc6-46dc-a2d7-2daa1754754f"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
-/dev/sdc1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"a1cb5045-178a-476e-9821-084f8f6d92a6"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
-/dev/sde1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">"15b8b45e-fbd0-4efc-9534-5e38b1877828"</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">"ext4"</span>
-
-$ vi /etc/fstab
-
-___ snip ___
-
-$ cat /etc/fstab
-<span class="nv">UUID</span><span class="o">=</span>56d8a977-c1fe-461e-a328-b19fc47c743f       /        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
-<span class="nv">UUID</span><span class="o">=</span>a1cb5045-178a-476e-9821-084f8f6d92a6       /mnt/data1        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
-<span class="nv">UUID</span><span class="o">=</span>88f28b19-fdc6-46dc-a2d7-2daa1754754f       /mnt/data2        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
-<span class="nv">UUID</span><span class="o">=</span>15b8b45e-fbd0-4efc-9534-5e38b1877828       /mnt/data3        ext4   defaults        <span class="m">0</span> <span class="m">0</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="6">
-<li>最新にして再起動する</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ apt-get update
-___ snip ___
-$ apt-get upgrade
-___ snip ___
-
-$ shutdown -r now
-</pre></div>
-</div>
-<ol class="arabic simple" start="7">
-<li>iozone3 を入れる</li>
-</ol>
-<p>/etc/apt/sources.list を変更して、multiverse を追加（コメントを外しただけ）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ vi /etc/apt/sources.list
-
-___ snip ___
-
-$ apt-get update
-$ apt-get install iozone3
-</pre></div>
-</div>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id4">
-<h2>測定</h2>
-<p>これで環境が出来たので測定します。基本的には、iozone 一発で細かいオプションの指定はしません。なんとなく、Excelファイルにしたのですが、面倒になるだけであまりメリットは無かったかもしれません。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
-$ iozone -Ra -f /mnt/data1/tmp/test -b sdc1-001hcnone.xls -s 1g
-$ iozone -Ra -f /mnt/data2/tmp/test -b sdd1-001hcro.xls -s 1g
-$ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
-</pre></div>
-</div>
-<p><a class="reference download internal" href="_downloads/20121222-iozone-azurevm.zip" download=""><span class="xref download docutils literal"><span class="pre">結果のファイル(zip)</span></span></a></p>
-</div>
-<div class="section" id="iozone">
-<h2>iozone の実行結果</h2>
-<p>iozoneの測定結果をローカルドライブ、Data Diskの順で見ていく。それぞれの結果を図にした。</p>
-<div class="section" id="id5">
-<h3>ローカルディスクの性能</h3>
-<p>まずは、ローカルドライブの実行結果から見る。読み込みはレコードサイズが8Kあたりから256KBまでは、2,500,000 KB/sec  - 3,000,000 KB/sec で、レコードサイズが増えていくとだんだん遅くなっていく。書き込み側は同じ軸ではとスケールが違い過ぎてよくわからない。</p>
-<div class="figure" id="id8">
-<img alt="図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定" src="_images/2012_12_sdb2-rw.png"/>
-<p class="caption"><span class="caption-text">図1 /dev/sdb2 ローカルドライブ 2012/12/22 測定</span></p>
-</div>
-<p>そこで、書き込みの系統だけを表示させた。Record Rewriteの結果が桁外れに速い。これは「Iozone Filesystem Benchmark Download Documentation」 によると、同じ内容を繰り返し書き込むテストということなのでキャッシュの効果だろうと思われる。</p>
-<div class="figure" id="id9">
-<img alt="図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定" src="_images/2012_12_sdb2-note1-w.png"/>
-<p class="caption"><span class="caption-text">図1-1 /dev/sdb2 ローカルドライブ 書き込みのみ表示(1) 2012/12/22 測定</span></p>
-</div>
-<p>さらによく見ると、同じ再書き込みでも、Rewrite、Recoed Rewrite、Refwriteの違いがなかなか興味深い。Recoed Rewriteだけがリード並に桁外れに速い。Rewrite、Refwriteはファイル単位の再書き込みで、Recoed Rewriteは特定レコードの再書き込み（Iozone Filesystem Benchmark Download Documentationから）ということなので、キャッシュが利く場合は限定されてるらしいことがわかる。同じものを繰り返し書き込むというのは、現実にはあまり無いことなので、Rewriteをグラフから外して、書き込みのパフォーマンスを見やすくてみる。</p>
-<div class="figure" id="id10">
-<img alt="図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定" src="_images/2012_12_sdb2-w.png"/>
-<p class="caption"><span class="caption-text">図2 /dev/sdb2 ローカルドライブ  書き込みのみ表示(2) 2012/12/22 測定</span></p>
-</div>
-<p>小さいブロックのランダム書き込みが苦手だということがわかる。これはHDDの一般的な傾向で納得できる。以降では書き込みの図は図2と同じデータ項目を表示する。</p>
-</div>
-<div class="section" id="data-disk">
-<h3>Data Diskの性能</h3>
-<p>話題のData Diskの性能に入る。ローカルドライ比較で、読み込みはほぼ同等な性能だったが、書き込みは半分程度の性能しか出ていない。ホストキャッシュの設定で大きな違いが出ることを期待したが図を見る限りでは顕著な違いというほどの差異は認められなかった。</p>
-<div class="figure" id="id11">
-<img alt="図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定" src="_images/2012_12_sdc1-rw.png"/>
-<p class="caption"><span class="caption-text">図3 /dev/sdc1 ホストキャッシュなし 2012/12/22 測定</span></p>
-</div>
-<div class="figure" id="id12">
-<img alt="図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定" src="_images/2012_12_sdc1-w.png"/>
-<p class="caption"><span class="caption-text">図4 /dev/sdc1 ホストキャッシュなし 2012/12/22 書き込みのみ表示  測定</span></p>
-</div>
-<div class="figure" id="id13">
-<img alt="図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定" src="_images/2012_12_sdd1-rw.png"/>
-<p class="caption"><span class="caption-text">図5 /dev/sdd1 ホストキャッシュ 読み取り専用 2012/12/22 測定</span></p>
-</div>
-<div class="figure" id="id14">
-<img alt="図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sdd1-w.png"/>
-<p class="caption"><span class="caption-text">図6 /dev/sdd1 ホストキャッシュ 読み取り専用 書き込みのみ表示 2012/12/22 測定</span></p>
-</div>
-<div class="figure" id="id15">
-<img alt="図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定" src="_images/2012_12_sde1-rw.png"/>
-<p class="caption"><span class="caption-text">図7 /dev/sde1 ホストキャッシュ 読み取り/書き込み 2012/12/22 測定</span></p>
-</div>
-<div class="figure" id="id16">
-<img alt="図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定" src="_images/2012_12_sde1-w.png"/>
-<p class="caption"><span class="caption-text">図8 /dev/sde1 ホストキャッシュ 読み取り/書き込み 書き込みのみ表示 2012/12/22 測定</span></p>
-</div>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id6">
-<h3>結論</h3>
-<p>iozoneという選択肢がどうだったのかという気もするが、なかなか調子が良い。最初にパフォーマンス向上的な話ではなじめたが、7/4の結果に比べて劇的に変わっているという気はしない。もう少しデータを精査する必要を感じるが、思ったより長くなりすぎたので、また別の方法を絡めて再考してみようと思う。</p>
-<p>今回、テスト自体は一回しか走らせていないので再試験して結果を公開してもらえる嬉しい。今まで、Azure Tableの性能評価をした時も、何度か走らせると結果が違ったり、いつの間にかパフォーマンスが改善されたりなどすることがあるので、明確な数字を出すことは難しい。しかし、いろいろなパターンの性能情報があると設計時の精度もあがるので、この手の情報は重要とは思う。</p>
-</div>
-<div class="section" id="bookmarks">
-<h3>Bookmarks</h3>
-<ol class="arabic simple">
-<li>Iozone Filesystem Benchmark</li>
-<li>Iozone Filesystem Benchmark Download Documentation</li>
-<li>IOzoneによるファイルシステムのパフォーマンス測定</li>
-<li>Azure Ubuntu 12.04 iozone 速報 2012/7/4</li>
-</ol>
-</div>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/22/azurevmfix1221.html#disqus_thread" data-disqus-identifier="2012/12/22/azurevmfix1221">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -818,6 +547,8 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへの同時デプロイ</a>
+        </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
@@ -835,8 +566,6 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li><li>
             <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
-        </li><li>
-            <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
         </li></ul>
 </div>
 </section><section><div class="widget">

@@ -1,0 +1,91 @@
+ADAL v2 用のPowerShell コードを v3ように変更する話
+==================================================
+
+Azure Active Directory 周りを触っていたら、サンプルコードが、AcquireToken が無いと言われて動かない。
+
+.. code::
+
+
+   Method invocation failed because [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext] does not contain a method named 'AcquireToken'.
+   At C:\ws\aad\az001\gettoken.ps1:27 char:5
+   +     $authResult = $authContext.AcquireToken($resourceAppIdURI, $clien ...
+         +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
+         + FullyQualifiedErrorId : MethodNotFound
+
+
+どうも、こいつらしい。 `ADAL v3 で AcquireToken が使えなかったので ADAL v2 を使ったお話 <http://blog.engineer-memo.com/2017/06/03/adal-v3-%E3%81%A7-acquiretoken-%E3%81%8C%E4%BD%BF%E3%81%88%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%A7-adal-v2-%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%81%8A%E8%A9%B1/>`_
+
+元はこんな感じだった。 `Working with Azure Active Directory Graph Api from Powershell <https://blogs.technet.microsoft.com/paulomarques/2016/03/21/working-with-azure-active-directory-graph-api-from-powershell/>`_
+
+function GetAuthToken
+{
+       param
+       (
+              [Parameter(Mandatory=$true)]
+              $TenantName
+       )
+
+       $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+
+       $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
+
+       [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
+
+       [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
+
+       $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
+
+       $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+
+       $resourceAppIdURI = "https://graph.windows.net"
+
+       $authority = "https://login.windows.net/$TenantName"
+
+       $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
+
+       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId,$redirectUri, "Auto")
+
+       return $authResult
+}
+
+
+これを、
+
+function GetAuthToken {
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        $TenantName
+    )
+
+
+    $adal = "$pwd\Microsoft.IdentityModel.Clients.ActiveDirectory.3.16.0\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+    $adalforms = "$pwd\Microsoft.IdentityModel.Clients.ActiveDirectory.3.16.0\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
+
+    [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
+
+    [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
+
+    $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
+
+    $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+
+    $resourceAppIdURI = "https://graph.windows.net"
+
+    $authority = "https://login.windows.net/$TenantName"
+
+    $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
+
+    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+
+    return $authResult
+}
+
+
+
+
+.. author:: default
+.. categories:: none
+.. tags:: none
+.. comments::

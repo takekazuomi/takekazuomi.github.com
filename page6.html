@@ -76,6 +76,46 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>January 18, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
+<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a>の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「<a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a>」でみっちり53分ほど、もうひとつは、「しばやん」のセッション(<a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a>) にちょっとお邪魔。</p>
+<p>しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。</p>
+<div class="section" id="id1">
+<h2>Persistence on Azure - Microsoft Azure の永続化</h2>
+<p>スライドは、SlideShareに公開しています。</p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
+<p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
+<p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
+<p>榎本さんのセッション 「<a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a>」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
+<p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
+</div>
+<div class="section" id="id3">
+<h2>謝辞</h2>
+<p>榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。</p>
+<p>JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。</p>
+<p>参加者の皆様、ありがとうございました。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/session.html">Session</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/iaas.html">IaaS</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/goazure.html">GoAzure</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/01/18/goazure_2015.html#disqus_thread" data-disqus-identifier="2015/01/18/goazure_2015">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 02, 2014</span>
         </div>
         <div class="section">
@@ -357,296 +397,6 @@
         
         <div class="comments">
             <a href="http://kyrt.in/2014/07/02/mvp_2014_7.html#disqus_thread" data-disqus-identifier="2014/07/02/mvp_2014_7">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>June 09, 2014</span>
-        </div>
-        <div class="section">
-            <h1><a href="2014/06/09/websites_gradle_git.html">WebSites で、Java + gradle + git を使う</a></h1>
-<p>5/12 - 15 に行われた、TechEd North America 2014 で、待望のWebSitesのJavaサポートが発表されました。TechEdでは、AzureのJavaサポートとして、仮想マシン、クラウドサービス、WebSites の話がされていました。Azureの各種SDKはJavaは.NETと並ぶぐらい順調に進んでいるようなので今後も注目です。</p>
-<p>その中でも、WebSitesのJavaサポートが面白かったので紹介します。</p>
-<p>TechEdのセッションの内容は、<a class="reference external" href="http://channel9.msdn.com/Events/TechEd/NorthAmerica/2014/DEV-B384">Java on Microsoft Azure</a>を観てもらうことにして、一般的な開発で行われるプロセスを Java on WebSites でやってみます。</p>
-<div class="section" id="id1">
-<h2>道具立て</h2>
-<p>ソースコード管理には、git を使い。ビルドには昨今流行りの gradle 、 手元で動作を確認後、git push すると、kudu の deploy hook でbuildされて Web Sites に deploy というシナリオです。deploy の最終段には、tomcat の autoDeploy を使います。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/14109420833"><img alt="unagi by Takekazu Omi, on Flickr" class="align-center" src="http://farm3.staticflickr.com/2897/14109420833_a4fb730458_c.jpg"/></a>
-</div>
-<div class="section" id="web-sites">
-<h2>Web Sitesを作成</h2>
-<p>まず、azure cli を使うので、インストールしてください。</p>
-<p>git repository 付きでWebSitesを作成します。（以下kinmugi006でやっていますが、同じ名前では作れないので適当に変更してください）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ mkdir kinmugi006
-$ <span class="nb">cd</span> kinmugi006
-$ azure site create --location <span class="s2">"Japan West"</span> --git --gitusername kinmugi-king  kinmugi006
-info:    Executing <span class="nb">command</span> site create
-+ Getting sites
-+ Getting locations
-info:    Creating a new web site at kinmugi006.azurewebsites.net
--info:    Created website at kinmugi006.azurewebsites.net
-+
-info:    Executing <span class="sb">`</span>git init<span class="sb">`</span>
-info:    Initializing remote Azure repository
-+ Updating site information
-info:    Remote azure repository initialized
-+ Getting site information
-info:    Executing <span class="sb">`</span>git remote add azure https://kinmugi.king@kinmugi006.scm.azurewebsites.net/kinmugi006.git<span class="sb">`</span>
-info:    A new remote, <span class="s1">'azure'</span>, has been added to your <span class="nb">local</span> git repository
-info:    Use git locally to make changes to your site, commit, and <span class="k">then</span> use <span class="s1">'git push azure master'</span> to deploy to Azure
-info:    site create <span class="nb">command</span> OK
-</pre></div>
-</div>
-<p>これで、Web Sitesが作成されて、Web Sites内に git repository が用意されます。この状態では、ローカルレポジトリは下記のような設定になっています。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git remote -v
-azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>fetch<span class="o">)</span>
-azure   https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git <span class="o">(</span>push<span class="o">)</span>
-origin
-</pre></div>
-</div>
-<p>この状態で、作成したサイトを見るには、下記のコマンドを実行します。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site browse kinmugi006
-</pre></div>
-</div>
-<p>もし、<span class="docutils literal"><span class="pre">Site</span> <span class="pre">kinmugi006</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">hostname</span></span>のようなエラーになったら、まだ作成が完了していないと可能性があるので、少しまって再度実行してください。ほとんどの場合は、数分掛からずに作成は完了します。</p>
-<p>このような画面が表示されるはずです。</p>
-<img alt="Web Site の初期画面" class="align-center" src="_images/20140609_azure002.PNG"/>
-</div>
-<div class="section" id="push">
-<h2>試しに、なにか push してみましょう</h2>
-<p>まず、ポータルサイトから git のパスワードを設定します。<span class="docutils literal"><span class="pre">DASHBOARD</span></span>-&gt;<span class="docutils literal"><span class="pre">Reset</span> <span class="pre">your</span> <span class="pre">deployment</span> <span class="pre">credentials</span></span>で設定できます。</p>
-<img alt="local git のパスワード設定" class="align-center" src="_images/20140609_azure001.PNG"/>
-<p>index.html という名前で、Hello Java が書かれたHTMLファイルを作成します。git add、commitして、pushします。その時に、パスワードを聞かれるので、先ほどの設定したものを入れて下さい。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
-Password <span class="k">for</span> <span class="s1">'https://kinmugi-king@kinmugi006.scm.azurewebsites.net'</span>:
-Counting objects: <span class="m">3</span>, <span class="k">done</span>.
-Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="m">230</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
-remote: Updating branch <span class="s1">'master'</span>.
-remote: Updating submodules.
-remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'f522084597'</span>.
-remote: Generating deployment script.
-remote: Generating deployment script <span class="k">for</span> Web Site
-remote: Generated deployment script files
-remote: Running deployment command...
-remote: Handling Basic Web Site deployment.
-remote: KuduSync.NET from: <span class="s1">'D:\home\site\repository'</span> to: <span class="s1">'D:\home\site\wwwroot'</span>
-remote: Deleting file: <span class="s1">'hostingstart.html'</span>
-remote: Copying file: <span class="s1">'index.html'</span>
-remote: Finished successfully.
-remote: Deployment successful.
-To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
- * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-</pre></div>
-</div>
-<p>これで、サイトを確認すると、こんな感じで見えます。 ちなみに、<span class="docutils literal"><span class="pre">azure</span> <span class="pre">site</span> <span class="pre">browse</span> <span class="pre">kinmugi006</span></span>でブラウザが開きます。</p>
-<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
-</div>
-<div class="section" id="java">
-<h2>Java ランタイムの設定</h2>
-<p>これで、git の設定ができたので、次のJava Runtimeの設定をします。ここでもgitのパスワード設定と同じようにポータルを使います。Web Sitesの CONFIGURE のメニューから、JAVA VERSION をOFFから、1.7.0_51(バージョン番号は随時変わります）にして、WEB CONTAINER をTOMCAT 7.0.50 にして、SAVEを押します。</p>
-<img alt="Select Java runtime" class="align-center" src="_images/20140609_azure004.PNG"/>
-<p>ここで、<a class="reference external" href="http://kinmugi006.azurewebsites.net/">http://kinmugi006.azurewebsites.net/</a>を見ると、さきほどの<span class="docutils literal"><span class="pre">Hello</span> <span class="pre">Java</span></span>から下記のような画面になります。</p>
-<img alt="Hello Java" class="align-center" src="_images/20140609_azure003.PNG"/>
-<p>さっき上げた、index.html では無くて、Web Sitesがデフォルトで用意しているJava Web Application が表示されています。なにが起きているのかを簡単に Kudu の画面から確認してみましょう。</p>
-<p><a class="reference external" href="https://kinmugi006.scm.azurewebsites.net/">https://kinmugi006.scm.azurewebsites.net/</a>にアクセスします。ポータルとシングルサインオンになっているので、既にログインしている場合は、そのままアクセスすることができます。</p>
-<p>Debug Console を選んで、d:/home/site/wwwroot に行きます。すると、index.htmlと、webapps が見えます。先ほどpushしたファイルが、index.htmlで、java runtime を有効にしたときに作成されたのが、webappsです。Web Sitesで動いている tomcat のserver.xmlでは下記のように定義されています。appBase が、ここに指定されているのが確認できます。autoDeploy=”true” になっているので、appBaseにwarファイルを置くと自動展開されます。Java Runtimeを有効にする前は、IISがwwwrootをdocumet rootにして動いおりindex.htmlが見えていましたが、tomcat がhttp requestをハンドリングするようになったので、webapps/ROOTが見えるようになりました。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;Host</span> <span class="na">name=</span><span class="s">"localhost"</span>  <span class="na">appBase=</span><span class="s">"d:\home\site\wwwroot\webapps"</span> <span class="na">xmlBase=</span><span class="s">"d:\home\site\wwwroot\"</span>
-      <span class="na">unpackWARs=</span><span class="s">"true"</span> <span class="na">autoDeploy=</span><span class="s">"true"</span> <span class="na">workDir=</span><span class="s">"${site.tempdir}"</span><span class="nt">&gt;</span>
-
-  <span class="nt">&lt;Valve</span> <span class="na">className=</span><span class="s">"org.apache.catalina.valves.AccessLogValve"</span> <span class="na">directory=</span><span class="s">"${site.logdir}"</span>
-         <span class="na">prefix=</span><span class="s">"site_access_log."</span> <span class="na">suffix=</span><span class="s">".txt"</span>
-         <span class="na">pattern=</span><span class="s">"%h %l %u %t &amp;quot;%r&amp;quot; %s %b"</span> <span class="nt">/&gt;</span>
-
-<span class="nt">&lt;/Host&gt;</span>
-</pre></div>
-</div>
-<p>今回下記の設定をしてください。何故か、user.home が定義されていないので d:home にします。<a class="reference external" href="http://bugs.java.com/view_bug.do?bug_id=4787931">JDK-4787931 : System property “user.home” does not correspond to “USERPROFILE” (win)</a>Azureでは、IPV6をサポートしていない（今のところ）ので、IPv4 Stackのみにします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ azure site  appsetting add <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Duser.home=d:\home -Djava.net.preferIPv4Stack=true"</span> kinmugi006
-</pre></div>
-</div>
-<p>※想定外に話が長くなってきたので、飛ばして行きます。</p>
-</div>
-<div class="section" id="git-push">
-<h2>git push後の自動ビルド</h2>
-<p>標準の構成では、Web Sitesの git deploy を使うと、git の sever side hook のpost-receive<a class="footnote-reference" href="#r1" id="id2">[1]</a><a class="footnote-reference" href="#r7" id="id3">[7]</a>で、kudu.exe<a class="footnote-reference" href="#r2" id="id4">[2]</a>を起動します。kudu.exeは、repository をupdateし、規定のdeploy scriptを呼び出します。ASP.NETのようなコンパイルが必要なアプリケーションは良しなにやり、phpなどのように、そのまま展開すれば良いものはkudusyncで同期させます。<a class="footnote-reference" href="#r3" id="id5">[3]</a>今のところ、java用のビルド、展開スクリプトは用意されていないので、自前で作成します。</p>
-<p>まずは、Javaのアプリの準備をします。</p>
-<p>ビルドにgradleを使うので、<a class="reference external" href="http://www.gradle.org/">gradle公式</a>から、<a class="reference external" href="https://services.gradle.org/distributions/gradle-1.12-bin.zip">gradle-1.12-bin.zip</a>をダウンロードして展開します。バージョン番号が入ると面倒なので、ディレクトリ名は変更してます。srcの下のアプリケーションは、<span class="docutils literal"><span class="pre">gradle-1.12-(src|all).zip</span></span>に入っている、<a class="reference external" href="https://github.com/gradle/gradle/tree/REL_1.12/subprojects/docs/src/samples/webApplication/quickstart">webApplication/quickstart</a>です。</p>
-<p>ディレクトリ構成</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>├─gradle
-│  ├─bin
-│  ├─init.d
-│  ├─lib
-│  │  └─plugins
-│  └─media
-└─src
-    └─main
-        ├─java
-        │  └─org
-        │      └─gradle
-        │          └─sample
-        ├─resources
-        └─webapp
-</pre></div>
-</div>
-<p><span class="docutils literal"><span class="pre">.deployemnt</span></span>という下記のような内容のファイルを作成します。このファイルがあると、kudu.exe は、git update の後に、規定のスクリプトを実行せずに、<span class="docutils literal"><span class="pre">.deployemnt</span></span>ファイルの設定に従います。今回は、作成したバッチを実行するだけです。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/><span class="o">[</span>config<span class="o">]</span>
-<span class="nb">command</span> <span class="o">=</span> deploy.cmd
-</pre></div>
-</div>
-<p><span class="docutils literal"><span class="pre">deploy.cmd</span></span>では、gradleを実行して、出来上がったwarファルをappBaseにコピーします。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>@if <span class="s2">"%SCM_TRACE_LEVEL%"</span> NEQ <span class="s2">"4"</span> @echo off
-
-SET <span class="nv">GRADLE_HOME</span><span class="o">=</span>%~dp0%<span class="se">\g</span>radle
-SET <span class="nv">GRADLE_HOME_CMD</span><span class="o">=</span>%GRADLE_HOME%<span class="se">\b</span>in<span class="se">\g</span>radle.bat
-
-:: Setup
-:: -----
-
-setlocal enabledelayedexpansion
-
-IF NOT DEFINED DEPLOYMENT_SOURCE <span class="o">(</span>
-  SET <span class="nv">DEPLOYMENT_SOURCE</span><span class="o">=</span>%~dp0%.
-<span class="o">)</span>
-
-IF NOT DEFINED DEPLOYMENT_TARGET <span class="o">(</span>
-  SET <span class="nv">DEPLOYMENT_TARGET</span><span class="o">=</span>%~dp0%<span class="se">\.</span>.<span class="se">\w</span>wwroot
-<span class="o">)</span>
-
-IF EXIST <span class="s2">"%GRADLE_HOME_CMD%"</span> <span class="o">(</span>
-  call :ExecuteCmd <span class="s2">"%GRADLE_HOME_CMD%"</span> clean war
-  IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
-<span class="o">)</span>
-
-
-:: copy war file to wwwroot
-
-IF NOT EXIST <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps <span class="o">(</span>
-   mkdir <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps &gt; NUL <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-<span class="o">)</span>
-
-COPY /Y <span class="s2">"%DEPLOYMENT_SOURCE%"</span><span class="se">\b</span>uild<span class="se">\l</span>ibs<span class="se">\k</span>inmugi.war <span class="s2">"%DEPLOYMENT_TARGET%"</span><span class="se">\w</span>ebapps<span class="se">\R</span>OOT.war
-IF !ERRORLEVEL! NEQ <span class="m">0</span> goto error
-
-goto end
-
-:: Execute <span class="nb">command</span> routine that will <span class="nb">echo</span> out when error
-:ExecuteCmd
-setlocal
-<span class="nb">set</span> <span class="nv">_CMD_</span><span class="o">=</span>%*
-call %_CMD_%
-<span class="k">if</span> <span class="s2">"%ERRORLEVEL%"</span> NEQ <span class="s2">"0"</span> <span class="nb">echo</span> Failed <span class="nv">exitCode</span><span class="o">=</span>%ERRORLEVEL%, <span class="nv">command</span><span class="o">=</span>%_CMD_%
-<span class="nb">exit</span> /b %ERRORLEVEL%
-
-:error
-endlocal
-<span class="nb">echo</span> An error has occurred during web site deployment.
-call :exitSetErrorLevel
-call :exitFromFunction <span class="m">2</span>&gt;nul
-
-:exitSetErrorLevel
-<span class="nb">exit</span> /b <span class="m">1</span>
-
-:exitFromFunction
-<span class="o">()</span>
-
-:end
-endlocal
-<span class="nb">echo</span> Finished successfully.
-</pre></div>
-</div>
-<p>ここまでできたら、git add, commit して、pushしてください。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ git push azure master
-Counting objects: <span class="m">189</span>, <span class="k">done</span>.
-Delta compression using up to <span class="m">4</span> threads.
-Compressing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">178</span>/178<span class="o">)</span>, <span class="k">done</span>.
-Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">188</span>/188<span class="o">)</span>, <span class="m">40</span>.11 MiB <span class="p">|</span> <span class="m">973</span>.00 KiB/s, <span class="k">done</span>.
-Total <span class="m">188</span> <span class="o">(</span>delta <span class="m">3</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
-remote: Updating branch <span class="s1">'master'</span>.
-remote: Updating submodules.
-remote: Preparing deployment <span class="k">for</span> commit id <span class="s1">'c190ab30ef'</span>.
-remote: Running custom deployment command...
-remote: Running deployment command...
-remote: ..................
-remote:         <span class="m">1</span> file<span class="o">(</span>s<span class="o">)</span> copied.
-remote: Finished successfully.
-remote: Deployment successful.
-To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
-   f522084..c190ab3  master -&gt; master
-</pre></div>
-</div>
-<p>ただ一つだけ問題があります。最初に、WebSitesの作成したwebappsには、ROOTのディレクトリがあるのにROOT.warが無いので autoDeploy が上手く動作しません。どこかを修正してpushし直すか、ポータルから redeploy してください。問題があるのは初回だけで２回めからは前回upしたROOT.warがあるので無事自動展開されます。</p>
-</div>
-<div class="section" id="id6">
-<h2>最後に</h2>
-<p>kuduの仕組みが良く出来ていて<a class="footnote-reference" href="#r4" id="id7">[4]</a><a class="footnote-reference" href="#r5" id="id8">[5]</a><a class="footnote-reference" href="#r6" id="id9">[6]</a>特別なjava対応などが無くても、今回 WebSitesに入った httpPlatformHandler だけで、git pushしたらbuildしてdeployということが簡単に実現できました<a class="footnote-reference" href="#r8" id="id10">[8]</a>。ただ、<a class="reference external" href="https://github.com/projectkudu/kudu">kudu project</a>にある、kuduのソースはちょっと流し読みをして理解するには量が多く、動かしなら少しづつ確認するという形じゃないとなかなか動きを掴むのは難しところがあります。</p>
-</div>
-<div class="section" id="id11">
-<h2>下記のサイトを参考にしました</h2>
-<table class="docutils footnote" frame="void" id="r1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://git-scm.com/book/ja/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Git のカスタマイズ - Git フック</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Console/Program.cs">kudu.exeは、Kudu.Console</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Investigating-issues">SCM_TRACE_LEVEL = 4 にするとdeploy scriptのtraceが出る</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r4" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/blob/master/Kudu.Core/Deployment/WellKnownEnvironmentVariables.cs">Well Known Environment Variables</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r5" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[5]</a></td><td><a class="reference external" href="https://github.com/projectkudu/KuduSync.NET/blob/master/KuduSync.NET/KuduSyncOptions.cs">KuduSync のオプション</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r6" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[6]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-Logic-Flow">Deployment Logic Flow</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r7" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[7]</a></td><td><a class="reference external" href="https://github.com/projectkudu/kudu/wiki/Deployment-hooks">Deployment hooks</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="r8" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[8]</a></td><td><a class="reference external" href="http://blog.amitapple.com/post/38417491924/azurewebsitecustomdeploymentpart1/">Custom Deployment Scripts For Windows Azure Website Using Git Deployment</a></td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/java.html">Java</a>, <a href="categories/websites.html">WebSites</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/java.html">Java</a>, <a href="tags/gradle.html">Gradle</a>, <a href="tags/git.html">Git</a>, <a href="tags/websites.html">WebSites</a>, <a href="tags/kudu.html">Kudu</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2014/06/09/websites_gradle_git.html#disqus_thread" data-disqus-identifier="2014/06/09/websites_gradle_git">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -655,6 +405,8 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへの同時デプロイ</a>
+        </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
@@ -672,8 +424,6 @@ To https://kinmugi-king@kinmugi006.scm.azurewebsites.net/kinmugi006.git
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li><li>
             <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
-        </li><li>
-            <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
         </li></ul>
 </div>
 </section><section><div class="widget">

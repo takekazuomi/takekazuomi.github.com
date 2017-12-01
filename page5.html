@@ -76,6 +76,164 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>September 01, 2015</span>
+        </div>
+        <div class="section">
+            <h1><a href="2015/09/01/go_5_jazug_service_fabric_session.html">Go (5) JAZUG で Service Fabric の話をします</a></h1>
+<p>今週末、9/5の<a class="reference external" href="http://r.jazug.jp/index.html">JAZUG</a>5周年記念イベント<a class="reference external" href="https://jazug.doorkeeper.jp/events/29529">「ごーごー じゃずゆーじー」 Go(5) JAZUG</a>で、Azure Service Fabric<a class="footnote-reference" href="#r1" id="id1">[1]</a>をネタに<a class="reference external" href="http://tatsuakisakai.net/">酒井さん</a>と話をします。宣伝とメモを兼ねてちょっと予告編です。興味を持たれた方は是非ご来場下さい ↓click↓</p>
+<a class="reference external image-reference" href="https://jazug.doorkeeper.jp/events/29529"><img alt="gogo jazug" class="align-center" src="_images/29529_normal_1438663713_logo.png" style="width: 600px;"/></a>
+<div class="section" id="azure-service-fabric">
+<h2>Azure Service Fabric とは</h2>
+<p>Azure Service Fabric は、BUILD 2015 に先駆けて発表された、「スケーラブルで信頼性が高く管理しやすいクラウド向けアプリケーションの構築向けの分散型システム プラットフォーム」<a class="footnote-reference" href="#r2" id="id3">[2]</a>です。</p>
+<p>2015/4/20 に、Mark Russinovich が書いたBlog<a class="footnote-reference" href="#r3" id="id4">[3]</a>、翻訳<a class="footnote-reference" href="#r4" id="id5">[4]</a>から引用します。</p>
+<ul class="simple">
+<li>Service Fabric は、高度な制御プラットフォーム</li>
+<li>開発者や ISV は、拡張性とカスタマイズ性の高いクラウド サービスを構築可</li>
+<li>ミッションクリティカルなクラウド サービスを提供してきたマイクロソフトの経験を基礎として開発</li>
+<li>5 年以上にわたって実際に運用</li>
+<li>基盤となるテクノロジは、Azure のコア インフラストラクチャに使用（実証済）</li>
+<li>Skype for Business、Intune、Event Hubs、DocumentDB、Azure SQL Database 、Bing Cortana などの基盤で利用</li>
+<li>毎秒 5 億回を超える評価に対応可能な拡張性を持つ</li>
+</ul>
+<p>ざっくりまとめると、「マイクロソフトでAzureのインフラとして5年以上使っている技術がベースにとなっていて実績もいろいろあるよ」ってことのようです。これまでのAzureだとCloud Native アプリケーションの Computing は、<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/cloud-services/">Cloud Service</a>あるいは<a class="reference external" href="https://azure.microsoft.com/ja-jp/services/app-service/">App Service</a>でということでしたが、新しい選択肢として<strong>Service Fabric</strong>というのが出てきたってことです。（まだ、preview でローカルの開発環境でしか動きませんが）</p>
+<p>※ここでは、便宜上WebRole/WorkerRole を使う<a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/cloud-services-choose-me/#tellmecs/">Cloud Services</a>を<strong>PaaSv1</strong>と呼び、それに対して、Service Fabric を<strong>SF</strong>or<strong>PaaSv2</strong>と呼びます。</p>
+<p>BUILD 2015のセッション<a class="footnote-reference" href="#r5" id="id6">[5]</a>,<a class="footnote-reference" href="#r6" id="id7">[6]</a>や、ドキュメントを見ると機能が結構盛りだくさんなのですが、「<strong>SF</strong>が取り組んで問題は何なのか、何故必要なのか？」というのが分かりずらい、面白そうだけど、<strong>ﾍ(ﾟдﾟ)ﾉ ﾅﾆｺﾚ?</strong>って感じもします。</p>
+<p>9/5 のセッションでは、Service Fabricが出てから既に、4カ月以上経っているし、「Azure Service Fabric とは」的な内容はさくっと流して、私が感じていた<strong>SF</strong>に対する疑問に焦点を当てて話をしてみようと思います。</p>
+</div>
+<div class="section" id="service-fabric">
+<h2>Service Fabricが取り組んでいる課題</h2>
+<p>課題ですね、英語だと<strong>Challenge</strong>です。無理筋なのをやるとダメなやつですが、ここでは関係ありません。クラウド時代に突入してモダンなサービスは可用性とスケーラビリティを求められるようになりました。<a class="footnote-reference" href="#r7" id="id8">[7]</a></p>
+<p>その結果、Cluster アプリケーションでは複数のマシンに配置されることになります（つまり分散、分割）。複数台で構成されているので障害時に全停止せず、台数を増やせば処理能力が増えてスケールすると言うのが基本的なストーリーです。</p>
+<p>この考えに沿ったアーキテクチャの典型が、<strong>PaaSv1</strong>です。WebRole/WorkerRole を複数の障害ドメインのマシンに配置することで耐障害性を担保し、アプリケーションをステートレスにすることで、台数増加を性能向上に直結させ (<a class="reference external" href="http://www.publickey1.jp/blog/14/immutable_infrastructure_1.html">Immutable Infrastructure</a>ってやつです) 、高可用でスケーラブルなサービスを構築するというのが物語の粗筋です。</p>
+<p>これはこれで良いのですが、<strong>PaaSv1</strong>では、全てのRoleは仮想マシンを専有するような配置を行います。そのため、OSの設定やランタイムのインストールなど細かいことを自由にできるという大きなメリットがありますが「問題もあるよね」というのが今回の話しです。<strong>SF</strong>が、取り組んでいる課題はいろいろあるのですが、今回はこの配置に関する課題の話をします。</p>
+</div>
+<div class="section" id="static-partitioning">
+<h2>Static Partitioning 問題</h2>
+<p><strong>PaaSv1</strong>では、Role毎に台数を増減できますが、複数のWebRoleを同一の仮想マシンで動かすことはできません。また、WebRoleとWorkerRoleを同一仮想マシンでホストすることもできません。<a class="footnote-reference" href="#r8" id="id9">[8]</a>このようにRoleの分割が静的に行われているのを、Static Partitioning （静的分割？）と言います。Static Partitioning は、Role を増やせば、増すほど扱いづらくなりますし、ワークロードによっては事前に予測することが難しい場合もあり、リソースの利用効率という観点からは<strong>ムダ</strong>が生じやすい仕組みで、これは大きな課題ですね。</p>
+<img alt="../../../_images/pat01.png" class="align-center" src="_images/pat01.png"/>
+<p>Static Partitioning はシンプルなせいか、Cluster アプリケーションで広く使われてきました。最初のHadoop とか、昔の twitter とかですね。その結果あちこちから問題が聞こえてくるようになりました。その課題の解法の1つとして注目されているのが、Apache Mesos などで導入された手法です。 Mesosだと、このドキュメントが面白いです<a class="reference external" href="http://www.slideshare.net/charmalloc/buildingdeployingapplicationsmesos">Building and Deploying Application to Apache Mesos</a>、ちょっと引用します。</p>
+<p>Mesos 以前は、Static Partition（静的分割）だった。<strong>Static Partition（静的分割）IS BAD</strong>、とても扱いづらい。</p>
+<ul class="simple">
+<li>マシンの効率的な利用ができない</li>
+<li>効果的なスケールが出来ない</li>
+<li>障害の取り扱いが難しく、ダウンタイムの発生を招く</li>
+</ul>
+<p>リンク先には、「動的リソース割り当てが必要だ。 Operating System === Datacenter で、Mesos =&gt; data center の<em>kernel</em>だ」というようなことが書いてあります。Hadoopも、台数増えてくると十分Nodeが働かないという問題がありました。<a class="footnote-reference" href="#r9" id="id10">[9]</a></p>
+<p>確かにサービスを構成するアプリケーションを複数のコンポーネントに分けた場合、（例えばWeb Frontと、管理サイト、日時バッチ、月次バッチとか）。それぞれ、ワークロードも違えば、開発サイクルも違う。これを、クラスターに最適配置しようとするといろいろ<strong>メンドクサイ</strong>。<strong>PaaSv1</strong>で、現実的な解はRoleを分けることですが、月次バッチはWebFrontのオフピークの夜間にして効率的な運用をなどを考えると面倒なことになってくる・・・</p>
+</div>
+<div class="section" id="dynamic-partitioning">
+<h2>Dynamic Partitioning</h2>
+<p>Mesosから離れて、Service Fabric でどうしているのかを見てみます。 Service Fabric では、複数のNodeでクラスターを構成して、アプリケーションは同一Node内に複数配置することができます。どのように配置するかは、アプリケーションが要求を出して、配置条件にあたところにService Fabric が配置するという流れです。配置条件は、サービス マニフェストまたはアプリケーション マニフェストを使用するか、コード内で直接定義します。<a class="footnote-reference" href="#r10" id="id11">[10]</a></p>
+<img alt="../../../_images/pat04.png" class="align-center" src="_images/pat04.png"/>
+<p>Node内に複数のアプリケーションを配置することができ、リソースの有効利用を実現します。YARNとかMesosとかも同じようなことができます。このあたりの考え方は最近のトレンドのようです。</p>
+</div>
+<div class="section" id="cluster-manager">
+<h2>Cluster Manager <a class="footnote-reference" href="#r11" id="id12">[11]</a></h2>
+<p>このように、Datacenetrから仮想マシンをまとめて借りだして Cluserとしてプールし、アプリケーションの要求に応じてリソースを割り当てるのコンポーネントを、<strong>Cluster Manager</strong>と呼びます。（最近のクラウド界隈は、混沌としているので名称はちょっと曖昧さがあるけど）代表的な<strong>Cluster Manager</strong>を、Service Fabric も含め上げておきます。Hadoop MRv1 では JobTrancker がボトルネックとなって働かない Node 問題が発生しており、YARNが対策として作成されました。いずれの、Cluster Manager (YARN では、Resource Managerと呼ぶ）も、万単位のサーバーを扱うの前提で作成されているので完全に１つのリソースプールに全部入れてしまって、そこからリースするような使い方でも行けそうです。</p>
+<ul class="simple">
+<li><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/services/service-fabric/">Service Fabric</a></li>
+<li><a class="reference external" href="http://mesos.apache.org/">Apache Mesos</a></li>
+<li><a class="reference external" href="http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html">YARN, Apache Hadoop</a></li>
+<li><a class="reference external" href="http://www.infoq.com/jp/news/2015/04/google-borg">Google Borg/Omega</a></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h2>最後に</h2>
+<p>こんな感じで、Service Fabricがアプリケーションをクラスターに配置してくれるので、リソースとアプリケーションの分割の関係を柔軟に構成することができます。ワークロードと配置の関係をコード外でコントロールできるのは、なかなか嬉しい感じです。今回は時間の都合上入れられないと思いますが、開発支援、運用支援の機能もService Fabricには盛り込まれていて、かなり拾い範囲をサポートした分散型システム プラットフォームと言えそうです。</p>
+<p>ソフトウェアの基本は、「分割して統治せよ」だと思いますが、残念ながら分割にはもろもろのメリットとデメリットがあり、過剰な分割はデスマーチの元という面もありました。Service Fabricは、今風に多くの問題を解決し次世代クラウドアプリケーションの作成に役立ってくれそうで</p>
+<p>※Spark は、複数のCluster Managerに対応していて、これはこれで面白いと思います。</p>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-overview/">Service Fabric の概要</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="ServiceFabricドキュメント">Service Fabric ドキュメント</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td><a class="reference external" href="http://azure.microsoft.com/ja-jp/blog/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world/">Announcing Azure Service Fabric: Reducing Complexity in a Hyper-scale World</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2015/04/23/announcing-azure-service-fabric-reducing-complexity-in-a-hyper-scale-world.aspx">翻訳：Azure Service Fabric を発表: 高度なスケーラビリティをより簡単に実現</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/3-618">BUILD 2015, Mark Russinovich, The Next Generation of Azure Compute Platform with Mark Russinovich</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r6" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[6]</a></td><td><a class="reference external" href="https://channel9.msdn.com/Events/Build/2015/2-640">BUILD 2015, Gopal Kakivaya, Microsoft Azure Service Fabric Architecture</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[7]</a></td><td>クラウドだから可用性とスケーラビリティを求められるのか、両者が求めらるからクラウドなのかは ニワトリと卵の関係のような気もします。クラウドによって、いくつかの面でコストが抑えられるようになったので、現実的なビジネスでの適応局面が増えたという言い方もできるます。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r8" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td>WebRole で複数Siteを定義すれば複数Endpoint Hostできます、また、WebRoleのRoleEntryPointのRunをoverride するとWorkerRole的なことが出来たりします。これらの方法の課題はアプリケーション間が無用に密接にくっついてしまっていることです。できるけど、イマイチやなという感じです。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r9" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[9]</a></td><td><a class="reference external" href="http://www.ibm.com/developerworks/jp/analytics/library/bd-yarn-intro/">YARN の紹介</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r10" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[10]</a></td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-service-description/">サービス記述の概要</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r11" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[11]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Cluster_manager">Cluster manager</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r12" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[12]</td><td><a class="reference external" href="https://azure.microsoft.com/ja-jp/documentation/articles/service-fabric-resource-balancer-cluster-description/">クラスターの説明</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/service_fabric.html">Service Fabric</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/jazug.html">JAZUG</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2015/09/01/go_5_jazug_service_fabric_session.html#disqus_thread" data-disqus-identifier="2015/09/01/go_5_jazug_service_fabric_session">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>August 23, 2015</span>
         </div>
         <div class="section">
@@ -322,46 +480,6 @@
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2015/04/08/azure_diagonestics_1_3_bugs.html#disqus_thread" data-disqus-identifier="2015/04/08/azure_diagonestics_1_3_bugs">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>January 18, 2015</span>
-        </div>
-        <div class="section">
-            <h1><a href="2015/01/18/goazure_2015.html">GoAzure 2015 でAzureの永続化について話をしてきました</a></h1>
-<p><a class="reference external" href="http://r.jazug.jp/goazure">GoAzure 2015</a>の2つのセッションで喋ってきました。ひとつでは、Azure Storageの概要からIaaSのDiskについてまでを「<a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a>」でみっちり53分ほど、もうひとつは、「しばやん」のセッション(<a class="reference external" href="http://blog.shibayan.jp/entry/20150117/1421492433">GoAzure 2015 でクラウドデザインパターンと Azure Websites について話してきました</a>) にちょっとお邪魔。</p>
-<p>しばやんのセッションは、しばやんが気持ちよく喋ってるので間に割り込むのが難しく、しゃべりの修行の必要性を感じましたね。今後の課題です。</p>
-<div class="section" id="id1">
-<h2>Persistence on Azure - Microsoft Azure の永続化</h2>
-<p>スライドは、SlideShareに公開しています。</p>
-<iframe src="//www.slideshare.net/slideshow/embed_code/43601587" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe><p><a class="reference external" href="http://www.slideshare.net/takekazuomi/persistence-on-azure-microsoft-azure">Persistence on Azure - Microsoft Azure の永続化</a></p>
-<p>セッション、「Persistence on Azure - Microsoft Azure の永続化」は、資料を作り始めたら80ページ、90ページと順当に増えていって、到底50分に収まりそうもなく非常に難儀し、最終的にIaaSのDisk（Block Device）を落とし所にしてStorageの概要を話す形にしました。Azure Storageの特徴は、データセンターの構成や内部構造が絡んで、冗長構成とパフォーマンス特性に現れてくるので、どうしてそうなっているのかあたりを含めつつ短時間で話をするのはなかなか難しいです。</p>
-<p>もう少し、Tableも交えて話すと、Azure Storageという共通の仕組みの上に、NoSQLとBlock Device（VM Disk）が乗ってることの素晴らしさが伝わったんじゃないかと思うと少々残念です。クラウドベンダーとしてのMicrosoftという観点から見ると、Storage共通基盤は投資効果が高く、他のベンダーとの差別化ができるポイントではないかと思うので、さらなる今後の発展に期待しています。</p>
-<p>榎本さんのセッション 「<a class="reference external" href="http://atsushieno.hatenablog.com/entry/2015/01/17/003523">GoAzure2015 - オープンソース.NETと Mono / Xamarin の今後について</a>」が同じ時間の開催になってしまって見れなかったのが残念でした。自分で聞きたかったから、「台湾でばかり喋ってないで日本でも話してくれないか」とセッションに誘ったのに・・・ orz</p>
-<p>後になって、クラウドデザインパターン色を入れても良かったのかなと思いつつも、イベントを楽しめました。聞きたいセッションが被り過ぎてたのが残念と言えば残念ですが、非常に充実したイベントでした。</p>
-</div>
-<div class="section" id="id3">
-<h2>謝辞</h2>
-<p>榎本さん、酒井さん、森島さん、しばやん、セッションお疲れ様でした。</p>
-<p>JAZUGの皆さん、Microsoftの皆さん、スポンサーの皆さん、関係者の皆さん本当にありがとうございました。いつも裏方から表方までありがとうございます。</p>
-<p>参加者の皆様、ありがとうございました。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/session.html">Session</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/iaas.html">IaaS</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/goazure.html">GoAzure</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2015/01/18/goazure_2015.html#disqus_thread" data-disqus-identifier="2015/01/18/goazure_2015">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -370,6 +488,8 @@
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへの同時デプロイ</a>
+        </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
         </li><li>
             <a href="2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
@@ -387,8 +507,6 @@
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li><li>
             <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
-        </li><li>
-            <a href="2016/05/20/reliable_collection_lock.html">Reliable Collection の Lock の挙動</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
