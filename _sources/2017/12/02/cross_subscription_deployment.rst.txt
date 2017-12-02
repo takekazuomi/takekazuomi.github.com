@@ -77,7 +77,7 @@
 
 最後に
 ------
-今回の元ネタは、`@rjmax <https://github.com/rjmax>`_ の、 **Demos for Ignite US 2017 session BRK3167** [#ref4]_ です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、 `rjmax/ArmExamples <https://github.com/rjmax/ArmExamples>`_ はお勧めですよ、ここのテンプレートが短くて見やすいのも良い感じです。
+今回の元ネタは、`@rjmax <https://github.com/rjmax>`_ の、 **Demos for Ignite US 2017 session BRK3167** [#ref4]_ です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、 `rjmax/ArmExamples <https://github.com/rjmax/ArmExamples>`_ はお勧めですよ、ここのテンプレートは短くて見やすいのも良い感じです。
 
 
 参照
