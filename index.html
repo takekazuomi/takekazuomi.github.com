@@ -79,8 +79,7 @@
             <span>December 02, 2017</span>
         </div>
         <div class="section">
-            <div class="section" id="subscription">
-<h1><a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a></h1>
+            <h1><a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a></h1>
 <p>この記事は<a class="reference external" href="https://qiita.com/advent-calendar/2017/azure">Microsoft Azure Advent Calendar 2017</a>の2日目の記事です。</p>
 <p>ちょっと便利な、ARM template の小技を紹介します。</p>
 <p>以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>から、別のサブスクリプションへもデプロイできるようになりました。<a class="footnote-reference" href="#ref2" id="id2">[2]</a></p>
@@ -127,10 +126,10 @@ Location          : japanwest
 <h2>注意</h2>
 <p>テンプレートの、<a class="reference external" href="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38">38行目</a>で、location を西日本を直接指定しています。 ここを、<span class="docutils literal"><span class="pre">location":</span> <span class="pre">"[resourceGroup().location]</span></span>としたら、locationが東日本になってしました。<span class="docutils literal"><span class="pre">resourceGroup()</span></span>は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。</p>
 </div>
-</div>
 <div class="section" id="id6">
-<h1>最後に</h1>
-<p>今回の元ネタは、<a class="reference external" href="https://github.com/rjmax">@rjmax</a>の、<strong>Demos for Ignite US 2017 session BRK3167</strong><a class="footnote-reference" href="#ref4" id="id7">[4]</a>です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、<a class="reference external" href="https://github.com/rjmax/ArmExamples">rjmax/ArmExamples</a>はお勧めです。</p>
+<h2>最後に</h2>
+<p>今回の元ネタは、<a class="reference external" href="https://github.com/rjmax">@rjmax</a>の、<strong>Demos for Ignite US 2017 session BRK3167</strong><a class="footnote-reference" href="#ref4" id="id7">[4]</a>です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、<a class="reference external" href="https://github.com/rjmax/ArmExamples">rjmax/ArmExamples</a>はお勧めですよ、ここのテンプレートが短くて見やすいのも良い感じです。</p>
+</div>
 <div class="section" id="id8">
 <h2>参照</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
@@ -157,7 +156,6 @@ Location          : japanwest
 <tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td><a class="reference external" href="https://github.com/rjmax/IgniteUS2017">Demos for Ignite US 2017 session BRK3167 - Tips and Tricks with Azure Resource Manager, @rjmax</a></td></tr>
 </tbody>
 </table>
-</div>
 </div>
 
         </div>
