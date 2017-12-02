@@ -94,9 +94,9 @@
 <h1>複数Subscriptionへのデプロイ</h1>
 <p>この記事は<a class="reference external" href="https://qiita.com/advent-calendar/2017/azure">Microsoft Azure Advent Calendar 2017</a>の2日目の記事です。</p>
 <p>ちょっと便利な、ARM template の小技を紹介します。</p>
-<p>以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>から、別のサブスクリプションへもデプロイできるようになりました。</p>
+<p>以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが<a class="footnote-reference" href="#ref1" id="id1">[1]</a>。さらに、<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>の<span class="docutils literal"><span class="pre">API</span> <span class="pre">Version:</span> <span class="pre">2017-05-10</span></span>から、別のサブスクリプションへもデプロイできるようになりました。<a class="footnote-reference" href="#ref2" id="id2">[2]</a></p>
 <p>リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template(<span class="docutils literal"><span class="pre">Microsoft.Resources/deployments</span></span>) を使います。 deployments リソースにsubscriptionId プロパティが追加され、そこに指定したサブスクリプションにnested templateで定義したリソースが展開されるってわけです、簡単ですね。</p>
-<a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script><p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref2" id="id2">[2]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
+<a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script><p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref3" id="id3">[3]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
 <script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"></script><p>これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイします。そうするとストレージアカウント(東日本)が作成され、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）も作成されます。</p>
 <p>実行には事前に、リソースグループが必要です。サブスクリプションを切替ながら、リソースグループを両側に用意します。</p>
 <div class="code posh highlight-default"><div class="highlight"><pre><span></span>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
@@ -134,22 +134,38 @@ Location          : japanwest
 </pre></div>
 </div>
 <p>ストレージアカウントが２つ作成され、それぞれ別のサブスクリプションに東日本と西日本に配置されているのが確認できました。複数サブスクリプションへの配置が必要なケースはあまり無い気もしますが、なかなか面白いですね。</p>
-<div class="section" id="id3">
+<div class="section" id="id4">
 <h2>注意</h2>
 <p>テンプレートの、<a class="reference external" href="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38">38行目</a>で、location を西日本を直接指定しています。 ここを、<span class="docutils literal"><span class="pre">location&quot;:</span> <span class="pre">&quot;[resourceGroup().location]</span></span>としたら、locationが東日本になってしました。<span class="docutils literal"><span class="pre">resourceGroup()</span></span>は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。</p>
 </div>
-<div class="section" id="id5">
+</div>
+<div class="section" id="id6">
+<h1>最後に</h1>
+<p>今回の元ネタは、<a class="reference external" href="https://github.com/rjmax">&#64;rjmax</a>の、<strong>Demos for Ignite US 2017 session BRK3167</strong><a class="footnote-reference" href="#ref4" id="id7">[4]</a>です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、<a class="reference external" href="https://github.com/rjmax/ArmExamples">rjmax/ArmExamples</a>はお勧めです。</p>
+<div class="section" id="id8">
 <h2>参照</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><cite>複数のリソース グループに Azure リソースをデプロイする &lt;https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-cross-resource-group-deployment&gt;</cite></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-cross-resource-group-deployment">複数のリソース グループに Azure リソースをデプロイする</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="ref2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>完全なテンプレート<cite>deploystorage.json &lt;https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json&gt;</cite></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="https://myignite.microsoft.com/sessions/53286">Tips and tricks with Azure Resource Manager - BRK3167, Ryan Jones</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td><a class="reference external" href="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json">完全なテンプレート deploystorage.json</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td><a class="reference external" href="https://github.com/rjmax/IgniteUS2017">Demos for Ignite US 2017 session BRK3167 - Tips and Tricks with Azure Resource Manager, &#64;rjmax</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -202,7 +218,7 @@ Location          : japanwest
     </form>
 </div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
 
-        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2015, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2017, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
 
       </div> <!--! end of #container --><!--[if lt IE 7 ]>
           <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>

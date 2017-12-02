@@ -5,7 +5,7 @@
 
 ちょっと便利な、ARM template の小技を紹介します。
 
-以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが [#ref1]_ 。さらに、 ``Microsoft.Resources/deployments`` の ``API Version: 2017-05-10`` から、別のサブスクリプションへもデプロイできるようになりました。
+以前から１つのテンプレートを使って、複数のリソースグループへデプロイすることができましたが [#ref1]_ 。さらに、 ``Microsoft.Resources/deployments`` の ``API Version: 2017-05-10`` から、別のサブスクリプションへもデプロイできるようになりました。 [#ref2]_
 
 リソースを異なるサブスクリプションにデプロイするには、別のリソースグループへデプロイする時と同じように、nested template( ``Microsoft.Resources/deployments`` ) を使います。 deployments リソースにsubscriptionId プロパティが追加され、そこに指定したサブスクリプションにnested templateで定義したリソースが展開されるってわけです、簡単ですね。
 
@@ -15,7 +15,7 @@
 
 
 
-ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。 [#ref2]_ テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。
+ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。 [#ref3]_ テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。
 
 .. raw:: html
 
@@ -75,14 +75,18 @@
 ----
 テンプレートの、 `38行目 <https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38>`_ で、location を西日本を直接指定しています。 ここを、 ``location": "[resourceGroup().location]`` としたら、locationが東日本になってしました。 ``resourceGroup()`` は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。
 
-
+最後に
+======
+今回の元ネタは、`@rjmax <https://github.com/rjmax>`_ の、 **Demos for Ignite US 2017 session BRK3167** [#ref4]_ です。このレポジトリだけで無く彼のレポジトリはARM template を使う人には必見の情報満載です、素晴らしい。特に、 `rjmax/ArmExamples <https://github.com/rjmax/ArmExamples>`_ はお勧めです。
 
 
 参照
 ----
 
-.. [#ref1] `複数のリソース グループに Azure リソースをデプロイする <https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-cross-resource-group-deployment>`
-.. [#ref2] 完全なテンプレート `deploystorage.json <https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json>`
+.. [#ref1] `複数のリソース グループに Azure リソースをデプロイする <https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-cross-resource-group-deployment>`_
+.. [#ref2] `Tips and tricks with Azure Resource Manager - BRK3167, Ryan Jones <https://myignite.microsoft.com/sessions/53286>`_
+.. [#ref3] `完全なテンプレート deploystorage.json <https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json>`_
+.. [#ref4] `Demos for Ignite US 2017 session BRK3167 - Tips and Tricks with Azure Resource Manager, @rjmax <https://github.com/rjmax/IgniteUS2017>`_
 
 
 .. author:: default
