@@ -11,7 +11,7 @@
 
 .. raw:: html
 
-   <a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+   <a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"> </script>
 
 
 
@@ -19,7 +19,9 @@
 
 .. raw:: html
 
-   <script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json"></script>
+   <script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json">&nbsp;</script>
+
+
 
 
 これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイします。そうするとストレージアカウント(東日本)が作成され、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）も作成されます。
@@ -73,7 +75,7 @@
 
 注意
 ----
-テンプレートの、 `38行目 <https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38>`_ で、location を西日本を直接指定しています。 ここを、 ``location": "[resourceGroup().location]`` としたら、locationが東日本になってしました。 ``resourceGroup()`` は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。
+テンプレートの、 `38行目 <https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6#file-deploystorage-json-L38>`_ で、location を西日本を直接指定しています。 ここを、 ``location": "[resourceGroup().location]`` としたら、locationが東日本になってしまいました。 ``resourceGroup()`` は、親のdeploymentsリソースを指すようです。ちょっと混乱しますが、「まあ納得できる範囲かな」という気はします。
 
 最後に
 ------
