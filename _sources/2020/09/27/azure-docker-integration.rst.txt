@@ -56,7 +56,7 @@ Azure Docker Integration
     CMD ["tinker", "-h"]
 
 Bookmarks
-------------
+============
 
 * marpで書いたソース `第28回 Tokyo Jazug Night Introduction of Azure Docker Integration <https://github.com/takekazuomi/docker-aci-intro>`_ 。Makefileによく使うコマンドをまとめてある。作業環境をWSL2(Ubuntu 20.04)にしたら、Makefileをまた使うことになった。なかなか難儀する、昔は使ってたんだけど、、、orz
 

@@ -79,7 +79,8 @@
             <span>September 27, 2020</span>
         </div>
         <div class="section">
-            <h1><a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a></h1>
+            <div class="section" id="azure-docker-integration">
+<h1><a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a></h1>
 <p>先日(7/30)と言っても、既に2ヶ月前。<a class="reference external" href="https://jazug.connpass.com/event/181811/">第28回 Tokyo Jazug Night</a>の資料をやっとSlideshareに上げた。<a class="reference external" href="https://www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration">Introduction of Azure Docker Integration</a></p>
 <iframe src="//www.slideshare.net/slideshow/embed_code/key/1tQfINFHKSkRiw" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration" title="Introduction of Azure Docker Integration" target="_blank">Introduction of Azure Docker Integration</a> </strong> from <strong><a href="https://www.slideshare.net/takekazuomi" target="_blank">Takekazu Omi</a></strong> </div><p>だいぶ空いてしまったので、更新情報を。先日、2020/9/24 に、docker compose をクラウド上で動かすための、docker cli 拡張SDKが公開された。アーキテクチャを見ると、ECS/ACI バックエンドとなっているのが、それぞれのコンテキストを提供している部分で、ECS, ACI 統合がどのようにされているのかがわかる。</p>
 <p><a class="reference external" href="https://www.docker.com/blog/open-source-cloud-compose/">Docker Open Sources Compose for Amazon ECS and Microsoft ACI</a></p>
@@ -115,8 +116,9 @@
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="bookmarks">
-<h2>Bookmarks</h2>
+<h1>Bookmarks</h1>
 <ul class="simple">
 <li>marpで書いたソース<a class="reference external" href="https://github.com/takekazuomi/docker-aci-intro">第28回 Tokyo Jazug Night Introduction of Azure Docker Integration</a>。Makefileによく使うコマンドをまとめてある。作業環境をWSL2(Ubuntu 20.04)にしたら、Makefileをまた使うことになった。なかなか難儀する、昔は使ってたんだけど、、、orz</li>
 </ul>
