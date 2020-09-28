@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Storage 2.0 の Blob Upload" href="../08/blobasyncinside.html" /><link rel="prev" title="Azure Storage Client 2.0 CompletedSynchronously FIX" href="../26/asc2_dot_0asyncbug.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+          <a href="../../../pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,7 +70,7 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
@@ -168,7 +168,7 @@
 <ol class="arabic simple">
 <li>ポータルで256Gでdata diskを作成して接続を確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ dmesg <span class="p">|</span> grep -e <span class="s2">&quot;\[sd[a-z]\]&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ dmesg <span class="p">|</span> grep -e <span class="s2">&quot;\[sd[a-z]\]&quot;</span>
 sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> <span class="m">62914560</span> <span class="m">512</span>-byte logical blocks: <span class="o">(</span><span class="m">32</span>.2 GB/30.0 GiB<span class="o">)</span>
 sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Write Protect is off
 sd <span class="m">2</span>:0:0:0: <span class="o">[</span>sda<span class="o">]</span> Mode Sense: 0f <span class="m">00</span> <span class="m">10</span> <span class="m">00</span>
@@ -199,7 +199,7 @@ sd <span class="m">6</span>:0:0:2: <span class="o">[</span>sde<span class="o">]<
 <ol class="arabic simple" start="2">
 <li>parted で全セクタを使ってパーテーションを作成</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo parted /dev/sdc --script mklabel gpt
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo parted /dev/sdc --script mklabel gpt
 $ sudo parted /dev/sdc --script <span class="s1">&#39;mkpart disk1 ext4 1M -1&#39;</span>
 $ sudo parted /dev/sdc --script <span class="s1">&#39;print&#39;</span>
 
@@ -234,7 +234,7 @@ ___ snip ___
 <ol class="arabic simple" start="3">
 <li>mount point 作って、/mnt/resouceとともにパーミッションを変更</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ mkdir /mnt/data1 /mnt/data2 /mnt/data3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mkdir /mnt/data1 /mnt/data2 /mnt/data3
 $ chmod a+wrx /mnt/data*
 $ chmod a+wrx /mnt/resource
 $ ls -l /mnt/
@@ -249,7 +249,7 @@ drwxrwxrwx <span class="m">4</span> root root <span class="m">4096</span> Dec <s
 <ol class="arabic simple" start="4">
 <li>とりあえず、マウントして確認</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo mount -t ext4 /dev/sdc1 /mnt/data1
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo mount -t ext4 /dev/sdc1 /mnt/data1
 $ sudo mount -t ext4 /dev/sdd1 /mnt/data2
 $ sudo mount -t ext4 /dev/sde1 /mnt/data3
 
@@ -270,7 +270,7 @@ none           tmpfs       <span class="m">102400</span>       <span class="m">0
 <ol class="arabic simple" start="5">
 <li>再起動してもマウントされるように、UUIDを確認して /etc/fstab に追加。</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ blkid
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ blkid
 /dev/sda1: <span class="nv">LABEL</span><span class="o">=</span><span class="s2">&quot;cloudimg-rootfs&quot;</span> <span class="nv">UUID</span><span class="o">=</span><span class="s2">&quot;56d8a977-c1fe-461e-a328-b19fc47c743f&quot;</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">&quot;ext4&quot;</span>
 /dev/sdb1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">&quot;d063d8a2-32fc-486c-a9b4-e6bcf7e5deae&quot;</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">&quot;ext4&quot;</span>
 /dev/sdd1: <span class="nv">UUID</span><span class="o">=</span><span class="s2">&quot;88f28b19-fdc6-46dc-a2d7-2daa1754754f&quot;</span> <span class="nv">TYPE</span><span class="o">=</span><span class="s2">&quot;ext4&quot;</span>
@@ -291,7 +291,7 @@ $ cat /etc/fstab
 <ol class="arabic simple" start="6">
 <li>最新にして再起動する</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ apt-get update
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ apt-get update
 ___ snip ___
 $ apt-get upgrade
 ___ snip ___
@@ -303,7 +303,7 @@ $ shutdown -r now
 <li>iozone3 を入れる</li>
 </ol>
 <p>/etc/apt/sources.list を変更して、multiverse を追加（コメントを外しただけ）</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ vi /etc/apt/sources.list
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vi /etc/apt/sources.list
 
 ___ snip ___
 
@@ -316,7 +316,7 @@ $ apt-get install iozone3
 <div class="section" id="id4">
 <h2>測定</h2>
 <p>これで環境が出来たので測定します。基本的には、iozone 一発で細かいオプションの指定はしません。なんとなく、Excelファイルにしたのですが、面倒になるだけであまりメリットは無かったかもしれません。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ iozone -Ra -f /mnt/resource/tmp/test -b sdb2-001.xls -s 1g
 $ iozone -Ra -f /mnt/data1/tmp/test -b sdc1-001hcnone.xls -s 1g
 $ iozone -Ra -f /mnt/data2/tmp/test -b sdd1-001hcro.xls -s 1g
 $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
@@ -414,6 +414,8 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2012/12/22/azurevmfix1221";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="../../../2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="../../../2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -431,15 +433,13 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
             <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="../../../categories/azure.html">Azure</a> (35)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (3)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/posh.html">Posh</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (3)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/aci.html">ACI</a> (1), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/docker.html">docker</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

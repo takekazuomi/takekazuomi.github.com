@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="OWIN - Open Web Interface for .NET を使う" href="../17/owin_azure_cache_session_middleware.html" /><link rel="prev" title="Windows Azure Storage Client Library for C++ Preview" href="../21/windows_azure_storage_client_library_for_c_preview.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+          <a href="../../../pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,7 +70,7 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
@@ -102,7 +102,7 @@
 <div class="section" id="windows-azure-storage-team-blog-windows-azure-storage-client-library-for-java-v-0-5-0">
 <h2>抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0</h2>
 <p>このリリースでは、logging support, 新しい API overloads、そして 2013-08-15 REST<a class="footnote-reference" href="#r1" id="id2">[1]</a>が完全にサポートされています。今までのようにソースコードは、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github Windows Azure Storage libraries for Java</a>で公開されています。<a class="footnote-reference" href="#r2" id="id3">[2]</a>従来のようにmaven のレポジトリに登録されています。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>  
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>  
      <span class="nt">&lt;groupId&gt;</span>com.microsoft.windowsazure.storage<span class="nt">&lt;/groupId&gt;</span>
      <span class="nt">&lt;artifactId&gt;</span>microsoft-windowsazure-storage-sdk<span class="nt">&lt;/artifactId&gt;</span>
      <span class="nt">&lt;version&gt;</span>0.5.0<span class="nt">&lt;/version&gt;</span>
@@ -116,11 +116,11 @@
 <div class="section" id="samples">
 <h3>Samples</h3>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github</a>のソースのなかに、幾つかの重要なシナリを説明する<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">サンプル</a>があります。指定されたサンプルを実行するには、サンプルプロジェクトをロードし、ストレージの資格情報を提供するために、Utility.javaの次の行を更新します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">&quot;DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]&quot;</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">&quot;DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]&quot;</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>fiddler を使ってサンプル実行中の traffic を見たい場合は、Utility.java の下記の2行をコメントアウトを外してください。</p>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="c1">// System.setProperty(&quot;http.proxyHost&quot;, &quot;localhost&quot;);</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// System.setProperty(&quot;http.proxyHost&quot;, &quot;localhost&quot;);</span>
 <span class="c1">// System.setProperty(&quot;http.proxyPort&quot;, &quot;8888&quot;);</span>
 </pre></div>
 </div>
@@ -145,15 +145,15 @@
 <h3>Support for Read Access Geo Redundant Storage</h3>
 <p>このリリースでは、secondary region の storage account data の読み取りアクセス (RA-GRS)<a class="footnote-reference" href="#r3" id="id7">[3]</a>を完全にサポートしています。クライアントオブジェクト上の位置モードを設定し、getServiceStatsを起動すると、以下の例に示されている。LocationModeもRequestOptionsオブジェクト上に設定することで、リクエストごとに設定することができます。</p>
 <p>下記の例では、client objectの location mode を設定して getServiceStats を呼び出すことで、 replication の状態を取得しています。</p>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
-<span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="p">.</span><span class="na">createCloudTableClient</span><span class="p">();</span>
 
 <span class="c1">// Set the LocationMode to SECONDARY_ONLY since getServiceStats is supported only on the secondary endpoints.</span>
-<span class="n">tClient</span><span class="o">.</span><span class="na">setLocationMode</span><span class="o">(</span><span class="n">LocationMode</span><span class="o">.</span><span class="na">SECONDARY_ONLY</span><span class="o">);</span>
-<span class="n">ServiceStats</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">tClient</span><span class="o">.</span><span class="na">getServiceStats</span><span class="o">();</span>
-<span class="n">Date</span> <span class="n">lastSyncTime</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getLastSyncTime</span><span class="o">();</span>
+<span class="n">tClient</span><span class="p">.</span><span class="na">setLocationMode</span><span class="p">(</span><span class="n">LocationMode</span><span class="p">.</span><span class="na">SECONDARY_ONLY</span><span class="p">);</span>
+<span class="n">ServiceStats</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">tClient</span><span class="p">.</span><span class="na">getServiceStats</span><span class="p">();</span>
+<span class="n">Date</span> <span class="n">lastSyncTime</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="na">getGeoReplication</span><span class="p">().</span><span class="na">getLastSyncTime</span><span class="p">();</span>
 
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;Replication status = %s and LastSyncTime = %s&quot;</span><span class="o">,</span><span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getStatus</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">lastSyncTime</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastSyncTime</span><span class="o">.</span><span class="na">toString</span><span class="o">():</span> <span class="s">&quot;empty&quot;</span><span class="o">));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&quot;Replication status = %s and LastSyncTime = %s&quot;</span><span class="p">,</span><span class="n">stats</span><span class="p">.</span><span class="na">getGeoReplication</span><span class="p">().</span><span class="na">getStatus</span><span class="p">().</span><span class="na">toString</span><span class="p">(),</span> <span class="n">lastSyncTime</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastSyncTime</span><span class="p">.</span><span class="na">toString</span><span class="p">():</span> <span class="s">&quot;empty&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -161,56 +161,56 @@
 <h3>Expanded Table Protocol Support (JSON)</h3>
 <blockquote>
 <div>table traffic で、JSONがサポートされました。TableClient の setTablePayloadFormat() で、TablePayloadFormatを指定することでJSONformatを使うことができます。</div></blockquote>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
-<span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="p">.</span><span class="na">createCloudTableClient</span><span class="p">();</span>
 
 <span class="c1">// Set the payload format to JsonNoMetadata.</span>
-<span class="n">tableClient</span><span class="o">.</span><span class="na">setTablePayloadFormat</span><span class="o">(</span><span class="n">TablePayloadFormat</span><span class="o">.</span><span class="na">JsonNoMetadata</span><span class="o">);</span>
+<span class="n">tableClient</span><span class="p">.</span><span class="na">setTablePayloadFormat</span><span class="p">(</span><span class="n">TablePayloadFormat</span><span class="p">.</span><span class="na">JsonNoMetadata</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="o">{</span>    
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="p">{</span>    
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="p">;</span>
 
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getA</span><span class="o">()</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">A</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getA</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">A</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">getB</span><span class="o">()</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">B</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">getB</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">B</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">this</span><span class="o">.</span><span class="na">A</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span><span class="p">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">this</span><span class="p">.</span><span class="na">A</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="o">(</span><span class="kd">final</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">this</span><span class="o">.</span><span class="na">B</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="p">(</span><span class="kd">final</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">this</span><span class="p">.</span><span class="na">B</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
     
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">EdmType</span> <span class="nf">propertyResolver</span><span class="o">(</span><span class="n">String</span> <span class="n">pk</span><span class="o">,</span> <span class="n">String</span> <span class="n">rk</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;A&quot;</span><span class="o">))</span> <span class="o">{</span>
-	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">STRING</span><span class="o">;</span>
-	<span class="o">}</span>
-	<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;B&quot;</span><span class="o">))</span> <span class="o">{</span>
-	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">BINARY</span><span class="o">;</span>
-	<span class="o">}</span>
-	<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="n">EdmType</span> <span class="nf">propertyResolver</span><span class="p">(</span><span class="n">String</span> <span class="n">pk</span><span class="p">,</span> <span class="n">String</span> <span class="n">rk</span><span class="p">,</span> <span class="n">String</span> <span class="n">key</span><span class="p">,</span> <span class="n">String</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">))</span> <span class="p">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="p">.</span><span class="na">STRING</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">))</span> <span class="p">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="p">.</span><span class="na">BINARY</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
     
-<span class="o">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>この、propertyResolver は、TableRequestOptions にセットします。</p>
-<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="o">();</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setA</span><span class="o">(</span><span class="s">&quot;myPropVal&quot;</span><span class="o">);</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span> <span class="o">});</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setPartitionKey</span><span class="o">(</span><span class="s">&quot;testKey&quot;</span><span class="o">);</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setRowKey</span><span class="o">(</span><span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="p">();</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setA</span><span class="p">(</span><span class="s">&quot;myPropVal&quot;</span><span class="p">);</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setB</span><span class="p">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">});</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setPartitionKey</span><span class="p">(</span><span class="s">&quot;testKey&quot;</span><span class="p">);</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setRowKey</span><span class="p">(</span><span class="n">UUID</span><span class="p">.</span><span class="na">randomUUID</span><span class="p">().</span><span class="na">toString</span><span class="p">());</span>
 
-<span class="n">options</span><span class="o">.</span><span class="na">setPropertyResolver</span><span class="o">(</span><span class="n">ref</span><span class="o">);</span>
+<span class="n">options</span><span class="p">.</span><span class="na">setPropertyResolver</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -343,6 +343,8 @@
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/20/windows_azure_storage_client_library_for_java_v_0_5_0";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="../../../2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="../../../2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -360,15 +362,13 @@
             <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="../../../categories/azure.html">Azure</a> (35)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (3)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/posh.html">Posh</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (3)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/aci.html">ACI</a> (1), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/docker.html">docker</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

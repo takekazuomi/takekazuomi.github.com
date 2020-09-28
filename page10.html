@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page11.html" /><link rel="prev" title="Newer" href="page9.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About kyrt inc.</a>
+          <a href="pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,12 +70,121 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 11, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure PowerShell 0.7.2 リリース</a></h1>
+<p>Windows Azure PowerShell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
+<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
+<div class="section" id="id1">
+<h2>インストール</h2>
+<p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
+<img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
+<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
+
+Name                                                        Version
+----                                                        -------
+Autoload                                                    <span class="m">0</span>.0
+Azure                                                       <span class="m">0</span>.7.2
+Microsoft.PowerShell.Management                             <span class="m">3</span>.1.0.0
+Microsoft.PowerShell.Utility                                <span class="m">3</span>.1.0.0
+posh-git                                                    <span class="m">0</span>.0
+PsEnv                                                       <span class="m">0</span>.0
+PSReadline                                                  <span class="m">1</span>.0.0.1
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>変更点</h2>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
+<ul class="simple">
+<li>HDInsight cmdlets<ul>
+<li>Add-AzureHDInsightConfigValues</li>
+<li>Add-AzureHDInsightMetastore</li>
+<li>Add-AzureHDInsightStorage</li>
+<li>Get-AzureHDInsightCluster</li>
+<li>Get-AzureHDInsightJob</li>
+<li>Get-AzureHDInsightJobOutput</li>
+<li>Get-AzureHDInsightProperties</li>
+<li>New-AzureHDInsightCluster</li>
+<li>New-AzureHDInsightClusterConfig</li>
+<li>New-AzureHDInsightHiveJobDefinition</li>
+<li>New-AzureHDInsightMapReduceJobDefinition</li>
+<li>New-AzureHDInsightPigJobDefinition</li>
+<li>New-AzureHDInsightSqoopJobDefinition</li>
+<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
+<li>Remove-AzureHDInsightCluster</li>
+<li>Revoke-AzureHDInsightHttpServicesAccess</li>
+<li>Set-AzureHDInsightDefaultStorage</li>
+<li>Start-AzureHDInsightJob</li>
+<li>Stop-AzureHDInsightJob</li>
+<li>Use-AzureHDInsightCluster</li>
+<li>Wait-AzureHDInsightJob</li>
+<li>Grant-AzureHDInsightHttpServicesAccess</li>
+<li>Invoke-AzureHDInsightHiveJob</li>
+</ul>
+</li>
+<li>Web Site の WebSocket と managed pipe mode の設定<ul>
+<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
+</ul>
+</li>
+<li>Web Site の remote debugging 設定<ul>
+<li>Enable-AzureWebsiteDebug -Version</li>
+<li>Disable-AzureWebsiteDebug</li>
+</ul>
+</li>
+<li>VM を削除した時の VHD cleaning up オプション<ul>
+<li>Remove-AzureVM -DeleteVHD</li>
+<li>Remove-AzureService -DeleteAll</li>
+<li>Remove-AzureDeployment -DeleteVHD</li>
+</ul>
+</li>
+<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
+<li>Get-AzureDeployment</li>
+<li>Get-AzureReservedIP</li>
+<li>New-AzureReservedIP</li>
+<li>New-AzureVM</li>
+<li>Remove-AzureReservedIP</li>
+</ul>
+</li>
+<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
+<li>Start-AzureEmulator</li>
+<li>Publish-AzureServiceProject</li>
+<li>Save-AzureServiceProjectPackage</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>最後に</h2>
+<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure PowerShell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure PowerShell</a>, <a href="tags/powershell.html">PowerShell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/release.html">Release</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 06, 2013</span>
         </div>
         <div class="section">
@@ -154,7 +263,7 @@
 </table>
 <div class="section" id="fullatompub">
 <span id="id2"/><h3>AtomPub [引用]</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;feed</span> <span class="na">xml:base=</span><span class="s">"http://someaccount.table.core.windows.net/"</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices"</span> <span class="na">xmlns:m=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</span> <span class="na">xmlns:georss=</span><span class="s">"http://www.georss.org/georss"</span> <span class="na">xmlns:gml=</span><span class="s">"http://www.opengis.net/gml"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;id&gt;</span>http://someaccount.table.core.windows.net/Customers<span class="nt">&lt;/id&gt;</span>
   <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Customers<span class="nt">&lt;/title&gt;</span>
@@ -232,7 +341,7 @@
 </div>
 <div class="section" id="json-minimalmetadata">
 <span id="id3"/><h3>JSON minimalmetadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span/><span class="p">{</span>
     <span class="nt">"odata.metadata"</span><span class="p">:</span><span class="s2">"http://someaccount.table.core.windows.net/$metadata#Customers"</span><span class="p">,</span>
     <span class="nt">"value"</span><span class="p">:[</span>
         <span class="p">{</span>
@@ -275,7 +384,7 @@
 </div>
 <div class="section" id="json-nometadata">
 <span id="id4"/><h3>JSON nometadata [引用]</h3>
-<div class="highlight-json"><div class="highlight"><pre><span/><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span/><span class="p">{</span>
     <span class="nt">"value"</span><span class="p">:[</span>
 	<span class="p">{</span>
             <span class="nt">"PartitionKey"</span><span class="p">:</span><span class="s2">"Jonathan"</span><span class="p">,</span>
@@ -314,7 +423,7 @@
 </div>
 <div class="section" id="xml-nometadata">
 <span id="id5"/><h3>XML nometadata （参考までに作ってみました）</h3>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" ?&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" ?&gt;</span>
 <span class="nt">&lt;Feed&gt;</span>
   <span class="nt">&lt;Properties&gt;</span>
     <span class="nt">&lt;PartitionKey&gt;</span>Jonathan<span class="nt">&lt;/PartitionKey&gt;</span>
@@ -491,7 +600,7 @@
 <p>Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。</p>
 <p>名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。</p>
 <p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。<a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
-<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
 Cache-Control: no-cache
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
@@ -507,7 +616,7 @@ Date: Thu, 05 Dec 2013 12:00:39 GMT
 </pre></div>
 </div>
 <p>ちなみに、$で始まる適当な名前でリクエストを流すと400 Bad Requestで、リソースに不正な文字が含まれているというエラーになります。</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 400 Bad Request
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 400 Bad Request
 Transfer-Encoding: chunked
 Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
 Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
@@ -522,14 +631,14 @@ DE
 </pre></div>
 </div>
 <p>メトリックス系のテーブルは下記のようにListTableでも帰ってこないので存在するかどうかは難しいところですが、エラーにならないところを見ると特別扱いされているようで期待してしまいます。</p>
-<div class="highlight-none"><div class="highlight"><pre><span/>var tables = tableClient.ListTables("$Metrics");
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>var tables = tableClient.ListTables("$Metrics");
 </pre></div>
 </div>
 </div>
 <div class="section" id="id4">
 <h2>Minute Metrics （分単位メトリックス）を有効にする</h2>
 <p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>を使います。今のところ<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。<a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
-<div class="highlight-none"><div class="highlight"><pre><span/>private static void SetStorageAnalytics(CloudStorageAccount account)
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>private static void SetStorageAnalytics(CloudStorageAccount account)
 {
     var serviceProperty = new ServiceProperties
     {
@@ -566,7 +675,7 @@ DE
 <p>実行してリクエスト、レスポンスを覗いてみます。</p>
 <div class="section" id="http-request">
 <h3>http request</h3>
-<div class="highlight-none"><div class="highlight"><pre><span/>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
 User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
 x-ms-version: 2013-08-15
 x-ms-client-request-id: 56bffee5-4626-4835-b254-af38a1520242
@@ -582,7 +691,7 @@ Connection: Keep-Alive
 </div>
 <div class="section" id="http-response">
 <h3>http response</h3>
-<div class="highlight-none"><div class="highlight"><pre><span/>HTTP/1.1 202 Accepted
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 202 Accepted
 Transfer-Encoding: chunked
 Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
 x-ms-request-id: 650e2253-9e51-43e5-90bd-6077ef43ef31
@@ -754,64 +863,6 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/05/minute_metrics_storage_version_2013_08_15.html#disqus_thread" data-disqus-identifier="2013/12/05/minute_metrics_storage_version_2013_08_15">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 03, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html">Windows Azure SDK for Ruby Release 0.6.0</a></h1>
-<p>Windows Azure SDK for Ruby 0.6.0 がリリースされました。2013/04/25に 0.5.0 が出て以来7ヶ月ぶりのリリースです。RubyGemsから入ります</p>
-<div class="highlight-ruby"><div class="highlight"><pre><span/><span class="no">INISTALL</span> <span class="o">&gt;</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">azure</span>
-</pre></div>
-</div>
-<div class="section" id="id1">
-<h2>新機能</h2>
-<p>0.6.0では、主にmanagement APIの追加とBUG修正が行われたようです。</p>
-<ul class="simple">
-<li>service management API のライブラリとして下記のものが追加されています。<ul>
-<li>Virtual Machine</li>
-<li>Virtual Machine Image</li>
-<li>Virtual Network</li>
-<li>Cloud Service</li>
-<li>Storage</li>
-<li>Sql Database</li>
-<li>Location and Affinity Group</li>
-</ul>
-</li>
-</ul>
-<div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/blob/master/ChangeLog.txt#L1">ChangeLog.txt</a></div>
-<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby">GitHub WindowsAzure/azure-sdk-for-ruby</a></div>
-<div class="line"><a class="reference external" href="http://rubygems.org/gems/azure">RubyGems Azure</a></div>
-</div>
-</div>
-<div class="section" id="get-blob-properties-bug">
-<h2>get_blob_properties のBUG修正</h2>
-<p><a class="reference external" href="https://github.com/takekazuomi/azure-sdk-for-ruby/commit/f52ce92c9276544720ab45d150f96d4d5bf2de7b">5月にPRを出した修正</a>も取り込まれてリリースされました。これで、Blobのプロパティを取ったらBodyが付いてくるという大きな問題は解決されたことになります。</p>
-<div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/blob/blob_service.rb">azure/blob/blob_service.rb</a></div>
-<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_error.rb">azure/core/http/http_error.rb</a></div>
-<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-ruby/commits/master/lib/azure/core/http/http_response.rb">azure/core/http/http_response.rb</a></div>
-</div>
-<p>これで出すに出せなかったやつが出せるようになります。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/ruby.html">Ruby</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/azure_sdk.html">Azure SDK</a>, <a href="tags/release.html">Release</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0.html#disqus_thread" data-disqus-identifier="2013/12/03/windows_azure_sdk_for_ruby_release_0_6_0">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -820,6 +871,8 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -837,15 +890,13 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/aci.html">ACI</a> (1), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/docker.html">docker</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

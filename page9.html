@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page10.html" /><link rel="prev" title="Newer" href="page8.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About kyrt inc.</a>
+          <a href="pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,12 +70,322 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>December 21, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/12/21/windows_azure_storage_client_library_for_c_preview.html">Windows Azure Storage Client Library for C++ Preview</a></h1>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx">Windows Azure Storage Client Library for C++ Preview がリリースされました</a></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">2013/12/27 Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/27/windows-azure-storage-client-library-for-c-preview.aspx">C++ 用 Windows Azure ストレージ クライアント ライブラリのプレビュー版をリリース</a></div>
+</div>
+</div></blockquote>
+<p>待望のC++用のライブラリです。</p>
+<p>以下にざっくりと訳します。</p>
+<div class="section" id="id2">
+<h2>抄訳 Windows Azure Storage Client Library for C++ Preview</h2>
+<p>これは、Preview release です、まだ puroduction codeでは使用しないでください（should not be used in your production code）。 その代わり、ざっと目を通して試してみて、あなたがGAに必要だと考える拡張・変更のフィードバックを下さい。</p>
+<p>Windows Azure Storage に付いての詳しい情報は、SOSP Paper<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2011/11/20/windows-azure-storage-a-highly-available-cloud-storage-service-with-strong-consistency.aspx">Windows Azure Storage: A Highly Available Cloud Storage Service with Strong Consistency</a><a class="footnote-reference" href="#r1" id="id3">[1]</a>を参照してください。</p>
+<div class="section" id="emulator-guidance">
+<h3>Emulator Guidance</h3>
+<p>このライブラリが使う<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd894041.aspx">2013-08-15 REST</a>は、現在のAzure SDK(2.2)のStorage Emulatorでサポートされていません。これらの全ての機能をサポートしたAzure Storage Emulatorのアップデートを来月には出せる見込みです。(An updated Windows Azure Storage Emulator is expected to ship with full support of these new features in the next month)Storage Emulatorの現在のバージョンを使って開発しようとすると不正な要求エラーを受け取ることになります。アップデートが出るまでは、新機能を使用したいユーザーは、Windows Azure Storage Account (本番環境）を使ってテストをして下さい。<a class="footnote-reference" href="#r2" id="id4">[2]</a></p>
+</div>
+<div class="section" id="id5">
+<h3>サポートされるプラットフォーム</h3>
+<p>今回のリリースでは、Visual Studio 2012 (v110) と Visual Studio 2013 (v120) platform toolsets 用ライブラリの x64およびx86バージョンを提供します。パッケージには、8 build flavors が含まれます。</p>
+<ol class="arabic simple">
+<li>Release, x64, v120</li>
+<li>Debug, x64, v120</li>
+<li>Release, Win32, v120</li>
+<li>Debug, Win32, v120</li>
+<li>Release, x64, v110</li>
+<li>Debug, x64, v110</li>
+<li>Release, Win32, v110</li>
+<li>Debug, Win32, v110</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h3>入手方法</h3>
+<p>ライブラリは、<a class="reference external" href="http://www.nuget.org/packages/wastorage">NuGet</a>から、完全なソースコードは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp">GitHub</a>からダウンロードできます。NuGet packageは、<a class="reference external" href="http://coapp.org/">CoApp tools</a>を使って作成され、3つのpackage として構成されています。</p>
+<ul class="simple">
+<li>wastorage.0.2.0-preview.nupkg：このパッケージには、アプリケーションの開発に必要なヘッダーとLIBファイルが含まれています。これは、再配布（redist） package に依存します。NuGet は、自動的にredist packageのインストールを行います。</li>
+<li>wastorage.redist.0.2.0-preview.nupkg：このパッケージを実行し、アプリケーションを再配布するために必要なDLLファイルが含まれています。</li>
+<li>wastorage.symbols.0.2.0-preview.nupkg：このパッケージには、それぞれのDLLファイルのシンボルが含まれています。オプションのパッケージです。</li>
+</ul>
+<p>パッケージは、<a class="reference external" href="https://www.nuget.org/packages/cpprestsdk/">C++ REST SDK</a>に依存しており、それもNuGetで自動的にインストールされます。<a class="reference external" href="http://casablanca.codeplex.com/">C++ REST SDK (codename “Casablanca”)</a>は、native code の cloud-based client-server communication のための Microsoft のプロジェクトです。これは、native code の REST services アクセスを、multiple platforms で非同期な HTTP, JSON, URIs の C++ bindings として提供します。Windows Azure Storage Client Library では、このライブラリを Windows Azure Storage Blob, Queue, Table services との通信で利用しています。</p>
+</div>
+<div class="section" id="id7">
+<h3>できること</h3>
+<p>ここでは、REST API に付いて話をする代わりに、Windows Azure Storage Client Library の概要を説明します。</p>
+<ul class="simple">
+<li>Windows Azure Storage REST API version<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">2013-08-15</a>全体を簡単に使えるようにする実装</li>
+<li>Retry policies: リクエストが失敗した場合の再試行ロジックとして、exponential や linear back off algorithm を実装</li>
+<li>Streamlined authentication model: 共有鍵と共有認証署名の両方をサポート</li>
+<li>操作コンテキストとETWのログを使用して要求の詳細と結果に潜り込む能力</li>
+<li>サイズや、Blob typeに関係の無い、ユーザー設定による、parallel block/page アップロード</li>
+<li>特定のupload/download APIに対応しなくても、読み取りまたはBLOBへの書き込みを許可するBLOB Stream</li>
+<li>すべてのBlob uploadおよびdownload での完全なMD5のサポート</li>
+<li>Table layerでは、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Azure Storage Table の新しいJSON サポート</a>を利用</li>
+<li>Table service の、Entity Group Transaction サポート。（Entity Group Transactionでは、単一トランザクションで複数操作が可能）</li>
+</ul>
+</div>
+<div class="section" id="read-access-geo-redundant-storage-ra-grs">
+<h3>Read Access Geo Redundant Storage (RA-GRS) サポート</h3>
+<p>このリリースでは、storage account のsecondary region データへの読込アクセスをフルサポートしています。　この機能は、Portalで有効にしないと利用できません、詳しくは、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/11/introducing-read-access-geo-replicated-storage-ra-grs-for-windows-azure-storage.aspx">RA-GRS</a>を参照<a class="footnote-reference" href="#r3" id="id9">[3]</a>して下さい。</p>
+</div>
+<div class="section" id="how-to-use-it">
+<h3>How to use it?</h3>
+<p>NuGet package を入れると、<cite>was</cite>(Windows Azure Storageの略) のフォルダーに全てのヘッダー が入ります。  このディレクトリでは下記のheader ファイルが重要です。</p>
+<ul class="simple">
+<li>blob.h: Blob service 関連の全ての宣言</li>
+<li>queue.h: Queue service 関連の全ての宣言</li>
+<li>table.h: Table service 関連の全ての宣言</li>
+<li>storage_account.h: account の name/key 、あるいは connection string から、service client のオブジェクトを簡単に作成するための cloud_storage_account type の宣言</li>
+<li>retry_policies.h: 全ての操作で使われる、幾つかの retry policies の宣言</li>
+</ul>
+<p>下記のように使います</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="cp">#include</span> <span class="cpf">"was/storage_account.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/queue.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/table.h"</span><span class="cp"/>
+<span class="cp">#include</span> <span class="cpf">"was/blob.h"</span><span class="cp"/>
+</pre></div>
+</div>
+<p>その後、我々は作成されますcloud_storage_accountコードの後半でサービス·クライアント·オブジェクトを作成するために私達を可能にするオブジェクトを、。私たちは安全な接続のために以下のHTTPSを使用しているが、アプリケーションをデバッグするときに、HTTPは非常に便利であることに注意してください。</p>
+<p>その後、下記のコードでcloud_storage_account オブジェクトを作成します。 ここでは、セキュアな接続のため https を使っていますが、デバックする場合は http が非常に便利です。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span> <span class="n">storage_account</span> <span class="o">=</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_storage_account</span><span class="o">::</span><span class="n">parse</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"AccountName=&lt;account_name&gt;;AccountKey=&lt;account_key&gt;;DefaultEndpointsProtocol=https"</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blobs">
+<h3>Blobs</h3>
+<p>ここでは、blob container を作成し、<cite>”some text</cite>” と入ったblobを作って、それを download 、そして container 内のblobをリストします。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="c1">// Create a blob container</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_client</span> <span class="n">blob_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_blob_client</span><span class="p">();</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_blob_container</span> <span class="n">container</span> <span class="o">=</span> <span class="n">blob_client</span><span class="p">.</span><span class="n">get_container_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mycontainer"</span><span class="p">));</span>
+<span class="n">container</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
+
+<span class="c1">// Upload a blob</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_block_blob</span> <span class="n">blob1</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">get_block_blob_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"myblob"</span><span class="p">));</span>
+<span class="n">blob1</span><span class="p">.</span><span class="n">upload_text</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"some text"</span><span class="p">));</span>
+
+<span class="c1">// Download a blob</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_block_blob</span> <span class="n">blob2</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">get_block_blob_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"myblob"</span><span class="p">));</span>
+<span class="n">utility</span><span class="o">::</span><span class="n">string_t</span> <span class="n">text</span> <span class="o">=</span> <span class="n">blob2</span><span class="p">.</span><span class="n">download_text</span><span class="p">();</span>
+
+<span class="c1">// List blobs</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_result_segment</span> <span class="n">blobs</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">list_blobs_segmented</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_continuation_token</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tables">
+<h3>Tables</h3>
+<p>以下のサンプルでは、 Tableを作成し、様々な型のプロパティの組をエンティティに挿入し、最終的にはその指定したエンティティを取得します。最初の検索操作では、ポイント·クエリを実行し、特定のエンティティを取得します。一方クエリ操作では、PartitionKeyが<cite>“partition”</cite>に等しく、かつ、RowKey が、<cite>“m”</cite>より大きいすべてのエンティティを照会します。これは、結果的にinsertした全てのエンティティになります。</p>
+<p>Windows Azure Tables に関する詳しい情報は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx">Understanding the Table Service Data Model</a>の記事と、<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2010/11/06/how-to-get-most-out-of-windows-azure-tables.aspx">How to get most out of Windows Azure Tables</a>の blog post を見て下さい。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="c1">// Create a table</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_table_client</span> <span class="n">table_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_table_client</span><span class="p">();</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_table</span> <span class="n">table</span> <span class="o">=</span> <span class="n">table_client</span><span class="p">.</span><span class="n">get_table_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mytable"</span><span class="p">));</span>
+<span class="n">table</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
+
+<span class="c1">// Insert a table entity</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity</span> <span class="n">entity</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"partition"</span><span class="p">),</span> <span class="n">U</span><span class="p">(</span><span class="s">"row"</span><span class="p">));</span>
+<span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="p">().</span><span class="n">insert</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity</span><span class="o">::</span><span class="n">property_type</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"PropertyA"</span><span class="p">),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity_property</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"some string"</span><span class="p">))));</span>
+<span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="p">().</span><span class="n">insert</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity</span><span class="o">::</span><span class="n">property_type</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"PropertyB"</span><span class="p">),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity_property</span><span class="p">(</span><span class="n">utility</span><span class="o">::</span><span class="n">datetime</span><span class="o">::</span><span class="n">utc_now</span><span class="p">())));</span>
+<span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="p">().</span><span class="n">insert</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity</span><span class="o">::</span><span class="n">property_type</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"PropertyC"</span><span class="p">),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity_property</span><span class="p">(</span><span class="n">utility</span><span class="o">::</span><span class="n">new_uuid</span><span class="p">())));</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_operation</span> <span class="n">operation1</span> <span class="o">=</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_operation</span><span class="o">::</span><span class="n">insert_or_replace_entity</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_result</span> <span class="n">table_result</span> <span class="o">=</span> <span class="n">table</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">operation1</span><span class="p">);</span>
+
+<span class="c1">// Retrieve a table entity</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_operation</span> <span class="n">operation2</span> <span class="o">=</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_operation</span><span class="o">::</span><span class="n">retrieve_entity</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"partition"</span><span class="p">),</span> <span class="n">U</span><span class="p">(</span><span class="s">"row"</span><span class="p">));</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_result</span> <span class="n">result</span> <span class="o">=</span> <span class="n">table</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">operation2</span><span class="p">);</span>
+
+<span class="c1">// Query table entities</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_query</span> <span class="n">query</span><span class="p">;</span>
+<span class="n">query</span><span class="p">.</span><span class="n">set_filter_string</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_query</span><span class="o">::</span><span class="n">combine_filter_conditions</span><span class="p">(</span>
+    <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_query</span><span class="o">::</span><span class="n">generate_filter_condition</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"PartitionKey"</span><span class="p">),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">query_comparison_operator</span><span class="o">::</span><span class="n">equal</span><span class="p">,</span> <span class="n">U</span><span class="p">(</span><span class="s">"partition"</span><span class="p">)),</span> 
+    <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">query_logical_operator</span><span class="o">::</span><span class="n">and</span><span class="p">,</span> 
+    <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_query</span><span class="o">::</span><span class="n">generate_filter_condition</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"RowKey"</span><span class="p">),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">query_comparison_operator</span><span class="o">::</span><span class="n">greater_than_or_equal</span><span class="p">,</span> <span class="n">U</span><span class="p">(</span><span class="s">"m"</span><span class="p">))));</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">table_entity</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">table</span><span class="p">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">query</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="queues">
+<h3>Queues</h3>
+<p>最後の例では、Queueを作成します、それにmessageを追加、同じmessageを取得し、最終的にそれを更新します。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="c1">// Create a queue</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue_client</span> <span class="n">queue_client</span> <span class="o">=</span> <span class="n">storage_account</span><span class="p">.</span><span class="n">create_cloud_queue_client</span><span class="p">();</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">queue_client</span><span class="p">.</span><span class="n">get_queue_reference</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"myqueue"</span><span class="p">));</span>
+<span class="n">queue</span><span class="p">.</span><span class="n">create_if_not_exists</span><span class="p">();</span>
+
+<span class="c1">// Add a queue message</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue_message</span> <span class="n">message1</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"mymessage"</span><span class="p">));</span>
+<span class="n">queue</span><span class="p">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">message1</span><span class="p">);</span>
+
+<span class="c1">// Get a queue message</span>
+<span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">cloud_queue_message</span> <span class="n">message2</span> <span class="o">=</span> <span class="n">queue</span><span class="p">.</span><span class="n">get_message</span><span class="p">();</span>
+
+<span class="c1">// Update a queue message</span>
+<span class="n">message2</span><span class="p">.</span><span class="n">set_content</span><span class="p">(</span><span class="n">U</span><span class="p">(</span><span class="s">"changedmessage"</span><span class="p">));</span>
+<span class="n">queue</span><span class="p">.</span><span class="n">update_message</span><span class="p">(</span><span class="n">message2</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>デバック方法</h3>
+<p>なにか上手く行っていない場合、exception で帰ってきます。この exception は、wa::storage::storage_exception の型で、なにか問題なのかの詳細な情報を含んでいます。次のコードを見て下さい。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="k">try</span>
+<span class="p">{</span>
+    <span class="n">blob1</span><span class="p">.</span><span class="n">download_attributes</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">storage_exception</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Exception: "</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">ucout</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">"The request that started at "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">result</span><span class="p">().</span><span class="n">start_time</span><span class="p">().</span><span class="n">to_string</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">" and ended at "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">result</span><span class="p">().</span><span class="n">end_time</span><span class="p">().</span><span class="n">to_string</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">" resulted in HTTP status code "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">result</span><span class="p">().</span><span class="n">http_status_code</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">" and the request ID reported by the server was "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">result</span><span class="p">().</span><span class="n">service_request_id</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>blobが存在しない場合, このコードは下記のような結果になります。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>Exception: The specified blob does not exist.
+
+The request that started at Fri, 13 Dec 2013 18:31:11 GMT and ended at Fri, 13 Dec 2013 18:31:11 GMT resulted in HTTP status code 404 and the request ID reported by the server was 5de65ae4-9a71-4b1d-9c99-cc4225e714c6
+</pre></div>
+</div>
+<p>ライブラリでは、type wa::storage::operation_context を提供しています。これは、全てのAPIでサポートされ、操作中に行われていることについてより多くの情報を取得するために使います。次のコードを見て下さい。</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span/><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span> <span class="n">context</span><span class="p">;</span> 
+
+<span class="n">context</span><span class="p">.</span><span class="n">set_sending_request</span><span class="p">([]</span> <span class="p">(</span><span class="n">web</span><span class="o">::</span><span class="n">http</span><span class="o">::</span><span class="n">http_request</span><span class="o">&amp;</span> <span class="n">request</span><span class="p">,</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span><span class="p">)</span> 
+<span class="p">{</span> 
+  <span class="n">ucout</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">"The request is being sent to "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">request</span><span class="p">.</span><span class="n">request_uri</span><span class="p">().</span><span class="n">to_string</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> 
+<span class="p">});</span>
+
+<span class="n">context</span><span class="p">.</span><span class="n">set_response_received</span><span class="p">([]</span> <span class="p">(</span><span class="n">web</span><span class="o">::</span><span class="n">http</span><span class="o">::</span><span class="n">http_request</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">web</span><span class="o">::</span><span class="n">http</span><span class="o">::</span><span class="n">http_response</span><span class="o">&amp;</span> <span class="n">response</span><span class="p">,</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">operation_context</span><span class="p">)</span> 
+<span class="p">{</span> 
+  <span class="n">ucout</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">"The reason phrase is "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">response</span><span class="p">.</span><span class="n">reason_phrase</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> 
+<span class="p">});</span>
+
+<span class="k">try</span> 
+<span class="p">{</span> 
+  <span class="n">blob1</span><span class="p">.</span><span class="n">download_attributes</span><span class="p">(</span><span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">access_condition</span><span class="p">(),</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">blob_request_options</span><span class="p">(),</span> <span class="n">context</span><span class="p">);</span> 
+<span class="p">}</span> 
+<span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">wa</span><span class="o">::</span><span class="n">storage</span><span class="o">::</span><span class="n">storage_exception</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> 
+<span class="p">{</span> 
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Exception: "</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> 
+<span class="p">}</span> 
+
+<span class="n">ucout</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">"Executed "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">context</span><span class="p">.</span><span class="n">request_results</span><span class="p">().</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">U</span><span class="p">(</span><span class="s">" request(s) to perform this operation and the last request's status code was "</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">context</span><span class="p">.</span><span class="n">request_results</span><span class="p">().</span><span class="n">back</span><span class="p">().</span><span class="n">http_status_code</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>もう一度、blobが存在しない状況で動かします。すると下記のような結果になります。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>wa::storage::operation_context context; 
+
+context.set_sending_request([] (web::http::http_request&amp; request, wa::storage::operation_context) 
+{ 
+  ucout &lt;&lt; U("The request is being sent to ") &lt;&lt; request.request_uri().to_string() &lt;&lt; std::endl; 
+});
+
+context.set_response_received([] (web::http::http_request&amp;, const web::http::http_response&amp; response, wa::storage::operation_context) 
+{ 
+  ucout &lt;&lt; U("The reason phrase is ") &lt;&lt; response.reason_phrase() &lt;&lt; std::endl; 
+});
+
+try 
+{ 
+  blob1.download_attributes(wa::storage::access_condition(), wa::storage::blob_request_options(), context); 
+} 
+catch (const wa::storage::storage_exception&amp; e) 
+{ 
+  std::cout &lt;&lt; "Exception: " &lt;&lt; e.what() &lt;&lt; std::endl; 
+} 
+
+ucout &lt;&lt; U("Executed ") &lt;&lt; context.request_results().size() &lt;&lt; U(" request(s) to perform this operation and the last request's status code was ") &lt;&lt; context.request_results().back().http_status_code() &lt;&lt; std::endl;
+</pre></div>
+</div>
+</div>
+<div class="section" id="samples">
+<h3>Samples</h3>
+<p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp/tree/master/Microsoft.WindowsAzure.Storage/samples">github 上のプロジェクトのサンプル</a>フォルダの中に、幾つかの重要なシナリを説明する コードがあります。</p>
+<p>Visual Studioで「Microsoft.WindowsAzure.Storage.Samples.sln」という名前のサンプルのソリューションファイルを開きます。Microsoft.WindowsAzure.Storage.SamplesCommonプロジェクトの下samples_common.hファイルの、ストレージのアカウント情報を更新します。Solution Explorer のウィンドウに移動し、（例えば、Microsoft.WindowsAzure.Storage.BlobsGettingStarted）実行したいサンプルプロジェクトを選択してStartUp Projectにするか、コンテキストメニューから実行します。</p>
+</div>
+<div class="section" id="summary">
+<h3>Summary</h3>
+<p><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/20/windows-azure-storage-client-library-for-cplusplus-preview.aspx">コメント欄 （原文）</a>、フォーラム、あるいは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp">GitHub</a>でのフィードバックをお待ちしています。BUGに当たった場合、GitHubに上げてもらえると、その後の解決策などをトラックすることができるようになります。</p>
+<p>Serdar Ozler, Mike Fisher, and Joe Giardino</p>
+</div>
+<div class="section" id="resources">
+<h3>Resources</h3>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-cpp">Source (GitHub)</a></div>
+<div class="line"><a class="reference external" href="http://www.nuget.org/packages/wastorage">Binaries (NuGet)</a></div>
+<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></div>
+<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/05/windows-azure-tables-introducing-json.aspx">Windows Azure Tables: Introducing JSON</a></div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h2>まとめ</h2>
+<p>C++用のクライアントは良いですね、やっぱり欲しい。</p>
+<p>その他に、今回<a class="reference external" href="http://coapp.org/">CoApp tools</a>が気になりました。native code をnugetでpackege化して配布するプロジェクトです。 Windows にapt-getみたいな位置づけに機能を盛り込むのを狙っているようで、期待できます。<a class="footnote-reference" href="#r4" id="id16">[4]</a>これで、python、ruby、node.js で Windows パッケージのバイナリコードのビルドに引っかかる問題も、このレポジトリを参照することで解決できると良いなあと思いますが、今のところプロジェクトのターゲットに入っていないようで、そこはちょっと残念です。</p>
+<p>もう一つ、<a class="reference external" href="http://casablanca.codeplex.com/">http://casablanca.codeplex.com/</a>は、<a class="reference external" href="http://msdn.microsoft.com/library/jj969455(v=vs.120).aspx">MSDN C++ REST SDK (Codename “Casablanca”)</a>に割りとしっかりしたドキュメントが上がっていて、nugetでは、production 扱いなので、使っても良さそうな感じです。<a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a>今年の４月からパッケージとしては上がっていたようですが、気が付きませんでした。</p>
+<p>nugetを見てみたところ、C++ REST SDK も、SDK、 Redist、Symbols の３本立てになってました。でも、SDKが1.4.0なのに他が1.3.1のままですね。</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk/">C++ REST SDK 1.4.0</a></li>
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.redist/">C++ REST SDK Redist 1.3.1</a></li>
+<li><a class="reference external" href="http://www.nuget.org/packages/cpprestsdk.symbols/">C++ REST SDK Symbols 1.3.1</a></li>
+</ul>
+<p>パッケージマネージャー関連は、nuget を中心に、整備が進んでいるようで、いろいろ期待できますね。</p>
+<div class="line-block">
+<div class="line"><br/></div>
+<div class="line"><br/></div>
+</div>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>日本語訳<a class="reference external" href="http://download.microsoft.com/download/C/0/2/C02C4D26-0472-4688-AC13-199EA321135E/23rdACM_SOSP_WindowsAzureStorage_201110_jpn.pdf">SOSP 論文 Windows Azure ストレージ: 高可用性と強い一貫を両立する クラウド ストレージ サービス</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">Windows Azure Storage Client Library for Java v. 0.5.0</a>では、<cite>An updated Windows Azure Storage Emulator is expected to ship with full support of these new features in the next couple of months.</cite>になっていました。数ヶ月先って話だったので、来月だとすると良い知らせですね。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[3]</a></td><td>日本語訳<a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/19/blog-windows-azure-storage-redundancy-options-and-read-access-geo-redundant-storage.aspx">Windows Azure ストレージの冗長オプションと読み取りアクセス地理冗長ストレージ</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id16">[4]</a></td><td><a class="reference external" href="http://coapp.org/news/2013-10-02-State-of-CoApp.html">The State of CoApp</a></td></tr>
+</tbody>
+</table>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_sdk.html">Azure SDK</a>, <a href="categories/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/c.html">C++</a>, <a href="tags/release.html">Release</a>, <a href="tags/azure_storage.html">Azure Storage</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/21/windows_azure_storage_client_library_for_c_preview.html#disqus_thread" data-disqus-identifier="2013/12/21/windows_azure_storage_client_library_for_c_preview">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 20, 2013</span>
         </div>
         <div class="section">
@@ -90,7 +400,7 @@
 <div class="section" id="windows-azure-storage-team-blog-windows-azure-storage-client-library-for-java-v-0-5-0">
 <h2>抄訳 Windows Azure Storage Team Blog - Windows Azure Storage Client Library for Java v. 0.5.0</h2>
 <p>このリリースでは、logging support, 新しい API overloads、そして 2013-08-15 REST<a class="footnote-reference" href="#r1" id="id2">[1]</a>が完全にサポートされています。今までのようにソースコードは、<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github Windows Azure Storage libraries for Java</a>で公開されています。<a class="footnote-reference" href="#r2" id="id3">[2]</a>従来のようにmaven のレポジトリに登録されています。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="nt">&lt;dependency&gt;</span>  
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span/><span class="nt">&lt;dependency&gt;</span>  
      <span class="nt">&lt;groupId&gt;</span>com.microsoft.windowsazure.storage<span class="nt">&lt;/groupId&gt;</span>
      <span class="nt">&lt;artifactId&gt;</span>microsoft-windowsazure-storage-sdk<span class="nt">&lt;/artifactId&gt;</span>
      <span class="nt">&lt;version&gt;</span>0.5.0<span class="nt">&lt;/version&gt;</span>
@@ -104,11 +414,11 @@
 <div class="section" id="samples">
 <h3>Samples</h3>
 <p><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-java">github</a>のソースのなかに、幾つかの重要なシナリを説明する<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/12/19/windows-azure-storage-client-library-for-java-v-0-5-0.aspx">サンプル</a>があります。指定されたサンプルを実行するには、サンプルプロジェクトをロードし、ストレージの資格情報を提供するために、Utility.javaの次の行を更新します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">"DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]"</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">storageConnectionString</span> <span class="o">=</span> <span class="s">"DefaultEndpointsProtocol=http;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY]"</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>fiddler を使ってサンプル実行中の traffic を見たい場合は、Utility.java の下記の2行をコメントアウトを外してください。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="c1">// System.setProperty("http.proxyHost", "localhost");</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="c1">// System.setProperty("http.proxyHost", "localhost");</span>
 <span class="c1">// System.setProperty("http.proxyPort", "8888");</span>
 </pre></div>
 </div>
@@ -133,15 +443,15 @@
 <h3>Support for Read Access Geo Redundant Storage</h3>
 <p>このリリースでは、secondary region の storage account data の読み取りアクセス (RA-GRS)<a class="footnote-reference" href="#r3" id="id7">[3]</a>を完全にサポートしています。クライアントオブジェクト上の位置モードを設定し、getServiceStatsを起動すると、以下の例に示されている。LocationModeもRequestOptionsオブジェクト上に設定することで、リクエストごとに設定することができます。</p>
 <p>下記の例では、client objectの location mode を設定して getServiceStats を呼び出すことで、 replication の状態を取得しています。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
-<span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="p">.</span><span class="na">createCloudTableClient</span><span class="p">();</span>
 
 <span class="c1">// Set the LocationMode to SECONDARY_ONLY since getServiceStats is supported only on the secondary endpoints.</span>
-<span class="n">tClient</span><span class="o">.</span><span class="na">setLocationMode</span><span class="o">(</span><span class="n">LocationMode</span><span class="o">.</span><span class="na">SECONDARY_ONLY</span><span class="o">);</span>
-<span class="n">ServiceStats</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">tClient</span><span class="o">.</span><span class="na">getServiceStats</span><span class="o">();</span>
-<span class="n">Date</span> <span class="n">lastSyncTime</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getLastSyncTime</span><span class="o">();</span>
+<span class="n">tClient</span><span class="p">.</span><span class="na">setLocationMode</span><span class="p">(</span><span class="n">LocationMode</span><span class="p">.</span><span class="na">SECONDARY_ONLY</span><span class="p">);</span>
+<span class="n">ServiceStats</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">tClient</span><span class="p">.</span><span class="na">getServiceStats</span><span class="p">();</span>
+<span class="n">Date</span> <span class="n">lastSyncTime</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="na">getGeoReplication</span><span class="p">().</span><span class="na">getLastSyncTime</span><span class="p">();</span>
 
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Replication status = %s and LastSyncTime = %s"</span><span class="o">,</span><span class="n">stats</span><span class="o">.</span><span class="na">getGeoReplication</span><span class="o">().</span><span class="na">getStatus</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span> <span class="n">lastSyncTime</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastSyncTime</span><span class="o">.</span><span class="na">toString</span><span class="o">():</span> <span class="s">"empty"</span><span class="o">));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">"Replication status = %s and LastSyncTime = %s"</span><span class="p">,</span><span class="n">stats</span><span class="p">.</span><span class="na">getGeoReplication</span><span class="p">().</span><span class="na">getStatus</span><span class="p">().</span><span class="na">toString</span><span class="p">(),</span> <span class="n">lastSyncTime</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">lastSyncTime</span><span class="p">.</span><span class="na">toString</span><span class="p">():</span> <span class="s">"empty"</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -149,56 +459,56 @@
 <h3>Expanded Table Protocol Support (JSON)</h3>
 <blockquote>
 <div>table traffic で、JSONがサポートされました。TableClient の setTablePayloadFormat() で、TablePayloadFormatを指定することでJSONformatを使うことができます。</div></blockquote>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">connectionString</span><span class="o">);</span>
-<span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="o">.</span><span class="na">createCloudTableClient</span><span class="o">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="n">CloudStorageAccount</span> <span class="n">httpAcc</span> <span class="o">=</span> <span class="n">CloudStorageAccount</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">connectionString</span><span class="p">);</span>
+<span class="n">CloudTableClient</span> <span class="n">tableClient</span> <span class="o">=</span> <span class="n">httpAcc</span><span class="p">.</span><span class="na">createCloudTableClient</span><span class="p">();</span>
 
 <span class="c1">// Set the payload format to JsonNoMetadata.</span>
-<span class="n">tableClient</span><span class="o">.</span><span class="na">setTablePayloadFormat</span><span class="o">(</span><span class="n">TablePayloadFormat</span><span class="o">.</span><span class="na">JsonNoMetadata</span><span class="o">);</span>
+<span class="n">tableClient</span><span class="p">.</span><span class="na">setTablePayloadFormat</span><span class="p">(</span><span class="n">TablePayloadFormat</span><span class="p">.</span><span class="na">JsonNoMetadata</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>JsonNoMetadataを指定した場合メタデータがpayloadに有りません、その場合プロパティの型はpropertyResolver を用意して下記のようにコードで解釈します。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="o">{</span>    
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Class1</span> <span class="kd">extends</span> <span class="n">TableServiceEntity</span> <span class="kd">implements</span> <span class="n">PropertyResolver</span> <span class="p">{</span>    
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">A</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">B</span><span class="p">;</span>
 
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getA</span><span class="o">()</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">A</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getA</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">A</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">getB</span><span class="o">()</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">B</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">getB</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">B</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">this</span><span class="o">.</span><span class="na">A</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setA</span><span class="p">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">this</span><span class="p">.</span><span class="na">A</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+    <span class="p">}</span>
     
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="o">(</span><span class="kd">final</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">this</span><span class="o">.</span><span class="na">B</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="p">(</span><span class="kd">final</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">this</span><span class="p">.</span><span class="na">B</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
     
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">EdmType</span> <span class="nf">propertyResolver</span><span class="o">(</span><span class="n">String</span> <span class="n">pk</span><span class="o">,</span> <span class="n">String</span> <span class="n">rk</span><span class="o">,</span> <span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"A"</span><span class="o">))</span> <span class="o">{</span>
-	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">STRING</span><span class="o">;</span>
-	<span class="o">}</span>
-	<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"B"</span><span class="o">))</span> <span class="o">{</span>
-	    <span class="k">return</span> <span class="n">EdmType</span><span class="o">.</span><span class="na">BINARY</span><span class="o">;</span>
-	<span class="o">}</span>
-	<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="kd">public</span> <span class="n">EdmType</span> <span class="nf">propertyResolver</span><span class="p">(</span><span class="n">String</span> <span class="n">pk</span><span class="p">,</span> <span class="n">String</span> <span class="n">rk</span><span class="p">,</span> <span class="n">String</span> <span class="n">key</span><span class="p">,</span> <span class="n">String</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">"A"</span><span class="p">))</span> <span class="p">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="p">.</span><span class="na">STRING</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">"B"</span><span class="p">))</span> <span class="p">{</span>
+	    <span class="k">return</span> <span class="n">EdmType</span><span class="p">.</span><span class="na">BINARY</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
     
-<span class="o">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>この、propertyResolver は、TableRequestOptions にセットします。</p>
-<div class="highlight-java"><div class="highlight"><pre><span/><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="o">();</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setA</span><span class="o">(</span><span class="s">"myPropVal"</span><span class="o">);</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">2</span> <span class="o">});</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setPartitionKey</span><span class="o">(</span><span class="s">"testKey"</span><span class="o">);</span>
-<span class="n">ref</span><span class="o">.</span><span class="na">setRowKey</span><span class="o">(</span><span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span/><span class="n">Class1</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class1</span><span class="p">();</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setA</span><span class="p">(</span><span class="s">"myPropVal"</span><span class="p">);</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setB</span><span class="p">(</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[]</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">});</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setPartitionKey</span><span class="p">(</span><span class="s">"testKey"</span><span class="p">);</span>
+<span class="n">ref</span><span class="p">.</span><span class="na">setRowKey</span><span class="p">(</span><span class="n">UUID</span><span class="p">.</span><span class="na">randomUUID</span><span class="p">().</span><span class="na">toString</span><span class="p">());</span>
 
-<span class="n">options</span><span class="o">.</span><span class="na">setPropertyResolver</span><span class="o">(</span><span class="n">ref</span><span class="o">);</span>
+<span class="n">options</span><span class="p">.</span><span class="na">setPropertyResolver</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -341,11 +651,11 @@
 <div class="section" id="owin">
 <h2>OWINの基本</h2>
 <p>The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
 </pre></div>
 </div>
 <p>２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
 </pre></div>
 </div>
 <p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成<a class="footnote-reference" href="#r2" id="id3">[2]</a>でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、<a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a>なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
@@ -360,7 +670,7 @@
 <div class="section" id="console-project">
 <h3>Console Projectを作成して必要なパッケージを入れる</h3>
 <p>nugetから必要なパッケージを入れる</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>install-package Microsoft.Owin.Hosting
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span/>install-package Microsoft.Owin.Hosting
 install-package Microsoft.Owin.Host.HttpListener
 install-package Microsoft.Owin.Diagnostics
 install-Package Owin.Extensions
@@ -370,7 +680,7 @@ install-Package Owin.Extensions
 <div class="section" id="program-csmain">
 <h3>Program.csのmainを下記のようにする</h3>
 <p><cite>WebApp.Start&lt;Startup&gt;(url)</cite>とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="nn">SelfHostSample</span>
@@ -396,7 +706,7 @@ install-Package Owin.Extensions
 <div class="section" id="startup">
 <h3>Startup用のクラスを追加する</h3>
 <p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite>でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
 <span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
@@ -425,14 +735,14 @@ install-Package Owin.Extensions
 <p>ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。</p>
 <div class="section" id="windows-azure-cache-client">
 <h3>Windows Azure Cache Client を入れる</h3>
-<div class="highlight-bash"><div class="highlight"><pre><span/>Install-Package Microsoft.WindowsAzure.Caching
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span/>Install-Package Microsoft.WindowsAzure.Caching
 </pre></div>
 </div>
 </div>
 <div class="section" id="app-configazure-cache">
 <h3>App.config内のAzure Cacheの設定をする</h3>
 <p>App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span/><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;configuration&gt;</span>
   <span class="nt">&lt;configSections&gt;</span>
     <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">"dataCacheClients"</span> <span class="na">type=</span><span class="s">"Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core"</span> <span class="na">allowLocation=</span><span class="s">"true"</span> <span class="na">allowDefinition=</span><span class="s">"Everywhere"</span> <span class="nt">/&gt;</span>
@@ -461,7 +771,7 @@ install-Package Owin.Extensions
 <div class="section" id="owin-middleware">
 <h3>OWIN Middleware用のプロジェクトを追加する</h3>
 <p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>install-Package Microsoft.Owin
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span/>install-Package Microsoft.Owin
 install-Package Microsoft.WindowsAzure.Caching
 install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </pre></div>
@@ -470,7 +780,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="azrue-cache-middleware">
 <h3>Azrue Cache Middleware</h3>
 <p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。<a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
@@ -517,7 +827,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <p>Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。</p>
 <p>オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheOptions</span>
     <span class="p">{</span>
@@ -533,7 +843,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line-block">
 <div class="line"><br/></div>
 </div>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
@@ -569,7 +879,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line"><br/></div>
 </div>
 <p>Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 
@@ -619,7 +929,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="id6">
 <h2>アプリケーションの変更</h2>
 <p>最後に、アプリケーションをCacheとSessionを使うように変更する。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span/><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
@@ -744,115 +1054,6 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/11/windows_azure_storage_client_3_0_1.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_storage_client_3_0_1">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 11, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure PowerShell 0.7.2 リリース</a></h1>
-<p>Windows Azure PowerShell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
-<div class="section" id="id1">
-<h2>インストール</h2>
-<p>最新版はWeb Platform Installer 経由で入れられます。12/10 リリースのWindows Azure Poershell を選択してください。</p>
-<img alt="../../../_images/2013_12_11_webpi001.png" src="_images/2013_12_11_webpi001.png"/>
-<p>インストールしたら念のためバージョンを確認します。Azureの所が、0.7.2ですね。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span/>$ Get-Module <span class="p">|</span> ft name,version
-
-Name                                                        Version
-----                                                        -------
-Autoload                                                    <span class="m">0</span>.0
-Azure                                                       <span class="m">0</span>.7.2
-Microsoft.PowerShell.Management                             <span class="m">3</span>.1.0.0
-Microsoft.PowerShell.Utility                                <span class="m">3</span>.1.0.0
-posh-git                                                    <span class="m">0</span>.0
-PsEnv                                                       <span class="m">0</span>.0
-PSReadline                                                  <span class="m">1</span>.0.0.1
-</pre></div>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>変更点</h2>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-tools/tree/release-0.7.2">2013.12.10 Version 0.7.2</a></p>
-<ul class="simple">
-<li>HDInsight cmdlets<ul>
-<li>Add-AzureHDInsightConfigValues</li>
-<li>Add-AzureHDInsightMetastore</li>
-<li>Add-AzureHDInsightStorage</li>
-<li>Get-AzureHDInsightCluster</li>
-<li>Get-AzureHDInsightJob</li>
-<li>Get-AzureHDInsightJobOutput</li>
-<li>Get-AzureHDInsightProperties</li>
-<li>New-AzureHDInsightCluster</li>
-<li>New-AzureHDInsightClusterConfig</li>
-<li>New-AzureHDInsightHiveJobDefinition</li>
-<li>New-AzureHDInsightMapReduceJobDefinition</li>
-<li>New-AzureHDInsightPigJobDefinition</li>
-<li>New-AzureHDInsightSqoopJobDefinition</li>
-<li>New-AzureHDInsightStreamingMapReduceJobDefinition</li>
-<li>Remove-AzureHDInsightCluster</li>
-<li>Revoke-AzureHDInsightHttpServicesAccess</li>
-<li>Set-AzureHDInsightDefaultStorage</li>
-<li>Start-AzureHDInsightJob</li>
-<li>Stop-AzureHDInsightJob</li>
-<li>Use-AzureHDInsightCluster</li>
-<li>Wait-AzureHDInsightJob</li>
-<li>Grant-AzureHDInsightHttpServicesAccess</li>
-<li>Invoke-AzureHDInsightHiveJob</li>
-</ul>
-</li>
-<li>Web Site の WebSocket と managed pipe mode の設定<ul>
-<li>Set-AzureWebsite -WebSocketEnabled -ManagedPipelineMode</li>
-</ul>
-</li>
-<li>Web Site の remote debugging 設定<ul>
-<li>Enable-AzureWebsiteDebug -Version</li>
-<li>Disable-AzureWebsiteDebug</li>
-</ul>
-</li>
-<li>VM を削除した時の VHD cleaning up オプション<ul>
-<li>Remove-AzureVM -DeleteVHD</li>
-<li>Remove-AzureService -DeleteAll</li>
-<li>Remove-AzureDeployment -DeleteVHD</li>
-</ul>
-</li>
-<li>仮想 IP 予約 (Virtual IP reservation) preview feature (in AzurePreview module)<ul>
-<li>Get-AzureDeployment</li>
-<li>Get-AzureReservedIP</li>
-<li>New-AzureReservedIP</li>
-<li>New-AzureVM</li>
-<li>Remove-AzureReservedIP</li>
-</ul>
-</li>
-<li>下記の cmdletsでの Visual Studio Cloud Service プロジェクトのサポート<ul>
-<li>Start-AzureEmulator</li>
-<li>Publish-AzureServiceProject</li>
-<li>Save-AzureServiceProjectPackage</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="id3">
-<h2>最後に</h2>
-<p>今回の目玉は、HDInsight cmdletsかなと思いますが、個人的にはVisual Studioで作ったプロジェクトが使えるようになったのが一番嬉しいですね。</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_powershell.html">Azure PowerShell</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/azure.html">Azure</a>, <a href="tags/azure_powershell.html">Azure PowerShell</a>, <a href="tags/powershell.html">PowerShell</a>, <a href="tags/posh.html">posh</a>, <a href="tags/release.html">Release</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/11/windows_azure_powershel_0_7_2_release.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_powershel_0_7_2_release">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -861,6 +1062,8 @@ PSReadline                                                  <span class="m">1</s
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -878,15 +1081,13 @@ PSReadline                                                  <span class="m">1</s
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/aci.html">ACI</a> (1), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/docker.html">docker</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

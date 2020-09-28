@@ -1,0 +1,66 @@
+Azure Docker Integration
+=========================
+
+先日(7/30)と言っても、既に2ヶ月前。`第28回 Tokyo Jazug Night <https://jazug.connpass.com/event/181811/>`_ の資料をやっとSlideshareに上げた。`Introduction of Azure Docker Integration <https://www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration>`_
+
+.. raw:: html
+
+    <iframe src="//www.slideshare.net/slideshow/embed_code/key/1tQfINFHKSkRiw" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration" title="Introduction of Azure Docker Integration" target="_blank">Introduction of Azure Docker Integration</a> </strong> from <strong><a href="https://www.slideshare.net/takekazuomi" target="_blank">Takekazu Omi</a></strong> </div>
+
+だいぶ空いてしまったので、更新情報を。先日、2020/9/24 に、docker compose をクラウド上で動かすための、docker cli 拡張SDKが公開された。アーキテクチャを見ると、ECS/ACI バックエンドとなっているのが、それぞれのコンテキストを提供している部分で、ECS, ACI 統合がどのようにされているのかがわかる。
+
+`Docker Open Sources Compose for Amazon ECS and Microsoft ACI <https://www.docker.com/blog/open-source-cloud-compose/>`_
+
+.. image:: https://lh4.googleusercontent.com/fd3iey8C9o63e6_sPcEoJepr4xPNZ-uAw1lX98e8FJTaK41nvQ2fFN8x0UYZI0_PTt04JnjhcuUCncs9JXiqLBBVuCzhPfPGLXqaGQFr0Q7FPByRRrhsIN1ZadUdin9G-B6BZrWh
+   :target: https://www.docker.com/blog/open-source-cloud-compose/
+   :alt: Stone
+   :align: center
+
+現時点で、この図の `Node SDK <https://github.com/docker/node-sdk>`_ と `Compose CLI <https://github.com/docker/compose-cli>`_ の部分がオープンソース化されている。このアーキテクチャは最終的なものではなく、「後でCompose CLIを既存のCLIとマージする予定」ということだ。
+
+どうやら、Compose CLIに、gRPCのAPIを追加して、複数の言語から、Docker CLIを使えるようにするつもりらしい。
+今は、Node SDKしかなく、APIはCompose CLIに付いてるが、これは暫定。
+将来的には、人気のある言語用にSDKを用意し、Compose CLIは、Docker CLIに統合、また、コンテキストのバックエンドは、ECS、ACIだけでは無く他のものもサポートする。ということらしい。なかなか興味深い
+
+閑話休題
+---------
+
+このBlog、2年ほど空いてしまったが、今回復活にあたり、static site generatorとして使ってる `tinkerer <https://github.com/vladris/tinkerer>`_ を docker 化しWSL2でビルドすることにした。
+`tinkerer の Dockerfile <https://github.com/takekazuomi/tinkerer/blob/docker-patch/Dockerfile>`_ 、`takekazuomi/tinkerer <https://hub.docker.com/repository/docker/takekazuomi/tinkerer>`_ 最近は、Windows Python環境が安定しないのと、Python 環境自体が壊れやすいので、venv を使うより、いっそのことWSL2+Docker の方が良いかなと思っている。
+
+参考までに、Blogの方のDockerfile
+
+.. code:: Dockerfile
+
+    FROM takekazuomi/tinkerer:1.7.2
+
+    WORKDIR /tmp
+
+    ENV DEBIAN_FRONTEND noninteractive
+
+    USER root
+
+    COPY requirements.txt ./
+
+    RUN apt-get -y update \
+    && apt-get -y clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install pip -U \
+    && pip install -r requirements.txt \
+    && python -m pip install https://github.com/takekazuomi/sphinx-gist-embed/archive/master.tar.gz
+
+    USER tinker
+
+    WORKDIR /blog
+
+    CMD ["tinker", "-h"]
+
+Bookmarks
+------------
+
+* marpで書いたソース `第28回 Tokyo Jazug Night Introduction of Azure Docker Integration <https://github.com/takekazuomi/docker-aci-intro>`_ 。Makefileによく使うコマンドをまとめてある。作業環境をWSL2(Ubuntu 20.04)にしたら、Makefileをまた使うことになった。なかなか難儀する、昔は使ってたんだけど、、、orz
+
+.. author:: default
+.. categories:: none
+.. tags:: ACI, docker
+.. comments::

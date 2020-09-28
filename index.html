@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page2.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="#">Home</a>
         </li>
         <li class="main-nav">
-          <a href="pages/about_me.html">About kyrt inc.</a>
+          <a href="pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,12 +70,72 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="https://mvp.microsoft.com/Content/Images/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>September 27, 2020</span>
+        </div>
+        <div class="section">
+            <h1><a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a></h1>
+<p>先日(7/30)と言っても、既に2ヶ月前。<a class="reference external" href="https://jazug.connpass.com/event/181811/">第28回 Tokyo Jazug Night</a>の資料をやっとSlideshareに上げた。<a class="reference external" href="https://www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration">Introduction of Azure Docker Integration</a></p>
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/1tQfINFHKSkRiw" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/takekazuomi/introduction-of-azure-docker-integration" title="Introduction of Azure Docker Integration" target="_blank">Introduction of Azure Docker Integration</a> </strong> from <strong><a href="https://www.slideshare.net/takekazuomi" target="_blank">Takekazu Omi</a></strong> </div><p>だいぶ空いてしまったので、更新情報を。先日、2020/9/24 に、docker compose をクラウド上で動かすための、docker cli 拡張SDKが公開された。アーキテクチャを見ると、ECS/ACI バックエンドとなっているのが、それぞれのコンテキストを提供している部分で、ECS, ACI 統合がどのようにされているのかがわかる。</p>
+<p><a class="reference external" href="https://www.docker.com/blog/open-source-cloud-compose/">Docker Open Sources Compose for Amazon ECS and Microsoft ACI</a></p>
+<a class="reference external image-reference" href="https://www.docker.com/blog/open-source-cloud-compose/"><img alt="Stone" class="align-center" src="https://lh4.googleusercontent.com/fd3iey8C9o63e6_sPcEoJepr4xPNZ-uAw1lX98e8FJTaK41nvQ2fFN8x0UYZI0_PTt04JnjhcuUCncs9JXiqLBBVuCzhPfPGLXqaGQFr0Q7FPByRRrhsIN1ZadUdin9G-B6BZrWh"/></a>
+<p>現時点で、この図の<a class="reference external" href="https://github.com/docker/node-sdk">Node SDK</a>と<a class="reference external" href="https://github.com/docker/compose-cli">Compose CLI</a>の部分がオープンソース化されている。このアーキテクチャは最終的なものではなく、「後でCompose CLIを既存のCLIとマージする予定」ということだ。</p>
+<p>どうやら、Compose CLIに、gRPCのAPIを追加して、複数の言語から、Docker CLIを使えるようにするつもりらしい。今は、Node SDKしかなく、APIはCompose CLIに付いてるが、これは暫定。将来的には、人気のある言語用にSDKを用意し、Compose CLIは、Docker CLIに統合、また、コンテキストのバックエンドは、ECS、ACIだけでは無く他のものもサポートする。ということらしい。なかなか興味深い</p>
+<div class="section" id="id1">
+<h2>閑話休題</h2>
+<p>このBlog、2年ほど空いてしまったが、今回復活にあたり、static site generatorとして使ってる<a class="reference external" href="https://github.com/vladris/tinkerer">tinkerer</a>を docker 化しWSL2でビルドすることにした。<a class="reference external" href="https://github.com/takekazuomi/tinkerer/blob/docker-patch/Dockerfile">tinkerer の Dockerfile</a>、<a class="reference external" href="https://hub.docker.com/repository/docker/takekazuomi/tinkerer">takekazuomi/tinkerer</a>最近は、Windows Python環境が安定しないのと、Python 環境自体が壊れやすいので、venv を使うより、いっそのことWSL2+Docker の方が良いかなと思っている。</p>
+<p>参考までに、Blogの方のDockerfile</p>
+<div class="code Dockerfile highlight-default notranslate"><div class="highlight"><pre><span/><span class="n">FROM</span> <span class="n">takekazuomi</span><span class="o">/</span><span class="n">tinkerer</span><span class="p">:</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">2</span>
+
+<span class="n">WORKDIR</span> <span class="o">/</span><span class="n">tmp</span>
+
+<span class="n">ENV</span> <span class="n">DEBIAN_FRONTEND</span> <span class="n">noninteractive</span>
+
+<span class="n">USER</span> <span class="n">root</span>
+
+<span class="n">COPY</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="o">./</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">update</span> \
+<span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">clean</span> \
+<span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span> \
+<span class="o">&amp;&amp;</span> <span class="n">pip3</span> <span class="n">install</span> <span class="n">pip</span> <span class="o">-</span><span class="n">U</span> \
+<span class="o">&amp;&amp;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> \
+<span class="o">&amp;&amp;</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">takekazuomi</span><span class="o">/</span><span class="n">sphinx</span><span class="o">-</span><span class="n">gist</span><span class="o">-</span><span class="n">embed</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+
+<span class="n">USER</span> <span class="n">tinker</span>
+
+<span class="n">WORKDIR</span> <span class="o">/</span><span class="n">blog</span>
+
+<span class="n">CMD</span> <span class="p">[</span><span class="s2">"tinker"</span><span class="p">,</span> <span class="s2">"-h"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bookmarks">
+<h2>Bookmarks</h2>
+<ul class="simple">
+<li>marpで書いたソース<a class="reference external" href="https://github.com/takekazuomi/docker-aci-intro">第28回 Tokyo Jazug Night Introduction of Azure Docker Integration</a>。Makefileによく使うコマンドをまとめてある。作業環境をWSL2(Ubuntu 20.04)にしたら、Makefileをまた使うことになった。なかなか難儀する、昔は使ってたんだけど、、、orz</li>
+</ul>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/aci.html">ACI</a>, <a href="tags/docker.html">docker</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2020/09/27/azure-docker-integration.html#disqus_thread" data-disqus-identifier="2020/09/27/azure-docker-integration">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 02, 2017</span>
         </div>
         <div class="section">
@@ -87,7 +147,7 @@
 <a data-flickr-embed="true" href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"/></a><script async="" src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"> </script><p>ちょっとやってみましょう、下にテンプレートの抜粋を見て下さい。<a class="footnote-reference" href="#ref3" id="id3">[3]</a>テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。</p>
 <script src="https://gist.github.com/takekazuomi/e8bdc99a8fa56f5875e753915001bdc6.js?file=deploystorage-chunk.json">&amp;amp;nbsp;</script><p>これで上手くデプロイできるか確認しましょう。 local subscription (083c462a-7c24-4a16-8bfe-876cb0ab434b) を選択した状態でデプロイします。そうするとストレージアカウント(東日本)が作成され、同時に remote subscription (ff05d8ad-12ee-4c68-97bb-78baefa1c01a) にもストレージアカウント（西日本）も作成されます。</p>
 <p>実行には事前に、リソースグループが必要です。サブスクリプションを切替ながら、リソースグループを両側に用意します。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+<div class="code posh highlight-default notranslate"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
 $ New-AzureRmResourceGroup -Name LocalRG -Location japaneast
 
 $ Select-AzureRmSubscription -SubscriptionId ff05d8ad-12ee-4c68-97bb-78baefa1c01a
@@ -95,7 +155,7 @@ $ New-AzureRmResourceGroup -Name RemoteRG -Location japanwest
 </pre></div>
 </div>
 <p>これでリソースグループが出来たので、local subscription を選択し直して、前記のテンプレートをデプロイします。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+<div class="code posh highlight-default notranslate"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
 $ New-AzureRmResourceGroupDeployment -TemplateFile .\deploystorage.json `
        -StorageAccountName kyrtlocal01 `
        -ResourceGroupName LocalRG `
@@ -105,7 +165,7 @@ $ New-AzureRmResourceGroupDeployment -TemplateFile .\deploystorage.json `
 </pre></div>
 </div>
 <p>思った通りに出来ているか確認しましょう。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
+<div class="code posh highlight-default notranslate"><div class="highlight"><pre><span/>$ Select-AzureRmSubscription -SubscriptionId 083c462a-7c24-4a16-8bfe-876cb0ab434b
 $ Get-AzureRmStorageAccount -ResourceGroupName RemoteRG | fl ResourceGroupName,Id, Location
 
 ResourceGroupName : localrg
@@ -207,7 +267,7 @@ Location          : japanwest
 <h2>使い方</h2>
 <p><strong>azlogin</strong>を実行すると、azure cli 2.0 と同じように、デバイスコードと入力用のURLが表示される。この画面のメッセージが<strong>azure cli 2.0</strong>と一文一句違わず同じなのは、AIPが返して来るメッセージをそのまま表示してるからだ。</p>
 <p>ログインに成功すると、アカウントに紐づいたテナントを全部取得して、テナントのアクセストークンを取得し、それを使ってサブスクリプションの情報を取得。結果をJSONで出力する。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ .\azlogin
+<div class="code posh highlight-default notranslate"><div class="highlight"><pre><span/>$ .\azlogin
 To sign in, use a web browser to open the page https://aka.ms/devicelogin and enter the code G9HFZ4NCY to authenticate.
 ....
 [
@@ -236,7 +296,7 @@ To sign in, use a web browser to open the page https://aka.ms/devicelogin and en
 <p>まずは、jp (JMESPath) の式を用意する。短いのでコマンドラインにそのまま書きたいところだが、Windowsだとエスケープ関係が難しすぎる（cmd.exeや、powershellでは）ので、諦めてファイルに書く。</p>
 <p>この例だと、subscriptionName が ‘kinmugi’のサブスクリプションのBearer tokenを取り出している。Windowsだと素直にPowerShellで書いたほうが楽な気がする。最近、JMESPath が気に入っているので、あえてjpを使う。</p>
 <p>ここでは、本物の<strong>curl</strong>を使って、リソースグループの一覧を取得している。PowerShellだとcurlでaliasが切ってあるが使えないので、本物を入れてalias を切った方が良い。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ cat filter.jp
+<div class="code posh highlight-default notranslate"><div class="highlight"><pre><span/>$ cat filter.jp
 [?subscriptionName == 'kinmugi'].bearer|[0]
 
 $ $bearer = (.\azlogin | jp -u -e filter.jp)
@@ -296,175 +356,6 @@ $ curl -H  "Authorization: Bearer $bearer" "https://management.azure.com/subscri
         
         <div class="comments">
             <a href="http://kyrt.in/2017/06/03/az_login_device_flow.html#disqus_thread" data-disqus-identifier="2017/06/03/az_login_device_flow">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>May 19, 2017</span>
-        </div>
-        <div class="section">
-            <h1><a href="2017/05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a></h1>
-<p>最近のAzure PowerShellのインストール事情が少々メンドクサイことになっているのでメモ代わりに書き留める。</p>
-<p>基本は、Azure テクニカル サポート チームが<a class="reference external" href="https://blogs.technet.microsoft.com/jpaztech/2017/05/02/azure-powershell-3-8-0-install/">Azure PowerShell 最新版のインストール手順 (v3.8.0 現在)</a>に書いている状況だが、いろいろあるので書いた。</p>
-<p><strong>更新： 2017/7/7、Azure PowerShell 4.1.0 時点の情報</strong></p>
-<p>この問題を、VSのフィードバックに上げた所返事が来ました。</p>
-<p><a class="reference external" href="https://developercommunity.visualstudio.com/solutions/67232/view.html">https://developercommunity.visualstudio.com/solutions/67232/view.html</a></p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">To work around the issue please install the latest Azure PowerShell MSI from GitHub.</div>
-<div class="line"><a class="reference external" href="https://github.com/Azure/azure-powershell/releases">https://github.com/Azure/azure-powershell/releases</a></div>
-</div>
-</div></blockquote>
-<p>「VS 2017を入れている場合は、とりあえず MSI経由のインストールをして欲しい、最新版は、GitHubのリリースページにあるよ」ということで、色々あるけど当面はMSIで入れましょう。</p>
-<p><strong>2017/5/19、Azure PowerShell 4.0.1 時点の情報です</strong></p>
-<a class="reference external image-reference" href="https://flic.kr/p/T8kWHy"><img alt="sky" class="align-center" src="https://c1.staticflickr.com/5/4184/33557301834_6e7ab21ef7_c.jpg"/></a>
-<div class="line-block">
-<div class="line"><br/></div>
-</div>
-<div class="section" id="id1">
-<h2>推薦されるインストール方法</h2>
-<p>以前は、WebPI経由でAzure PowerShellをインストールしていたが、現在では PowerShell Gallery 経由のインストールが推薦になっている。公式ドキュメント、<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps">Install and configure Azure PowerShell</a>にも、下記のように書かれている。（ちょっと翻訳が追いついていないようで、サイトは英語のまま）</p>
-<blockquote>
-<div>Installing Azure PowerShell from the PowerShell Gallery is the preferred method of installation.</div></blockquote>
-<p>Windows 10、Windows Server 2016より古いOSではデフォルトでPowerShellGetが使えないので、Windows Management Framework (WMF) 5.0 を入れる必要がある<a class="footnote-reference" href="#ref1" id="id2">[1]</a>。</p>
-<p>PowerShellGetでPowerShell Galleryから方法は簡単だ。（以下、Install-Moduleで入れると記載）</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Install-Module AzureRm
-</pre></div>
-</div>
-</div>
-<div class="section" id="msi">
-<h2>MSIからのインストール</h2>
-<p>Install-Moduleで入れる方法の他に。Web Platform Installer (WebPI) やVisual Studio 2017のVisual Studio Installer での、Azure「Azure development」の選択、GitHubからMSIファイルをダウンロード<a class="footnote-reference" href="#ref2" id="id3">[2]</a>などの方法で、MSIファイルからインストールすることができる。MSIファイルからインストールは推薦されていないが、VS経由の時にように選択の余地なくMSI経路でインストールされてしまうこともある。</p>
-<p>また、ググって出てくる日本語の公式ページが<a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install">その他のインストール方法</a>で、その他の方法としてMSIでのインストール方法を紹介している。ここには推薦は、Install-Moduleを使うことだと書いてあるが、よく読まないで書いてある通りに操作するとMSIで入れてしまうという落とし穴もある。今のところVisual Studio 2017 で入るのは 2.1.0と大分古いバージョンだというのがいろいろな問題を面倒にしている。</p>
-</div>
-<div class="section" id="msi-install-module">
-<h2>問題点：MSI -&gt; Install-Module でエラー</h2>
-<p>PowerShell Gallery と、MSI 経由のインストールには互換性が無く、MSI経由でAzure PowerShellが入った環境に PowerShell Gallery で新しいものを入れたり<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>、アップデート<span class="docutils literal"><span class="pre">Update-Module</span> <span class="pre">AzureRm</span></span>することはできない。</p>
-<p>例えば、Visual Studio 2017のインストールで、Azure PowerShellが入っている状態で、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>を やると下記のようなエラーになる。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ install-module AzureRm
-
-PackageManagement\Install-Package : The following commands are already available on this system:'Get-AzureStorageContainerAcl,Start-CopyAzureStorageBlob,Stop-CopyAzureStorageBlob'. This module 'Azure.Storage' may override the existing commands. If you still want to install this module 'Azure.Storage', use -AllowClobber parameter.
-At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:1809 char:21
-+ ...          $null = PackageManagement\Install-Package @PSBoundParameters
-+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : InvalidOperation: (Microsoft.Power....InstallPackage:InstallPackage) [Install-Package], Exception
-    + FullyQualifiedErrorId : CommandAlreadyAvailable,Validate-ModuleCommandAlreadyAvailable,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage
-</pre></div>
-</div>
-<p>つまり、MSIインストールとInstall-Moduleは互換性が無く、「混ぜるな危険」という状況だ。</p>
-</div>
-<div class="section" id="id5">
-<h2>解決策</h2>
-<p>もし混ざってしまったからどうするか。</p>
-<p>MSIで入れたものを、設定画面の、「アプリと機能」、あるいはコントロールパネルの「プログラムのアンインストールまたは変更」からアンイストール後、再度 Install-Moduleで PowerShell Gallery からインストールする。</p>
-<p>下記は、PowerShellからアンインストールする方法。実行には、Admin権限が必要。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ $app = Get-WmiObject -Class Win32_Product -Filter "Name like '%Azure PowerShell%'"
-$ $app
-
-IdentifyingNumber : {CB3F8A12-1570-4964-8206-17274AB9EF4D}
-Name              : Microsoft Azure PowerShell - September 2016
-Vendor            : Microsoft Corporation
-Version           : 2.1.0
-Caption           : Microsoft Azure PowerShell - September 2016
-
-$ $app.Uninstall()
-</pre></div>
-</div>
-<p>これで下記のように入れ直すと入る。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ Install-Module AzureRM
-</pre></div>
-</div>
-</div>
-<div class="section" id="id6">
-<h2>原因</h2>
-<p>MSIで入れた場合とInstall-Moduleで入れた場合、モジュールは別の場所に入る。</p>
-<p>MSIの場合は、下記のPSModulePathに入り</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellResourceManagerAzureResourceManager</div>
-<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellServiceManagement</div>
-<div class="line">C:Program Files (x86)Microsoft SDKsAzurePowerShellStorage</div>
-</div>
-</div></blockquote>
-<p>Install-Moduleの場合は下記に入る</p>
-<blockquote>
-<div>C:Program FilesWindowsPowerShellModules</div></blockquote>
-<p>MSIで入れた後にInstall-Moduleで入れた場合、MSIで入れたものを認識せずにインストールが進み、途中で別のバージョンのモジュールをロードして前記のエラーになる。Install-Moduleで入れた後に、MSIで入れると次のような問題が起きる。</p>
-</div>
-<div class="section" id="id7">
-<h2>MSIインストールの問題点</h2>
-<p>現在のMSIインストールで把握している問題点は3点ある（増えるかも）、そのうち深刻なのは1つ目の問題だ。</p>
-<ol class="arabic simple">
-<li>Install-Moduleのモジュールを無条件上書きする</li>
-<li>Import-Module AzureRMでエラー</li>
-<li>WebPIでのリリースが遅い</li>
-</ol>
-</div>
-<div class="section" id="install-module">
-<h2>1. Install-Moduleのモジュールを無条件上書</h2>
-<p>現在のMSIインストールは、Install-Moduleで入れたModuleがあれば削除してから、モジュールのインストールを行う。そのとき既存のモジュールのバージョンは見ていないので、Install-Moduleで4.0.1などのあたらしいバージョンを入れていても、VS 2017 を入れると、2.1.0になってしまうなどの現象が起きる。削除処理は、<a class="reference external" href="https://github.com/Azure/azure-powershell/blob/preview/setup/Setup/RemoveGalleryModules.ps1">setup/Setup/RemoveGalleryModules.ps1</a>のあたり。 Scope CurrentUserで入れた場合は考慮されておらず、なかなか残念なコードだ。</p>
-<p>MSIだけで、バージョンアップを重ねている場合は、Windowsのインストールの仕組みでバージョンチャックされて古いバージョンは入らないので問題がないが、Install-Module(psget)で入れたものとの共存は考えられておらず、いきなり古いバージョンで上書きされるというわけだ。<a class="footnote-reference" href="#ref3" id="id8">[3]</a></p>
-<p>これは非常にメンドクサイ</p>
-</div>
-<div class="section" id="import-module-azurerm">
-<h2>2. Import-Module AzureRMでエラー</h2>
-<p>MSIで入れると、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRm</span></span>がエラーになる。これは、<span class="docutils literal"><span class="pre">AzureRM</span></span>というマニフェストモジュールが無いのが原因。Azure Poshの説明のあちこちで、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRM</span></span>が出て来るが、実はあまり意味がなく、モジュールはインストール時にModule Path配下に配置され、自動的にロードされるので、マニフェストモジュールが無くても動作上の不都合は無い。ただ、ドキュメントに書いてあるものがエラーになるのはちょと混乱する。ちなみに、<span class="docutils literal"><span class="pre">Install-Module</span></span>経由で入れてた場合は、AzureRM マニフェストモジュールが入り、<span class="docutils literal"><span class="pre">Import-Module</span> <span class="pre">AzureRM</span></span>も成功する。</p>
-<div class="code posh highlight-default"><div class="highlight"><pre><span/>$ import-module azurerm
-import-module : The specified module 'azurerm' was not loaded because no valid module file was found in any module directory.
-At line:1 char:1
-+ import-module azurerm
-+ ~~~~~~~~~~~~~~~~~~~~~
-   + CategoryInfo          : ResourceUnavailable: (azurerm:String) [Import-Module], FileNotFoundException
-   + FullyQualifiedErrorId : Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand
-</pre></div>
-</div>
-</div>
-<div class="section" id="webpi">
-<h2>3. WebPIでのリリースが遅い</h2>
-<p>なかなか、WebPIにリリースされない。今回だと、Managed Diskの機能がサポートされたバージョンはしばらく放置され、5/10にやっとリリースされた。最新版を使いたい場合は、Install-Module経由で入れるしかない。WebPIに頼らずに、GitHubからMSIをダウンロードして入れるという方法もある。<a class="footnote-reference" href="#ref2" id="id9">[2]</a></p>
-</div>
-<div class="section" id="id10">
-<h2>まとめ</h2>
-<p>Azure PowerShell を使う場合、<span class="docutils literal"><span class="pre">Install-Module</span> <span class="pre">AzureRM</span></span>で入れる、VS 2017や以前WebPIで入れている場合は、一度コンパネからアンインストールしてから入れる。Windows 10より古い環境では、WMF 5.0を入れよう。</p>
-<p>今のVS 2017は、リリースのたびにAzure PowerShellの古いバージョンを入れてくるが、挫けずにアンインストールしてから入れ直す。</p>
-<p>現状だとGitHubからダウンロードして、MSIインストールで運用という手もあるが、推薦インストール方法が<span class="docutils literal"><span class="pre">Install-Module</span></span>経由なので、そちらを取った方が無難だろう。VS 2017が原因で面倒なことになっているのは残念だ。</p>
-</div>
-<div class="section" id="id11">
-<h2>参考</h2>
-<table class="docutils footnote" frame="void" id="ref1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps?view=azurermps-4.0.0#how-to-get-powershellget">How to get PowerShellGet</a>WMF 5.0 を入れようという話が書いてある</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> <a class="reference external" href="https://github.com/Azure/azure-powershell/releases/tag/v4.0.1--May2017">azure-powershell.4.0.1.msi</a>リリースのとこに、msiへのリンクがある。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="ref3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[3]</a></td><td><a class="reference external" href="https://developercommunity.visualstudio.com/content/problem/41135/vs-installer-overwrite-with-old-version-azure-powe.html">VS Installer overwrite with old version Azure PowerShell.</a>すぐTriaged になったけど、その後の動きがない。</td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/posh.html">Posh</a>, <a href="categories/powershell.html">PowerShell</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/install.html">Install</a>, <a href="tags/posh.html">Posh</a>, <a href="tags/powershell.html">PowerShell</a>, <a href="tags/bugs.html">Bugs</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2017/05/19/install_azure_powershell.html#disqus_thread" data-disqus-identifier="2017/05/19/install_azure_powershell">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -473,6 +364,8 @@ At line:1 char:1
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -490,15 +383,13 @@ At line:1 char:1
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/aci.html">ACI</a> (1), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/docker.html">docker</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="search.html" method="get">
         <input type="text" name="q" />

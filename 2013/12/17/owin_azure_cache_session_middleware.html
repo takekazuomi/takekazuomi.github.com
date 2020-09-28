@@ -31,7 +31,7 @@
         <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Windows Azure Storage Client 3.0.1" href="../11/windows_azure_storage_client_3_0_1.html" /><link rel="prev" title="Windows Azure Storage Client Library for Java v. 0.5.0" href="../20/windows_azure_storage_client_library_for_java_v_0_5_0.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.6.0',
+        VERSION:     '1.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         SOURCELINK_SUFFIX: '.txt',
@@ -59,7 +59,7 @@
           <a href="../../../index.html">Home</a>
         </li>
         <li class="main-nav">
-          <a href="../../../pages/about_me.html">About kyrt inc.</a>
+          <a href="../../../pages/about_me.html">About Kyrt.</a>
         </li>
         </ul>
       <ul>
@@ -70,7 +70,7 @@
         </li>
         <li class="mvp-nav">
 	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
-            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" width = 181 height = 74 />
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
 	  </a>
         </li><li class="quicklink"><div class="rss">
         <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
@@ -103,11 +103,11 @@
 <div class="section" id="owin">
 <h2>OWINの基本</h2>
 <p>The Open Web Interface for .NET (OWIN) の主要なデータ構造は２つしか無い。ひとつは、環境を保持する  environment dictionary　これに、HTTP request and response を処理するのに必要なデータは保持される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
 </pre></div>
 </div>
 <p>２つ目は、application delegate　全てのコンポーネントの間は下記の function signature で呼ばれる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="n">Func</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;,</span> <span class="n">Task</span><span class="p">&gt;;</span>
 </pre></div>
 </div>
 <p>Headers、Request Body、Response Body などの抽象度の高いオブジェクトを、この上に構築している。ちょっと中を見てみた感じでは、OWIN自体は非常にシンプルな構成<a class="footnote-reference" href="#r2" id="id3">[2]</a>でコンポーネント指向も高くいい感じで使えそうだ。とりあえずなにか、OWIN Middleware を作ってみようと思ったけどネタが思い付かない。どうしようかと思っていたら、<a class="reference external" href="https://github.com/neuecc/Owin.RedisSession">neuecc/Owin.RedisSession</a>なんてものを見つけ「ああOWINだとSessionすら無いのか」と気が付いて Azure Cache 版を作ってみることにした。</p>
@@ -122,7 +122,7 @@
 <div class="section" id="console-project">
 <h3>Console Projectを作成して必要なパッケージを入れる</h3>
 <p>nugetから必要なパッケージを入れる</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>install-package Microsoft.Owin.Hosting
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>install-package Microsoft.Owin.Hosting
 install-package Microsoft.Owin.Host.HttpListener
 install-package Microsoft.Owin.Diagnostics
 install-Package Owin.Extensions
@@ -132,7 +132,7 @@ install-Package Owin.Extensions
 <div class="section" id="program-csmain">
 <h3>Program.csのmainを下記のようにする</h3>
 <p><cite>WebApp.Start&lt;Startup&gt;(url)</cite>とするとlistnerを上げて、Startup Classにリクエストを回してくれる。今回の設定だと、Microsoft.Owin.Host.HttpListener が入っているのでHttpListnerを使ったSelfHostになる。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin.Hosting</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="nn">SelfHostSample</span>
@@ -158,7 +158,7 @@ install-Package Owin.Extensions
 <div class="section" id="startup">
 <h3>Startup用のクラスを追加する</h3>
 <p><cite>[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</cite>でアプリケーションのクラスを登録する。登録されたクラスのConfiguration MethodがWebApp.Start()で実行される。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
 <span class="na">[assembly: OwinStartup(typeof(SelfHostSample.Startup))]</span>
@@ -187,14 +187,14 @@ install-Package Owin.Extensions
 <p>ざっと手順を説明して、コード上のポイントを解説する。例外処理周りなどは検討の余地が多い。</p>
 <div class="section" id="windows-azure-cache-client">
 <h3>Windows Azure Cache Client を入れる</h3>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>Install-Package Microsoft.WindowsAzure.Caching
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Install-Package Microsoft.WindowsAzure.Caching
 </pre></div>
 </div>
 </div>
 <div class="section" id="app-configazure-cache">
 <h3>App.config内のAzure Cacheの設定をする</h3>
 <p>App.config 内の configuration/dataCacheClients/dataCacheClient/autoDiscover のidentifier属性をAzure CacheのEndpointにして、securityProperties/messageSecurityのauthorizationInfo属性にManage Access Keys を設定する。</p>
-<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;configuration&gt;</span>
   <span class="nt">&lt;configSections&gt;</span>
     <span class="nt">&lt;section</span> <span class="na">name=</span><span class="s">&quot;dataCacheClients&quot;</span> <span class="na">type=</span><span class="s">&quot;Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core&quot;</span> <span class="na">allowLocation=</span><span class="s">&quot;true&quot;</span> <span class="na">allowDefinition=</span><span class="s">&quot;Everywhere&quot;</span> <span class="nt">/&gt;</span>
@@ -223,7 +223,7 @@ install-Package Owin.Extensions
 <div class="section" id="owin-middleware">
 <h3>OWIN Middleware用のプロジェクトを追加する</h3>
 <p>今回は、Owin.Middleware という名前で作成して、Azure CacheとSessnionのMiddlewareを作成する。<a class="reference external" href="https://github.com/takekazuomi/OwinAzureCacheSessionMiddleware/tree/master/Owin.Middleware">Owin.Middleware project</a>必要なパッケージを追加する。このプロジェクトではOWIN Hosting系のパッケージは入れない。</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>install-Package Microsoft.Owin
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>install-Package Microsoft.Owin
 install-Package Microsoft.WindowsAzure.Caching
 install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </pre></div>
@@ -232,7 +232,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="azrue-cache-middleware">
 <h3>Azrue Cache Middleware</h3>
 <p>OWIN Middleware 定番クラスを３つ追加する。Middleware が処理の本体、Optionsは、Middlewareのオプション、Extensionsは拡張メソッドが入っている。今回は、素のOwinではなく、Microsoft.Owin を使っている。Microsoft.Owin は、Microsoftが作成したOwinの薄いラッパである程度型割り当て済みのデータを渡してくれるのでコーディングが楽になる。<a class="footnote-reference" href="#r3" id="id5">[3]</a></p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.ApplicationServer.Caching</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
@@ -279,7 +279,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 </div>
 <p>Middlewareの基本的な考えは非常に簡単で Invoke の処理内で次のInvokeの前後に割り込んで処理をするだけ。AzureCacheMiddlewareでは、AzureCacheClient（中身はDataCache）を作成してEnvironmentに追加している。このケースでは、Invokeの前に処理を入れただけで、Invoke後は何もしていない。</p>
 <p>オプションや拡張メソッドのクラスはおまけのようになもので大したことはしていない。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nn">Owin.Middleware</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">class</span> <span class="nc">AzureCacheOptions</span>
     <span class="p">{</span>
@@ -295,7 +295,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
 
@@ -331,7 +331,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="line"><br /></div>
 </div>
 <p>Session Middlewareは、Invoke前処理でCacheからのSessionの復元とResponseのCookieへのセッションIDの設定、後処理でSessionの保存を行っている。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 
@@ -381,7 +381,7 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
 <div class="section" id="id6">
 <h2>アプリケーションの変更</h2>
 <p>最後に、アプリケーションをCacheとSessionを使うように変更する。</p>
-<div class="highlight-c#"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<div class="highlight-c# notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Microsoft.Owin</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">Owin</span><span class="p">;</span>
@@ -476,6 +476,8 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
         </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2013/12/17/owin_azure_cache_session_middleware";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="../../../2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
             <a href="../../../2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
         </li><li>
             <a href="../../../2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
@@ -493,15 +495,13 @@ install-Package EnterpriseLibrary.TransientFaultHandling.Caching
             <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
         </li><li>
             <a href="../../../2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
-        </li><li>
-            <a href="../../../2016/07/01/2016_mvp.html">2016 Microsoft MVP Award を受賞しました</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
     <ul><li><a href="../../../categories/azure.html">Azure</a> (35)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (3)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/posh.html">Posh</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (3)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
-    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/aci.html">ACI</a> (1), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/docker.html">docker</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
     <form action="../../../search.html" method="get">
         <input type="text" name="q" />

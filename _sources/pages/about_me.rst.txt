@@ -1,30 +1,35 @@
-About kyrt inc.
-===============
+About Kyrt.
+===========
 カート(kyrt) という名称は、Isaac Asimovの宇宙気流( `The Currents of Space <https://en.wikipedia.org/wiki/The_Currents_of_Space>`_ )からもらいました。この話しの中では惑星フロリナの特産品として出てくる繊維の名前として使われています。宇宙気流は、後に銀河帝国となるトランター帝国が勢力を増して行く時代を書いた作品で昔からのお気に入りの作品です。
 
+株式会社 kyrt は、2020/4/30で休眠に入り、このKyrt Blogは、2020/3/16 から個人ブログになりました。
 
-業務内容
+
+得意分野
 =========
 
 1. スケーラビリティに関するコンサルティング
-2. Windows Azure Storage 周りのコンサルティング
+2. Azure Storage 周りのコンサルティング
 3. 分散ストレージシステムの研究開発
+4. クラウド・セキュリティ
 
 
+.. table:: 略歴
+  :widths: auto
 
-沿革
-=====
+  ========= =====================================
+  2013/1/25 個人事業主として活動開始
+  2015/5/12 株式会社　kyrt　設立 (代表取締役)
+  2020/3/16 `株式会社　バリーン・スタジオ <https://www.baleen.studio/>`_　設立　取締役）
+  ========= =====================================
 
 
-+---------+------------------+
-|2013/1/25|活動開始          |
-+---------+------------------+
-|2015/5/12|株式会社 kyrt 設立|
-+---------+------------------+
-
-代表
+関連
 ====
+
 近江 武一
+
+* `github @takekazuomi <https://github.com/takekazuomi>`_
 
 * `twitter @takekazuomi <https://twitter.com/takekazuomi>`_
 
@@ -35,12 +40,19 @@ About kyrt inc.
 ====
 * `過去公開資料 Slide Share <http://www.slideshare.net/takekazuomi/>`_
 
+* Microsoft Tech Summit 2018 AD19: クラウド ネイティブなセキュア アプリケーションの作り方に PCI DSS を添えて
+
+  * `スライド <https://www.slideshare.net/harutama/ad19techsummit2018-122025270>`_
+  * `動画 <https://www.youtube.com/watch?v=L09LQl9Gk00>`_
+
 * `2017 Global Azure Bootcamp 2017@Tokyo DocumentDB Deep Dive <https://www.slideshare.net/takekazuomi/documentdb-deep-drive>`_
 
 * .NET Fringe 2016 日本初のオルタナティブ.NET イベント 開催、登壇
+
   * `Azure Storageにおけるパーテーショニングの詳細と実装 <http://www.slideshare.net/takekazuomi/azure-storage-partition-internals>`_
 
 * Service Fabricの紹介 次世代マイクロサービスフレームワークService Fabric 関連の勉強会を開催
+
   * `JAZUGでの紹介 <http://www.slideshare.net/takekazuomi/azure-fabric-service-reliable-collection>`_  `C#ユーザー会での資料 <http://www.slideshare.net/takekazuomi/ga-service-fabric>`_
 
 * `2015, GoAzure 登壇 Persistence on Azure - Microsoft Azure における永続化 <http://channel9.msdn.com/Series/Microsoft-Virtual-Academy-Japan/Session1-5>`_
@@ -54,6 +66,7 @@ About kyrt inc.
 * `2011, Windows Azure Table の利用 ～ 特性とパフォーマンスの検証 <http://bit.ly/nENGjD>`_
 
 * 日経クラウドファースト寄稿
+
   * `2016年9月号 Azure Disk <http://itpro.nikkeibp.co.jp/atclncf/service/00007/081800002/>`_
   * `2016年10月号 Azure Blob Storage <http://itpro.nikkeibp.co.jp/atclncf/service/00008/091600002/>`_
   * `2017年1月号 Azure Queue/Service Bus Queue <http://itpro.nikkeibp.co.jp/atclncf/service/00014/011300002/>`_
