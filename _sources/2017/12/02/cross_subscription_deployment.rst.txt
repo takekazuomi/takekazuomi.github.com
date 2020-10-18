@@ -14,8 +14,7 @@
    <a data-flickr-embed="true"  href="https://www.flickr.com/photos/takekazuomi/34268600011/in/dateposted-public/" title="IMG_3105"><img src="https://farm5.staticflickr.com/4185/34268600011_c2ec225de5_c.jpg" width="800" height="534" alt="IMG_3105"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"> </script>
 
 
-
-ちょっとやってみよう、下にテンプレートの抜粋を見て下さい。 [#ref3]_ テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。
+ちょっとやってみよう、下のテンプレートの抜粋を見て下さい。 [#ref3]_ テンプレートは、別のリソースグループへデプロイする時とほぼ同じで、8行目のsubscriptionId のところが違うぐらいなのがわかります。
 
 .. raw:: html
 

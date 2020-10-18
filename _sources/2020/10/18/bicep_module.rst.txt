@@ -5,9 +5,10 @@ bicep moduleを使う
 
 先日、`vscode-remote-try-bicep <https://github.com/Azure/vscode-remote-try-bicep>`_ がいつまでも空のままなので `vs code dev container <https://code.visualstudio.com/docs/remote/containers>`_ のテンプレートとして `devcontainer-bicep <https://github.com/takekazuomi/devcontainer-bicep>`_ を作って公開した。個人の嗜好の部分をどこまで入れるのかは微妙な感じではある。
 
-.. raw:: html
-
-    <a data-flickr-embed="true" href="https://www.flickr.com/photos/takekazuomi/49997998651/in/datetaken/" title="Gate Sign"><img src="https://live.staticflickr.com/65535/49997998651_756352fee6_c.jpg" width="800" height="533" alt="Gate Sign"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+.. image:: https://live.staticflickr.com/65535/49997998651_756352fee6_c.jpg
+   :target: https://www.flickr.com/photos/takekazuomi/49997998651/in/datetaken/
+   :alt: Stone
+   :align: center
 
 話がズレた、10/16に、masterに、0.2でリリースされる予定の **bicep module** [#ref1]_ がマージされたので動かしてみた。まだリリースされてないのでソースを持ってきてビルドして、path の切れてるディレクトリにリンクを張リ、実行属性を付ける。最後に、versionを確認。2020/10/17 時点では、**0.1.149-alpha (1ca02b52de)**  だった。ビルドは、こんな感じのコマンドになる。
 
