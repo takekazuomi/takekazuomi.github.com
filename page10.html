@@ -79,6 +79,42 @@
             <span>December 11, 2013</span>
         </div>
         <div class="section">
+            <h1><a href="2013/12/11/windows_azure_storage_client_3_0_1.html">Windows Azure Storage Client 3.0.1</a></h1>
+<p>2013/12/11 Windows Azure Storage Client 3.0.1 がリリースされました。変更内容はBUG FIXのみです。<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.1">nuget:Windows Azure Storage 3.0.1</a></p>
+<div class="section" id="id2">
+<h2><a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net/blob/master/changelog.txt#L176">修正点 3.0.1.0:</a></h2>
+<ul class="simple">
+<li>All (WP): Get/SetACL で明示的に Accept type application/xml を設定</li>
+<li>Blobs: Lease operations の後で、LastModified と ETag プロパティを設定</li>
+<li>Tables: Nuget package に Microsoft.Data.Services.Client への明示的な参照を追加</li>
+<li>Tables: Json .NET の bug に起因したtable query responseのパース時の問題を修正。Json .NET bugの詳細:<a class="reference external" href="http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug">http://james.newtonking.com/archive/2013/11/29/fixing-jarray-getenumerator-method-not-found-bug</a></li>
+<li>Tables (RT): クエリーと列挙操作の継続トークンに関する問題を修正</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>メモ</h2>
+<p>Json .NET の bug から発生している問題は、Json .NETの5.0.5 で JArray.GetEnumerator をpublicにした結果、IEnumerableを取った時に、今までIEnumerable&lt;JToken&gt;)が返ってたのがJArray.GetEnumerator になってしまったことに起因するようです。５系の中で非互換な修正をしてしまったので、storageが使うJson .NETと他の部分で使うのが混在したときに両立出来ずにお手上げになってしまう可能性があったそうですが、このバージョンで解決されます。</p>
+</div>
+
+        </div>
+        <div class="postmeta">
+        
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure.html">Azure</a>, <a href="categories/github観察記.html">GitHub観察記</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/table.html">Table</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/hotfix.html">Hotfix</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/12/11/windows_azure_storage_client_3_0_1.html#disqus_thread" data-disqus-identifier="2013/12/11/windows_azure_storage_client_3_0_1">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
+            <span>December 11, 2013</span>
+        </div>
+        <div class="section">
             <h1><a href="2013/12/11/windows_azure_powershel_0_7_2_release.html">Windows Azure PowerShell 0.7.2 リリース</a></h1>
 <p>Windows Azure PowerShell 0.7.2 がリリースされました。 10月の 0.7.0 、11月の 0.7.1 続く12月リリースです。最近毎月リリースされています。Azureに新機能が出ると追っかけでcmdletが追加されます。| 主な変更は、HDInsight cmdletsの追加、Web Site、VM cmdletの改善、Virtual IP reservation、Cloud Service cmdletの Visual Studio 互換です。</p>
 <a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9207001266"><img alt="IMG_0911 by Takekazu Omi, on Flickr" class="align-center" src="http://farm4.staticflickr.com/3700/9207001266_9084fa6fc2_z.jpg"/></a>
@@ -561,308 +597,6 @@ PSReadline                                                  <span class="m">1</s
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2013/12/06/github_windows_azure_storage_libraries_for_net_3_0.html#disqus_thread" data-disqus-identifier="2013/12/06/github_windows_azure_storage_libraries_for_net_3_0">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 05, 2013</span>
-        </div>
-        <div class="section">
-            <h1><a href="2013/12/05/minute_metrics_storage_version_2013_08_15.html">Windows Azure Storage 2013-08-15 の Minute Metrics</a></h1>
-<p><a class="reference external" href="http://qiita.com/advent-calendar/2013/azure">Windows Azure Advent Calendar 2013 - Qiita [キータ]</a>の 5 日目の記事です。最初Javaネタを書こうと思ってたのですが、11/27にWindows Azure Storageの新しいバージョン(x-ms-version:2013-08-15)が公開され盛り上がっているのでストレージネタに切り替えました。</p>
-<p>新バージョンに付いては以前に書いているので、それを見て下さい。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line"><a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/">Windows Azure Storage Team Blog</a> で、新しいWindows Azure Storageのリリースが紹介されています。<a class="reference external" href="http://blogs.msdn.com/b/windowsazurestorage/archive/2013/11/27/windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure Storage Release - Introducing CORS, JSON, Minute Metrics, and More</a></div>
-</div>
-</div></blockquote>
-<p>立派な訳が出てるので、こちらも合わせてどうぞ。</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">2013/11/30 翻訳が出ました。S/N RATIO BY SATO NAOKI <a class="reference external" href="http://satonaoki.wordpress.com/2013/11/30/azure-storage-cors-json-metric/">Windows Azureストレージのリリース – CORS、JSON、分単位メトリックなど</a></div>
-</div>
-<div class="line-block">
-<div class="line">2013/12/20  Windows Azure Japan Team Blog 公式 谷訳出ました。 <a class="reference external" href="http://blogs.msdn.com/b/windowsazurej/archive/2013/12/03/blog-windows-azure-storage-release-introducing-cors-json-minute-metrics-and-more.aspx">Windows Azure ストレージのリリース - CORS、JSON、分単位メトリックなど各種機能の導入</a></div>
-</div>
-</div></blockquote>
-<p>久しぶりのストレージ のリリースで機能盛り沢山なのですが<a class="footnote-reference" href="#f1" id="id2">[1]</a>、その中でもパフォーマンスジャンキー注目の Minute Metrics （分単位メトリックス）を紹介します。機能紹介だけだと面白くないので脱線しながら書きますのでお楽しみ下さい。</p>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/9204218499"><img alt="DEAD END by takekazu, on Flickr" class="align-center" src="http://farm6.staticflickr.com/5498/9204218499_3d95538ae6_z.jpg"/></a>
-<div class="section" id="minute-metrics">
-<h2>Minute Metrics （分単位メトリックス）とは</h2>
-<p>今まで、Windows Azure StorageのMetricsは時間集計でした。<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh343258.aspx">Storage Analytics Metrics の詳細</a>新しい 2013-08-15 version のMinute Metrics では、5分以内に 分単位の集計（Minute Metrics） が参照できるようになりました。それに伴って下記のテーブルが追加されています。</p>
-<blockquote>
-<div><ul class="simple">
-<li>$MetricsHourPrimaryTransactionsBlob</li>
-<li>$MetricsHourPrimaryTransactionsTable</li>
-<li>$MetricsHourPrimaryTransactionsQueue</li>
-<li>$MetricsMinutePrimaryTransactionsBlob</li>
-<li>$MetricsMinutePrimaryTransactionsTable</li>
-<li>$MetricsMinutePrimaryTransactionsQueue</li>
-</ul>
-</div></blockquote>
-<p>Hourと付いているのは、以前の $MetricsTransactionsBlob、$MetricsTransactionsTable、$MetricsTransactionsQueue の名前が変わったものです。古い名前のものもありますが、Minute Metrics の導入に伴って命名規則が整理されたようです。今のところ Windows Azure Portal では分単位の設定はできませんが、将来サポートされるそうです。</p>
-<p>名前を見ていて面白いのは、Primary という文字列が入っていることです。もしかしたら、GEO replication 先のメトリックスも見れるようになるんじゃないかと思って、「$MetricsMinuteSecondaryTransactionsTable」って名前でテーブルを参照してみました。</p>
-<p>エラーには成らなかったのですが、下記のようなレスポンスでTableは空のようです。<a class="footnote-reference" href="#f2" id="id3">[2]</a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 200 OK
-Cache-Control: no-cache
-Transfer-Encoding: chunked
-Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 9e39e71e-70ea-41b3-be3e-b7a6231315b0
-x-ms-version: 2013-08-15
-X-Content-Type-Options: nosniff
-Date: Thu, 05 Dec 2013 12:00:39 GMT
-
-83
-{"odata.metadata":"http://waac2013omi001diag.table.core.windows.net/$metadata#$MetricsMinuteSecondaryTransactionsTable","value":[]}
-0
-</pre></div>
-</div>
-<p>ちなみに、$で始まる適当な名前でリクエストを流すと400 Bad Requestで、リソースに不正な文字が含まれているというエラーになります。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 400 Bad Request
-Transfer-Encoding: chunked
-Content-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-Server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 272dce2f-ac46-46b7-b59d-b0338cefa78b
-x-ms-version: 2013-08-15
-X-Content-Type-Options: nosniff
-Date: Thu, 05 Dec 2013 11:57:59 GMT
-
-DE
-{"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The specifed resource name contains invalid characters.\nRequestId:272dce2f-ac46-46b7-b59d-b0338cefa78b\nTime:2013-12-05T11:58:00.5348125Z"}}}
-0
-</pre></div>
-</div>
-<p>メトリックス系のテーブルは下記のようにListTableでも帰ってこないので存在するかどうかは難しいところですが、エラーにならないところを見ると特別扱いされているようで期待してしまいます。</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>var tables = tableClient.ListTables("$Metrics");
-</pre></div>
-</div>
-</div>
-<div class="section" id="id4">
-<h2>Minute Metrics （分単位メトリックス）を有効にする</h2>
-<p>Minute Metricsを有効にするには、xms-version:2013-08-15 を指定して、Set Service Properties REST APIを使います。今回は、<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>を使います。今のところ<a class="reference external" href="http://www.nuget.org/packages/WindowsAzure.Storage/3.0.0">Widnows Azure Storage Client 3.0.0</a>のドキュメントがほぼ存在しないのですが、nugetで入れるとデフォルトでは入ります。設定は、ServiceProperties に、Version、MetricsLevel、RetentionDays（保存期間）を入れて、CreateCloud(Blob|Table|Queue)ClientのSetServicePropertiesを呼ぶだけです、簡単ですね。下記のコードだと、Loggingと時間集計メトリックスの設定も同時にやっています。Minute MetricsのRetentionの期間は従来と同じで日付なのでデータ量には要注意です。従来の時間単位集計に比べて60倍のデータが蓄積されます。<a class="footnote-reference" href="#f3" id="id6">[3]</a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>private static void SetStorageAnalytics(CloudStorageAccount account)
-{
-    var serviceProperty = new ServiceProperties
-    {
-        Logging = new LoggingProperties
-        {
-            Version = "1.0",
-            LoggingOperations = LoggingOperations.All,
-            RetentionDays = 7,
-
-        },
-        HourMetrics = new MetricsProperties
-        {
-            Version = "1.0",
-            MetricsLevel = MetricsLevel.ServiceAndApi,
-            RetentionDays = 7
-        },
-        MinuteMetrics = new MetricsProperties
-        {
-            Version = "1.0",
-            MetricsLevel = MetricsLevel.ServiceAndApi,
-            RetentionDays = 1
-        }
-    };
-    account.CreateCloudBlobClient().SetServiceProperties(serviceProperty);
-    account.CreateCloudTableClient().SetServiceProperties(serviceProperty);
-    account.CreateCloudQueueClient().SetServiceProperties(serviceProperty);
-
-}
-</pre></div>
-</div>
-<p>このコード書いていてServicePropertiesのプロパティで「あれ？」と思いました。以前は、ServicePropertiesは、LoggingProperties と MetricsProperties の２つのプロパティを持っていたのですが、3.0では MetricsProperties が無くなって HourMetrics になってしまっているようです、Table側は古い名前も残してあるのに、ライブラリは Braking Changesにしてしまったようですね。このあたりの判断は難しいところなのでしょうが、古い名前もあっても良い気がします。</p>
-<p><a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/blob/v2.1.0.4/microsoft-azure-api/Services/Storage/Lib/Common/Shared/Protocol/ServiceProperties.cs#L97">2.1.0.4 ServiceProperties.cs</a></p>
-<p>nugetから無条件で最新版として入るのに前のバージョンと互換性が無いっていうのは大胆な気がしますが、なんらかの事情でちょっとドキュメントが遅れているだけなのでしょう。</p>
-<p>実行してリクエスト、レスポンスを覗いてみます。</p>
-<div class="section" id="http-request">
-<h3>http request</h3>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>PUT http://waac2013omi001diag.blob.core.windows.net/?comp=properties&amp;restype=service&amp;timeout=90 HTTP/1.1
-User-Agent: WA-Storage/3.0.0 (.NET CLR 4.0.30319.34003; Win32NT 6.3.9600.0)
-x-ms-version: 2013-08-15
-x-ms-client-request-id: 56bffee5-4626-4835-b254-af38a1520242
-x-ms-date: Thu, 05 Dec 2013 12:39:54 GMT
-Authorization: SharedKey ********************************************************
-Host: waac2013omi001diag.blob.core.windows.net
-Content-Length: 626
-Connection: Keep-Alive
-
-&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;StorageServiceProperties&gt;&lt;Logging&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Delete&gt;true&lt;/Delete&gt;&lt;Read&gt;true&lt;/Read&gt;&lt;Write&gt;true&lt;/Write&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;7&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;/Logging&gt;&lt;HourMetrics&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;7&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;IncludeAPIs&gt;true&lt;/IncludeAPIs&gt;&lt;/HourMetrics&gt;&lt;MinuteMetrics&gt;&lt;Version&gt;1.0&lt;/Version&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;RetentionPolicy&gt;&lt;Enabled&gt;true&lt;/Enabled&gt;&lt;Days&gt;1&lt;/Days&gt;&lt;/RetentionPolicy&gt;&lt;IncludeAPIs&gt;true&lt;/IncludeAPIs&gt;&lt;/MinuteMetrics&gt;&lt;Cors /&gt;&lt;/StorageServiceProperties&gt;
-</pre></div>
-</div>
-</div>
-<div class="section" id="http-response">
-<h3>http response</h3>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span/>HTTP/1.1 202 Accepted
-Transfer-Encoding: chunked
-Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-x-ms-request-id: 650e2253-9e51-43e5-90bd-6077ef43ef31
-x-ms-version: 2013-08-15
-Date: Thu, 05 Dec 2013 12:39:47 GMT
-
-0
-</pre></div>
-</div>
-<p>リクエストで、ServicePropertiesに設定した内容を投げていますがXMLなんですね。ここはJSONじゃないのかと思ったけど、そんなにトラフィックが多いところじゃないので問題ないですね。シンプルでいい感じです。</p>
-</div>
-</div>
-<div class="section" id="id7">
-<h2>Minute Metrics （分単位メトリックス）の結果</h2>
-<p>細かい確認ができていないのですが、結果自体はテーブル名が違うだけで従来の時間集計と同じものが出てるようです。パーテションキーが単位で採番されています。</p>
-<table border="1" class="docutils" id="id10">
-<caption><span class="caption-text">Minute Metricsの例</span></caption>
-<colgroup>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-<col width="17%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PartitionKey</th>
-<th class="head">RowKey</th>
-<th class="head">TotalIngress</th>
-<th class="head">TotalEgress</th>
-<th class="head">AverageE2ELatency</th>
-<th class="head">AverageServerLatency</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>20131205T0303</td>
-<td>user;All</td>
-<td>393</td>
-<td>59079</td>
-<td>352</td>
-<td>53</td>
-</tr>
-<tr class="row-odd"><td>20131205T0303</td>
-<td>user;QueryEntities</td>
-<td>393</td>
-<td>59079</td>
-<td>352</td>
-<td>53</td>
-</tr>
-<tr class="row-even"><td>20131205T0304</td>
-<td>system;All</td>
-<td>8057</td>
-<td>9452</td>
-<td>20</td>
-<td>19</td>
-</tr>
-<tr class="row-odd"><td>20131205T0304</td>
-<td>user;All</td>
-<td>2188</td>
-<td>15747</td>
-<td>46.833333</td>
-<td>5.166667</td>
-</tr>
-<tr class="row-even"><td>20131205T0304</td>
-<td>user;QueryEntities</td>
-<td>1478</td>
-<td>14291</td>
-<td>68.5</td>
-<td>6.25</td>
-</tr>
-<tr class="row-odd"><td>20131205T0304</td>
-<td>user;QueryTables</td>
-<td>710</td>
-<td>1456</td>
-<td>3.5</td>
-<td>3</td>
-</tr>
-<tr class="row-even"><td>20131205T0305</td>
-<td>system;All</td>
-<td>24161</td>
-<td>28398</td>
-<td>14.333333</td>
-<td>13.333333</td>
-</tr>
-<tr class="row-odd"><td>20131205T0305</td>
-<td>user;All</td>
-<td>2041</td>
-<td>13787</td>
-<td>268.5</td>
-<td>5.75</td>
-</tr>
-<tr class="row-even"><td>20131205T0305</td>
-<td>user;GetTableServiceProperties</td>
-<td>338</td>
-<td>584</td>
-<td>2</td>
-<td>2</td>
-</tr>
-<tr class="row-odd"><td>20131205T0305</td>
-<td>user;QueryEntities</td>
-<td>1703</td>
-<td>13203</td>
-<td>357.333333</td>
-<td>7</td>
-</tr>
-<tr class="row-even"><td>20131205T0306</td>
-<td>system;All</td>
-<td>32239</td>
-<td>37972</td>
-<td>17.25</td>
-<td>16</td>
-</tr>
-<tr class="row-odd"><td>20131205T0307</td>
-<td>system;All</td>
-<td>23475</td>
-<td>27904</td>
-<td>15</td>
-<td>14.5</td>
-</tr>
-</tbody>
-</table>
-<p><a class="reference download internal" href="_downloads/20131205-minutemetrics-sample.zip" download=""><span class="xref download docutils literal"><span class="pre">表だと厳しいのでcsvをどうぞ</span> <span class="pre">(zip)</span></span></a></p>
-</div>
-<div class="section" id="id8">
-<h2>まとめ</h2>
-<p>Minute Metrics は出てくるまで少々遅延(5分ぐらい？)があるようですが、分単位のメトリックスが見れるのは助かります。簡単な負荷テストの結果を確認するのにも使えます。今回はStorage Clinet 3.0を使いましたが、現時点ではGitHubにコードが出ていない、変更点のドキュメントが無いなど少々使いづらいところがあります。もし新機能にこだわりが無いなら、あの嫌らしいCastのBUGも治ってますし2.1.0.4 を使うのが良いと思います。今回のように、Minute Metricsの設定がしたいというなら、Storage Clinet 3.0 が必要です。あと、ServicePropertiesに、CorsPropertiesが追加されているので、CROS が使いたい場合も3.0が便利だと思います。</p>
-</div>
-<div class="section" id="id9">
-<h2>訂正 2013/12/06</h2>
-<p>訂正です。Storage Clinet 3.0は、現時点ではGitHubにコードが出ていないと書きましたが、正式名称 Windows Azure Storage Libraries for .NET のソースは<a class="reference external" href="https://github.com/WindowsAzure/azure-storage-net">github:azure-storage-net</a>で公開されています。</p>
-<div class="line-block">
-<div class="line"><br/></div>
-<div class="line"><br/></div>
-</div>
-<table class="docutils footnote" frame="void" id="f1" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>日本リージョン、IaaSのGAなど大きな話題が続いている Azure 全体に比べると地味ですね。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f2" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>レスポンスのbodyがJSONですね、このバージョンからJSONがサポートされています。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="f3" rules="none">
-<colgroup><col class="label"/><col/></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>当たり前ですね</td></tr>
-</tbody>
-</table>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure.html">Azure</a>, <a href="categories/azure_storage.html">Azure Storage</a>, <a href="categories/azure_sdk.html">Azure SDK</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/2013_08_15.html">2013-08-15</a>, <a href="tags/azure.html">Azure</a>, <a href="tags/step_by_step.html">Step By Step</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2013/12/05/minute_metrics_storage_version_2013_08_15.html#disqus_thread" data-disqus-identifier="2013/12/05/minute_metrics_storage_version_2013_08_15">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
@@ -871,6 +605,8 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2020/10/18/bicep_module.html">bicep moduleを使う</a>
+        </li><li>
             <a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
         </li><li>
             <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
@@ -888,13 +624,11 @@ Date: Thu, 05 Dec 2013 12:39:47 GMT
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
         </li><li>
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
-        </li><li>
-            <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/arm_template.html">ARM template</a> (1)</li><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/bicep.html">bicep</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/aci.html">ACI</a> (1), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/docker.html">docker</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>

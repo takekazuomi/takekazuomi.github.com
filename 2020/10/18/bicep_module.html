@@ -1,0 +1,350 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="https://www.facebook.com/2008/fbml" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="もろもろの備忘録、C#とAzureなど">
+        <meta name="viewport" content="width=device-width">
+        <title>bicep moduleを使う &mdash; Kyrt Blog</title>
+            <link rel="stylesheet" href="../../../_static/normalize.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/sphinx.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/main.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/flat.css" type="text/css">
+            <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+            <link rel="stylesheet" href="../../../_static/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="../../../_static/style.css" type="text/css" /><link rel="shortcut icon" href="../../../_static/favicon.ico" /><!-- Load modernizr and JQuery -->
+        <script src="../../../_static/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../../_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <script src="../../../_static/plugins.js"></script>
+        <script src="../../../_static/main.js"></script>
+        <link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Azure Docker Integration" href="../../09/27/azure-docker-integration.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="../../../rss.html" /><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        SOURCELINK_SUFFIX: '.txt',
+        HAS_SOURCE:  true
+      };
+    </script><script type="text/javascript" src="../../../_static/underscore.js"></script><script type="text/javascript" src="../../../_static/doctools.js"></script><script type="text/javascript" src="../../../_static/disqus.js"></script><script type="text/javascript" src="../../../_static/google_analytics.js"></script><meta property="og:type" content="article" />
+<meta property="og:title" content="bicep moduleを使う &mdash; Kyrt Blog" />
+<meta property="og:description" content="もろもろの備忘録、C#とAzureなど" />
+<meta property="og:url" content="http://kyrt.in/2020/10/18/bicep_module.html" />
+<meta name="twitter:image" content="http://kyrt.in/_static/kyrt_logo4sq.png" />
+
+</head>
+    <body role="document">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+      <div id="container"><header role="banner">
+            <hgroup>
+              <h1><a href="../../../index.html">Kyrt Blog</a></h1><h2>もろもろの備忘録、C#とAzureなど</h2></hgroup>
+          </header>
+      <nav>
+      <ul>
+        <li class="main-nav">
+          <a href="../../../index.html">Home</a>
+        </li>
+        <li class="main-nav">
+          <a href="../../../pages/about_me.html">About Kyrt.</a>
+        </li>
+        </ul>
+      <ul>
+        <li class="logo-nav">
+	  <a href="../../../pages/about_me.html" >
+            <img id="kyrt_logo" alt="kyrt logo" src="../../../_static/kyrt_logo.png" width = 200 height = 106 />
+	  </a>
+        </li>
+        <li class="mvp-nav">
+	  <a href="https://mvp.microsoft.com/en-us/PublicProfile/5000998?fullName=Takekazu%20%20Omi" >
+            <img id="mvp_logo" alt="mvp logo" src="../../../_static/MVP_Reconnect_Logo_Blue_Color_RGB.png" width = 181 height = 74 />
+	  </a>
+        </li><li class="quicklink"><div class="rss">
+        <a href="../../../rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
+    </div></li></ul>
+    </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article>
+    <div class="section_head">
+    <div class="timestamp_layout">
+      <div class="timestamp postmeta">
+            <span>October 18, 2020</span>
+        </div>
+    </div>
+    
+    <div class="buttons">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="takekazuomi">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+    
+    </div>
+    
+    <div class="section" id="bicep-module">
+<h1>bicep moduleを使う</h1>
+<p>最近、<a class="reference external" href="https://github.com/Azure/bicep/blob/main/docs/spec/modules.md">bicep</a>が気に入って使ってる。まだ、かなり初期段階の開発中のプロダクトだが、ARM Template のファイルを生成するので、記述ツールという位置付なら今でも十分便利に使える。</p>
+<p>先日、<a class="reference external" href="https://github.com/Azure/vscode-remote-try-bicep">vscode-remote-try-bicep</a>がいつまでも空のままなので<a class="reference external" href="https://code.visualstudio.com/docs/remote/containers">vs code dev container</a>のテンプレートとして<a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep">devcontainer-bicep</a>を作って公開した。個人の嗜好の部分をどこまで入れるのかは微妙な感じではある。</p>
+<a data-flickr-embed="true" href="https://www.flickr.com/photos/takekazuomi/49997998651/in/datetaken/" title="Gate Sign"><img src="https://live.staticflickr.com/65535/49997998651_756352fee6_c.jpg" width="800" height="533" alt="Gate Sign"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script><p>話がズレた、10/16に、masterに、0.2でリリースされる予定の<strong>bicep module</strong><a class="footnote-reference" href="#ref1" id="id1">[1]</a>がマージされたので動かしてみた。まだリリースされてないのでソースを持ってきてビルドして、path の切れてるディレクトリにリンクを張リ、実行属性を付ける。最後に、versionを確認。2020/10/17 時点では、<strong>0.1.149-alpha (1ca02b52de)</strong>だった。ビルドは、こんな感じのコマンドになる。</p>
+<div class="code shell highlight-default notranslate"><div class="highlight"><pre><span></span>% git clone git@github.com:Azure/bicep.git
+% cd bicep/src/Bicep.Cli
+% dotnet publish -r linux-x64 -c Release --self-contained true /p:PublishTrimmed=true -p:PublishReadyToRun=true -p:PublishSingleFile=true -p:PublishReadyToRunShowWarnings=true
+% ln -s $PWD/bin/Release/netcoreapp3.1/linux-x64/publish/bicep ~/.local/bin/bicep
+% chmod +x ~/.local/bin/bicep
+% bicep --version
+Bicep CLI version 0.1.149-alpha (1ca02b52de)
+</pre></div>
+</div>
+<p>ビルド後の<strong>bicep</strong>サイズを見たら、74MBほどある。今のリリースが45MBなのでちょっとでかい。</p>
+<p><a class="reference external" href="https://github.com/Azure/bicep/blob/401534d6c5c110d6a575755cca5dbf443c5beeb3/.github/workflows/build.yml#L67">.github/workflows/build.yml</a>を見たら、<cite>PublishReadyToRun</cite>が指定されていなかったので外してみる。</p>
+<div class="code yaml highlight-default notranslate"><div class="highlight"><pre><span></span>run: dotnet publish --configuration ${{ matrix.configuration }} --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true -r ${{ matrix.rid }} ./src/Bicep.Cli/Bicep.Cli.csproj
+</pre></div>
+</div>
+<p>オプションを合わせてコンパイルし直す。</p>
+<div class="code shell highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">dotnet</span> <span class="n">publish</span> <span class="o">-</span><span class="n">r</span> <span class="n">linux</span><span class="o">-</span><span class="n">x64</span> <span class="o">-</span><span class="n">c</span> <span class="n">Release</span> <span class="o">--</span><span class="bp">self</span><span class="o">-</span><span class="n">contained</span> <span class="n">true</span> <span class="o">/</span><span class="n">p</span><span class="p">:</span><span class="n">PublishTrimmed</span><span class="o">=</span><span class="n">true</span> <span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="n">PublishSingleFile</span><span class="o">=</span><span class="n">true</span> <span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="n">PublishReadyToRunShowWarnings</span><span class="o">=</span><span class="n">true</span>
+<span class="o">%</span> <span class="n">ls</span> <span class="o">-</span><span class="n">lh</span> <span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">Release</span><span class="o">/</span><span class="n">netcoreapp3</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">/</span><span class="n">publish</span><span class="o">/</span><span class="n">bicep</span> <span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">takekazu</span> <span class="n">takekazu</span> <span class="mi">54</span><span class="n">M</span> <span class="mi">10</span><span class="n">月</span> <span class="mi">17</span> <span class="mi">17</span><span class="p">:</span><span class="mi">41</span> <span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">Release</span><span class="o">/</span><span class="n">netcoreapp3</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">/</span><span class="n">publish</span><span class="o">/</span><span class="n">bicep</span>
+</pre></div>
+</div>
+<p>54MBになった。AOTは無くても良さそうなので外すことにする。また、VS Code Pluginはとりあえず、無くて良いので後で試す。</p>
+<div class="section" id="modules">
+<h2>Modulesを試す</h2>
+<p>ドキュメントでは、このあたり<a class="reference external" href="https://github.com/Azure/bicep/blob/main/docs/spec/modules.md">Modules</a>に書いてある。</p>
+<p>まずは使ってみる、モジュール利用のシナリオは色々あると思うが、今回は仮想マシンのデプロイをやって、ポイントを整理する。</p>
+<p>仮想マシン（VM）をデプロイする場合、ポータルや<a class="reference external" href="https://github.com/Azure/azure-quickstart-templates">Azure Quickstart Template</a>を見ると、ほとんどの場合は仮想ネットワーク(VNet)とVMは固定の構成で作成されることが前提となっている。一方、実業務では既存のVNetに追加でVMをデプロイしたり、異なったVNetに同一構成のVMをデプロイすることが頻繁にある。実際、仮想マシンと仮想ネットワークのライフサイクルは別と考えた方が良く、このようなケースは、テンプレートのモジュール利用の典型的な例になる。</p>
+<p>bicep で、vmとvnetをmoduleに分けてデプロイするレートを書いた例をレポジトリにあげた<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples">bisep module examples</a>。</p>
+<p>簡単にポイントをだけ説明する。</p>
+<p>下記のようにメインのテンプレートを作成し、module を利用する。従来のARM Templateでは、テンプレート参照する場合は、URL経由である必要があったが、<strong>bicep module</strong>ではローカルファイルにモジュールを置くことができる。また、<strong>vnet: vnetMod.outputs.results.vnet</strong>のように、モジュールの入力として他のモジュールの出力を使うことで、モジュール間の依存関係をもたせることができる。</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">param</span> <span class="n">vmSize</span> <span class="n">string</span>
+<span class="n">param</span> <span class="n">adminUsername</span> <span class="n">string</span>
+<span class="n">param</span> <span class="n">adminPassword</span> <span class="n">string</span> <span class="p">{</span>
+    <span class="n">secure</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+
+<span class="n">module</span> <span class="n">vnetMod</span> <span class="s1">&#39;./vnet.bicep&#39;</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;vnetMod&#39;</span>
+    <span class="n">params</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">vnetName</span><span class="p">:</span> <span class="s1">&#39;vNet&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">module</span> <span class="n">vmMod</span> <span class="s1">&#39;./vm.bicep&#39;</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;vmMod&#39;</span>
+    <span class="n">params</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">vnet</span><span class="p">:</span> <span class="n">vnetMod</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">vnet</span>
+        <span class="n">adminUsername</span><span class="p">:</span> <span class="n">adminUsername</span>
+        <span class="n">adminPassword</span><span class="p">:</span> <span class="n">adminPassword</span>
+        <span class="n">vmSize</span><span class="p">:</span> <span class="n">vmSize</span>
+        <span class="n">vmName</span><span class="p">:</span> <span class="s1">&#39;vm1&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="n">results</span> <span class="nb">object</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">vnet</span><span class="p">:</span> <span class="n">vnetMod</span>
+    <span class="n">vm</span><span class="p">:</span> <span class="n">vmMod</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>module vnetMod ‘./vnet.bicep’ = {</strong>と書くと、<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/vnet.bicep">vnet.bicep</a>が読み込まれる。下記は内容の抜粋。</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">param</span> <span class="n">vnetName</span> <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;vNet&#39;</span>
+<span class="n">param</span> <span class="n">addressPrefix</span> <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;10.1.0.0/16&#39;</span>
+<span class="n">param</span> <span class="n">location</span> <span class="n">string</span> <span class="o">=</span> <span class="n">resourceGroup</span><span class="p">()</span><span class="o">.</span><span class="n">location</span>
+
+<span class="n">output</span> <span class="n">results</span> <span class="nb">object</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">vnet</span><span class="p">:</span> <span class="n">vnet</span>
+<span class="p">}</span>
+
+<span class="o">...</span> <span class="n">snip</span> <span class="o">....</span>
+
+<span class="o">//</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="o">.</span><span class="n">microsoft</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">en</span><span class="o">-</span><span class="n">us</span><span class="o">/</span><span class="n">azure</span><span class="o">/</span><span class="n">templates</span><span class="o">/</span><span class="n">microsoft</span><span class="o">.</span><span class="n">network</span><span class="o">/</span><span class="n">virtualnetworks</span>
+<span class="n">resource</span> <span class="n">vnet</span> <span class="s1">&#39;Microsoft.Network/virtualNetworks@2020-05-01&#39;</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">vnetName</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">location</span>
+    <span class="n">properties</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">addressSpace</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">addressPrefixes</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">addressPrefix</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">subnets</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">subnet1</span>
+            <span class="n">subnet2</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>モジュールは、<strong>Microsoft.Resources/deployments</strong>のインラインのテンプレートに展開される。該当部分、<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/main.json#L20-L104">main.json#L20-L104</a>。　以下抜粋</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Microsoft.Resources/deployments&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;apiVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-10-01&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vnetMod&quot;</span><span class="p">,</span>
+
+   <span class="o">...</span> <span class="n">snip</span> <span class="o">....</span>
+
+       <span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="p">{</span>
+
+   <span class="o">...</span> <span class="n">snip</span> <span class="o">....</span>
+
+         <span class="s2">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+           <span class="p">{</span>
+             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Microsoft.Network/virtualNetworks&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;apiVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-05-01&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;[parameters(&#39;vnetName&#39;)]&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;[parameters(&#39;location&#39;)]&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+               <span class="s2">&quot;addressSpace&quot;</span><span class="p">:</span> <span class="p">{</span>
+                 <span class="s2">&quot;addressPrefixes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                   <span class="s2">&quot;[parameters(&#39;addressPrefix&#39;)]&quot;</span>
+                 <span class="p">]</span>
+               <span class="p">},</span>
+               <span class="s2">&quot;subnets&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="s2">&quot;[variables(&#39;subnet1&#39;)]&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;[variables(&#39;subnet2&#39;)]&quot;</span>
+               <span class="p">]</span>
+             <span class="p">}</span>
+           <span class="p">}</span>
+         <span class="p">],</span>
+
+  <span class="o">...</span> <span class="n">snip</span> <span class="o">....</span>
+</pre></div>
+</div>
+<p><strong>bicep</strong>全般の動きとして、ネイティブのARM Tempateとの関係は、ほぼ1:1で非常にシンプルな展開で、<strong>module</strong>でも同様な動きになっている。</p>
+</div>
+<div class="section" id="id3">
+<h2>ポイント１：依存関係</h2>
+<p>vmは、vnetに依存している、これは、普通ARM Template では、ネストしたリソースで書くか、<strong>dependsOn</strong>で記述する。<a class="footnote-reference" href="#ref2" id="id4">[2]</a><strong>bicep</strong>には、自動依存性解決<a class="footnote-reference" href="#ref3" id="id5">[3]</a>の機能があり、<strong>bicep resources 定義</strong>内で、別のリソースを参照すると、json生成時に、<strong>dependsOn</strong>を追加してくれる。</p>
+<p>今回のケースだと、<strong>vmMod</strong>の<strong>vnet</strong>パラメータで、<strong>vnetMod.outputs.results.vnet</strong>を参照している。生成された<strong>main.json</strong>では、下記の<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/main.json#L329-L331">main.json#L329-L331</a>部分に依存関係は記述されているのがわかる。</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;dependsOn&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;[resourceId(&#39;Microsoft.Resources/deployments&#39;, &#39;vnetMod&#39;)]&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>単純に vnetModeのdeploymentsへに依存するように展開されてるので、大規模な展開で展開時間がセンシティブな場合は少々注意が必要だが殆どの場合は問題無い素直な変換になっている。</p>
+<p>この依存関係の自動解決（暗黙の依存関係）は、コードをシンプルにするし、<strong>dependsOn</strong>の書き漏れが軽減されるので非常に気に入っている。</p>
+</div>
+<div class="section" id="id6">
+<h2>ポイント２：オブジェクトの利用</h2>
+<p>従来からARM Templateではパラメータにオブジェクトを渡せたが、あまり便利では無かったので殆ど使っていなかった。このスクリプトでは、vnetもモジュールでは、vnet reference を返し。vm モジュールのパラメータに渡している。</p>
+<p><a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/vnet.bicep#L5-L7">vnet.bicep#L5-L7</a></p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="n">results</span> <span class="nb">object</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">vnet</span><span class="p">:</span> <span class="n">vnet</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>param vnet object</strong>で受け取って、<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/vm.bicep#L25-L26">vm.bicep#L25-L26</a>で使っている。ここでは、vnet name 使っていないが、vnetそのものが渡ってくるので他の操作もできる。あと、呼び出し側の<strong>main.bicep</strong>で、参照関係が生まれるので、自動依存関係で処理できるという利点もある。<a class="footnote-reference" href="#ref4" id="id7">[4]</a></p>
+<p>今の<strong>bicep</strong>だと、仕様のブレと未実装が混ざっていて少し混乱するが、そんな時はIssueを見れば良い。<a class="footnote-reference" href="#ref5" id="id8">[5]</a></p>
+</div>
+<div class="section" id="id9">
+<h2>まとめ</h2>
+<p><strong>bicep</strong>は、単純にARM Templateを各ツールとして捉えると今まであったどのツールより書きやすい。今回、module が実装されたことでかなり実用的に使えるようになった。この手のものを書くにはGUIツールより、テキストベースのツールが向いているように思う。ただ、ARM Template (= Azure Resource API) の難しさは残るのでハマる時はハマる。</p>
+<p>bicepのリリースは来年になりそうだが、筋が良いので積極的に使って方が良いと思う、お勧めだ。ただ、copy が実装されいないので要注意、copy は、12月リリース予定の0.3でサポートされる予定だ。</p>
+<p>あと、今回実行は基本WSL2内で行い、azコマンドのランナーとしては、昔ながらの<strong>Makefile</strong>を使っている。<strong>Azure PowerShell Cmdlet</strong>を使うなら、全部Poshスクリプトで書けば良いが、<strong>az cli</strong>を使う場合、コマンド間を繋ぐ何らかの<strong>glue script</strong><a class="footnote-reference" href="#ref6" id="id10">[6]</a>が必要だ。<strong>bash</strong>で全部書くのも辛いので、最近は、<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/Makefile">Makefile</a>を使うことにしている。GNU Make なんて、20年ぐらいまともに使ってなかったのでだいぶ忘れていたがだいぶ思い出してきてる。</p>
+</div>
+<div class="section" id="id11">
+<h2>参照</h2>
+<table class="docutils footnote" frame="void" id="ref1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://github.com/Azure/bicep/commit/23bd4cac508d0bc4e7f1b35ef74be9f519838207">Module implementation (#608)</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td><a class="reference external" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/define-resource-dependency">Define the order for deploying resources in ARM templates</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td><a class="reference external" href="https://github.com/Azure/bicep/blob/main/docs/spec/resources.md#implicit-dependency">Implicit dependency</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td>このあたりコードでちょと変なことをしているのは、<a class="reference external" href="https://docs.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworkshttps://github.com/Azure/bicep/blob/">Microsoft.Network virtualNetworks template reference</a>によると、<strong>name</strong>属性があるはずなのだが、参照すると実行エラーになってしま。仕方が無いので、id から<strong>vnet name</strong>を求めていてる</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[5]</a></td><td><a class="reference external" href="https://github.com/Azure/bicep/issues/131#issuecomment-711103396">自動依存関係解決だけあれば、module にdependsOn は不要じゃないかという議論</a>どうやら、modeule に dependsOn 構文を追加するつもりらしい。これは、未確認</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[6]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Scripting_language#Glue_languages">Glue languages</a>、ぐぐったら、AWS Glue ばかりが出てきた心配になってのでリンクを張っておく。日本語のWikipediaはイマイチだったので、<strong>en.wikipedia.org</strong>にした</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="../../../categories/bicep.html">bicep</a>, <a href="../../../categories/arm_template.html">ARM template</a></span>
+        </div>
+        
+        </div>
+    <div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2020/10/18/bicep_module";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<ul class="related clearfix">
+            <li class="left"></li>
+            <li class="right"><a href="../../09/27/azure-docker-integration.html">Azure Docker Integration</a> &raquo; </li>
+        </ul><div id="disqus_thread"></div><script type="text/javascript">    var disqus_shortname = "cloudmemo";    var disqus_identifier = "2020/10/18/bicep_module";    disqus_thread();</script><noscript>Please enable JavaScript to view the    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></article><aside class="sidebar"><section><div class="widget">
+    <h1>Recent Posts</h1>
+    <ul><li>
+            <a href="#">bicep moduleを使う</a>
+        </li><li>
+            <a href="../../09/27/azure-docker-integration.html">Azure Docker Integration</a>
+        </li><li>
+            <a href="../../../2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
+        </li><li>
+            <a href="../../../2017/07/02/2017_mvp.html">2017 Microsoft MVP Award を受賞しました</a>
+        </li><li>
+            <a href="../../../2017/06/03/az_login_device_flow.html">Azure に OAuth 2.0 Device Flow でログインする</a>
+        </li><li>
+            <a href="../../../2017/05/19/install_azure_powershell.html">Azure PowerShellのインストール事情</a>
+        </li><li>
+            <a href="../../../2017/05/14/azure_cosmos_intro.html">Azure Cosmos DB がやってきた</a>
+        </li><li>
+            <a href="../../../2017/02/13/psenv_tabexpansion.html">PsEnv への TabExpansion の実装</a>
+        </li><li>
+            <a href="../../../2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
+        </li><li>
+            <a href="../../../2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
+        </li></ul>
+</div>
+</section><section><div class="widget">
+    <h1>Categories</h1>
+    <ul><li><a href="../../../categories/arm_template.html">ARM template</a> (1)</li><li><a href="../../../categories/azure.html">Azure</a> (35)</li><li><a href="../../../categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="../../../categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="../../../categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="../../../categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="../../../categories/azure_table.html">Azure Table</a> (10)</li><li><a href="../../../categories/batch.html">Batch</a> (1)</li><li><a href="../../../categories/bicep.html">bicep</a> (1)</li><li><a href="../../../categories/blog.html">blog</a> (1)</li><li><a href="../../../categories/cdp.html">CDP</a> (1)</li><li><a href="../../../categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="../../../categories/datafactory.html">DataFactory</a> (1)</li><li><a href="../../../categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="../../../categories/helios.html">Helios</a> (1)</li><li><a href="../../../categories/java.html">Java</a> (2)</li><li><a href="../../../categories/mvp.html">MVP</a> (3)</li><li><a href="../../../categories/owin.html">OWIN</a> (2)</li><li><a href="../../../categories/posh.html">Posh</a> (1)</li><li><a href="../../../categories/powershell.html">PowerShell</a> (3)</li><li><a href="../../../categories/ruby.html">Ruby</a> (1)</li><li><a href="../../../categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="../../../categories/session.html">Session</a> (1)</li><li><a href="../../../categories/storage.html">Storage</a> (1)</li><li><a href="../../../categories/websites.html">WebSites</a> (1)</li></ul>
+</div></section><section><div class="widget">
+    <h1>Tags</h1><a href="../../../tags/2013_08_15.html">2013-08-15</a> (6), <a href="../../../tags/aci.html">ACI</a> (1), <a href="../../../tags/architecture.html">Architecture</a> (1), <a href="../../../tags/async.html">Async</a> (5), <a href="../../../tags/azure.html">Azure</a> (14), <a href="../../../tags/azure_blob.html">Azure Blob</a> (3), <a href="../../../tags/azure_cache.html">Azure Cache</a> (1), <a href="../../../tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="../../../tags/azure_sdk.html">Azure SDK</a> (2), <a href="../../../tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="../../../tags/azure_storage.html">Azure Storage</a> (2), <a href="../../../tags/azure_table.html">Azure Table</a> (11), <a href="../../../tags/batch.html">Batch</a> (1), <a href="../../../tags/blob.html">Blob</a> (5), <a href="../../../tags/bug.html">BUG</a> (2), <a href="../../../tags/bugs.html">Bugs</a> (1), <a href="../../../tags/build2016.html">BUILD2016</a> (1), <a href="../../../tags/build2017.html">Build2017</a> (1), <a href="../../../tags/c.html">C#</a> (4), <a href="../../../tags/c.html">C++</a> (1), <a href="../../../tags/cache.html">Cache</a> (1), <a href="../../../tags/cloud.html">Cloud</a> (5), <a href="../../../tags/cloud_service.html">Cloud Service</a> (1), <a href="../../../tags/code.html">Code</a> (1), <a href="../../../tags/cool_storage.html">Cool Storage</a> (1), <a href="../../../tags/debug.html">Debug</a> (1), <a href="../../../tags/deploy.html">Deploy</a> (1), <a href="../../../tags/diagonestics.html">Diagonestics</a> (2), <a href="../../../tags/dml.html">DML</a> (2), <a href="../../../tags/docker.html">docker</a> (1), <a href="../../../tags/eclipse.html">Eclipse</a> (1), <a href="../../../tags/emulator.html">Emulator</a> (2), <a href="../../../tags/fiddler.html">Fiddler</a> (1), <a href="../../../tags/fixed.html">Fixed</a> (1), <a href="../../../tags/git.html">Git</a> (1), <a href="../../../tags/goazure.html">GoAzure</a> (2), <a href="../../../tags/gradle.html">Gradle</a> (1), <a href="../../../tags/hotfix.html">Hotfix</a> (3), <a href="../../../tags/how_to.html">How-to</a> (1), <a href="../../../tags/iaas.html">IaaS</a> (1), <a href="../../../tags/install.html">Install</a> (1), <a href="../../../tags/intro.html">Intro</a> (1), <a href="../../../tags/issue.html">Issue</a> (3), <a href="../../../tags/java.html">Java</a> (3), <a href="../../../tags/jazug.html">JAZUG</a> (1), <a href="../../../tags/json.html">JSON</a> (1), <a href="../../../tags/kudu.html">Kudu</a> (1), <a href="../../../tags/manageddisk.html">ManagedDisk</a> (1), <a href="../../../tags/nlog.html">NLog</a> (1), <a href="../../../tags/nosql.html">NoSQL</a> (4), <a href="../../../tags/owin.html">OWIN</a> (2), <a href="../../../tags/play_framework.html">Play Framework</a> (1), <a href="../../../tags/posh.html">posh</a> (2), <a href="../../../tags/posh.html">Posh</a> (1), <a href="../../../tags/powershell.html">PowerShell</a> (3), <a href="../../../tags/premiumtable.html">PremiumTable</a> (1), <a href="../../../tags/preview.html">preview</a> (1), <a href="../../../tags/queue.html">Queue</a> (1), <a href="../../../tags/release.html">Release</a> (4), <a href="../../../tags/sdk.html">SDK</a> (1), <a href="../../../tags/session.html">Session</a> (2), <a href="../../../tags/snowflake.html">snowflake</a> (1), <a href="../../../tags/step_by_step.html">Step By Step</a> (2), <a href="../../../tags/storage.html">Storage</a> (15), <a href="../../../tags/table.html">Table</a> (12), <a href="../../../tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="../../../tags/tutorial.html">Tutorial</a> (1), <a href="../../../tags/webrole.html">WebRole</a> (1), <a href="../../../tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
+    <h1><a href="#searchbox">Search</a></h1>
+    <form action="../../../search.html" method="get">
+        <input type="text" name="q" />
+        <button type="submit"><span class="fa fa-search"></span></button>
+    </form>
+</div></section></aside></div> <!-- #main --></div> <!-- #main-container -->
+
+        <div class="footer-container" role="contentinfo"><footer class="wrapper">&copy; Copyright 2012-2017, Takekazu Omi. Powered by <a href="http://www.tinkerer.me/">Tinkerer</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.</footer></div> <!-- footer-container -->
+
+      </div> <!--! end of #container --><!--[if lt IE 7 ]>
+          <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+          <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <![endif]-->
+    </body>
+</html>

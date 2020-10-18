@@ -28,7 +28,7 @@
         <script>window.jQuery || document.write('<script src="_static/vendor/jquery-1.8.2.min.js"><\/script>')</script>
         <script src="_static/plugins.js"></script>
         <script src="_static/main.js"></script>
-        <link rel="search" title="Search" href="search.html" /><link rel="prev" title="Newer" href="page12.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
+        <link rel="search" title="Search" href="search.html" /><link rel="next" title="Older" href="page14.html" /><link rel="prev" title="Newer" href="page12.html" /><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.html" /><script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '1.7.2',
@@ -76,6 +76,254 @@
         <a href="rss.html" title="Subscribe via RSS"><span class="fa fa-lg fa-rss"></span></a>
     </div></li></ul>
     </nav><div class="main-container" role="main"><div class="main wrapper body clearfix"><article><div class="timestamp postmeta">
+            <span>October 15, 2013</span>
+        </div>
+        <div class="section">
+            <h1><a href="2013/10/15/windows_azure_plugin_for_eclipse_with_java.html">Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1</a></h1>
+<p>Pyay Framework 2.1のアプリを作ってWindows AzureにDeployするまでを簡単に流します。Java, Play Frameworkに付いてある程度知識があって、Windows Azureを使ってみようという人を前提としています。</p>
+<div class="section" id="id1">
+<h2>必要環境</h2>
+<p>確認は下記の環境で行いました。</p>
+<ol class="arabic simple">
+<li>Windows 8</li>
+<li>Java Developer Kit (JDK), v1.7</li>
+<li>Eclipse IDE for Java EE Developers Kepler</li>
+<li>Windows Azure SDK 2.1</li>
+<li>Play Framework 2.1</li>
+</ol>
+<p>Windows Azure Plugin for Eclipse with JavaとPlay Framework 2.1の開発環境としては、JDKは1.6以降、Eclipseは、 Indigo 以降がサポートされています。Windows Azure SDKは最新（2.1）が必要です。Play Frameworkに関しては2.1.5で試しましたが、他のバージョンとの互換性は確認していません。</p>
+<div class="section" id="windows-azure-sdk-2-1">
+<h3>Windows Azure SDK 2.1のインストール</h3>
+<p>Windows Azure SDK 2.1は、Web Platform Installer 4.6経由で入れるのがお勧めです。少し慣れないと分かりづらいので説明します。</p>
+<p>Web Platform Installerを起動して、右上の検索ボックス①に<span class="docutils literal"><span class="pre">azure</span> <span class="pre">sdk</span> <span class="pre">2.1</span></span>と入力して改行すると検索結果が表示されます。その中の<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>② を「インストールする」して下さい。（画面はインストール後になってしまっているのですが、右端のインストールボタンを押すとインストール候補として選択されます）Visual Studio用のツールなど複数表示されますが、今回必要なのは、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>だけです。</p>
+<p>画面下の「インストール」ボタン③を押すと処理が始まります、この時に必要な依存関係も同時にインストールされます。</p>
+<img alt="../../../_images/2013_10_webpi002.png" src="_images/2013_10_webpi002.png"/>
+<ul class="simple">
+<li>Web Platform Installer 4.6 は、<a class="reference external" href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer 4.6</a>からインストールできます。</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>もっと簡単な方法</h3>
+<p>This plugin requires Windows Azure SDK 2.1. This can be downloaded using theWeb Platform Installer (WebPI) 経由で<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">SDK</span> <span class="pre">2.1</span></span>をインストールするplugin(exe)も配布されています。<a class="reference external" href="http://go.microsoft.com/fwlink/?LinkID=252838">http://go.microsoft.com/fwlink/?LinkID=252838</a>このリンク先さからダウンロードされるEXEを起動するとSDKのインストールが自動的に始まります。どちらの方法でインストールしても同じものが入ります。</p>
+</div>
+</div>
+<div class="section" id="windows-azure-plugin-for-eclipse-with-java-by-microsoft-open-technologies">
+<h2>Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</h2>
+<p>次に、Microsoft Open Technologiesが作っている Windows Azure Plugin for Eclipse with Java を入れます。現在(2013/10/15)の最新版は、2.1.1です。プラグインのインストールは、通常のものと同じに、Help メニューのInstall New Softwareから行います。</p>
+<p>レポジトリとして、<span class="docutils literal"><span class="pre">http://dl.msopentech.com/eclipse</span></span>を追加すると、<span class="docutils literal"><span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Toolkit</span> <span class="pre">for</span> <span class="pre">Java</span></span>が表示されます。</p>
+<img alt="../../../_images/2013_10_javaplugininstall002.png" src="_images/2013_10_javaplugininstall002.png"/>
+<p>必要に応じてライブラリを選択してください。今回はとりあえず、全部選択します。</p>
+<div class="section" id="id3">
+<h3>サポートされているライブラリの種類</h3>
+<p>Windows Azure Plugin for Eclipse with Javaが、EclipseのUIとツールを提供するもので、その他のものはAzureのAPIをラップしたクラスライブラリです。</p>
+<ul class="simple">
+<li>Microsoft JDBC Driver 4.0 for SQL Server: SQL Database 用のコンポーネント</li>
+<li>Package for Apache Qpid Client Libraries for JMS (by MS Open Tech): Azureのメッセージングサービス向けのJMS client library （Apache Qpid project が元になっています）</li>
+<li>Package for Windows Azure Libraries for Java (by MS Open Tech): このコンポーネントは、Windows Azure でスケーラブルなクラウドコンピューティングを実現するためのライブラリを提供</li>
+<li>Windows Azure Access Control Services Filter (by MS Open Tech): このコンポーネントはWindows Azure ACS を使った認証アプリケーション向け</li>
+<li>Windows Azure Common Plugin (by MS Open Tech): 他のこのコンポーネントとの共通コンポーネント</li>
+<li>Windows Azure Plugin for Eclipse with Java (by MS Open Tech): このコンポーネントは、project configuration logic、the publish-to-cloud wizard、と user interfaceを含む</li>
+</ul>
+<p>インストールに異常に時間がかかる場合は、<span class="docutils literal"><span class="pre">Contact</span> <span class="pre">all</span> <span class="pre">update</span> <span class="pre">sites</span> <span class="pre">during</span> <span class="pre">install</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">required</span> <span class="pre">software</span></span>のチェックを外してみてください。</p>
+<p>ここまでの内容は、<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690946.aspx">Installing the Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a>に詳しく書いてありますので、そちらも参照してください。</p>
+</div>
+</div>
+<div class="section" id="play-frameworkeclipse">
+<h2>Play Frameworkのプロジェクト作成からEclipseへの取り込へ</h2>
+<p>動作確認のためにPlay Frameworkのプロジェクトを作成して、Eclipseへ取り込みます。</p>
+<p>MyFirstAppという名前で、play frameworkのアプリを作ります。今回は全くコードは書かないので関係ありませんが言語はJavaを選択します:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>$ play new MyFirstApp
+       _            _
+ _ __ | | __ _ _  _| |
+| '_ \| |/ _' | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+The new application will be created in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp
+
+What is the application name? [MyFirstApp]
+&gt;
+
+Which template do you want to use for this new application?
+
+  1             - Create a simple Scala application
+  2             - Create a simple Java application
+
+&gt; 2
+OK, application MyFirstApp is created.
+
+Have fun!
+</pre></div>
+</div>
+<p>eclipseのプロジェクトを作ります。先ほど作成したアプリのディレクトリに移動してeclipseのプロジェクトを作成します。 普通の開発ならば、<span class="docutils literal"><span class="pre">eclipse</span> <span class="pre">with-source=true</span></span>の方が良いかもしれませんが、今回はダウンロード時間の節約でソースは持ってきません:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>$ cd .\MyFirstApp
+$ play
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+       _            _
+ _ __ | | __ _ _  _| |
+| '_ \| |/ _' | || |_|
+|  __/|_|\____|\__ (_)
+|_|            |__/
+
+play! 2.1.5 (using Java 1.7.0_25 and Scala 2.10.0), http://www.playframework.org
+
+&gt; Type "help play" or "license" for more information.
+&gt; Type "exit" or use Ctrl+D to leave this console.
+
+[MyFirstApp] $ eclipse
+[info] About to create Eclipse project files for your project(s).
+[info] Updating {file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/}MyFirstApp...
+[info] Done updating.
+[info] Compiling 4 Scala sources and 2 Java sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\classes...
+[info] Successfully created Eclipse project files for project(s):
+[info] MyFirstApp
+[MyFirstApp] $ exit
+</pre></div>
+</div>
+<p>AzureのDeploy用のパッケージ(cspkg)に入れるためアプリの配布用zipを作成します:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>$ play dist
+[info] Loading project definition from C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\project
+[info] Set current project to MyFirstApp (in build file:/C:/Users/Takekazu/Documents/GitHub/sandbox/java/play002/MyFirstApp/)
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-sources.jar ...
+[info] Done packaging.
+[info] Generating Scala API documentation for main sources to C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\api...
+[info] Wrote C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.pom
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT.jar ...
+[info] Done packaging.
+model contains 17 documentable templates
+[info] Scala API documentation generation successful.
+[info] Packaging C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\target\scala-2.10\myfirstapp_2.10-1.0-SNAPSHOT-javadoc.jar ...
+[info] Done packaging.
+
+Your application is ready in C:\Users\Takekazu\Documents\GitHub\sandbox\java\play002\MyFirstApp\dist\myfirstapp-1.0-SNAPSHOT.zip
+
+[success] Total time: 8 s, completed 2013/10/15 14:57:13
+$
+</pre></div>
+</div>
+<p>この時に、<span class="docutils literal"><span class="pre">Your</span> <span class="pre">application</span> <span class="pre">is</span> <span class="pre">ready</span> <span class="pre">in</span></span>の行に表示される zip ファイル名（以下 dist zip名）をメモして置いて下さい、この前で使います。</p>
+<p>eclipseを起動して、プロジェクトをimportします。</p>
+<img alt="../../../_images/2013_10_eclipse002.png" src="_images/2013_10_eclipse002.png"/>
+<p>これで、サンプルのplay frameworkのプロジェクトの作成とビルドが終わりました。この先は、Azure 用のプロジェクトを作成に入ります。</p>
+<p>参考：<a class="reference external" href="http://www.playframework.com/documentation/2.2.x/IDE">Setting up your preferred IDE</a></p>
+</div>
+<div class="section" id="azure-project">
+<h2>Azure 用のProjectの作成</h2>
+<p>ツールバーの<span class="docutils literal"><span class="pre">New</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Deployment</span> <span class="pre">Project</span></span>を押します。</p>
+<img alt="../../../_images/2013_10_eclipse003.png" src="_images/2013_10_eclipse003.png"/>
+<p>New Windows Azure Deployment Projectの設定POPUPが開きます。Project Nameを入れます。今回は、MyAzureProjectにしました。例では、default locationを変更してplay frameworkのプロジェクトの横のディレクトリに持ってきていますが、プロジェクトの場所はどこでも構いません。</p>
+<img alt="../../../_images/2013_10_eclipse004.png" src="_images/2013_10_eclipse004.png"/>
+<p>Nextを押すと、JDKの設定に移ります。Emulator deployment と書いてある部分が、Emulatorを使った場合に利用されるJDKの設定で、Cloud deployment の部分がクラウド上（Azure環境）で使われるJDKの設定です。Deploy my local JDKを選択すると、Emulatorで使うように設定したものを自動的にCloudにアップロードしてクラウド上でも同じものを使うようになります。今回は、ローカルのJDK 1.7を両方で使うように設定しています。この画面ではJDKの設定しかしません。SeverとApplicationは何も触らずにFinish のボタンを押します。</p>
+<img alt="../../../_images/2013_10_eclipse005.png" src="_images/2013_10_eclipse005.png"/>
+<p>下記のような内容のプロジェクトが作成されます。</p>
+<img alt="../../../_images/2013_10_eclipse006.png" src="_images/2013_10_eclipse006.png"/>
+<div class="section" id="workerrole1myfirstappdist-zip">
+<h3>プロジェクトのWorkerRole1へMyFirstAppのdist zipを追加する</h3>
+<p>WorkerRole1を選択してプロパティを開き、Windows Azure RoleのTreeを開いてComponentsを選びます。コンポーネントリストにHelloWorld.warがありますが、不要なのでremoveします。その後Addを押してMyFirstAppのdist zipを追加します。</p>
+<img alt="../../../_images/2013_10_eclipse007.png" src="_images/2013_10_eclipse007.png"/>
+<p>「Windows Azure Role Component」のpopupをでは、Import into packageのFrom Pathの部分に、dist zip のフルパス名を入れます。Methodは、copyを選択、As Nameは、dist zipのファイル名入れます（ここは、From Pathのファイル名部分がデフォルトで入力されるはずです）その下の、Deploy from packageの設定は、Methodをunzip、To directoryを.にしてください。今回</p>
+<img alt="../../../_images/2013_10_eclipse008.png" src="_images/2013_10_eclipse008.png"/>
+</div>
+<div class="section" id="id4">
+<h3>環境変数の追加</h3>
+<p>dist zip名をRoleの実行タスクに渡す良い方法が無かったので、環境変数を使います。環境変数名ZIP_NAMEにdist zipのbase名(今回は、<span class="docutils literal"><span class="pre">myfirstapp-1.0-SNAPSHOT</span></span>)を定義します。</p>
+<img alt="../../../_images/2013_10_eclipse009.png" src="_images/2013_10_eclipse009.png"/>
+</div>
+<div class="section" id="endpoint">
+<h3>EndPointを変更</h3>
+<p>play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。publicで定義されているのがAzure のload brancer がインターネット上で公開しているポート番号で、privateがAzure インスタンスでアプリが待ち受けているポート番号です。play frameworkアプリのデフォルトの待ち受けポートが9000なので、EndPointを9000に変更します。Azure Load brancerがこの定義に基いてポート変換を実行します。</p>
+<img alt="../../../_images/2013_10_eclipse010.png" src="_images/2013_10_eclipse010.png"/>
+</div>
+<div class="section" id="script">
+<h3>scriptの変更</h3>
+<p>MyAzureProject/WorkerRole1/approotにあるstartup.cmdとrun.cmdを下記のように変更します。</p>
+<p>startup.cmd:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>del /q run_body.cmd
+powershell -ExecutionPolicy RemoteSigned -f replace.ps1 run_body.cmd.template &gt; run_body.cmd
+</pre></div>
+</div>
+<p>run.cmd:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>rem @ECHO OFF
+
+set _SLEEPLENGTH=15000
+set _FILENAME=run_body.cmd
+
+@REM Create a temporary sleep script in VBScript
+echo WScript.sleep(%_SLEEPLENGTH%) &gt; %Temp%\_mysleep.vbs
+
+:Loop
+if exist %_FILENAME% (goto:StartToRun)
+
+cscript /Nologo %Temp%\_mysleep.vbs
+goto:Loop
+
+del %Temp%\_mysleep.vbs
+
+:StartToRun
+call %_FILENAME%
+</pre></div>
+</div>
+<p>replace.ps1と、run_body.cmd.templateの2つファイルを追加します。</p>
+<p>replace.ps1:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>cat $args[0] | % {$l = $_ -creplace '__JAVA_HOME__',"$Env:JAVA_HOME"; "$l" } | % {$l = $_ -creplace '__ZIP_NAME__',"$Env:ZIP_NAME"; "$l" }
+</pre></div>
+</div>
+<p>run_body.cmd.template:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span/>set JAVA_HOME=__JAVA_HOME__
+set ZIP_NAME=__ZIP_NAME__
+
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+setlocal
+set d=%~dp0
+set d=%d:\=/%
+java %* -cp "%d%/%ZIP_NAME%/lib/*;" play.core.server.NettyServer %d%
+</pre></div>
+</div>
+</div>
+<div class="section" id="emulator">
+<h3>Emulatorでの実行</h3>
+<p>これで準備ができました。<span class="docutils literal"><span class="pre">Run</span> <span class="pre">In</span> <span class="pre">Windows</span> <span class="pre">Azure</span> <span class="pre">Emurator`</span></span>を押してEmulatorでの実行します。成功すると、80と9000のポートで結果を見ることができます。80はAzure SDKに付属のCompute Emulator経由で、9000はPlay Frameworkの待受を見ていることになります。また、EndPointの設定で80にしていますが、Compute Emulatorが起動時に、既に80が使われていた場合は順次ポート番号をインクリメントしていき空いているポートを利用します。</p>
+<img alt="../../../_images/2013_10_eclipse011.png" src="_images/2013_10_eclipse011.png"/>
+<p>Emulatorの管理画面が同時に起動します。Windows Azure Compute Emurator のウインドウを開いてWorkerRole1の0を選択すると、コンソール画面が表示されます。</p>
+<img alt="../../../_images/2013_10_eclipse012.png" src="_images/2013_10_eclipse012.png"/>
+</div>
+<div class="section" id="azuredeploy">
+<h3>Azure環境へのDeploy</h3>
+<p>Publish to Windows Azure Cloudを押してAzure環境にDeploy します。必要に応じて、StorageとCloud Serviceを作成してください。</p>
+<img alt="../../../_images/2013_10_eclipse013.png" src="_images/2013_10_eclipse013.png"/>
+<p>この設定だと、Azure環境ではAzure LoadBarancerが介在して外部から port 80で見えます。</p>
+</div>
+</div>
+<div class="section" id="bookmarks">
+<h2>Bookmarks</h2>
+<ul class="simple">
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh690943.aspx">Java Developer Guidance</a>Java開発の入り口</li>
+<li><a class="reference external" href="http://msdn.microsoft.com/en-us/library/windowsazure/hh694271.aspx">Windows Azure Plugin for Eclipse with Java (by Microsoft Open Technologies)</a></li>
+</ul>
+</div>
+
+        </div>
+        <div class="postmeta">
+        <div class="author">
+            <span>Posted by Takekazu Omi</span>
+        </div>
+        <div class="categories">
+            <span>
+                Filed under:
+                <a href="categories/azure.html">Azure</a>, <a href="categories/java.html">Java</a></span>
+        </div>
+        <div class="tags">
+            <span>
+                Tags:
+                <a href="tags/azure.html">Azure</a>, <a href="tags/emulator.html">Emulator</a>, <a href="tags/deploy.html">Deploy</a>, <a href="tags/tutorial.html">Tutorial</a>, <a href="tags/play_framework.html">Play Framework</a>, <a href="tags/step_by_step.html">Step By Step</a>, <a href="tags/eclipse.html">Eclipse</a></span>
+        </div>
+        <div class="comments">
+            <a href="http://kyrt.in/2013/10/15/windows_azure_plugin_for_eclipse_with_java.html#disqus_thread" data-disqus-identifier="2013/10/15/windows_azure_plugin_for_eclipse_with_java">Leave a comment</a>
+        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
             <span>December 26, 2012</span>
         </div>
         <div class="section">
@@ -606,174 +854,16 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
         </div>
         <div class="comments">
             <a href="http://kyrt.in/2012/12/08/blobasyncinside.html#disqus_thread" data-disqus-identifier="2012/12/08/blobasyncinside">Leave a comment</a>
-        </div></div><div class="separator post_separator"></div><div class="timestamp postmeta">
-            <span>December 08, 2012</span>
-        </div>
-        <div class="section">
-            <h1><a href="2012/12/08/waac2012day2.html">Azure Storage Gen 2は速かった</a></h1>
-<p>今年も早いもので、あっという間に12月になりました。個人的なAzure今年の目玉は、Azure Storageのパフォーマンスの向上(Gen2)と新しくなったWindows Azure Storage 2.0です。</p>
-<p>IaaS、Web Site、Mobile Service、Media Serviceなど新機能満載なAzureですが、目立たないところで地味にストレージ関連は改善されています。ストレージはクラウドの足回りなので重要です。</p>
-<ul class="simple">
-<li>元記事は、Windows Azure Advent Calendar 2012 2日目として書きました。<a class="reference external" href="http://atnd.org/events/34353">Windows Azure Advent Calendar jp: 2012</a></li>
-</ul>
-<a class="reference external image-reference" href="http://www.flickr.com/photos/takekazuomi/8217239370/"><img alt="omikuji by takekazu, on Flickr" src="http://farm9.staticflickr.com/8484/8217239370_f6ebb8d21d_z.jpg"/></a>
-<hr class="docutils"/>
-<div class="section" id="azure-storage">
-<h2>Azure Storageのパフォーマンスの向上</h2>
-<p>2012/6/7 以降に作成されたストレージアカウントで、下記のようにパフォーマンスターゲットが引き上げられました。Gen 2と呼ばれているようです。以前のもの（Gen1）に比べ秒間のトランザクションベースだと4倍程度になっています（Azure Table 1Kエンティティの場合）</p>
-<p>詳しくはリンク先を見てもらうとして下記の4点が注目です。</p>
-<ol class="arabic simple">
-<li>ストレージ ノード 間のネットワーク速度が1Gbpsから10Gbpsに向上</li>
-<li>ジャーナリングに使われるストレージデバイスがHDDからSSDに改善</li>
-<li>単一パーテーション  500 エンティティ/秒 -&gt;   2,000 エンティティ/秒 (15Mbps)</li>
-<li>複数パーテーション 5,000 エンティティ/秒 -&gt; 20,000 エンティティ/秒 (156Mbps)</li>
-</ol>
-<p>参照：<a class="reference external" href="http://satonaoki.wordpress.com/2012/11/03/windows-azure%E3%81%AE%E3%83%95%E3%83%A9%E3%83%83%E3%83%88-%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%81%A82012%E5%B9%B4%E7%89%88%E3%82%B9/">Windows Azureのフラット ネットワーク ストレージと2012年版スケーラビリティ ターゲット</a></p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id1">
-<h2>確認しよう</h2>
-<p>ではどれだけ速くなったのか確認しましょう。なるべく実利用環境に近いようにということでC#を使います。ライブライは、最近出たばかりですが、Azure Storage Client 2.0を使います。このライブラリのコードをざっと見た感じだと、従来のコードに比べてシンプルになって読みやすく速度も期待できそうです。</p>
-<p>比較的限界が低い単一パーテーションで確認します。前記のGen2の記事には、エンティティが1KByteで、単一パーテーションの場合、2,000 エンティティ/秒というパフォーマンスターゲットが記述されています。これを確認しようとするとAzure外部からのネットワークアクセスだと厳しいのでWorkerRoleを立てて、リモートデスクトップでログインしてプログラムを実行します。プログラムは秒間2000オブジェクトを計測時間の間は作りづけないといけないのでCPUやGCがボトルネックになるかもしれません、今回はLargeのインスタンスを使うことにしました。</p>
-<p>Largeだとメモリ7GByte、coreが8つ、ネットワーク400Mbpsというスペックなので気にしなくても良いかと思ったのですが、GCをなるべく減らすためにエンティティのデータ部分をCache（共有）します。1KByteぐらいだとあまり効果が無いかもしれませんが。</p>
-<script src="https://gist.github.com/takekazuomi/4238298.js">&amp;amp;nbsp;</script><p>さらに、Threadを上げる数を減らして並列性を上げるために非同期呼び出しを使います。.NET 4.5 から await/async が使えるので割合簡単に非同期コードが記述できるのですが、少し手間がかかりました。</p>
-<p>なんと残念ながら、Windows Azure Storage 2.0になっても APM (Asynchronous Programming Model) のメソッドしか用意されておらず、 await で使えるTaskAsyncの形式がサポートされていません。仕方がないので、自分で拡張メソッドを書きますが、引数が多くて intellisense があっても混乱します。泣く泣く、コンパイルエラーで期待されているシグニチャーをみながら書きました。コードとしてはこんな感じで簡単です。</p>
-<script src="https://gist.github.com/takekazuomi/4238639.js">&amp;amp;nbsp;</script><p>この辺りは、下記のサイトが詳しくお勧めです。</p>
-<p>参照：<a class="reference external" href="http://ufcpp.net/study/csharp/sp5_async.html#async">++C++; // 未確認飛行C 非同期処理</a></p>
-<div class="section" id="waac2012day2-pending">
-<span id="id2"/><h3>非同期で同時接続数が上がらない？</h3>
-<p>このコードを動かしてみたら、「単一スレッド＋非同期の組み合わせだと、おおよそ２から３程度のコネクションしか作成されない」ことに気が付きました。場合によっては、5ぐらいまで上がることもあるようですが、どうしてこうなるのか不思議です。</p>
-<p>#### ** これは、Azure Storage Client 2.0のBUG ** だったようです。2.0.2で修正されています。<a class="reference external" href="https://github.com/WindowsAzure/azure-sdk-for-net/pull/134">WindowsAzure/azure-sdk-for-net Issue #141</a></p>
-<p>** [2012/12/26 このFIXに関するまとめを書きました](<a class="reference internal" href="2012/12/26/asc2_dot_0asyncbug.html"><span class="doc">Azure Storage Client 2.0 CompletedSynchronously FIX</span></a>) **</p>
-<p>非同期でガンガンリクエストが飛ぶのかと思ったのですが、それほどでもなかったので、今回のコードは複数スレッド（Task）をあげて、それぞれのスレッド内で非同期呼び出しを使って処理を行うようになっています。Taskの起動には、Parallel.ForEach を使っています。</p>
-<p>さらに、上限に挑戦するためにEntity Group Transactionを使います。TableBatchOperation のインスタンスを作って操作を追加していってCloudTableのExecuteBatchAsync()で実行します。この辺りは以前の使い方とだいぶ違っています。今回は時間を測っているだけですが、resultにはEntityのリストが帰ってきて、それぞれにtimestampとetagがセットされています。</p>
-<script src="https://gist.github.com/takekazuomi/4238661.js">&amp;amp;nbsp;</script><p>—</p>
-</div>
-</div>
-<div class="section" id="id3">
-<h2>結果</h2>
-<p>いくつかパラメータを調整して実行し、スロットリングが起きる前後を探して4回測定しました。ピークe/sは、もっとも時間当たりのエンティティの挿入数が大きかった時の数字で秒間のエンティティ挿入数を表しています。単一プロセスでスレッドを増やしていく方法では頭打ちになってしまうので、複数のプロセスを起動して測定ています。（このあたりも少しオカシイです）下記の表の最初のカラムは起動するプロセス数です。</p>
-<p>失敗が無かったケースで6,684、 6,932 エンティティ/秒で処理できており、Gen2で挙げられているパフォーマンスターゲットは十分達成できているようです。</p>
-<p>測定時間の、Table Metricsを見るとThrottlingErrorと同時に、ClientTimeoutErrorも出ているのでプロセスを3つ上げているケースではクライアント側でサーバからの戻りが受けきれずにエラーになっている場合も含まれているようです。</p>
-<table border="1" class="colwidths-given docutils" id="id6">
-<caption><span class="caption-text">表1 条件：エンティティサイズ 1KByte、単一パーテーション、スレッド数12、バッチサイズ100</span></caption>
-<colgroup>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-<col width="9%"/>
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">プロセス数</th>
-<th class="head">最少</th>
-<th class="head">中央値</th>
-<th class="head">平均</th>
-<th class="head">最大</th>
-<th class="head">90%点</th>
-<th class="head">95%点</th>
-<th class="head">99%点</th>
-<th class="head">ピークe/s</th>
-<th class="head">成功数</th>
-<th class="head">失敗数</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>2</td>
-<td>97.27</td>
-<td>166.6</td>
-<td>258</td>
-<td>14,800</td>
-<td>359.578</td>
-<td>472.373</td>
-<td>1,106.28</td>
-<td>6,684</td>
-<td>40,000</td>
-<td>0</td>
-</tr>
-<tr class="row-odd"><td>2</td>
-<td>94.17</td>
-<td>260.5</td>
-<td>333.7</td>
-<td>5,320</td>
-<td>564.774</td>
-<td>723.272</td>
-<td>1,339.03</td>
-<td>6,932</td>
-<td>40,000</td>
-<td>0</td>
-</tr>
-<tr class="row-even"><td>3</td>
-<td>90.13</td>
-<td>174.8</td>
-<td>734.1</td>
-<td>21,270</td>
-<td>1,621.49</td>
-<td>1,845.90</td>
-<td>3,434.26</td>
-<td>7,218</td>
-<td>59,377</td>
-<td>623</td>
-</tr>
-<tr class="row-odd"><td>3</td>
-<td>90.35</td>
-<td>341.6</td>
-<td>610.1</td>
-<td>27,490</td>
-<td>1,064.59</td>
-<td>1,380.42</td>
-<td>4,431.79</td>
-<td>8,005</td>
-<td>59,740</td>
-<td>260</td>
-</tr>
-</tbody>
-</table>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id4">
-<h2>最後に</h2>
-<p>今回、第一世代（Gen 1）の単一パーテーションで500 エンティティ/秒というパフォーマンスターゲットに比べ10倍近いパフォーマンスを出しているのが測定できました。測定時間が短かったので、継続してこのパフォーマンスがでるのかどうかなど検証の余地はありますが、劇的に向上していると言えます。<a class="reference external" href="https://github.com/takekazuomi/WAAC201202">takekazuomi/WAAC201202のレポジトリ</a>に計測に使ったコードをいれてあります。</p>
-<p>12/2の担当でしたが、JSTでは日付も変わってだいぶ遅くなってしました。データの解析に最近お気に入りの（慣れない）「R」を使ったのですが、いろいろ手間取ってしまいました。最初はRで出した図なども入れたいと思ったのですが、軸や凡例の設定がうまくできずに時間切れで断念です。</p>
-<p>レポジトリには、なんかずいぶん古い履歴まで上がってしましたが、手元のコードを使いまわしたら出てしまいました。スルーでお願いします。</p>
-</div>
-<hr class="docutils"/>
-<div class="section" id="id5">
-<h2>おまけ</h2>
-<p>数時間振り回してみると、エンティティ/秒の中央値は2000から3000エンティティ/秒程度になりそうです。負荷がかかり始めると、Gen １ではスロットリングをかけてエラーにしてしまうという動きでしたが、Gen 2 ではスロットリングを随時掛けつつ2000から3000エンティティ/秒程度に絞っていくという動きになったようです。`</p>
-</div>
-
-        </div>
-        <div class="postmeta">
-        <div class="author">
-            <span>Posted by Takekazu Omi</span>
-        </div>
-        <div class="categories">
-            <span>
-                Filed under:
-                <a href="categories/azure_table.html">Azure Table</a>, <a href="categories/azure.html">Azure</a></span>
-        </div>
-        <div class="tags">
-            <span>
-                Tags:
-                <a href="tags/c.html">C#</a>, <a href="tags/azure_table.html">Azure Table</a>, <a href="tags/async.html">Async</a>, <a href="tags/cloud.html">Cloud</a>, <a href="tags/nosql.html">NoSQL</a>, <a href="tags/storage.html">Storage</a>, <a href="tags/table.html">Table</a></span>
-        </div>
-        <div class="comments">
-            <a href="http://kyrt.in/2012/12/08/waac2012day2.html#disqus_thread" data-disqus-identifier="2012/12/08/waac2012day2">Leave a comment</a>
         </div></div><div class="archive_link">
         <a href="archive.html"> &mdash; Blog Archive &mdash; </a>
     </div><ul class="related clearfix">
             <li class="left"> &laquo; <a href="page12.html">Newer</a></li>
-            <li class="right"></li>
+            <li class="right"><a href="page14.html">Older</a> &raquo; </li>
         </ul></article><aside class="sidebar"><section><div class="widget">
     <h1>Recent Posts</h1>
     <ul><li>
+            <a href="2020/10/18/bicep_module.html">bicep moduleを使う</a>
+        </li><li>
             <a href="2020/09/27/azure-docker-integration.html">Azure Docker Integration</a>
         </li><li>
             <a href="2017/12/02/cross_subscription_deployment.html">複数Subscriptionへのデプロイ</a>
@@ -791,13 +881,11 @@ $ iozone -Ra -f /mnt/data3/tmp/test -b sde1-001hcrw.xls -s 1g
             <a href="2017/02/10/managed_disk_1.html">Azure Managed Disk が GA</a>
         </li><li>
             <a href="2016/12/03/adf_tips_rerun.html">Azure DataFactory Tips タイムスライスの再実行</a>
-        </li><li>
-            <a href="2016/10/04/net_fringe_japan_2016.html">.NET Fringe Japan 2016</a>
         </li></ul>
 </div>
 </section><section><div class="widget">
     <h1>Categories</h1>
-    <ul><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
+    <ul><li><a href="categories/arm_template.html">ARM template</a> (1)</li><li><a href="categories/azure.html">Azure</a> (35)</li><li><a href="categories/azure_blob.html">Azure Blob</a> (2)</li><li><a href="categories/azure_powershell.html">Azure PowerShell</a> (3)</li><li><a href="categories/azure_sdk.html">Azure SDK</a> (7)</li><li><a href="categories/azure_storage.html">Azure Storage</a> (15)</li><li><a href="categories/azure_table.html">Azure Table</a> (10)</li><li><a href="categories/batch.html">Batch</a> (1)</li><li><a href="categories/bicep.html">bicep</a> (1)</li><li><a href="categories/blog.html">blog</a> (1)</li><li><a href="categories/cdp.html">CDP</a> (1)</li><li><a href="categories/cosmos_db.html">Cosmos DB</a> (1)</li><li><a href="categories/datafactory.html">DataFactory</a> (1)</li><li><a href="categories/github観察記.html">GitHub観察記</a> (7)</li><li><a href="categories/helios.html">Helios</a> (1)</li><li><a href="categories/java.html">Java</a> (2)</li><li><a href="categories/mvp.html">MVP</a> (3)</li><li><a href="categories/owin.html">OWIN</a> (2)</li><li><a href="categories/posh.html">Posh</a> (1)</li><li><a href="categories/powershell.html">PowerShell</a> (3)</li><li><a href="categories/ruby.html">Ruby</a> (1)</li><li><a href="categories/service_fabric.html">Service Fabric</a> (2)</li><li><a href="categories/session.html">Session</a> (1)</li><li><a href="categories/storage.html">Storage</a> (1)</li><li><a href="categories/websites.html">WebSites</a> (1)</li></ul>
 </div></section><section><div class="widget">
     <h1>Tags</h1><a href="tags/2013_08_15.html">2013-08-15</a> (6), <a href="tags/aci.html">ACI</a> (1), <a href="tags/architecture.html">Architecture</a> (1), <a href="tags/async.html">Async</a> (5), <a href="tags/azure.html">Azure</a> (14), <a href="tags/azure_blob.html">Azure Blob</a> (3), <a href="tags/azure_cache.html">Azure Cache</a> (1), <a href="tags/azure_powershell.html">Azure PowerShell</a> (2), <a href="tags/azure_sdk.html">Azure SDK</a> (2), <a href="tags/azure_sdk_for_java.html">Azure SDK for Java</a> (1), <a href="tags/azure_storage.html">Azure Storage</a> (2), <a href="tags/azure_table.html">Azure Table</a> (11), <a href="tags/batch.html">Batch</a> (1), <a href="tags/blob.html">Blob</a> (5), <a href="tags/bug.html">BUG</a> (2), <a href="tags/bugs.html">Bugs</a> (1), <a href="tags/build2016.html">BUILD2016</a> (1), <a href="tags/build2017.html">Build2017</a> (1), <a href="tags/c.html">C#</a> (4), <a href="tags/c.html">C++</a> (1), <a href="tags/cache.html">Cache</a> (1), <a href="tags/cloud.html">Cloud</a> (5), <a href="tags/cloud_service.html">Cloud Service</a> (1), <a href="tags/code.html">Code</a> (1), <a href="tags/cool_storage.html">Cool Storage</a> (1), <a href="tags/debug.html">Debug</a> (1), <a href="tags/deploy.html">Deploy</a> (1), <a href="tags/diagonestics.html">Diagonestics</a> (2), <a href="tags/dml.html">DML</a> (2), <a href="tags/docker.html">docker</a> (1), <a href="tags/eclipse.html">Eclipse</a> (1), <a href="tags/emulator.html">Emulator</a> (2), <a href="tags/fiddler.html">Fiddler</a> (1), <a href="tags/fixed.html">Fixed</a> (1), <a href="tags/git.html">Git</a> (1), <a href="tags/goazure.html">GoAzure</a> (2), <a href="tags/gradle.html">Gradle</a> (1), <a href="tags/hotfix.html">Hotfix</a> (3), <a href="tags/how_to.html">How-to</a> (1), <a href="tags/iaas.html">IaaS</a> (1), <a href="tags/install.html">Install</a> (1), <a href="tags/intro.html">Intro</a> (1), <a href="tags/issue.html">Issue</a> (3), <a href="tags/java.html">Java</a> (3), <a href="tags/jazug.html">JAZUG</a> (1), <a href="tags/json.html">JSON</a> (1), <a href="tags/kudu.html">Kudu</a> (1), <a href="tags/manageddisk.html">ManagedDisk</a> (1), <a href="tags/nlog.html">NLog</a> (1), <a href="tags/nosql.html">NoSQL</a> (4), <a href="tags/owin.html">OWIN</a> (2), <a href="tags/play_framework.html">Play Framework</a> (1), <a href="tags/posh.html">posh</a> (2), <a href="tags/posh.html">Posh</a> (1), <a href="tags/powershell.html">PowerShell</a> (3), <a href="tags/premiumtable.html">PremiumTable</a> (1), <a href="tags/preview.html">preview</a> (1), <a href="tags/queue.html">Queue</a> (1), <a href="tags/release.html">Release</a> (4), <a href="tags/sdk.html">SDK</a> (1), <a href="tags/session.html">Session</a> (2), <a href="tags/snowflake.html">snowflake</a> (1), <a href="tags/step_by_step.html">Step By Step</a> (2), <a href="tags/storage.html">Storage</a> (15), <a href="tags/table.html">Table</a> (12), <a href="tags/translate_selected_passages.html">Translate Selected Passages</a> (3), <a href="tags/tutorial.html">Tutorial</a> (1), <a href="tags/webrole.html">WebRole</a> (1), <a href="tags/websites.html">WebSites</a> (1)</div></section><section><div class="widget" id="searchbox" role="search">
     <h1><a href="#searchbox">Search</a></h1>
