@@ -236,8 +236,9 @@ Bicep CLI version 0.1.149-alpha (1ca02b52de)
 <p><strong>bicep</strong>は、単純にARM Templateを各ツールとして捉えると今まであったどのツールより書きやすい。今回、module が実装されたことでかなり実用的に使えるようになった。この手のものを書くにはGUIツールより、テキストベースのツールが向いているように思う。ただ、ARM Template (= Azure Resource API) の難しさは残るのでハマる時はハマる。</p>
 <p>bicepのリリースは来年になりそうだが、筋が良いので積極的に使って方が良いと思う、お勧めだ。ただ、copy が実装されいないので要注意、copy は、12月リリース予定の0.3でサポートされる予定だ。</p>
 <p>あと、今回実行は基本WSL2内で行い、azコマンドのランナーとしては、昔ながらの<strong>Makefile</strong>を使っている。<strong>Azure PowerShell Cmdlet</strong>を使うなら、全部Poshスクリプトで書けば良いが、<strong>az cli</strong>を使う場合、コマンド間を繋ぐ何らかの<strong>glue script</strong><a class="footnote-reference" href="#ref6" id="id10">[6]</a>が必要だ。<strong>bash</strong>で全部書くのも辛いので、最近は、<a class="reference external" href="https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/Makefile">Makefile</a>を使うことにしている。GNU Make なんて、20年ぐらいまともに使ってなかったのでだいぶ忘れていたがだいぶ思い出してきてる。</p>
+<p>2020/10/22 「GitHub Action の Workflow から持ってくると最新のビルドが拾えるよ」、って話が追記された。<a class="footnote-reference" href="#ref7" id="id11">[7]</a></p>
 </div>
-<div class="section" id="id11">
+<div class="section" id="id12">
 <h2>参照</h2>
 <table class="docutils footnote" frame="void" id="ref1" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
@@ -273,6 +274,12 @@ Bicep CLI version 0.1.149-alpha (1ca02b52de)
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id10">[6]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Scripting_language#Glue_languages">Glue languages</a>、ぐぐったら、AWS Glue ばかりが出てきた心配になってのでリンクを張っておく。日本語のWikipediaはイマイチだったので、<strong>en.wikipedia.org</strong>にした</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ref7" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[7]</a></td><td><a class="reference external" href="https://github.com/Azure/bicep/blob/281cde1efe76e662947570e73986fe5419adc2d5/docs/installing-nightly.md">Installing the “Nightly” build of bicep CLI and VS Code extension</a></td></tr>
 </tbody>
 </table>
 </div>

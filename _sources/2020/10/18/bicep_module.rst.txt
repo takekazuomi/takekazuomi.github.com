@@ -199,6 +199,7 @@ bicepのリリースは来年になりそうだが、筋が良いので積極的
 
 あと、今回実行は基本WSL2内で行い、azコマンドのランナーとしては、昔ながらの **Makefile** を使っている。**Azure PowerShell Cmdlet** を使うなら、全部Poshスクリプトで書けば良いが、**az cli** を使う場合、コマンド間を繋ぐ何らかの **glue script** [#ref6]_ が必要だ。**bash** で全部書くのも辛いので、最近は、`Makefile <https://github.com/takekazuomi/bicep-module-examples/blob/2a7749eb224e0aa3a0d1df8882251d27f85c2616/src/Makefile>`_ を使うことにしている。GNU Make なんて、20年ぐらいまともに使ってなかったのでだいぶ忘れていたがだいぶ思い出してきてる。
 
+2020/10/22 「GitHub Action の Workflow から持ってくると最新のビルドが拾えるよ」、って話が追記された。[#ref7]_
 
 参照
 ------
@@ -209,6 +210,7 @@ bicepのリリースは来年になりそうだが、筋が良いので積極的
 .. [#ref4] このあたりコードでちょと変なことをしているのは、`Microsoft.Network virtualNetworks template reference <https://docs.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworkshttps://github.com/Azure/bicep/blob/>`_ によると、**name** 属性があるはずなのだが、参照すると実行エラーになってしま。仕方が無いので、id から **vnet name** を求めていてる
 .. [#ref5] `自動依存関係解決だけあれば、module にdependsOn は不要じゃないかという議論 <https://github.com/Azure/bicep/issues/131#issuecomment-711103396>`_ どうやら、modeule に dependsOn 構文を追加するつもりらしい。これは、未確認
 .. [#ref6] `Glue languages <https://en.wikipedia.org/wiki/Scripting_language#Glue_languages>`_ 、ぐぐったら、AWS Glue ばかりが出てきた心配になってのでリンクを張っておく。日本語のWikipediaはイマイチだったので、**en.wikipedia.org** にした
+.. [#ref7] `Installing the "Nightly" build of bicep CLI and VS Code extension <https://github.com/Azure/bicep/blob/281cde1efe76e662947570e73986fe5419adc2d5/docs/installing-nightly.md>`_
 
 .. author:: default
 .. categories:: bicep, ARM template
