@@ -4,6 +4,7 @@ Sitemap
 .. toctree::
    :maxdepth: 1
 
+   2020/10/27/bicep_devcontaner
    2020/10/18/bicep_module
    2020/09/27/azure-docker-integration
    2017/12/02/cross_subscription_deployment

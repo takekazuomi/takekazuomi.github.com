@@ -1,0 +1,165 @@
+bicep 用 dev contaner
+======================
+
+最近、bicep を触ることが多く。また、開発環境の再現性やポータビリティが気になることがママある。VSCode dev container [#r1]_ がなかなか便利だったので、`bicep 用 dev contaner <https://github.com/takekazuomi/devcontainer-bicep>`_ を作成した。[#r2]_
+
+.. image:: https://live.staticflickr.com/65535/49997478968_72e7a0f1e7_c.jpg
+   :target: https://www.flickr.com/photos/takekazuomi/49997478968/in/datetaken/
+   :alt: Distecca
+   :align: center
+
+作成に当たっては、下記の２つのレポジトリを参考にした。
+
+* dev containers のレポジトリ `https://github.com/microsoft/vscode-dev-containers <https://github.com/microsoft/vscode-dev-containers>`_
+* 各言語向けのdev containers 例：golang `https://github.com/microsoft/vscode-remote-try-go <https://github.com/microsoft/vscode-remote-try-go>`_
+
+概要
+-----
+
+大まかな流れととしては、下記の3段階となる。docker 絡みは、普通にDockerfileを書くのとほぼ同じだ。
+
+1. bicep dev containers 用のベースとなるDocker Image の作成
+2. dev containers の プレースホルダー用 Dockerfile の作成
+3. devcontainer.json の 作成
+
+1. ベースとなるDocker Image の作成
+------------------------------------
+
+大枠は、テンプレート `vscode-dev-containers/container-templates/ <https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/container-templates>`_ があるので、持ってくる。
+
+.. code-block:: shell
+
+    mkdir vscode-dev-containers-bicep
+    cd vscode-dev-containers-bicep
+    cp -r ../vscode-dev-containers/container-templates/dockerfile/. .
+
+今回は、ベースイメージを作成するDockerfileを `base.Dockerfile <https://github.com/takekazuomi/devcontainer-bicep/blob/main/.devcontainer/base.Dockerfile>`_ として追加した。
+
+`script-library <https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/script-library/>`_  によく使われるパッケージのインストール用のスクリプトが用意されているので必要なのを持ってくる。ドキュメントは、`この辺 <https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/script-library/docs>`_ にある。ここでは、**az cli** と **powershell** を入れる。手間をかけたくなければ、現状では **debian/buster** を baseのOSとして選ぶのが良い。
+
+.. code-block:: shell
+
+    echo -n "common-debian.sh powershell-debian.sh azcli-debian.sh" | \
+        xargs -t -d ' ' -I {} cp ../vscode-dev-containers/script-library/{} .devcontainer/library-scripts/
+
+bicep 用のインストールスクリプトを作る。`bicep-debian.sh <https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/library-scripts/bicep-debian.sh>`_。やってることは、bicep本体のインストールと、vscode plugin のダウンロード。あと普段使いのツールもおまけで入れてる。bicep の vscode plugin は、まだmarket place に出てないので、ローカルにダウンロードして、**devcontainer.json** でフルパス指定で入れている。
+
+作成した、bicep-debian.sh は、こんな感じで、主要部分は割りとシンプル。
+
+.. code-block:: shell
+
+    ... snip ...
+
+    # Install the Bicep CLI
+    # https://github.com/Azure/bicep/blob/master/docs/installing.md#install-the-bicep-cli
+
+    curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+    chmod +x ./bicep
+    mv ./bicep /usr/local/bin/bicep
+    bicep --help
+
+    # Fetch the latest Bicep VSCode extension
+    curl -Lo vscode-bicep.vsix https://github.com/Azure/bicep/releases/latest/download/vscode-bicep.vsix
+
+
+持ってきた、スクリプトと、bicep のインストール [#r3]_ を **base.Dockerfile** に追加する。
+
+作成したDockerfileを抜粋
+
+.. code-block:: Dockerfile
+
+    ... snip ...
+    RUN bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" \
+        # Install the Azure CLI
+        && bash /tmp/library-scripts/azcli-debian.sh \
+        # Install the powershell
+        && bash /tmp/library-scripts/powershell-debian.sh \
+        # Install the bicep
+        && bash /tmp/library-scripts/bicep-debian.sh \
+        # Clean up
+        && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+
+`Makefile <https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/Makefile>`_ を作ってあるので、下記のように実行するとbuildしてpushされる。[#r4]_
+
+.. code-block:: sh
+
+    make build push
+
+2. Dockerfile を作る
+----------------------
+
+`Dockerfile <https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/Dockerfile>`_ で、先程作った、base.Dockerfile のイメージを利用する。
+このDockerfileは、プレースホルダーで、非常に簡単な感じになった。専用のイメージを作るべきか、どこまで入れるかはケースバイケースではある。
+
+.. code-block:: Dockerfile
+
+    # See here for image contents: base.Dockerfile
+    ARG VARIANT="latest"
+    FROM takekazuomi/devcontainers-bicep:${VARIANT}
+
+
+3. **devcontainer.json** を作成
+----------------------------------
+
+ちょっと長いが、`devcontainer.json <https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/devcontainer.json>`_ を下記に全文引用。ポイントは、"extensions" で、docker image にダウンロードされてる、vscode-bicep.vsix をフルパス指定していること。フルパスで書くと、ローカルからロードしてくれる[#r5]_
+
+.. code-block:: js
+
+    {
+        "name": "Bicep",
+        "build": {
+            "dockerfile": "Dockerfile",
+            "args": {
+                "VARIANT": "latest"
+            }
+        },
+        "runArgs": [
+            "--cap-add=SYS_PTRACE",
+            "--security-opt",
+            "seccomp=unconfined"
+        ],
+        // Set *default* container specific settings.json values on container create.
+        "settings": {
+            "terminal.integrated.shell.linux": "/bin/zsh"
+        },
+        // Add the IDs of extensions you want installed when the container is created.
+        "extensions": [
+            "ms-azuretools.vscode-docker",
+            "ms-vscode.azure-account",
+            "davidanson.vscode-markdownlint",
+            "ms-vscode.powershell",
+            "dandric.vscode-jq",
+            "redhat.vscode-yaml",
+            "dotjoshjohnson.xml",
+            "timonwong.shellcheck",
+            "editorconfig.editorconfig",
+            "/tmp/vscode-bicep.vsix"
+        ],
+        // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+        "remoteUser": "vscode"
+    }
+
+
+最後に
+-------
+
+dev container は割と簡単に作れるしカスタマイズも容易で利便性が高い。開発環境は、少し使っていると魔窟化してしまい再現性やポータビリティが無くなり、チーム開発などで環境を揃えたい場合に問題になりやすい。
+
+その点Windows も問題だが、Linuxだとディストーションの違いや、パッケージのレポジトリを追加したり、細かいカスタマイズが効いたりなどの自由度の高さに起因して、更に問題が深刻化してしまうことがある。
+
+dev container を使うとクリアな開発環境を維持しやすくなり問題のかなりの部分が解決できるのではないかと期待している。贅沢を言うと、VS Code だけでなく、他のエディターでも使ると嬉しいところではある。vimとかemacsとか。
+
+参照
+-----
+
+.. [#r1] `Developing inside a Container <https://code.visualstudio.com/docs/remote/containers>`_
+.. [#r2] このBlogは、`tinkerer <http://tinkerer.me/>`_ で書いてるのだが、 Windows + python だとなにかと辛く。python 環境をvenvから docker に移し、さらに dev container を使っうようにしたら。複数のライティング環境を維持しやすくなり苦しみが無くなった、素晴らしい。
+.. [#r3] 最近、なんだかんだ言って task runner とての make は優秀だと思い直している。その昔、make の複雑さが嫌になって、ant にしたのだが、20年経って戻ってきたことになる
+.. [#r4] `Build and image generation for vscode-dev-containers <https://github.com/microsoft/vscode-dev-containers/blob/v0.146.0/build/README.md>`_
+.. [#r5] vscode plugin をローカルからロードのにフルパスで書く方法がどこかに書いてあったと思うのだが原典が見つからない。見つかったら更新する
+
+.. author:: default
+.. categories:: Azure
+.. tags:: bicep, ARM Template
+.. comments::
+

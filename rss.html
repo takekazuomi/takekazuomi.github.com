@@ -5,8 +5,170 @@
         <link>http://kyrt.in/</link>
         <description>もろもろの備忘録、C#とAzureなど</description>
         <language>en-us</language>
-        <pubDate>Sun, 18 Oct 2020 00:00:00 +0000</pubDate>
+        <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
         
+        <item>
+            <link>http://kyrt.in/2020/10/27/bicep_devcontaner.html</link>
+            <guid>http://kyrt.in/2020/10/27/bicep_devcontaner.html</guid>
+            <title><![CDATA[bicep 用 dev contaner]]></title>
+            <description><![CDATA[<h1>bicep 用 dev contaner</h1>
+<p>最近、bicep を触ることが多く。また、開発環境の再現性やポータビリティが気になることがママある。VSCode dev container<a class="footnote-reference" href="#r1" id="id1">[1]</a>がなかなか便利だったので、<a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep">bicep 用 dev contaner</a>を作成した。<a class="footnote-reference" href="#r2" id="id3">[2]</a></p>
+<a class="reference external image-reference" href="https://www.flickr.com/photos/takekazuomi/49997478968/in/datetaken/"><img alt="Distecca" class="align-center" src="https://live.staticflickr.com/65535/49997478968_72e7a0f1e7_c.jpg"/></a>
+<p>作成に当たっては、下記の２つのレポジトリを参考にした。</p>
+<ul class="simple">
+<li>dev containers のレポジトリ<a class="reference external" href="https://github.com/microsoft/vscode-dev-containers">https://github.com/microsoft/vscode-dev-containers</a></li>
+<li>各言語向けのdev containers 例：golang<a class="reference external" href="https://github.com/microsoft/vscode-remote-try-go">https://github.com/microsoft/vscode-remote-try-go</a></li>
+</ul>
+<div class="section" id="id4">
+<h2>概要</h2>
+<p>大まかな流れととしては、下記の3段階となる。docker 絡みは、普通にDockerfileを書くのとほぼ同じだ。</p>
+<ol class="arabic simple">
+<li>bicep dev containers 用のベースとなるDocker Image の作成</li>
+<li>dev containers の プレースホルダー用 Dockerfile の作成</li>
+<li>devcontainer.json の 作成</li>
+</ol>
+</div>
+<div class="section" id="docker-image">
+<h2>1. ベースとなるDocker Image の作成</h2>
+<p>大枠は、テンプレート<a class="reference external" href="https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/container-templates">vscode-dev-containers/container-templates/</a>があるので、持ってくる。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span/>mkdir vscode-dev-containers-bicep
+<span class="nb">cd</span> vscode-dev-containers-bicep
+cp -r ../vscode-dev-containers/container-templates/dockerfile/. .
+</pre></div>
+</div>
+<p>今回は、ベースイメージを作成するDockerfileを<a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep/blob/main/.devcontainer/base.Dockerfile">base.Dockerfile</a>として追加した。</p>
+<p><a class="reference external" href="https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/script-library/">script-library</a>によく使われるパッケージのインストール用のスクリプトが用意されているので必要なのを持ってくる。ドキュメントは、<a class="reference external" href="https://github.com/microsoft/vscode-dev-containers/tree/v0.146.0/script-library/docs">この辺</a>にある。ここでは、<strong>az cli</strong>と<strong>powershell</strong>を入れる。手間をかけたくなければ、現状では<strong>debian/buster</strong>を baseのOSとして選ぶのが良い。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span/><span class="nb">echo</span> -n <span class="s2">"common-debian.sh powershell-debian.sh azcli-debian.sh"</span> <span class="p">|</span> <span class="se">\</span>
+    xargs -t -d <span class="s1">' '</span> -I <span class="o">{}</span> cp ../vscode-dev-containers/script-library/<span class="o">{}</span> .devcontainer/library-scripts/
+</pre></div>
+</div>
+<p>bicep 用のインストールスクリプトを作る。<a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/library-scripts/bicep-debian.sh">bicep-debian.sh</a>。やってることは、bicep本体のインストールと、vscode plugin のダウンロード。あと普段使いのツールもおまけで入れてる。bicep の vscode plugin は、まだmarket place に出てないので、ローカルにダウンロードして、<strong>devcontainer.json</strong>でフルパス指定で入れている。</p>
+<p>作成した、bicep-debian.sh は、こんな感じで、主要部分は割りとシンプル。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span/>... snip ...
+
+<span class="c1"># Install the Bicep CLI</span>
+<span class="c1"># https://github.com/Azure/bicep/blob/master/docs/installing.md#install-the-bicep-cli</span>
+
+curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+chmod +x ./bicep
+mv ./bicep /usr/local/bin/bicep
+bicep --help
+
+<span class="c1"># Fetch the latest Bicep VSCode extension</span>
+curl -Lo vscode-bicep.vsix https://github.com/Azure/bicep/releases/latest/download/vscode-bicep.vsix
+</pre></div>
+</div>
+<p>持ってきた、スクリプトと、bicep のインストール<a class="footnote-reference" href="#r3" id="id6">[3]</a>を<strong>base.Dockerfile</strong>に追加する。</p>
+<p>作成したDockerfileを抜粋</p>
+<div class="highlight-Dockerfile notranslate"><div class="highlight"><pre><span/>... snip ...
+<span class="k">RUN</span> bash /tmp/library-scripts/common-debian.sh <span class="s2">"</span><span class="si">${</span><span class="nv">INSTALL_ZSH</span><span class="si">}</span><span class="s2">"</span> <span class="s2">"</span><span class="si">${</span><span class="nv">USERNAME</span><span class="si">}</span><span class="s2">"</span> <span class="s2">"</span><span class="si">${</span><span class="nv">USER_UID</span><span class="si">}</span><span class="s2">"</span> <span class="s2">"</span><span class="si">${</span><span class="nv">USER_GID</span><span class="si">}</span><span class="s2">"</span> <span class="s2">"</span><span class="si">${</span><span class="nv">UPGRADE_PACKAGES</span><span class="si">}</span><span class="s2">"</span> <span class="se">\</span>
+    # Install the Azure CLI
+    <span class="o">&amp;&amp;</span> bash /tmp/library-scripts/azcli-debian.sh <span class="se">\</span>
+    # Install the powershell
+    <span class="o">&amp;&amp;</span> bash /tmp/library-scripts/powershell-debian.sh <span class="se">\</span>
+    # Install the bicep
+    <span class="o">&amp;&amp;</span> bash /tmp/library-scripts/bicep-debian.sh <span class="se">\</span>
+    # Clean up
+    <span class="o">&amp;&amp;</span> apt-get clean -y <span class="o">&amp;&amp;</span> rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+</pre></div>
+</div>
+<p><a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/Makefile">Makefile</a>を作ってあるので、下記のように実行するとbuildしてpushされる。<a class="footnote-reference" href="#r4" id="id7">[4]</a></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span/>make build push
+</pre></div>
+</div>
+</div>
+<div class="section" id="dockerfile">
+<h2>2. Dockerfile を作る</h2>
+<p><a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/Dockerfile">Dockerfile</a>で、先程作った、base.Dockerfile のイメージを利用する。このDockerfileは、プレースホルダーで、非常に簡単な感じになった。専用のイメージを作るべきか、どこまで入れるかはケースバイケースではある。</p>
+<div class="highlight-Dockerfile notranslate"><div class="highlight"><pre><span/><span class="c"># See here for image contents: base.Dockerfile</span>
+<span class="k">ARG</span> <span class="nv">VARIANT</span><span class="o">=</span><span class="s2">"latest"</span>
+<span class="k">FROM</span> <span class="s">takekazuomi/devcontainers-bicep:${VARIANT}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="devcontainer-json">
+<h2>3. <strong>devcontainer.json</strong> を作成</h2>
+<p>ちょっと長いが、<a class="reference external" href="https://github.com/takekazuomi/devcontainer-bicep/blob/v0.0.4/.devcontainer/devcontainer.json">devcontainer.json</a>を下記に全文引用。ポイントは、”extensions” で、docker image にダウンロードされてる、vscode-bicep.vsix をフルパス指定していること。フルパスで書くと、ローカルからロードしてくれる[#r5]_</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span/><span class="p">{</span>
+    <span class="s2">"name"</span><span class="o">:</span> <span class="s2">"Bicep"</span><span class="p">,</span>
+    <span class="s2">"build"</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">"dockerfile"</span><span class="o">:</span> <span class="s2">"Dockerfile"</span><span class="p">,</span>
+        <span class="s2">"args"</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">"VARIANT"</span><span class="o">:</span> <span class="s2">"latest"</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"runArgs"</span><span class="o">:</span> <span class="p">[</span>
+        <span class="s2">"--cap-add=SYS_PTRACE"</span><span class="p">,</span>
+        <span class="s2">"--security-opt"</span><span class="p">,</span>
+        <span class="s2">"seccomp=unconfined"</span>
+    <span class="p">],</span>
+    <span class="c1">// Set *default* container specific settings.json values on container create.</span>
+    <span class="s2">"settings"</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">"terminal.integrated.shell.linux"</span><span class="o">:</span> <span class="s2">"/bin/zsh"</span>
+    <span class="p">},</span>
+    <span class="c1">// Add the IDs of extensions you want installed when the container is created.</span>
+    <span class="s2">"extensions"</span><span class="o">:</span> <span class="p">[</span>
+        <span class="s2">"ms-azuretools.vscode-docker"</span><span class="p">,</span>
+        <span class="s2">"ms-vscode.azure-account"</span><span class="p">,</span>
+        <span class="s2">"davidanson.vscode-markdownlint"</span><span class="p">,</span>
+        <span class="s2">"ms-vscode.powershell"</span><span class="p">,</span>
+        <span class="s2">"dandric.vscode-jq"</span><span class="p">,</span>
+        <span class="s2">"redhat.vscode-yaml"</span><span class="p">,</span>
+        <span class="s2">"dotjoshjohnson.xml"</span><span class="p">,</span>
+        <span class="s2">"timonwong.shellcheck"</span><span class="p">,</span>
+        <span class="s2">"editorconfig.editorconfig"</span><span class="p">,</span>
+        <span class="s2">"/tmp/vscode-bicep.vsix"</span>
+    <span class="p">],</span>
+    <span class="c1">// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.</span>
+    <span class="s2">"remoteUser"</span><span class="o">:</span> <span class="s2">"vscode"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>最後に</h2>
+<p>dev container は割と簡単に作れるしカスタマイズも容易で利便性が高い。開発環境は、少し使っていると魔窟化してしまい再現性やポータビリティが無くなり、チーム開発などで環境を揃えたい場合に問題になりやすい。</p>
+<p>その点Windows も問題だが、Linuxだとディストーションの違いや、パッケージのレポジトリを追加したり、細かいカスタマイズが効いたりなどの自由度の高さに起因して、更に問題が深刻化してしまうことがある。</p>
+<p>dev container を使うとクリアな開発環境を維持しやすくなり問題のかなりの部分が解決できるのではないかと期待している。贅沢を言うと、VS Code だけでなく、他のエディターでも使ると嬉しいところではある。vimとかemacsとか。</p>
+</div>
+<div class="section" id="id11">
+<h2>参照</h2>
+<table class="docutils footnote" frame="void" id="r1" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://code.visualstudio.com/docs/remote/containers">Developing inside a Container</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r2" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>このBlogは、<a class="reference external" href="http://tinkerer.me/">tinkerer</a>で書いてるのだが、 Windows + python だとなにかと辛く。python 環境をvenvから docker に移し、さらに dev container を使っうようにしたら。複数のライティング環境を維持しやすくなり苦しみが無くなった、素晴らしい。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r3" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>最近、なんだかんだ言って task runner とての make は優秀だと思い直している。その昔、make の複雑さが嫌になって、ant にしたのだが、20年経って戻ってきたことになる</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r4" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[4]</a></td><td><a class="reference external" href="https://github.com/microsoft/vscode-dev-containers/blob/v0.146.0/build/README.md">Build and image generation for vscode-dev-containers</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="r5" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td>vscode plugin をローカルからロードのにフルパスで書く方法がどこかに書いてあったと思うのだが原典が見つからない。見つかったら更新する</td></tr>
+</tbody>
+</table>
+</div>
+]]></description>
+            <category><![CDATA[ Azure ]]></category>
+             <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
+        </item>
+    
         <item>
             <link>http://kyrt.in/2020/10/18/bicep_module.html</link>
             <guid>http://kyrt.in/2020/10/18/bicep_module.html</guid>
